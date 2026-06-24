@@ -61,6 +61,12 @@ tools/unity_gate_a.sh
 This generates and validates `Assets/Scenes/AshenThresholdSpike.unity`.
 Set `UNITY_EDITOR` if Unity is installed outside the default Hub path.
 
+To capture the generated camera view as local evidence:
+
+```sh
+tools/unity_capture_gate_a.sh
+```
+
 ## Controls
 
 - Move: WASD / arrows
