@@ -50,6 +50,27 @@ confirms:
 
 See `docs/MCP_SECURITY.md`.
 
+## Veripsa Forge
+
+The Unity path is managed through Veripsa Forge: AI agents edit stable game
+specification files, GitHub and Veripsa Core coordinate PRs, and Unity produces
+screenshots, logs, tests, and builds as evidence.
+
+Start here:
+
+- `docs/forge/FORGE_VISION.md`
+- `docs/forge/FORGE_ARCHITECTURE.md`
+- `docs/forge/CLI_MEDIATOR.md`
+- `docs/forge/MVP.md`
+
+Local contract checks:
+
+```sh
+tools/forge/forge inspect project
+tools/forge/forge inspect scene scene.ashen_threshold
+tools/forge/forge validate command commands/samples/run-room-spike.json
+```
+
 ## Generate Scene
 
 Run the Gate A Unity validation:

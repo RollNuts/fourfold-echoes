@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "contracts/schemas/forge-command.schema.json",
+  "title": "Forge command",
+  "type": "object",
+  "required": ["commandId", "action"],
+  "additionalProperties": false,
+  "properties": {
+    "commandId": {
+      "type": "string",
+      "pattern": "^cmd\\.[a-z0-9_.-]+$"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "inspect_project",
+        "inspect_scene",
+        "plan_operation",
+        "run_room_spike",
+        "capture_scene",
+        "run_playmode_tests"
+      ]
+    },
+    "sceneId": {
+      "type": "string",
+      "pattern": "^scene\\.[a-z0-9_.-]+$"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "screenshot": { "type": "boolean" },
+        "video": { "type": "boolean" },
+        "playmodeLog": { "type": "boolean" }
+      }
+    }
+  }
+}

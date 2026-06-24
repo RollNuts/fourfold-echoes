@@ -1,0 +1,12 @@
+version: 1
+project:
+  id: project.fourfold_echoes
+  title: FOURFOLD ECHOES
+  target_unity_version: 6000.3.18f1
+  first_scene: scene.ashen_threshold
+  director_review:
+    primary_outputs:
+      - screenshot
+      - playable_artifact
+      - audio_note
+      - scenario_result

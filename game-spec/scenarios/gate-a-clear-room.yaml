@@ -1,0 +1,32 @@
+version: 1
+scenario:
+  id: scenario.gate_a.clear_room
+  scene: scene.ashen_threshold
+  seed: 1234
+  purpose: Verify the first playable room can be cleared from authored inputs.
+  commands:
+    - tick: 1
+      actor: entity.player.solo
+      action: move
+      vector: { x: 1, z: 0 }
+    - tick: 40
+      actor: entity.player.solo
+      action: attack
+      target: entity.enemy.hollow_grunt
+    - tick: 120
+      actor: entity.player.solo
+      action: phase_action
+      target: entity.object.ember_altar
+    - tick: 220
+      actor: entity.player.solo
+      action: interact
+      target: entity.object.claim_gate
+  expected:
+    states:
+      - state.enemy_defeated
+      - state.gate_open
+    rewards:
+      - loot.relic.ember_afterglow
+    evidence:
+      - artifacts/screenshots/gate-a-clear-room.png
+      - artifacts/logs/gate-a-playmode.log

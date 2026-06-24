@@ -1,0 +1,8 @@
+*
+!.gitignore
+!screenshots/
+!logs/
+!test-results/
+!screenshots/.gitkeep
+!logs/.gitkeep
+!test-results/.gitkeep
