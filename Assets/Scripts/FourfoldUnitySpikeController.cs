@@ -44,6 +44,14 @@ namespace FourfoldEchoes.Spike
         private const float ChainWindow = 1.35f;
         private const float AltarRange = 1.35f;
         private const float AltarHeatPerSecond = 34f;
+        private const float EnemySenseRange = 4.2f;
+        private const float EnemyStrikeRange = 1.05f;
+        private const float EnemyMoveSpeed = 1.45f;
+        private const float EnemyWindupDuration = 0.72f;
+        private const float EnemyRecoveryDuration = 0.62f;
+        private const float EnemyDamage = 18f;
+        private const float PlayerMaxHealth = 100f;
+        private const float PlayerInvulnerableDuration = 0.55f;
 
         private EchoPhase currentPhase = EchoPhase.Ember;
         private EchoPhase? lastHitPhase;
@@ -51,21 +59,33 @@ namespace FourfoldEchoes.Spike
         private float attackCooldown;
         private float dodgeTimer;
         private float dodgeCooldown;
+        private float enemyWindupTimer;
+        private float enemyRecoveryTimer;
+        private float playerHealth = PlayerMaxHealth;
+        private float playerInvulnerableTimer;
+        private float playerHitFlashTimer;
         private float altarHeat;
         private float enemyHealth = 70f;
         private bool gateOpen;
         private bool rewardClaimed;
         private string lastEvent = "Entered Ashen Threshold";
         private Vector3 facing = Vector3.right;
+        private Vector3 playerStartPosition;
+        private Vector3 enemyStartPosition;
+        private Transform enemyTellRing;
 
         private AudioSource audioSource;
         private AudioClip attackTone;
         private AudioClip comboTone;
         private AudioClip gateTone;
         private AudioClip rewardTone;
+        private AudioClip warningTone;
+        private AudioClip playerHitTone;
 
         public void Awake()
         {
+            playerStartPosition = player.position;
+            enemyStartPosition = enemy.position;
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
             audioSource.spatialBlend = 0f;
@@ -73,6 +93,9 @@ namespace FourfoldEchoes.Spike
             comboTone = CreateTone("ComboTone", 440f, 0.12f);
             gateTone = CreateTone("GateTone", 330f, 0.16f);
             rewardTone = CreateTone("RewardTone", 660f, 0.2f);
+            warningTone = CreateTone("WarningTone", 146f, 0.14f);
+            playerHitTone = CreateTone("PlayerHitTone", 92f, 0.16f);
+            CreateRuntimeIndicators();
             ApplyPhaseMaterial();
             UpdatePresentation();
         }
@@ -84,9 +107,23 @@ namespace FourfoldEchoes.Spike
             dodgeTimer = Mathf.Max(0f, dodgeTimer - dt);
             dodgeCooldown = Mathf.Max(0f, dodgeCooldown - dt);
             chainTimer = Mathf.Max(0f, chainTimer - dt);
+            playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
+            playerHitFlashTimer = Mathf.Max(0f, playerHitFlashTimer - dt);
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                ResetRoom();
+            }
+
+            if (playerHealth <= 0f)
+            {
+                UpdatePresentation();
+                return;
+            }
 
             HandlePhaseInput();
             MovePlayer(dt);
+            UpdateEnemy(dt);
 
             if (Input.GetKeyDown(KeyCode.Space) && dodgeCooldown <= 0f)
             {
@@ -157,6 +194,71 @@ namespace FourfoldEchoes.Spike
             );
         }
 
+        private void UpdateEnemy(float dt)
+        {
+            if (enemyHealth <= 0f)
+            {
+                return;
+            }
+
+            if (enemyRecoveryTimer > 0f)
+            {
+                enemyRecoveryTimer = Mathf.Max(0f, enemyRecoveryTimer - dt);
+                return;
+            }
+
+            var toPlayer = player.position - enemy.position;
+            toPlayer.y = 0f;
+            var distance = toPlayer.magnitude;
+
+            if (enemyWindupTimer > 0f)
+            {
+                enemyWindupTimer = Mathf.Max(0f, enemyWindupTimer - dt);
+                if (enemyWindupTimer <= 0f)
+                {
+                    ResolveEnemyStrike();
+                }
+                return;
+            }
+
+            if (distance <= EnemyStrikeRange)
+            {
+                enemyWindupTimer = EnemyWindupDuration;
+                lastEvent = "Hollow winding up";
+                audioSource.PlayOneShot(warningTone, 0.22f);
+                return;
+            }
+
+            if (distance <= EnemySenseRange && distance > 0.01f)
+            {
+                enemy.position += toPlayer.normalized * EnemyMoveSpeed * dt;
+            }
+        }
+
+        private void ResolveEnemyStrike()
+        {
+            enemyWindupTimer = 0f;
+            enemyRecoveryTimer = EnemyRecoveryDuration;
+
+            if (!IsInRange(player, enemy, EnemyStrikeRange + 0.18f))
+            {
+                lastEvent = "Hollow strike missed";
+                return;
+            }
+
+            if (dodgeTimer > 0f || playerInvulnerableTimer > 0f)
+            {
+                lastEvent = "Dodge evaded hollow strike";
+                return;
+            }
+
+            playerHealth = Mathf.Max(0f, playerHealth - EnemyDamage);
+            playerInvulnerableTimer = PlayerInvulnerableDuration;
+            playerHitFlashTimer = 0.16f;
+            lastEvent = playerHealth <= 0f ? "Downed by hollow strike" : "Hollow hit - read the tell";
+            audioSource.PlayOneShot(playerHitTone, 0.32f);
+        }
+
         private void Attack()
         {
             attackCooldown = AttackCooldown;
@@ -191,6 +293,31 @@ namespace FourfoldEchoes.Spike
             }
         }
 
+        private void ResetRoom()
+        {
+            currentPhase = EchoPhase.Ember;
+            lastHitPhase = null;
+            chainTimer = 0f;
+            attackCooldown = 0f;
+            dodgeTimer = 0f;
+            dodgeCooldown = 0f;
+            enemyWindupTimer = 0f;
+            enemyRecoveryTimer = 0f;
+            playerInvulnerableTimer = 0f;
+            playerHitFlashTimer = 0f;
+            altarHeat = 0f;
+            enemyHealth = 70f;
+            playerHealth = PlayerMaxHealth;
+            gateOpen = false;
+            rewardClaimed = false;
+            lastEvent = "Room reset";
+            facing = Vector3.right;
+            player.position = playerStartPosition;
+            enemy.position = enemyStartPosition;
+            ApplyPhaseMaterial();
+            UpdatePresentation();
+        }
+
         private void ApplyPhaseMaterial()
         {
             var material = currentPhase switch
@@ -203,15 +330,53 @@ namespace FourfoldEchoes.Spike
             player.GetComponentInChildren<Renderer>().sharedMaterial = material != null ? material : playerMaterial;
         }
 
+        private void CreateRuntimeIndicators()
+        {
+            var ring = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            ring.name = "Enemy Strike Tell";
+            ring.transform.localScale = new Vector3(1.2f, 0.025f, 1.2f);
+            var collider = ring.GetComponent<Collider>();
+            if (collider != null)
+            {
+                collider.enabled = false;
+            }
+            ring.GetComponent<Renderer>().sharedMaterial = gateReadyMaterial;
+            ring.SetActive(false);
+            enemyTellRing = ring.transform;
+        }
+
         private void UpdatePresentation()
         {
+            var playerRenderer = player.GetComponentInChildren<Renderer>();
+            if (playerHitFlashTimer > 0f && playerMaterial != null)
+            {
+                playerRenderer.sharedMaterial = playerMaterial;
+            }
+            else
+            {
+                ApplyPhaseMaterial();
+            }
+
             var enemyAlive = enemyHealth > 0f;
             enemy.gameObject.SetActive(enemyAlive);
             if (enemyAlive)
             {
                 var scale = Mathf.Lerp(0.45f, 1f, enemyHealth / 70f);
-                enemy.localScale = new Vector3(scale, 1f, scale);
+                var windupPulse = enemyWindupTimer > 0f ? 0.16f * Mathf.Sin(Time.time * 32f) : 0f;
+                enemy.localScale = new Vector3(scale + windupPulse, 1f + windupPulse, scale + windupPulse);
                 enemy.GetComponentInChildren<Renderer>().sharedMaterial = enemyMaterial;
+            }
+
+            if (enemyTellRing != null)
+            {
+                var showingTell = enemyAlive && enemyWindupTimer > 0f;
+                enemyTellRing.gameObject.SetActive(showingTell);
+                if (showingTell)
+                {
+                    var progress = 1f - enemyWindupTimer / EnemyWindupDuration;
+                    enemyTellRing.position = new Vector3(enemy.position.x, 0.035f, enemy.position.z);
+                    enemyTellRing.localScale = new Vector3(Mathf.Lerp(0.8f, 1.55f, progress), 0.025f, Mathf.Lerp(0.8f, 1.55f, progress));
+                }
             }
 
             var heat = altarHeat / 100f;
@@ -267,9 +432,13 @@ namespace FourfoldEchoes.Spike
                 normal = { textColor = Color.white }
             };
             GUI.Label(new Rect(24, 18, 520, 32), "FOURFOLD ECHOES - Unity room spike", style);
-            GUI.Label(new Rect(24, 48, 520, 32), $"Phase: {currentPhase}   Enemy: {Mathf.RoundToInt(enemyHealth)}   Altar: {Mathf.RoundToInt(altarHeat)}%   Gate: {(gateOpen ? "Open" : "Closed")}", style);
+            GUI.Label(new Rect(24, 48, 760, 32), $"Phase: {currentPhase}   HP: {Mathf.RoundToInt(playerHealth)}   Enemy: {Mathf.RoundToInt(enemyHealth)}   Altar: {Mathf.RoundToInt(altarHeat)}%   Gate: {(gateOpen ? "Open" : "Closed")}", style);
             GUI.Label(new Rect(24, 78, 720, 32), $"Event: {lastEvent}", style);
-            GUI.Label(new Rect(24, Screen.height - 42, 900, 32), "Move WASD/Arrows | Attack J/Click | Dodge Space | Phase [ ] | Hold K at altar | Claim E/Right click", style);
+            if (playerHealth <= 0f)
+            {
+                GUI.Label(new Rect(24, 108, 720, 32), "Downed - press R to reset the room", style);
+            }
+            GUI.Label(new Rect(24, Screen.height - 42, 980, 32), "Move WASD/Arrows | Attack J/Click | Dodge Space | Phase [ ] | Hold K at altar | Claim E/Right click | Reset R", style);
         }
     }
 }
