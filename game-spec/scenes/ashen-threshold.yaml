@@ -1,0 +1,21 @@
+version: 1
+scene:
+  id: scene.ashen_threshold
+  name: Ashen Threshold
+  purpose: Gate A one-room game feel proof
+  camera:
+    id: camera.proof_room
+    mode: fixed_orthographic
+    resolution:
+      width: 1280
+      height: 800
+  entities:
+    - entity.player.solo
+    - entity.enemy.hollow_grunt
+    - entity.object.ember_altar
+    - entity.object.claim_gate
+  verification:
+    scenarios:
+      - scenario.gate_a.clear_room
+    captures:
+      - camera.proof_room
