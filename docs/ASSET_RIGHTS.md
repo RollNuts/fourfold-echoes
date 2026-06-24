@@ -8,6 +8,7 @@ Current Gate A status:
 | Path or ID | Source | Rights status | Notes |
 | --- | --- | --- | --- |
 | Gate A primitive geometry and procedural placeholder tones | Repository-authored | Approved | No third-party production art, animation, audio, model, font, or texture assets are committed. |
+| `Assets/Scripts/FourfoldProofAudio.cs` runtime tones | Repository-authored procedural synthesis | Approved | Attack, hit, dodge, altar heat, gate open, room clear, enemy tell, player hit, phase, and reward cues are generated in Unity at runtime from sine-wave sample data. No external audio files or AI-generated audio assets are committed. |
 
 ## Intake Rules
 

@@ -73,28 +73,18 @@ namespace FourfoldEchoes.Spike
         private Vector3 playerStartPosition;
         private Vector3 enemyStartPosition;
         private Transform enemyTellRing;
-
-        private AudioSource audioSource;
-        private AudioClip attackTone;
-        private AudioClip comboTone;
-        private AudioClip gateTone;
-        private AudioClip rewardTone;
-        private AudioClip warningTone;
-        private AudioClip playerHitTone;
+        private FourfoldProofAudio proofAudio;
+        private float nextAltarHeatAudio;
 
         public void Awake()
         {
             playerStartPosition = player.position;
             enemyStartPosition = enemy.position;
-            audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.spatialBlend = 0f;
-            attackTone = CreateTone("AttackTone", 220f, 0.07f);
-            comboTone = CreateTone("ComboTone", 440f, 0.12f);
-            gateTone = CreateTone("GateTone", 330f, 0.16f);
-            rewardTone = CreateTone("RewardTone", 660f, 0.2f);
-            warningTone = CreateTone("WarningTone", 146f, 0.14f);
-            playerHitTone = CreateTone("PlayerHitTone", 92f, 0.16f);
+            proofAudio = GetComponent<FourfoldProofAudio>();
+            if (proofAudio == null)
+            {
+                proofAudio = gameObject.AddComponent<FourfoldProofAudio>();
+            }
             CreateRuntimeIndicators();
             ApplyPhaseMaterial();
             UpdatePresentation();
@@ -130,6 +120,7 @@ namespace FourfoldEchoes.Spike
                 dodgeTimer = DodgeDuration;
                 dodgeCooldown = DodgeCooldown;
                 lastEvent = "Dodge";
+                proofAudio.Play(FourfoldProofAudioCue.Dodge, 0.26f);
             }
 
             if ((Input.GetKeyDown(KeyCode.J) || Input.GetMouseButtonDown(0)) && attackCooldown <= 0f)
@@ -144,7 +135,12 @@ namespace FourfoldEchoes.Spike
                 {
                     gateOpen = true;
                     lastEvent = IsGateClaimReady() ? "Gate claim ready" : "Gate opened";
-                    audioSource.PlayOneShot(gateTone, 0.38f);
+                    proofAudio.Play(FourfoldProofAudioCue.GateOpen, 0.38f);
+                }
+                else if (Time.time >= nextAltarHeatAudio)
+                {
+                    proofAudio.PlayAltarHeat(altarHeat / 100f);
+                    nextAltarHeatAudio = Time.time + 0.42f;
                 }
             }
 
@@ -152,7 +148,7 @@ namespace FourfoldEchoes.Spike
             {
                 rewardClaimed = true;
                 lastEvent = "Recovered Ember Afterglow";
-                audioSource.PlayOneShot(rewardTone, 0.42f);
+                proofAudio.Play(FourfoldProofAudioCue.Reward, 0.42f);
             }
 
             UpdatePresentation();
@@ -165,12 +161,14 @@ namespace FourfoldEchoes.Spike
                 currentPhase = (EchoPhase)(((int)currentPhase + 1) % 4);
                 ApplyPhaseMaterial();
                 lastEvent = $"{currentPhase} phase";
+                proofAudio.PlayPhase(currentPhase);
             }
             else if (Input.GetKeyDown(KeyCode.LeftBracket))
             {
                 currentPhase = (EchoPhase)(((int)currentPhase + 3) % 4);
                 ApplyPhaseMaterial();
                 lastEvent = $"{currentPhase} phase";
+                proofAudio.PlayPhase(currentPhase);
             }
         }
 
@@ -225,7 +223,7 @@ namespace FourfoldEchoes.Spike
             {
                 enemyWindupTimer = EnemyWindupDuration;
                 lastEvent = "Hollow winding up";
-                audioSource.PlayOneShot(warningTone, 0.22f);
+                proofAudio.Play(FourfoldProofAudioCue.EnemyTell, 0.22f);
                 return;
             }
 
@@ -256,13 +254,13 @@ namespace FourfoldEchoes.Spike
             playerInvulnerableTimer = PlayerInvulnerableDuration;
             playerHitFlashTimer = 0.16f;
             lastEvent = playerHealth <= 0f ? "Downed by hollow strike" : "Hollow hit - read the tell";
-            audioSource.PlayOneShot(playerHitTone, 0.32f);
+            proofAudio.Play(FourfoldProofAudioCue.PlayerHit, 0.32f);
         }
 
         private void Attack()
         {
             attackCooldown = AttackCooldown;
-            audioSource.PlayOneShot(attackTone, 0.28f);
+            proofAudio.Play(FourfoldProofAudioCue.Attack, 0.28f);
 
             if (enemyHealth <= 0f || !IsInRange(player, enemy, AttackRange))
             {
@@ -280,16 +278,18 @@ namespace FourfoldEchoes.Spike
             {
                 altarHeat = gateOpen ? altarHeat : Mathf.Min(100f, altarHeat + 35f);
                 lastEvent = $"{lastHitPhase.Value} chain surged altar {Mathf.RoundToInt(altarHeat)}%";
-                audioSource.PlayOneShot(comboTone, 0.38f);
+                proofAudio.Play(FourfoldProofAudioCue.Hit, 0.38f);
             }
             else
             {
                 lastEvent = $"{currentPhase} hit";
+                proofAudio.Play(FourfoldProofAudioCue.Hit, 0.24f);
             }
 
             if (enemyHealth <= 0f)
             {
                 lastEvent = combo ? "Steam Burst surged altar 35%" : "Hollow down";
+                proofAudio.Play(FourfoldProofAudioCue.RoomClear, 0.36f);
             }
         }
 
@@ -312,6 +312,7 @@ namespace FourfoldEchoes.Spike
             rewardClaimed = false;
             lastEvent = "Room reset";
             facing = Vector3.right;
+            nextAltarHeatAudio = 0f;
             player.position = playerStartPosition;
             enemy.position = enemyStartPosition;
             ApplyPhaseMaterial();
@@ -407,22 +408,6 @@ namespace FourfoldEchoes.Spike
             return delta.sqrMagnitude <= range * range;
         }
 
-        private static AudioClip CreateTone(string clipName, float frequency, float duration)
-        {
-            const int sampleRate = 44100;
-            var samples = Mathf.CeilToInt(sampleRate * duration);
-            var data = new float[samples];
-            for (var i = 0; i < samples; i++)
-            {
-                var t = i / (float)sampleRate;
-                var envelope = Mathf.Clamp01(1f - t / duration);
-                data[i] = Mathf.Sin(2f * Mathf.PI * frequency * t) * envelope * 0.18f;
-            }
-            var clip = AudioClip.Create(clipName, samples, 1, sampleRate, false);
-            clip.SetData(data, 0);
-            return clip;
-        }
-
         public void OnGUI()
         {
             var style = new GUIStyle(GUI.skin.label)
@@ -439,6 +424,7 @@ namespace FourfoldEchoes.Spike
                 GUI.Label(new Rect(24, 108, 720, 32), "Downed - press R to reset the room", style);
             }
             GUI.Label(new Rect(24, Screen.height - 42, 980, 32), "Move WASD/Arrows | Attack J/Click | Dodge Space | Phase [ ] | Hold K at altar | Claim E/Right click | Reset R", style);
+            GUI.Label(new Rect(24, Screen.height - 70, 980, 32), "Audio proof: procedural runtime tones only; no external clips loaded", style);
         }
     }
 }
