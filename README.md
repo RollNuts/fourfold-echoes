@@ -33,6 +33,16 @@ The scene is generated from project-authored C# and Unity primitive geometry.
 No third-party art, animation, audio, model, font, or texture asset is committed
 in this first gate.
 
+## Repository Hygiene
+
+- `.gitignore` excludes Unity caches, local editor files, generated Gate A
+  validation output, local evidence, and shipping artifacts.
+- `.gitattributes` normalizes text/YAML Unity files and routes commercial binary
+  asset formats through Git LFS when they are intentionally tracked.
+- Track Unity `.meta` files beside every committed Unity asset. Missing or
+  regenerated GUIDs should block review once imported assets exist.
+- Asset intake and provenance rules live in `docs/ASSET_RIGHTS.md`.
+
 ## Unity MCP
 
 Unity's official MCP bridge, provided through the Unity Assistant package, is
