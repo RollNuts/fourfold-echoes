@@ -21,6 +21,19 @@ Current command entry:
 FourfoldEchoes.Editor.Mediator.FourfoldForgeMediator.Run
 ```
 
+Current playable build entry:
+
+```text
+tools/unity_build_gate_a.sh
+  -> FourfoldEchoes.Editor.FourfoldUnityBuild.BuildGateA
+  -> FourfoldUnitySpikeBuilder.BuildAndValidate
+  -> Build/GateA/
+```
+
+The default Gate A build target is the macOS standalone app. Windows can be
+requested from the same wrapper when the Unity Windows standalone module is
+available, but macOS is the verified path for Gate A.
+
 ## Acceleration Layer
 
 Local Unity MCP can accelerate day-to-day editor work once reviewed.
