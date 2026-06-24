@@ -1,0 +1,33 @@
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+
+.vs/
+.idea/
+.vscode/
+.DS_Store
+sysinfo.txt
+
+# Keep local AI/MCP client paths private unless a portable project config is
+# intentionally generated and reviewed.
+.codex/
+.mcp.json
+.cursor/
+opencode.json
