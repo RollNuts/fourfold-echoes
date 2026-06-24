@@ -28,7 +28,7 @@ namespace FourfoldEchoes.Editor
             var camera = Camera.main;
             if (camera == null)
             {
-                camera = UnityEngine.Object.FindObjectOfType<Camera>();
+                camera = UnityEngine.Object.FindFirstObjectByType<Camera>();
             }
 
             if (camera == null)
