@@ -20,6 +20,17 @@ references. It must not invent unrelated enemies, puzzles, or effects.
 - Capture screenshots.
 - Generate reports.
 
+## Editor Control Surfaces
+
+Unity can be driven through three surfaces, in this order of authority:
+
+1. CLI file-contract mediator for CI and PR gates.
+2. Reviewed local MCP bridge for interactive editor acceleration.
+3. `Tools/FOURFOLD/...` menu items as thin wrappers over repository-owned APIs.
+
+The same underlying operation should be reachable from CLI and editor surfaces.
+MCP is a transport, not a separate source of truth.
+
 ## Fail Closed
 
 The Adapter must fail instead of guessing when:

@@ -9,9 +9,9 @@ Unity \
   -batchmode \
   -quit \
   -projectPath "$PROJECT_ROOT" \
-  -executeMethod FourfoldEchoes.Forge.Mediator.Entry.Run \
-  --commandFile commands/0001.json \
-  -logFile artifacts/logs/0001-unity.log
+  -executeMethod FourfoldEchoes.Editor.Mediator.FourfoldForgeMediator.Run \
+  --commandFile commands/samples/run-room-spike.json \
+  -logFile artifacts/logs/run-room-spike-unity.log
 ```
 
 The command method reads one JSON command, performs allowed operations, writes
@@ -35,7 +35,7 @@ Generated artifacts are not source of truth. They are review evidence.
 
 ```json
 {
-  "commandId": "cmd-0001",
+  "commandId": "cmd.0001",
   "action": "run_room_spike",
   "sceneId": "scene.ashen_threshold",
   "seed": 1234,
@@ -52,7 +52,7 @@ Generated artifacts are not source of truth. They are review evidence.
 ```json
 {
   "event": "room_clear",
-  "commandId": "cmd-0001",
+  "commandId": "cmd.0001",
   "semanticId": "entity.object.ember_altar",
   "status": "ok",
   "artifacts": [

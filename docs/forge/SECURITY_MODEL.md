@@ -43,13 +43,14 @@ Unity MCP is optional and not the main path.
 Allowed:
 
 - Unity official MCP bridge after checklist approval.
+- Reviewed local Unity MCP bridge in an isolated evaluation branch.
 - Local-only editor automation.
 - Console and scene inspection.
 - Running repository-defined commands.
 
 Not allowed:
 
-- Third-party MCP bridges without separate review.
+- Third-party MCP bridges without separate security review.
 - Accepting unknown client prompts.
 - Using MCP output as playability proof.
 - Committing generated MCP config.

@@ -10,7 +10,9 @@ const textRoots = [
   "commands",
   "contracts",
   "game-spec",
+  "Assets/Editor/Mediator",
   "tools/forge",
+  "tools/unity_forge_command.sh",
   "artifacts",
   "events"
 ];

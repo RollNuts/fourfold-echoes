@@ -61,6 +61,7 @@ Start here:
 - `docs/forge/FORGE_VISION.md`
 - `docs/forge/FORGE_ARCHITECTURE.md`
 - `docs/forge/CLI_MEDIATOR.md`
+- `docs/forge/EDITOR_AUTOMATION.md`
 - `docs/forge/MVP.md`
 
 Local contract checks:
@@ -70,6 +71,12 @@ node tools/forge/check.mjs
 tools/forge/forge inspect project
 tools/forge/forge inspect scene scene.ashen_threshold
 tools/forge/forge validate command commands/samples/run-room-spike.json
+```
+
+Unity mediator command:
+
+```sh
+tools/unity_forge_command.sh commands/samples/run-room-spike.json
 ```
 
 ## Generate Scene
