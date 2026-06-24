@@ -25,6 +25,12 @@ Gate A: one playable Unity room.
 - Procedural placeholder audio
 - Fixed-angle 3D block room
 
+## Store Readiness
+
+Product presentation guidance for the current prototype lives in
+`docs/store/README.md`. These docs support Steam-facing quality planning, but do
+not claim the game is Steam-ready, demo-ready, or content-complete.
+
 ## Unity
 
 Target editor: Unity 6.3 LTS `6000.3.18f1`.
