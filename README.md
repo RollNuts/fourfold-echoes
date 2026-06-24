@@ -35,24 +35,29 @@ in this first gate.
 
 ## Unity MCP
 
-This project includes `com.coplaydev.unity-mcp` pinned to `v9.7.3`.
+Unity's official MCP bridge, provided through the Unity Assistant package, is
+the preferred editor automation path. Third-party Unity MCP bridges are not
+installed by default.
 
-After Unity resolves packages, open the editor and use:
+Do not enable Unity MCP or add generated client config until a security review
+confirms:
 
-`Window > MCP for Unity > Configure All Detected Clients`
-
-Keep generated user-local MCP config out of git unless it is explicitly reviewed
-as a portable project config.
+- The project uses Unity's official `com.unity.ai.assistant` MCP path.
+- The bridge binds to localhost only.
+- External client connections require explicit approval in Unity settings.
+- Generated MCP client config stays out of git.
+- The tool is used for editor automation only, not as gameplay verification.
 
 ## Generate Scene
 
-Set `UNITY_EDITOR` to the Unity editor executable, then run:
+Run the Gate A Unity validation:
 
 ```sh
-"$UNITY_EDITOR" -batchmode -quit -projectPath . -executeMethod FourfoldEchoes.Editor.FourfoldUnitySpikeBuilder.Build -logFile -
+tools/unity_gate_a.sh
 ```
 
-Open `Assets/Scenes/AshenThresholdSpike.unity`.
+This generates and validates `Assets/Scenes/AshenThresholdSpike.unity`.
+Set `UNITY_EDITOR` if Unity is installed outside the default Hub path.
 
 ## Controls
 
