@@ -132,7 +132,11 @@ Windows standalone module being installed and is not the verified Gate A path.
 
 - Move: WASD / arrows
 - Attack: J / left click
-- Dodge: Space
+- Dodge: Space, commits in the current facing direction and briefly grants
+  invulnerability
 - Phase: [ / ]
 - Phase action: hold K near altar while Ember is active
 - Claim gate: E / right click
+
+The in-game HUD shows dodge/attack recovery, chain timing, altar heat, the
+current objective, and the hollow strike tell when the enemy is winding up.
