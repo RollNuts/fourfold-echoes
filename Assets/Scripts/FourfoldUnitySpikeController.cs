@@ -35,38 +35,57 @@ namespace FourfoldEchoes.Spike
         public Material gateOpenMaterial;
         public Material gateReadyMaterial;
 
-        private const float MoveSpeed = 4.6f;
-        private const float DodgeSpeed = 9.5f;
-        private const float DodgeDuration = 0.18f;
-        private const float DodgeCooldown = 0.55f;
-        private const float DodgeInvulnerableDuration = 0.24f;
-        private const float AttackRange = 1.45f;
-        private const float AttackCooldown = 0.38f;
-        private const float AttackFlashDuration = 0.13f;
-        private const float ChainWindow = 1.35f;
-        private const float AltarRange = 1.35f;
-        private const float AltarHeatPerSecond = 34f;
-        private const float EnemySenseRange = 4.2f;
-        private const float EnemyStrikeRange = 1.05f;
-        private const float EnemyMoveSpeed = 1.45f;
-        private const float EnemyWindupDuration = 0.9f;
-        private const float EnemyRecoveryDuration = 0.62f;
-        private const float EnemyDamage = 18f;
+        private const float MoveSpeed = 5.15f;
+        private const float DodgeSpeed = 11.25f;
+        private const float DodgeDuration = 0.22f;
+        private const float DodgeCooldown = 0.42f;
+        private const float DodgeInvulnerableDuration = 0.36f;
+        private const float DodgeBufferDuration = 0.24f;
+        private const float AttackRange = 1.82f;
+        private const float AttackCooldown = 0.25f;
+        private const float AttackFlashDuration = 0.16f;
+        private const float AttackBufferDuration = 0.28f;
+        private const float AttackMoveCommitment = 0.72f;
+        private const float AttackLungeDuration = 0.1f;
+        private const float AttackLungeSpeed = 4.4f;
+        private const float AttackImpactDelay = 0.01f;
+        private const float AttackDamage = 30f;
+        private const float AttackKnockback = 4.6f;
+        private const float AltarRange = 1.65f;
+        private const float AltarHeatPerSecond = 62f;
+        private const float EnemySenseRange = 5.7f;
+        private const float EnemyStrikeRange = 1.0f;
+        private const float EnemyMoveSpeed = 1.18f;
+        private const float EnemyWindupDuration = 1.08f;
+        private const float EnemyRecoveryDuration = 0.85f;
+        private const float EnemyDamage = 14f;
         private const float EnemyMaxHealth = 70f;
-        private const float EnemyHitFlashDuration = 0.16f;
-        private const float EnemyDeathVisibleDuration = 0.55f;
+        private const float EnemyHitFlashDuration = 0.2f;
+        private const float EnemyDeathVisibleDuration = 0.85f;
         private const float EnemyKnockbackDamping = 9f;
         private const float PlayerMaxHealth = 100f;
         private const float PlayerInvulnerableDuration = 0.55f;
-        private const float GateOpenPulseDuration = 0.8f;
+        private const float GateOpenPulseDuration = 1.1f;
+        private const float RewardPickupDuration = 1.65f;
+        private const float RoomCompleteDuration = 1.8f;
+        private const float RoomMinX = -5.05f;
+        private const float RoomMaxX = 5.2f;
+        private const float RoomMinZ = -3.15f;
+        private const float RoomMaxZ = 3.15f;
+        private const float GateCenterX = 3.45f;
+        private const float GateCenterZ = 0f;
+        private const float GateRange = 1.45f;
 
         private EchoPhase currentPhase = EchoPhase.Ember;
-        private EchoPhase? lastHitPhase;
-        private float chainTimer;
         private float attackCooldown;
+        private float attackBufferTimer;
+        private float attackCommitTimer;
         private float attackFlashTimer;
+        private float attackImpactTimer;
+        private float attackLungeTimer;
         private float dodgeTimer;
         private float dodgeCooldown;
+        private float dodgeBufferTimer;
         private float enemyWindupTimer;
         private float enemyRecoveryTimer;
         private float enemyHitFlashTimer;
@@ -77,17 +96,24 @@ namespace FourfoldEchoes.Spike
         private float altarHeat;
         private float enemyHealth = EnemyMaxHealth;
         private float gateOpenPulseTimer;
+        private float rewardPickupTimer;
+        private float altarBlockedTimer;
+        private float gateBlockedTimer;
+        private float roomCompleteTimer;
+        private bool attackImpactPending;
         private bool gateOpen;
         private bool rewardClaimed;
         private string lastEvent = "Entered Ashen Threshold";
         private Vector3 facing = Vector3.right;
         private Vector3 dodgeDirection = Vector3.right;
+        private Vector3 attackLungeDirection = Vector3.right;
         private Vector3 enemyKnockbackVelocity;
         private Vector3 enemyTelegraphDirection = Vector3.left;
         private Vector3 playerStartPosition;
         private Vector3 enemyStartPosition;
         private Transform enemyTellRing;
         private Transform enemyStrikeLane;
+        private Transform enemyRecoveryRing;
         private Transform dodgeReadyRing;
         private Transform playerInvulnerableHalo;
         private Transform attackArc;
@@ -95,6 +121,10 @@ namespace FourfoldEchoes.Spike
         private Transform enemyDeathBurst;
         private Transform altarPromptRing;
         private Transform gateOpenPulse;
+        private Transform altarLockRing;
+        private Transform altarGateLink;
+        private Transform hollowGateLock;
+        private Transform rewardPickupBurst;
         private FourfoldProofAudio proofAudio;
         private float nextAltarHeatAudio;
 
@@ -116,17 +146,25 @@ namespace FourfoldEchoes.Spike
         {
             var dt = Time.deltaTime;
             attackCooldown = Mathf.Max(0f, attackCooldown - dt);
+            attackBufferTimer = Mathf.Max(0f, attackBufferTimer - dt);
+            attackCommitTimer = Mathf.Max(0f, attackCommitTimer - dt);
             attackFlashTimer = Mathf.Max(0f, attackFlashTimer - dt);
+            attackLungeTimer = Mathf.Max(0f, attackLungeTimer - dt);
             dodgeTimer = Mathf.Max(0f, dodgeTimer - dt);
             dodgeCooldown = Mathf.Max(0f, dodgeCooldown - dt);
-            chainTimer = Mathf.Max(0f, chainTimer - dt);
+            dodgeBufferTimer = Mathf.Max(0f, dodgeBufferTimer - dt);
             enemyHitFlashTimer = Mathf.Max(0f, enemyHitFlashTimer - dt);
             enemyDeathTimer = Mathf.Max(0f, enemyDeathTimer - dt);
             gateOpenPulseTimer = Mathf.Max(0f, gateOpenPulseTimer - dt);
+            rewardPickupTimer = Mathf.Max(0f, rewardPickupTimer - dt);
+            altarBlockedTimer = Mathf.Max(0f, altarBlockedTimer - dt);
+            gateBlockedTimer = Mathf.Max(0f, gateBlockedTimer - dt);
+            roomCompleteTimer = Mathf.Max(0f, roomCompleteTimer - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
             playerHitFlashTimer = Mathf.Max(0f, playerHitFlashTimer - dt);
+            UpdateAttackImpact(dt);
 
-            if (Input.GetKeyDown(KeyCode.R))
+            if (ResetPressed())
             {
                 ResetRoom();
             }
@@ -141,51 +179,74 @@ namespace FourfoldEchoes.Spike
             MovePlayer(dt);
             UpdateEnemy(dt);
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (DodgePressed())
             {
-                if (dodgeCooldown <= 0f)
+                if (CanBeginDodge())
                 {
                     BeginDodge();
                 }
                 else
                 {
-                    lastEvent = $"Dodge cooling {dodgeCooldown:0.0}s";
+                    dodgeBufferTimer = DodgeBufferDuration;
+                    lastEvent = dodgeCooldown > 0f ? $"Dodge cooling {dodgeCooldown:0.0}s" : "Dodge queued";
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.J) || Input.GetMouseButtonDown(0))
+            if (AttackPressed())
             {
-                if (attackCooldown <= 0f)
+                if (CanBeginAttack())
                 {
-                    Attack();
+                    BeginAttack();
                 }
                 else
                 {
-                    lastEvent = $"Attack recovering {attackCooldown:0.0}s";
+                    attackBufferTimer = AttackBufferDuration;
+                    lastEvent = "Attack queued";
                 }
             }
 
-            if (Input.GetKey(KeyCode.K) && currentPhase == EchoPhase.Ember && IsInRange(player, altarCore, AltarRange) && !gateOpen)
+            ProcessBufferedActions();
+
+            if (AltarHeld() && IsInRange(player, altarCore, AltarRange) && !gateOpen)
             {
-                altarHeat = Mathf.Min(100f, altarHeat + AltarHeatPerSecond * dt);
-                if (altarHeat >= 100f)
+                if (IsAltarBlocked())
                 {
-                    gateOpen = true;
-                    gateOpenPulseTimer = GateOpenPulseDuration;
-                    lastEvent = IsGateClaimReady() ? "Gate claim ready" : "Gate opened";
-                    proofAudio.Play(FourfoldProofAudioCue.GateOpen, 0.38f);
+                    altarBlockedTimer = 0.32f;
+                    gateBlockedTimer = 0.32f;
+                    lastEvent = "Hollow blocks the altar";
                 }
-                else if (Time.time >= nextAltarHeatAudio)
+                else
                 {
-                    proofAudio.PlayAltarHeat(altarHeat / 100f);
-                    nextAltarHeatAudio = Time.time + 0.42f;
+                    altarHeat = Mathf.Min(100f, altarHeat + AltarHeatPerSecond * dt);
+                    if (altarHeat >= 100f)
+                    {
+                        gateOpen = true;
+                        gateOpenPulseTimer = GateOpenPulseDuration;
+                        lastEvent = "Gate opened - claim reward";
+                        proofAudio.Play(FourfoldProofAudioCue.GateOpen, 0.38f);
+                    }
+                    else if (Time.time >= nextAltarHeatAudio)
+                    {
+                        lastEvent = $"Gate opening {Mathf.RoundToInt(altarHeat)}%";
+                        proofAudio.PlayAltarHeat(altarHeat / 100f);
+                        nextAltarHeatAudio = Time.time + 0.32f;
+                    }
                 }
             }
 
-            if ((Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1)) && IsGateClaimReady())
+            if (InteractPressed() && IsGateBlocked())
+            {
+                gateBlockedTimer = 0.45f;
+                lastEvent = "Gate sealed by hollow";
+            }
+
+            if (InteractPressed() && IsGateClaimReady())
             {
                 rewardClaimed = true;
-                lastEvent = "Recovered Ember Afterglow";
+                rewardPickupTimer = RewardPickupDuration;
+                roomCompleteTimer = RoomCompleteDuration;
+                gateOpenPulseTimer = GateOpenPulseDuration;
+                lastEvent = "Room complete";
                 proofAudio.Play(FourfoldProofAudioCue.Reward, 0.42f);
             }
 
@@ -194,14 +255,14 @@ namespace FourfoldEchoes.Spike
 
         private void HandlePhaseInput()
         {
-            if (Input.GetKeyDown(KeyCode.RightBracket))
+            if (NextPhasePressed())
             {
                 currentPhase = (EchoPhase)(((int)currentPhase + 1) % 4);
                 ApplyPhaseMaterial();
                 lastEvent = $"{currentPhase} phase";
                 proofAudio.PlayPhase(currentPhase);
             }
-            else if (Input.GetKeyDown(KeyCode.LeftBracket))
+            else if (PreviousPhasePressed())
             {
                 currentPhase = (EchoPhase)(((int)currentPhase + 3) % 4);
                 ApplyPhaseMaterial();
@@ -219,12 +280,16 @@ namespace FourfoldEchoes.Spike
             }
             var movement = dodgeTimer > 0f ? dodgeDirection : input;
             var speed = dodgeTimer > 0f ? DodgeSpeed : MoveSpeed;
+            if (attackCommitTimer > 0f && dodgeTimer <= 0f)
+            {
+                speed *= AttackMoveCommitment;
+            }
             player.position += movement * speed * dt;
-            player.position = new Vector3(
-                Mathf.Clamp(player.position.x, -4.4f, 5.4f),
-                player.position.y,
-                Mathf.Clamp(player.position.z, -2.8f, 2.8f)
-            );
+            if (attackLungeTimer > 0f && dodgeTimer <= 0f)
+            {
+                player.position += attackLungeDirection * AttackLungeSpeed * dt;
+            }
+            ClampPlayerToRoom();
         }
 
         private void BeginDodge()
@@ -234,8 +299,10 @@ namespace FourfoldEchoes.Spike
             facing = dodgeDirection;
             dodgeTimer = DodgeDuration;
             dodgeCooldown = DodgeCooldown;
+            dodgeBufferTimer = 0f;
+            attackBufferTimer = 0f;
             playerInvulnerableTimer = Mathf.Max(playerInvulnerableTimer, DodgeInvulnerableDuration);
-            lastEvent = "Dodge i-frames";
+            lastEvent = "Dodged through";
             proofAudio.Play(FourfoldProofAudioCue.Dodge, 0.26f);
         }
 
@@ -272,7 +339,7 @@ namespace FourfoldEchoes.Spike
             {
                 enemyTelegraphDirection = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : enemyTelegraphDirection;
                 enemyWindupTimer = EnemyWindupDuration;
-                lastEvent = "Hollow winding up";
+                lastEvent = "Hollow strike incoming";
                 proofAudio.Play(FourfoldProofAudioCue.EnemyTell, 0.22f);
                 return;
             }
@@ -290,19 +357,19 @@ namespace FourfoldEchoes.Spike
 
             if (!IsPlayerInEnemyStrikeLane())
             {
-                lastEvent = "Hollow strike missed";
+                lastEvent = "Hollow whiffed - punish now";
                 return;
             }
 
             if (dodgeTimer > 0f || playerInvulnerableTimer > 0f)
             {
-                lastEvent = "Dodge evaded hollow strike";
+                lastEvent = "Evaded - hollow exposed";
                 return;
             }
 
             playerHealth = Mathf.Max(0f, playerHealth - EnemyDamage);
             playerInvulnerableTimer = PlayerInvulnerableDuration;
-            playerHitFlashTimer = 0.16f;
+            playerHitFlashTimer = 0.28f;
             lastEvent = playerHealth <= 0f ? "Downed by hollow strike" : "Hollow hit - read the tell";
             proofAudio.Play(FourfoldProofAudioCue.PlayerHit, 0.32f);
         }
@@ -317,9 +384,9 @@ namespace FourfoldEchoes.Spike
 
             enemy.position += enemyKnockbackVelocity * dt;
             enemy.position = new Vector3(
-                Mathf.Clamp(enemy.position.x, -4.4f, 5.4f),
+                Mathf.Clamp(enemy.position.x, RoomMinX, RoomMaxX),
                 enemy.position.y,
-                Mathf.Clamp(enemy.position.z, -2.8f, 2.8f)
+                Mathf.Clamp(enemy.position.z, RoomMinZ, RoomMaxZ)
             );
             enemyKnockbackVelocity = Vector3.Lerp(enemyKnockbackVelocity, Vector3.zero, EnemyKnockbackDamping * dt);
         }
@@ -329,7 +396,7 @@ namespace FourfoldEchoes.Spike
             var toPlayer = player.position - enemy.position;
             toPlayer.y = 0f;
             var distance = toPlayer.magnitude;
-            if (distance > EnemyStrikeRange + 0.25f)
+            if (distance > EnemyStrikeRange + 0.18f)
             {
                 return false;
             }
@@ -340,40 +407,59 @@ namespace FourfoldEchoes.Spike
             }
 
             var direction = enemyTelegraphDirection.sqrMagnitude > 0.001f ? enemyTelegraphDirection.normalized : toPlayer.normalized;
-            return Vector3.Dot(direction, toPlayer.normalized) >= 0.35f;
+            return Vector3.Dot(direction, toPlayer.normalized) >= 0.45f;
         }
 
-        private void Attack()
+        private void BeginAttack()
         {
             attackCooldown = AttackCooldown;
+            attackBufferTimer = 0f;
+            attackCommitTimer = 0.11f;
             attackFlashTimer = AttackFlashDuration;
+            attackImpactTimer = AttackImpactDelay;
+            attackImpactPending = true;
+            attackLungeTimer = AttackLungeDuration;
+            attackLungeDirection = facing.sqrMagnitude > 0.001f ? facing.normalized : Vector3.right;
+            lastEvent = "Attack";
             proofAudio.Play(FourfoldProofAudioCue.Attack, 0.28f);
+        }
 
-            if (enemyHealth <= 0f || !IsInRange(player, enemy, AttackRange))
+        private void UpdateAttackImpact(float dt)
+        {
+            if (!attackImpactPending)
+            {
+                return;
+            }
+
+            if (playerHealth <= 0f)
+            {
+                attackImpactPending = false;
+                return;
+            }
+
+            attackImpactTimer -= dt;
+            if (attackImpactTimer > 0f)
+            {
+                return;
+            }
+
+            attackImpactPending = false;
+            ResolveAttackImpact();
+        }
+
+        private void ResolveAttackImpact()
+        {
+            if (enemyHealth <= 0f || !IsEnemyInAttackArc(AttackRange))
             {
                 lastEvent = "Attack whiff";
                 return;
             }
 
-            var combo = lastHitPhase.HasValue && lastHitPhase.Value != currentPhase && chainTimer > 0f;
-            var damage = 25f + (combo ? 20f : 0f);
-            enemyHealth = Mathf.Max(0f, enemyHealth - damage);
+            enemyHealth = Mathf.Max(0f, enemyHealth - AttackDamage);
             enemyHitFlashTimer = EnemyHitFlashDuration;
-            enemyKnockbackVelocity = KnockbackDirectionFromPlayerToEnemy() * (combo ? 5.4f : 3.6f);
-            lastHitPhase = currentPhase;
-            chainTimer = ChainWindow;
-
-            if (combo)
-            {
-                altarHeat = gateOpen ? altarHeat : Mathf.Min(100f, altarHeat + 35f);
-                lastEvent = $"{lastHitPhase.Value} chain surged altar {Mathf.RoundToInt(altarHeat)}%";
-                proofAudio.Play(FourfoldProofAudioCue.Hit, 0.38f);
-            }
-            else
-            {
-                lastEvent = $"{currentPhase} hit";
-                proofAudio.Play(FourfoldProofAudioCue.Hit, 0.24f);
-            }
+            enemyKnockbackVelocity = KnockbackDirectionFromPlayerToEnemy() * AttackKnockback;
+            lastEvent = "Hollow hit";
+            proofAudio.Play(FourfoldProofAudioCue.Hit, 0.3f);
 
             if (enemyHealth <= 0f)
             {
@@ -381,7 +467,9 @@ namespace FourfoldEchoes.Spike
                 enemyDeathTimer = EnemyDeathVisibleDuration;
                 enemyWindupTimer = 0f;
                 enemyRecoveryTimer = 0f;
-                lastEvent = gateOpen ? "Hollow down - claim gate" : $"Hollow down - altar {Mathf.RoundToInt(altarHeat)}%";
+                altarBlockedTimer = 0f;
+                gateBlockedTimer = 0f;
+                lastEvent = "Hollow down - altar unlocked";
                 proofAudio.Play(FourfoldProofAudioCue.RoomClear, 0.36f);
             }
         }
@@ -396,17 +484,25 @@ namespace FourfoldEchoes.Spike
         private void ResetRoom()
         {
             currentPhase = EchoPhase.Ember;
-            lastHitPhase = null;
-            chainTimer = 0f;
             attackCooldown = 0f;
+            attackBufferTimer = 0f;
+            attackCommitTimer = 0f;
             attackFlashTimer = 0f;
+            attackImpactTimer = 0f;
+            attackLungeTimer = 0f;
+            attackImpactPending = false;
             dodgeTimer = 0f;
             dodgeCooldown = 0f;
+            dodgeBufferTimer = 0f;
             enemyWindupTimer = 0f;
             enemyRecoveryTimer = 0f;
             enemyHitFlashTimer = 0f;
             enemyDeathTimer = 0f;
             gateOpenPulseTimer = 0f;
+            rewardPickupTimer = 0f;
+            altarBlockedTimer = 0f;
+            gateBlockedTimer = 0f;
+            roomCompleteTimer = 0f;
             playerInvulnerableTimer = 0f;
             playerHitFlashTimer = 0f;
             altarHeat = 0f;
@@ -419,6 +515,7 @@ namespace FourfoldEchoes.Spike
             facing = Vector3.right;
             nextAltarHeatAudio = 0f;
             dodgeDirection = Vector3.right;
+            attackLungeDirection = Vector3.right;
             enemyTelegraphDirection = Vector3.left;
             player.position = playerStartPosition;
             enemy.position = enemyStartPosition;
@@ -448,6 +545,7 @@ namespace FourfoldEchoes.Spike
         {
             enemyTellRing = CreateIndicator("Enemy Strike Tell", PrimitiveType.Cylinder, gateReadyMaterial, new Vector3(1.2f, 0.025f, 1.2f));
             enemyStrikeLane = CreateIndicator("Enemy Strike Lane", PrimitiveType.Cube, enemyMaterial, new Vector3(0.24f, 0.035f, 1.2f));
+            enemyRecoveryRing = CreateIndicator("Enemy Recovery Window", PrimitiveType.Cylinder, tideMaterial, new Vector3(1.15f, 0.02f, 1.15f));
             dodgeReadyRing = CreateIndicator("Dodge Cooldown Ring", PrimitiveType.Cylinder, tideMaterial, new Vector3(0.75f, 0.018f, 0.75f));
             playerInvulnerableHalo = CreateIndicator("Player Invulnerability Halo", PrimitiveType.Cylinder, gateReadyMaterial, new Vector3(0.92f, 0.02f, 0.92f));
             attackArc = CreateIndicator("Player Attack Arc", PrimitiveType.Cube, CurrentPhaseMaterial(), new Vector3(1.05f, 0.055f, 0.32f));
@@ -455,6 +553,10 @@ namespace FourfoldEchoes.Spike
             enemyDeathBurst = CreateIndicator("Enemy Death Burst", PrimitiveType.Cylinder, enemyDeadMaterial, new Vector3(0.9f, 0.035f, 0.9f));
             altarPromptRing = CreateIndicator("Altar Ember Prompt", PrimitiveType.Cylinder, emberMaterial, new Vector3(1.1f, 0.018f, 1.1f));
             gateOpenPulse = CreateIndicator("Gate Open Pulse", PrimitiveType.Cylinder, gateReadyMaterial, new Vector3(0.8f, 0.025f, 0.8f));
+            altarLockRing = CreateIndicator("Hollow Locks Altar", PrimitiveType.Cylinder, enemyMaterial, new Vector3(1.45f, 0.02f, 1.45f));
+            altarGateLink = CreateIndicator("Altar Opens Gate Link", PrimitiveType.Cube, gateReadyMaterial, new Vector3(2.15f, 0.035f, 0.16f));
+            hollowGateLock = CreateIndicator("Hollow Gate Lock", PrimitiveType.Cube, enemyMaterial, new Vector3(4.6f, 0.035f, 0.12f));
+            rewardPickupBurst = CreateIndicator("Reward Pickup Burst", PrimitiveType.Sphere, gateReadyMaterial, new Vector3(0.6f, 0.6f, 0.6f));
         }
 
         private static Transform CreateIndicator(string name, PrimitiveType type, Material material, Vector3 scale)
@@ -487,6 +589,10 @@ namespace FourfoldEchoes.Spike
             {
                 playerRenderer.sharedMaterial = gateReadyMaterial;
             }
+            else if (rewardPickupTimer > 0f && gateReadyMaterial != null && Mathf.Sin(Time.time * 18f) > -0.25f)
+            {
+                playerRenderer.sharedMaterial = gateReadyMaterial;
+            }
             else
             {
                 playerRenderer.sharedMaterial = CurrentPhaseMaterial();
@@ -494,12 +600,13 @@ namespace FourfoldEchoes.Spike
 
             if (dodgeReadyRing != null)
             {
-                var showDodgeRing = dodgeCooldown > 0f || dodgeTimer > 0f;
+                var showDodgeRing = dodgeCooldown > 0f || dodgeTimer > 0f || dodgeBufferTimer > 0f;
                 dodgeReadyRing.gameObject.SetActive(showDodgeRing);
                 if (showDodgeRing)
                 {
                     var progress = 1f - Mathf.Clamp01(dodgeCooldown / DodgeCooldown);
-                    var size = Mathf.Lerp(0.52f, 1.05f, progress);
+                    var queuedPulse = dodgeBufferTimer > 0f ? 0.14f * Mathf.Sin(Time.time * 28f) : 0f;
+                    var size = Mathf.Lerp(0.52f, 1.05f, progress) + queuedPulse;
                     dodgeReadyRing.position = new Vector3(player.position.x, 0.028f, player.position.z);
                     dodgeReadyRing.localScale = new Vector3(size, 0.018f, size);
                 }
@@ -524,11 +631,11 @@ namespace FourfoldEchoes.Spike
                 {
                     var progress = 1f - attackFlashTimer / AttackFlashDuration;
                     var direction = facing.sqrMagnitude > 0.001f ? facing.normalized : Vector3.right;
-                    attackArc.position = player.position + direction * Mathf.Lerp(0.62f, 1.05f, progress);
-                    attackArc.position = new Vector3(attackArc.position.x, 0.18f, attackArc.position.z);
+                    attackArc.position = player.position + direction * Mathf.Lerp(0.58f, 1.24f, progress);
+                    attackArc.position = new Vector3(attackArc.position.x, 0.2f, attackArc.position.z);
                     attackArc.rotation = Quaternion.LookRotation(direction, Vector3.up);
-                    attackArc.localScale = new Vector3(Mathf.Lerp(0.65f, 1.25f, progress), 0.055f, 0.32f);
-                    attackArc.GetComponent<Renderer>().sharedMaterial = CurrentPhaseMaterial();
+                    attackArc.localScale = new Vector3(Mathf.Lerp(0.85f, 1.55f, progress), 0.055f, 0.48f);
+                    attackArc.GetComponent<Renderer>().sharedMaterial = attackImpactPending && gateReadyMaterial != null ? gateReadyMaterial : CurrentPhaseMaterial();
                 }
             }
 
@@ -543,9 +650,21 @@ namespace FourfoldEchoes.Spike
                     var scale = Mathf.Lerp(0.45f, 1f, enemyHealth / EnemyMaxHealth);
                     var windupProgress = enemyWindupTimer > 0f ? 1f - enemyWindupTimer / EnemyWindupDuration : 0f;
                     var windupPulse = enemyWindupTimer > 0f ? Mathf.Lerp(0.04f, 0.18f, windupProgress) * Mathf.Sin(Time.time * 28f) : 0f;
+                    var recoverySquash = enemyRecoveryTimer > 0f ? -0.08f : 0f;
                     var hitPulse = enemyHitFlashTimer > 0f ? 0.14f : 0f;
-                    enemy.localScale = new Vector3(scale + windupPulse + hitPulse, 1f + windupPulse + hitPulse, scale + windupPulse + hitPulse);
-                    enemyRenderer.sharedMaterial = enemyHitFlashTimer > 0f && gateReadyMaterial != null ? gateReadyMaterial : enemyMaterial;
+                    enemy.localScale = new Vector3(scale + windupPulse + hitPulse, 1f + windupPulse + hitPulse + recoverySquash, scale + windupPulse + hitPulse);
+                    if (enemyHitFlashTimer > 0f && gateReadyMaterial != null)
+                    {
+                        enemyRenderer.sharedMaterial = gateReadyMaterial;
+                    }
+                    else if (enemyRecoveryTimer > 0f && tideMaterial != null)
+                    {
+                        enemyRenderer.sharedMaterial = tideMaterial;
+                    }
+                    else
+                    {
+                        enemyRenderer.sharedMaterial = enemyMaterial;
+                    }
                 }
                 else
                 {
@@ -603,64 +722,143 @@ namespace FourfoldEchoes.Spike
                 {
                     var progress = 1f - enemyWindupTimer / EnemyWindupDuration;
                     var direction = enemyTelegraphDirection.sqrMagnitude > 0.001f ? enemyTelegraphDirection.normalized : Vector3.left;
-                    enemyStrikeLane.position = enemy.position + direction * ((EnemyStrikeRange + 0.35f) * 0.5f);
+                    enemyStrikeLane.position = enemy.position + direction * ((EnemyStrikeRange + 0.5f) * 0.5f);
                     enemyStrikeLane.position = new Vector3(enemyStrikeLane.position.x, 0.08f, enemyStrikeLane.position.z);
                     enemyStrikeLane.rotation = Quaternion.LookRotation(direction, Vector3.up);
-                    enemyStrikeLane.localScale = new Vector3(Mathf.Lerp(0.18f, 0.42f, progress), 0.035f, EnemyStrikeRange + 0.35f);
+                    enemyStrikeLane.localScale = new Vector3(Mathf.Lerp(0.24f, 0.58f, progress), 0.035f, EnemyStrikeRange + 0.5f);
+                }
+            }
+
+            if (enemyRecoveryRing != null)
+            {
+                var showingRecovery = enemyAlive && enemyRecoveryTimer > 0f && enemyWindupTimer <= 0f;
+                enemyRecoveryRing.gameObject.SetActive(showingRecovery);
+                if (showingRecovery)
+                {
+                    var progress = 1f - enemyRecoveryTimer / EnemyRecoveryDuration;
+                    var pulse = 0.08f * Mathf.Sin(Time.time * 18f);
+                    var size = Mathf.Lerp(1.45f, 0.82f, progress) + pulse;
+                    enemyRecoveryRing.position = new Vector3(enemy.position.x, 0.04f, enemy.position.z);
+                    enemyRecoveryRing.localScale = new Vector3(size, 0.02f, size);
+                    enemyRecoveryRing.GetComponent<Renderer>().sharedMaterial = tideMaterial != null ? tideMaterial : gateReadyMaterial;
                 }
             }
 
             var heat = altarHeat / 100f;
+            var enemyAliveBlocking = IsAltarBlocked();
             var altarNearby = IsInRange(player, altarCore, AltarRange) && !gateOpen;
-            var altarCanCharge = altarNearby && currentPhase == EchoPhase.Ember;
-            var chargingAltar = altarCanCharge && Input.GetKey(KeyCode.K);
-            var altarPulse = chargingAltar ? 0.08f * Mathf.Sin(Time.time * 20f) : 0f;
-            altarCore.localScale = new Vector3(0.85f + altarPulse, 0.35f + heat * 0.55f + altarPulse, 0.85f + altarPulse);
-            altarGlow.gameObject.SetActive((heat > 0.01f && !gateOpen) || altarCanCharge || gateOpenPulseTimer > 0f);
+            var altarCanCharge = altarNearby && !enemyAliveBlocking;
+            var chargingAltar = altarCanCharge && AltarHeld();
+            var altarLockedPulse = enemyAliveBlocking ? 0.07f * Mathf.Sin(Time.time * 10f) : 0f;
+            var altarPulse = chargingAltar ? 0.1f * Mathf.Sin(Time.time * 20f) : altarLockedPulse;
+            altarCore.localScale = new Vector3(0.85f + altarPulse, 0.35f + heat * 0.55f + Mathf.Abs(altarPulse), 0.85f + altarPulse);
+            if (altarMaterial != null && enemyAliveBlocking && altarBlockedTimer > 0f)
+            {
+                altarCore.GetComponent<Renderer>().sharedMaterial = enemyMaterial != null ? enemyMaterial : altarMaterial;
+            }
+            else
+            {
+                altarCore.GetComponent<Renderer>().sharedMaterial = altarMaterial;
+            }
+            altarGlow.gameObject.SetActive((heat > 0.01f && !gateOpen) || altarCanCharge || gateOpenPulseTimer > 0f || roomCompleteTimer > 0f);
             if (altarGlow.gameObject.activeSelf)
             {
-                var glowPulse = altarCanCharge ? 0.12f * Mathf.Sin(Time.time * 14f) : 0f;
-                altarGlow.localScale = Vector3.one * (Mathf.Lerp(0.9f, 1.85f, heat) + glowPulse);
+                var glowPulse = altarCanCharge ? 0.14f * Mathf.Sin(Time.time * 14f) : 0f;
+                var completePulse = roomCompleteTimer > 0f ? 0.35f * Mathf.Sin(Time.time * 12f) : 0f;
+                altarGlow.localScale = Vector3.one * (Mathf.Lerp(0.9f, 1.95f, heat) + glowPulse + completePulse);
             }
 
             if (altarPromptRing != null)
             {
-                var showPrompt = altarNearby || (heat > 0.01f && !gateOpen);
+                var showPrompt = altarNearby || (heat > 0.01f && !gateOpen) || enemyAliveBlocking;
                 altarPromptRing.gameObject.SetActive(showPrompt);
                 if (showPrompt)
                 {
-                    var promptPulse = altarCanCharge ? 0.12f * Mathf.Sin(Time.time * 10f) : 0f;
-                    var size = Mathf.Lerp(1.0f, 1.55f, Mathf.Max(heat, 0.18f)) + promptPulse;
+                    var promptPulse = altarCanCharge ? 0.12f * Mathf.Sin(Time.time * 10f) : enemyAliveBlocking ? 0.08f * Mathf.Sin(Time.time * 16f) : 0f;
+                    var size = Mathf.Lerp(1.0f, 1.62f, Mathf.Max(heat, 0.18f)) + promptPulse;
                     altarPromptRing.position = new Vector3(altarCore.position.x, 0.032f, altarCore.position.z);
                     altarPromptRing.localScale = new Vector3(size, 0.018f, size);
-                    altarPromptRing.GetComponent<Renderer>().sharedMaterial = altarCanCharge && gateReadyMaterial != null ? gateReadyMaterial : emberMaterial;
+                    altarPromptRing.GetComponent<Renderer>().sharedMaterial = enemyAliveBlocking && enemyMaterial != null ? enemyMaterial : altarCanCharge && gateReadyMaterial != null ? gateReadyMaterial : emberMaterial;
+                }
+            }
+
+            if (altarLockRing != null)
+            {
+                var showLock = enemyAliveBlocking || altarBlockedTimer > 0f;
+                altarLockRing.gameObject.SetActive(showLock);
+                if (showLock)
+                {
+                    var pulse = 0.12f * Mathf.Sin(Time.time * 12f);
+                    var size = 1.5f + pulse;
+                    altarLockRing.position = new Vector3(altarCore.position.x, 0.055f, altarCore.position.z);
+                    altarLockRing.localScale = new Vector3(size, 0.02f, size);
+                }
+            }
+
+            if (altarGateLink != null)
+            {
+                var showLink = !enemyAliveBlocking && (heat > 0.01f || gateOpen || rewardClaimed);
+                altarGateLink.gameObject.SetActive(showLink);
+                if (showLink)
+                {
+                    var linkPower = rewardClaimed ? 1f : gateOpen ? 0.9f : Mathf.Max(0.18f, heat);
+                    var pulse = (chargingAltar || gateOpen || rewardClaimed) ? 0.1f * Mathf.Sin(Time.time * 18f) : 0f;
+                    altarGateLink.position = new Vector3(2.38f, 0.075f, GateCenterZ);
+                    altarGateLink.localScale = new Vector3(Mathf.Lerp(0.55f, 2.15f, linkPower), 0.035f, 0.16f + pulse);
+                    altarGateLink.GetComponent<Renderer>().sharedMaterial = gateReadyMaterial != null ? gateReadyMaterial : emberMaterial;
+                }
+            }
+
+            if (hollowGateLock != null)
+            {
+                var showGateLock = enemyAliveBlocking && !gateOpen;
+                hollowGateLock.gameObject.SetActive(showGateLock);
+                if (showGateLock)
+                {
+                    var pulse = gateBlockedTimer > 0f ? 0.08f * Mathf.Sin(Time.time * 24f) : 0f;
+                    hollowGateLock.position = new Vector3(1.1f, 0.065f, GateCenterZ);
+                    hollowGateLock.localScale = new Vector3(4.6f, 0.035f, 0.12f + pulse);
                 }
             }
 
             gateLeft.localPosition = Vector3.Lerp(new Vector3(3.7f, 0.9f, -0.48f), new Vector3(3.45f, 0.9f, -0.75f), gateOpen ? 1f : 0f);
             gateRight.localPosition = Vector3.Lerp(new Vector3(3.7f, 0.9f, 0.48f), new Vector3(3.45f, 0.9f, 0.75f), gateOpen ? 1f : 0f);
-            var gateMaterial = IsGateClaimReady() && gateReadyMaterial != null ? gateReadyMaterial : gateOpen ? gateOpenMaterial : gateClosedMaterial;
+            var gateMaterial = gateBlockedTimer > 0f && enemyMaterial != null ? enemyMaterial : IsGateClaimReady() && gateReadyMaterial != null ? gateReadyMaterial : gateOpen ? gateOpenMaterial : enemyAliveBlocking && enemyMaterial != null ? enemyMaterial : gateClosedMaterial;
             gateLeft.GetComponentInChildren<Renderer>().sharedMaterial = gateMaterial;
             gateRight.GetComponentInChildren<Renderer>().sharedMaterial = gateMaterial;
-            gateClaimBadge.gameObject.SetActive(IsGateClaimReady());
-            if (IsGateClaimReady())
+            gateClaimBadge.gameObject.SetActive(IsGateClaimReady() || rewardPickupTimer > 0f);
+            if (IsGateClaimReady() || rewardPickupTimer > 0f)
             {
-                var badgePulse = 1f + 0.16f * Mathf.Sin(Time.time * 12f);
-                gateClaimBadge.localScale = new Vector3(0.32f * badgePulse, 0.32f * badgePulse, 0.08f);
+                var badgePulse = 1f + 0.22f * Mathf.Sin(Time.time * 12f);
+                var badgeSize = rewardPickupTimer > 0f ? 0.48f : 0.32f;
+                gateClaimBadge.localScale = new Vector3(badgeSize * badgePulse, badgeSize * badgePulse, 0.08f);
                 gateClaimBadge.Rotate(Vector3.up, 110f * Time.deltaTime, Space.World);
             }
 
             if (gateOpenPulse != null)
             {
-                var showGatePulse = gateOpenPulseTimer > 0f || IsGateClaimReady();
+                var showGatePulse = gateOpenPulseTimer > 0f || IsGateClaimReady() || rewardPickupTimer > 0f || gateBlockedTimer > 0f;
                 gateOpenPulse.gameObject.SetActive(showGatePulse);
                 if (showGatePulse)
                 {
                     var progress = gateOpenPulseTimer > 0f ? 1f - gateOpenPulseTimer / GateOpenPulseDuration : 1f;
-                    var pulse = IsGateClaimReady() ? 0.16f * Mathf.Sin(Time.time * 9f) : 0f;
-                    var size = Mathf.Lerp(0.65f, 2.15f, progress) + pulse;
-                    gateOpenPulse.position = new Vector3(3.45f, 0.04f, 0f);
+                    var pulse = IsGateClaimReady() || rewardPickupTimer > 0f ? 0.2f * Mathf.Sin(Time.time * 9f) : gateBlockedTimer > 0f ? 0.1f * Mathf.Sin(Time.time * 18f) : 0f;
+                    var size = Mathf.Lerp(0.65f, rewardPickupTimer > 0f ? 2.7f : 2.15f, progress) + pulse;
+                    gateOpenPulse.position = new Vector3(GateCenterX, 0.04f, GateCenterZ);
                     gateOpenPulse.localScale = new Vector3(size, 0.025f, size);
+                    gateOpenPulse.GetComponent<Renderer>().sharedMaterial = gateBlockedTimer > 0f && enemyMaterial != null ? enemyMaterial : gateReadyMaterial;
+                }
+            }
+
+            if (rewardPickupBurst != null)
+            {
+                rewardPickupBurst.gameObject.SetActive(rewardPickupTimer > 0f);
+                if (rewardPickupTimer > 0f)
+                {
+                    var progress = 1f - rewardPickupTimer / RewardPickupDuration;
+                    var size = Mathf.Lerp(0.55f, 1.8f, progress);
+                    rewardPickupBurst.position = player.position + Vector3.up * Mathf.Lerp(0.6f, 1.35f, progress);
+                    rewardPickupBurst.localScale = Vector3.one * size;
                 }
             }
         }
@@ -670,6 +868,16 @@ namespace FourfoldEchoes.Spike
             return gateOpen && !rewardClaimed && enemyHealth <= 0f;
         }
 
+        private bool IsAltarBlocked()
+        {
+            return enemyHealth > 0f;
+        }
+
+        private bool IsGateBlocked()
+        {
+            return enemyHealth > 0f && IsInRange(player.position, new Vector3(GateCenterX, player.position.y, GateCenterZ), GateRange);
+        }
+
         private static bool IsInRange(Transform a, Transform b, float range)
         {
             var delta = a.position - b.position;
@@ -677,15 +885,122 @@ namespace FourfoldEchoes.Spike
             return delta.sqrMagnitude <= range * range;
         }
 
+        private static bool IsInRange(Vector3 a, Vector3 b, float range)
+        {
+            var delta = a - b;
+            delta.y = 0f;
+            return delta.sqrMagnitude <= range * range;
+        }
+
+        private bool CanBeginAttack()
+        {
+            return playerHealth > 0f && attackCooldown <= 0f && dodgeTimer <= 0f;
+        }
+
+        private bool CanBeginDodge()
+        {
+            return playerHealth > 0f && dodgeCooldown <= 0f && dodgeTimer <= 0f && attackCommitTimer <= 0f;
+        }
+
+        private void ProcessBufferedActions()
+        {
+            if (dodgeBufferTimer > 0f && CanBeginDodge())
+            {
+                BeginDodge();
+            }
+            else if (attackBufferTimer > 0f && CanBeginAttack())
+            {
+                BeginAttack();
+            }
+        }
+
+        private bool IsEnemyInAttackArc(float range)
+        {
+            var toEnemy = enemy.position - player.position;
+            toEnemy.y = 0f;
+            var distance = toEnemy.magnitude;
+            if (distance > range)
+            {
+                return false;
+            }
+
+            if (distance <= 0.65f)
+            {
+                return true;
+            }
+
+            var direction = facing.sqrMagnitude > 0.001f ? facing.normalized : Vector3.right;
+            return Vector3.Dot(direction, toEnemy.normalized) >= -0.05f;
+        }
+
+        private void ClampPlayerToRoom()
+        {
+            player.position = new Vector3(
+                Mathf.Clamp(player.position.x, RoomMinX, RoomMaxX),
+                player.position.y,
+                Mathf.Clamp(player.position.z, RoomMinZ, RoomMaxZ)
+            );
+        }
+
+        private static bool AttackPressed()
+        {
+            return Input.GetKeyDown(KeyCode.J)
+                || Input.GetMouseButtonDown(0)
+                || Input.GetKeyDown(KeyCode.JoystickButton0)
+                || Input.GetKeyDown(KeyCode.JoystickButton2);
+        }
+
+        private static bool DodgePressed()
+        {
+            return Input.GetKeyDown(KeyCode.Space)
+                || Input.GetKeyDown(KeyCode.JoystickButton1);
+        }
+
+        private static bool AltarHeld()
+        {
+            return Input.GetKey(KeyCode.K)
+                || Input.GetKey(KeyCode.JoystickButton3);
+        }
+
+        private static bool InteractPressed()
+        {
+            return Input.GetKeyDown(KeyCode.E)
+                || Input.GetMouseButtonDown(1)
+                || Input.GetKeyDown(KeyCode.JoystickButton3);
+        }
+
+        private static bool ResetPressed()
+        {
+            return Input.GetKeyDown(KeyCode.R)
+                || Input.GetKeyDown(KeyCode.JoystickButton7);
+        }
+
+        private static bool NextPhasePressed()
+        {
+            return Input.GetKeyDown(KeyCode.RightBracket)
+                || Input.GetKeyDown(KeyCode.JoystickButton5);
+        }
+
+        private static bool PreviousPhasePressed()
+        {
+            return Input.GetKeyDown(KeyCode.LeftBracket)
+                || Input.GetKeyDown(KeyCode.JoystickButton4);
+        }
+
         private static Vector3 ReadMoveInput()
         {
             var input = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
+            if (input.sqrMagnitude < 0.04f)
+            {
+                return Vector3.zero;
+            }
             if (input.sqrMagnitude > 1f)
             {
                 input.Normalize();
             }
             return input;
         }
+
         public void OnGUI()
         {
             var style = new GUIStyle(GUI.skin.label)
@@ -701,60 +1016,82 @@ namespace FourfoldEchoes.Spike
                 alignment = TextAnchor.MiddleLeft,
                 normal = { textColor = Color.white }
             };
+            var controlStyle = new GUIStyle(style)
+            {
+                fontSize = 14
+            };
 
-            var dodgeReady = dodgeCooldown <= 0f;
-            var attackReady = attackCooldown <= 0f;
-            var dodgeLabel = dodgeReady ? "Dodge READY" : $"Dodge {dodgeCooldown:0.0}s";
-            var attackLabel = attackReady ? "Attack READY" : $"Attack {attackCooldown:0.0}s";
-            var chainLabel = chainTimer > 0f ? $"Chain {chainTimer:0.0}s" : "Chain empty";
+            var hollowState = enemyHealth > 0f ? "Blocking" : "Down";
+            var altarState = IsAltarBlocked() ? "Locked" : gateOpen ? "Opened" : "Ready";
+            var gateState = IsGateClaimReady() ? "Ready" : gateOpen ? "Open" : "Sealed";
 
-            GUI.Label(new Rect(24, 18, 520, 32), "FOURFOLD ECHOES - Unity room spike", style);
-            GUI.Label(new Rect(24, 48, 760, 32), $"Phase: {currentPhase}   HP: {Mathf.RoundToInt(playerHealth)}   Enemy: {Mathf.RoundToInt(enemyHealth)}   Altar: {Mathf.RoundToInt(altarHeat)}%   Gate: {(gateOpen ? "Open" : "Closed")}", style);
-            GUI.Label(new Rect(24, 78, 720, 32), $"Event: {lastEvent}", style);
-            GUI.Label(new Rect(24, 108, 900, 32), ObjectiveText(), style);
+            if (playerHitFlashTimer > 0f || playerHealth <= 0f || roomCompleteTimer > 0f)
+            {
+                var previousColor = GUI.color;
+                GUI.color = roomCompleteTimer > 0f
+                    ? new Color(1f, 0.68f, 0.08f, 0.18f)
+                    : new Color(0.7f, 0.02f, 0f, playerHealth <= 0f ? 0.28f : 0.15f);
+                GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
+                GUI.color = previousColor;
+            }
 
-            DrawBar(new Rect(24, 142, 180, 20), 1f - dodgeCooldown / DodgeCooldown, new Color(0.25f, 0.75f, 1f, 0.82f), dodgeLabel, barStyle);
-            DrawBar(new Rect(216, 142, 180, 20), 1f - attackCooldown / AttackCooldown, new Color(1f, 0.55f, 0.22f, 0.82f), attackLabel, barStyle);
-            DrawBar(new Rect(408, 142, 180, 20), chainTimer / ChainWindow, new Color(0.78f, 0.5f, 1f, 0.82f), chainLabel, barStyle);
-            DrawBar(new Rect(600, 142, 220, 20), altarHeat / 100f, new Color(1f, 0.82f, 0.28f, 0.82f), $"Altar {Mathf.RoundToInt(altarHeat)}%", barStyle);
+            GUI.Label(new Rect(24, 18, 520, 32), "FOURFOLD ECHOES - Gate A", style);
+            GUI.Label(new Rect(24, 48, 840, 32), $"HP {Mathf.RoundToInt(playerHealth)}   Hollow {hollowState}   Altar {altarState}   Gate {gateState}", style);
+            GUI.Label(new Rect(24, 78, 900, 32), ObjectiveText(), style);
+            GUI.Label(new Rect(24, 108, 760, 28), $"Cue: {lastEvent}", controlStyle);
+
+            DrawBar(new Rect(24, 140, 260, 20), enemyHealth / EnemyMaxHealth, new Color(0.95f, 0.12f, 0.16f, 0.86f), enemyHealth > 0f ? "Hollow blocks progress" : "Hollow down", barStyle);
+            DrawBar(new Rect(300, 140, 260, 20), altarHeat / 100f, new Color(1f, 0.82f, 0.28f, 0.86f), gateOpen ? "Gate open" : IsAltarBlocked() ? "Altar locked" : $"Open gate {Mathf.RoundToInt(altarHeat)}%", barStyle);
             if (enemyWindupTimer > 0f)
             {
-                DrawBar(new Rect(24, 168, 260, 20), 1f - enemyWindupTimer / EnemyWindupDuration, new Color(1f, 0.18f, 0.18f, 0.88f), "Hollow strike tell", barStyle);
+                DrawBar(new Rect(24, 168, 300, 20), 1f - enemyWindupTimer / EnemyWindupDuration, new Color(1f, 0.18f, 0.18f, 0.88f), "Dodge now", barStyle);
+            }
+            else if (enemyRecoveryTimer > 0f && enemyHealth > 0f)
+            {
+                DrawBar(new Rect(24, 168, 300, 20), enemyRecoveryTimer / EnemyRecoveryDuration, new Color(0.24f, 0.84f, 0.82f, 0.86f), "Attack now", barStyle);
+            }
+            if (roomCompleteTimer > 0f)
+            {
+                GUI.Label(new Rect(24, 196, 720, 32), "Room complete", style);
+            }
+            else if (rewardPickupTimer > 0f)
+            {
+                GUI.Label(new Rect(24, 194, 720, 32), "Ember Afterglow acquired", style);
             }
             if (playerHealth <= 0f)
             {
-                GUI.Label(new Rect(24, 194, 720, 32), "Downed - press R to reset the room", style);
+                GUI.Label(new Rect(24, 226, 720, 32), "Downed - press R to reset the room", style);
             }
-            GUI.Label(new Rect(24, Screen.height - 42, 980, 32), "Move WASD/Arrows | Attack J/Click | Dodge Space | Phase [ ] | Hold K at altar | Claim E/Right click | Reset R", style);
+            GUI.Label(new Rect(24, Screen.height - 42, Screen.width - 48, 32), "Move WASD/Arrows/Stick | Attack J/Click/Pad | Dodge Space/Pad | Altar K/Pad | Claim E/Right/Pad | Reset R/Start", controlStyle);
         }
 
         private string ObjectiveText()
         {
             if (playerHealth <= 0f)
             {
-                return "Objective: reset and read the hollow tell";
+                return "Recover: reset and re-enter the fight";
             }
             if (rewardClaimed)
             {
-                return "Objective: Ember Afterglow secured";
+                return "Room complete";
             }
             if (IsGateClaimReady())
             {
-                return "Objective: claim the ready gate with E / right click";
+                return "Claim the reward at the open gate";
             }
             if (gateOpen)
             {
-                return enemyHealth > 0f ? "Objective: gate open - defeat the hollow" : "Objective: return to the gate";
+                return "Gate open - claim the reward";
             }
             if (enemyHealth <= 0f)
             {
-                return "Objective: use the Ember altar to open the gate";
+                return "Hold the altar to open the gate";
             }
             if (IsInRange(player, altarCore, AltarRange))
             {
-                return currentPhase == EchoPhase.Ember ? "Objective: hold K to heat the altar" : "Objective: switch to Ember before using the altar";
+                return "Defeat the hollow to unlock the altar";
             }
-            return "Objective: build altar heat and break the hollow guard";
+            return "Defeat the hollow, open the gate, claim the reward";
         }
 
         private static void DrawBar(Rect rect, float normalized, Color fillColor, string label, GUIStyle style)
