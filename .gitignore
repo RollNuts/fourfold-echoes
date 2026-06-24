@@ -10,7 +10,8 @@
 [Cc]rash[Rr]eports/
 
 # Unity generated validation output. Source of truth stays in C#/Game IR.
-[Aa]ssets/[Gg]enerated/
+[Aa]ssets/[Gg]enerated/*
+![Aa]ssets/[Gg]enerated/.gitkeep
 [Aa]ssets/[Ss]cenes/AshenThresholdSpike.unity
 [Aa]ssets/[Ss]cenes/AshenThresholdSpike.unity.meta
 
