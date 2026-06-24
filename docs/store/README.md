@@ -14,6 +14,15 @@ Current truth:
 - The committed audio is procedural placeholder synthesis, not final sound.
 - There are no committed third-party production assets in the current gate.
 
+Hard PO read:
+
+- The current prototype looks tedious and not fun enough.
+- The next visible work must prioritize fun-first ARPG basics: responsive
+  movement, satisfying hits, readable enemy pressure, fast recovery, and a clear
+  payoff.
+- Do not add puzzle-symbol complexity, lore glyphs, or extra phase iconography
+  until the core move-dodge-hit-defeat-claim loop feels good in a short clip.
+
 Use these docs to keep the next player-visible work honest:
 
 - [Steam demo positioning](STEAM_DEMO_POSITIONING.md)
