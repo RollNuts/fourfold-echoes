@@ -35,14 +35,17 @@ in this first gate.
 
 ## Unity MCP
 
-This project includes `com.coplaydev.unity-mcp` pinned to `v9.7.3`.
+Unity MCP is a candidate editor automation path, but it is not installed by
+default.
 
-After Unity resolves packages, open the editor and use:
+Do not add an MCP package or generated client config until a security review
+confirms:
 
-`Window > MCP for Unity > Configure All Detected Clients`
-
-Keep generated user-local MCP config out of git unless it is explicitly reviewed
-as a portable project config.
+- The bridge binds to localhost only.
+- Remote access is disabled.
+- Generated MCP client config stays out of git.
+- The package source and license are reviewed.
+- The tool is used for editor automation only, not as gameplay verification.
 
 ## Generate Scene
 
