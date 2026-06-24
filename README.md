@@ -48,6 +48,8 @@ confirms:
 - Generated MCP client config stays out of git.
 - The tool is used for editor automation only, not as gameplay verification.
 
+See `docs/MCP_SECURITY.md`.
+
 ## Generate Scene
 
 Run the Gate A Unity validation:
