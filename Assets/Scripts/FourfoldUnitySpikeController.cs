@@ -95,30 +95,18 @@ namespace FourfoldEchoes.Spike
         private Transform enemyDeathBurst;
         private Transform altarPromptRing;
         private Transform gateOpenPulse;
-
-        private AudioSource audioSource;
-        private AudioClip attackTone;
-        private AudioClip comboTone;
-        private AudioClip dodgeTone;
-        private AudioClip gateTone;
-        private AudioClip rewardTone;
-        private AudioClip warningTone;
-        private AudioClip playerHitTone;
+        private FourfoldProofAudio proofAudio;
+        private float nextAltarHeatAudio;
 
         public void Awake()
         {
             playerStartPosition = player.position;
             enemyStartPosition = enemy.position;
-            audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.spatialBlend = 0f;
-            attackTone = CreateTone("AttackTone", 220f, 0.07f);
-            comboTone = CreateTone("ComboTone", 440f, 0.12f);
-            dodgeTone = CreateTone("DodgeTone", 520f, 0.06f);
-            gateTone = CreateTone("GateTone", 330f, 0.16f);
-            rewardTone = CreateTone("RewardTone", 660f, 0.2f);
-            warningTone = CreateTone("WarningTone", 146f, 0.14f);
-            playerHitTone = CreateTone("PlayerHitTone", 92f, 0.16f);
+            proofAudio = GetComponent<FourfoldProofAudio>();
+            if (proofAudio == null)
+            {
+                proofAudio = gameObject.AddComponent<FourfoldProofAudio>();
+            }
             CreateRuntimeIndicators();
             ApplyPhaseMaterial();
             UpdatePresentation();
@@ -185,7 +173,12 @@ namespace FourfoldEchoes.Spike
                     gateOpen = true;
                     gateOpenPulseTimer = GateOpenPulseDuration;
                     lastEvent = IsGateClaimReady() ? "Gate claim ready" : "Gate opened";
-                    audioSource.PlayOneShot(gateTone, 0.38f);
+                    proofAudio.Play(FourfoldProofAudioCue.GateOpen, 0.38f);
+                }
+                else if (Time.time >= nextAltarHeatAudio)
+                {
+                    proofAudio.PlayAltarHeat(altarHeat / 100f);
+                    nextAltarHeatAudio = Time.time + 0.42f;
                 }
             }
 
@@ -193,7 +186,7 @@ namespace FourfoldEchoes.Spike
             {
                 rewardClaimed = true;
                 lastEvent = "Recovered Ember Afterglow";
-                audioSource.PlayOneShot(rewardTone, 0.42f);
+                proofAudio.Play(FourfoldProofAudioCue.Reward, 0.42f);
             }
 
             UpdatePresentation();
@@ -206,12 +199,14 @@ namespace FourfoldEchoes.Spike
                 currentPhase = (EchoPhase)(((int)currentPhase + 1) % 4);
                 ApplyPhaseMaterial();
                 lastEvent = $"{currentPhase} phase";
+                proofAudio.PlayPhase(currentPhase);
             }
             else if (Input.GetKeyDown(KeyCode.LeftBracket))
             {
                 currentPhase = (EchoPhase)(((int)currentPhase + 3) % 4);
                 ApplyPhaseMaterial();
                 lastEvent = $"{currentPhase} phase";
+                proofAudio.PlayPhase(currentPhase);
             }
         }
 
@@ -241,7 +236,7 @@ namespace FourfoldEchoes.Spike
             dodgeCooldown = DodgeCooldown;
             playerInvulnerableTimer = Mathf.Max(playerInvulnerableTimer, DodgeInvulnerableDuration);
             lastEvent = "Dodge i-frames";
-            audioSource.PlayOneShot(dodgeTone, 0.24f);
+            proofAudio.Play(FourfoldProofAudioCue.Dodge, 0.26f);
         }
 
         private void UpdateEnemy(float dt)
@@ -278,7 +273,7 @@ namespace FourfoldEchoes.Spike
                 enemyTelegraphDirection = toPlayer.sqrMagnitude > 0.001f ? toPlayer.normalized : enemyTelegraphDirection;
                 enemyWindupTimer = EnemyWindupDuration;
                 lastEvent = "Hollow winding up";
-                audioSource.PlayOneShot(warningTone, 0.22f);
+                proofAudio.Play(FourfoldProofAudioCue.EnemyTell, 0.22f);
                 return;
             }
 
@@ -309,7 +304,7 @@ namespace FourfoldEchoes.Spike
             playerInvulnerableTimer = PlayerInvulnerableDuration;
             playerHitFlashTimer = 0.16f;
             lastEvent = playerHealth <= 0f ? "Downed by hollow strike" : "Hollow hit - read the tell";
-            audioSource.PlayOneShot(playerHitTone, 0.32f);
+            proofAudio.Play(FourfoldProofAudioCue.PlayerHit, 0.32f);
         }
 
         private void ApplyEnemyKnockback(float dt)
@@ -352,7 +347,7 @@ namespace FourfoldEchoes.Spike
         {
             attackCooldown = AttackCooldown;
             attackFlashTimer = AttackFlashDuration;
-            audioSource.PlayOneShot(attackTone, 0.28f);
+            proofAudio.Play(FourfoldProofAudioCue.Attack, 0.28f);
 
             if (enemyHealth <= 0f || !IsInRange(player, enemy, AttackRange))
             {
@@ -372,11 +367,12 @@ namespace FourfoldEchoes.Spike
             {
                 altarHeat = gateOpen ? altarHeat : Mathf.Min(100f, altarHeat + 35f);
                 lastEvent = $"{lastHitPhase.Value} chain surged altar {Mathf.RoundToInt(altarHeat)}%";
-                audioSource.PlayOneShot(comboTone, 0.38f);
+                proofAudio.Play(FourfoldProofAudioCue.Hit, 0.38f);
             }
             else
             {
                 lastEvent = $"{currentPhase} hit";
+                proofAudio.Play(FourfoldProofAudioCue.Hit, 0.24f);
             }
 
             if (enemyHealth <= 0f)
@@ -386,6 +382,7 @@ namespace FourfoldEchoes.Spike
                 enemyWindupTimer = 0f;
                 enemyRecoveryTimer = 0f;
                 lastEvent = gateOpen ? "Hollow down - claim gate" : $"Hollow down - altar {Mathf.RoundToInt(altarHeat)}%";
+                proofAudio.Play(FourfoldProofAudioCue.RoomClear, 0.36f);
             }
         }
 
@@ -420,6 +417,7 @@ namespace FourfoldEchoes.Spike
             rewardClaimed = false;
             lastEvent = "Room reset";
             facing = Vector3.right;
+            nextAltarHeatAudio = 0f;
             dodgeDirection = Vector3.right;
             enemyTelegraphDirection = Vector3.left;
             player.position = playerStartPosition;
@@ -688,23 +686,6 @@ namespace FourfoldEchoes.Spike
             }
             return input;
         }
-
-        private static AudioClip CreateTone(string clipName, float frequency, float duration)
-        {
-            const int sampleRate = 44100;
-            var samples = Mathf.CeilToInt(sampleRate * duration);
-            var data = new float[samples];
-            for (var i = 0; i < samples; i++)
-            {
-                var t = i / (float)sampleRate;
-                var envelope = Mathf.Clamp01(1f - t / duration);
-                data[i] = Mathf.Sin(2f * Mathf.PI * frequency * t) * envelope * 0.18f;
-            }
-            var clip = AudioClip.Create(clipName, samples, 1, sampleRate, false);
-            clip.SetData(data, 0);
-            return clip;
-        }
-
         public void OnGUI()
         {
             var style = new GUIStyle(GUI.skin.label)
