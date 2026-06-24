@@ -1,4 +1,5 @@
 using System.IO;
+using System.Collections.Generic;
 using FourfoldEchoes.Spike;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -10,6 +11,12 @@ namespace FourfoldEchoes.Editor
     {
         private const string ScenePath = "Assets/Scenes/AshenThresholdSpike.unity";
         private const string MaterialFolder = "Assets/Generated/Materials";
+
+        public static void BuildAndValidate()
+        {
+            Build();
+            ValidateGeneratedScene();
+        }
 
         public static void Build()
         {
@@ -64,6 +71,55 @@ namespace FourfoldEchoes.Editor
             };
             AssetDatabase.SaveAssets();
             Debug.Log($"FOURFOLD Unity spike generated at {ScenePath}");
+        }
+
+        public static void ValidateGeneratedScene()
+        {
+            var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            var errors = new List<string>();
+
+            Require(scene.IsValid(), "Generated scene is not valid.", errors);
+            Require(File.Exists(ScenePath), $"Generated scene is missing: {ScenePath}", errors);
+
+            var controllerObject = GameObject.Find("Fourfold Spike Controller");
+            Require(controllerObject != null, "Fourfold Spike Controller is missing.", errors);
+
+            var controller = controllerObject != null ? controllerObject.GetComponent<FourfoldUnitySpikeController>() : null;
+            Require(controller != null, "FourfoldUnitySpikeController component is missing.", errors);
+
+            if (controller != null)
+            {
+                Require(controller.player != null, "Controller player reference is missing.", errors);
+                Require(controller.enemy != null, "Controller enemy reference is missing.", errors);
+                Require(controller.altarCore != null, "Controller altarCore reference is missing.", errors);
+                Require(controller.altarGlow != null, "Controller altarGlow reference is missing.", errors);
+                Require(controller.gateLeft != null, "Controller gateLeft reference is missing.", errors);
+                Require(controller.gateRight != null, "Controller gateRight reference is missing.", errors);
+                Require(controller.gateClaimBadge != null, "Controller gateClaimBadge reference is missing.", errors);
+                Require(controller.fixedCamera != null, "Controller fixedCamera reference is missing.", errors);
+                Require(controller.emberMaterial != null, "Ember material is missing.", errors);
+                Require(controller.gateReadyMaterial != null, "Gate ready material is missing.", errors);
+            }
+
+            Require(GameObject.Find("Block Diorama Terrain") != null, "Block Diorama Terrain root is missing.", errors);
+            Require(GameObject.Find("Claim Gate") != null, "Claim Gate root is missing.", errors);
+            Require(Camera.main != null || controller?.fixedCamera != null, "No usable camera was generated.", errors);
+            Require(EditorBuildSettings.scenes.Length > 0 && EditorBuildSettings.scenes[0].path == ScenePath, "Build Settings do not include the generated scene first.", errors);
+
+            if (errors.Count > 0)
+            {
+                throw new System.InvalidOperationException("FOURFOLD Unity spike validation failed:\n- " + string.Join("\n- ", errors));
+            }
+
+            Debug.Log("FOURFOLD Unity spike validation passed.");
+        }
+
+        private static void Require(bool condition, string message, List<string> errors)
+        {
+            if (!condition)
+            {
+                errors.Add(message);
+            }
         }
 
         private static void EnsureFolders()

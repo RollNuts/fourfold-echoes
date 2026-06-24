@@ -46,13 +46,14 @@ as a portable project config.
 
 ## Generate Scene
 
-Set `UNITY_EDITOR` to the Unity editor executable, then run:
+Run the Gate A Unity validation:
 
 ```sh
-"$UNITY_EDITOR" -batchmode -quit -projectPath . -executeMethod FourfoldEchoes.Editor.FourfoldUnitySpikeBuilder.Build -logFile -
+tools/unity_gate_a.sh
 ```
 
-Open `Assets/Scenes/AshenThresholdSpike.unity`.
+This generates and validates `Assets/Scenes/AshenThresholdSpike.unity`.
+Set `UNITY_EDITOR` if Unity is installed outside the default Hub path.
 
 ## Controls
 
