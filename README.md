@@ -35,16 +35,17 @@ in this first gate.
 
 ## Unity MCP
 
-Unity MCP is a candidate editor automation path, but it is not installed by
-default.
+Unity's official MCP bridge, provided through the Unity Assistant package, is
+the preferred editor automation path. Third-party Unity MCP bridges are not
+installed by default.
 
-Do not add an MCP package or generated client config until a security review
+Do not enable Unity MCP or add generated client config until a security review
 confirms:
 
+- The project uses Unity's official `com.unity.ai.assistant` MCP path.
 - The bridge binds to localhost only.
-- Remote access is disabled.
+- External client connections require explicit approval in Unity settings.
 - Generated MCP client config stays out of git.
-- The package source and license are reviewed.
 - The tool is used for editor automation only, not as gameplay verification.
 
 ## Generate Scene
