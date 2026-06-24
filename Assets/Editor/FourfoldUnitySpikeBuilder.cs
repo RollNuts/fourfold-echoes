@@ -430,7 +430,8 @@ namespace FourfoldEchoes.Editor
                 material = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
                 AssetDatabase.CreateAsset(material, path);
             }
-            color.a = alpha;
+            color = Color.Lerp(Color.black, color, alpha);
+            color.a = 1f;
             material.color = color;
             material.SetColor("_BaseColor", color);
             material.SetColor("_Color", color);
@@ -445,26 +446,13 @@ namespace FourfoldEchoes.Editor
                 material.DisableKeyword("_EMISSION");
                 material.SetColor("_EmissionColor", Color.black);
             }
-            if (alpha < 1f)
-            {
-                material.SetFloat("_Surface", 1f);
-                material.SetFloat("_Mode", 3f);
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.SetInt("_ZWrite", 0);
-                material.EnableKeyword("_ALPHABLEND_ON");
-                material.renderQueue = 3000;
-            }
-            else
-            {
-                material.SetFloat("_Surface", 0f);
-                material.SetFloat("_Mode", 0f);
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                material.SetInt("_ZWrite", 1);
-                material.DisableKeyword("_ALPHABLEND_ON");
-                material.renderQueue = -1;
-            }
+            material.SetFloat("_Surface", 0f);
+            material.SetFloat("_Mode", 0f);
+            material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+            material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+            material.SetInt("_ZWrite", 1);
+            material.DisableKeyword("_ALPHABLEND_ON");
+            material.renderQueue = -1;
             return material;
         }
 
