@@ -7,6 +7,20 @@
 [Uu]ser[Ss]ettings/
 [Mm]emoryCaptures/
 [Rr]ecordings/
+[Cc]rash[Rr]eports/
+
+# Unity generated validation output. Source of truth stays in C#/Game IR.
+[Aa]ssets/[Gg]enerated/
+[Aa]ssets/[Ss]cenes/AshenThresholdSpike.unity
+[Aa]ssets/[Ss]cenes/AshenThresholdSpike.unity.meta
+
+# Local evidence and shipping artifacts should be attached outside source
+# history unless explicitly reviewed.
+[Ee]vidence/
+*.apk
+*.aab
+*.ipa
+*.unitypackage
 
 *.csproj
 *.sln
