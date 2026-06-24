@@ -11,6 +11,7 @@ namespace FourfoldEchoes.Editor
         private const string GateAScenePath = "Assets/Scenes/AshenThresholdSpike.unity";
         private const string DefaultBuildRoot = "Build/GateA";
         private const string ProductName = "FourfoldEchoesGateA";
+        private const string CompanyName = "RollNuts";
 
         public static void BuildGateA()
         {
@@ -52,13 +53,27 @@ namespace FourfoldEchoes.Editor
                 Directory.CreateDirectory(artifactDirectory);
             }
 
-            var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+            var originalProductName = PlayerSettings.productName;
+            var originalCompanyName = PlayerSettings.companyName;
+            BuildReport report;
+            try
             {
-                scenes = new[] { GateAScenePath },
-                locationPathName = artifactPath,
-                target = target,
-                options = BuildOptions.None
-            });
+                PlayerSettings.productName = ProductName;
+                PlayerSettings.companyName = CompanyName;
+
+                report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+                {
+                    scenes = new[] { GateAScenePath },
+                    locationPathName = artifactPath,
+                    target = target,
+                    options = BuildOptions.None
+                });
+            }
+            finally
+            {
+                PlayerSettings.productName = originalProductName;
+                PlayerSettings.companyName = originalCompanyName;
+            }
 
             var summary = report.summary;
             if (summary.result != BuildResult.Succeeded)
