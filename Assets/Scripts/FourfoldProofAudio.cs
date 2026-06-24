@@ -23,10 +23,12 @@ namespace FourfoldEchoes.Spike
         private const int SampleRate = 44100;
 
         private readonly Dictionary<FourfoldProofAudioCue, AudioClip> clips = new Dictionary<FourfoldProofAudioCue, AudioClip>();
-        private AudioSource source;
+        private AudioSource cueSource;
+        private AudioSource ambientSource;
+        private AudioClip ambientLoop;
         private bool disabled;
 
-        public bool IsAvailable => !disabled && source != null;
+        public bool IsAvailable => !disabled && cueSource != null;
 
         public void Play(FourfoldProofAudioCue cue, float volume = 1f)
         {
@@ -65,8 +67,8 @@ namespace FourfoldEchoes.Spike
 
             try
             {
-                source.pitch = Mathf.Clamp(pitch, 0.5f, 1.8f);
-                source.PlayOneShot(clip, Mathf.Clamp01(volume));
+                cueSource.pitch = Mathf.Clamp(pitch, 0.5f, 1.8f);
+                cueSource.PlayOneShot(clip, Mathf.Clamp01(volume));
             }
             catch (Exception exception)
             {
@@ -82,25 +84,19 @@ namespace FourfoldEchoes.Spike
                 return false;
             }
 
-            if (source != null && clips.Count > 0)
+            if (cueSource != null && ambientSource != null && clips.Count > 0)
             {
+                EnsureAmbientPlaying();
                 return true;
             }
 
             try
             {
-                source = GetComponent<AudioSource>();
-                if (source == null)
-                {
-                    source = gameObject.AddComponent<AudioSource>();
-                }
-
-                source.playOnAwake = false;
-                source.loop = false;
-                source.spatialBlend = 0f;
-                source.dopplerLevel = 0f;
-                source.volume = 1f;
+                EnsureSources();
                 BuildClips();
+                ambientLoop = CreateAmbientLoop();
+                ambientSource.clip = ambientLoop;
+                EnsureAmbientPlaying();
                 return true;
             }
             catch (Exception exception)
@@ -108,6 +104,33 @@ namespace FourfoldEchoes.Spike
                 disabled = true;
                 Debug.LogWarning($"FOURFOLD procedural audio unavailable: {exception.Message}");
                 return false;
+            }
+        }
+
+        private void EnsureSources()
+        {
+            var sources = GetComponents<AudioSource>();
+            cueSource = sources.Length > 0 ? sources[0] : gameObject.AddComponent<AudioSource>();
+            ambientSource = sources.Length > 1 ? sources[1] : gameObject.AddComponent<AudioSource>();
+
+            cueSource.playOnAwake = false;
+            cueSource.loop = false;
+            cueSource.spatialBlend = 0f;
+            cueSource.dopplerLevel = 0f;
+            cueSource.volume = 1f;
+
+            ambientSource.playOnAwake = false;
+            ambientSource.loop = true;
+            ambientSource.spatialBlend = 0f;
+            ambientSource.dopplerLevel = 0f;
+            ambientSource.volume = 0.14f;
+        }
+
+        private void EnsureAmbientPlaying()
+        {
+            if (ambientSource != null && ambientSource.clip != null && !ambientSource.isPlaying)
+            {
+                ambientSource.Play();
             }
         }
 
@@ -186,6 +209,27 @@ namespace FourfoldEchoes.Spike
             }
 
             var clip = AudioClip.Create(clipName, data.Length, 1, SampleRate, false);
+            clip.SetData(data, 0);
+            return clip;
+        }
+
+        private static AudioClip CreateAmbientLoop()
+        {
+            const float duration = 8f;
+            var samples = Mathf.CeilToInt(SampleRate * duration);
+            var data = new float[samples];
+            for (var sampleIndex = 0; sampleIndex < samples; sampleIndex++)
+            {
+                var t = sampleIndex / (float)SampleRate;
+                var slowPulse = 0.62f + 0.38f * Mathf.Sin(2f * Mathf.PI * 0.125f * t);
+                var emberPulse = 0.5f + 0.5f * Mathf.Sin(2f * Mathf.PI * 0.25f * t + 0.8f);
+                var lowStone = Mathf.Sin(2f * Mathf.PI * 55f * t) * 0.035f;
+                var bowedAir = Mathf.Sin(2f * Mathf.PI * 82.41f * t + 0.45f) * 0.022f;
+                var distantBell = Mathf.Sin(2f * Mathf.PI * 146.83f * t + 1.3f) * 0.009f * emberPulse;
+                data[sampleIndex] = (lowStone + bowedAir + distantBell) * slowPulse;
+            }
+
+            var clip = AudioClip.Create("FOURFOLD_AshenThreshold_Ambient_Procedural", samples, 1, SampleRate, false);
             clip.SetData(data, 0);
             return clip;
         }
