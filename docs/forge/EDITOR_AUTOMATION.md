@@ -34,6 +34,23 @@ The default Gate A build target is the macOS standalone app. Windows can be
 requested from the same wrapper when the Unity Windows standalone module is
 available, but macOS is the verified path for Gate A.
 
+Current product-facing evidence entry:
+
+```text
+tools/unity_gate_a_evidence.sh
+  -> FourfoldEchoes.Editor.FourfoldGateAEvidenceReport.Capture
+  -> /tmp/fourfold-evidence-harness/gate-a-evidence.json
+  -> /tmp/fourfold-evidence-harness/gate-a-main-camera.png
+  -> /tmp/fourfold-evidence-harness/gate-a-objective-gate.png
+  -> /tmp/fourfold-evidence-harness/unity.log
+```
+
+The JSON report records project/commit metadata, Unity version, generated scene
+validation status, standalone build target support notes, deterministic capture
+paths, a Unity log console-error scan, and a product-facing
+`gameplay_readability` checklist for player, enemy, weapon/attack affordance,
+objective, loot/reward, and ARPG room framing.
+
 ## Acceleration Layer
 
 Local Unity MCP can accelerate day-to-day editor work once reviewed.
