@@ -106,6 +106,28 @@ To capture the generated camera view as local evidence:
 tools/unity_capture_gate_a.sh
 ```
 
+## Build Gate A
+
+Build the generated Gate A playable app from the terminal:
+
+```sh
+tools/unity_build_gate_a.sh
+```
+
+The default artifact is the ignored macOS standalone app at
+`Build/GateA/macos/FourfoldEchoesGateA.app`. Use `--run` to open it after a
+successful build:
+
+```sh
+tools/unity_build_gate_a.sh --run
+```
+
+Set `UNITY_EDITOR` if Unity is installed outside the default Hub path. Use
+`FOURFOLD_BUILD_DIR` or `--output-dir` to place uncommitted build artifacts in a
+different ignored/local directory. Windows can be requested with
+`tools/unity_build_gate_a.sh --target windows`, but it depends on the Unity
+Windows standalone module being installed and is not the verified Gate A path.
+
 ## Controls
 
 - Move: WASD / arrows
