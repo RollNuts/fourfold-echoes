@@ -66,6 +66,7 @@ Start here:
 Local contract checks:
 
 ```sh
+node tools/forge/check.mjs
 tools/forge/forge inspect project
 tools/forge/forge inspect scene scene.ashen_threshold
 tools/forge/forge validate command commands/samples/run-room-spike.json
