@@ -44,3 +44,22 @@ No final audio cue may be accepted if:
 - clipping is audible
 - it masks boss tells or UI confirmation
 - it exists only as an unedited AI generation
+
+## Mix Targets
+
+These are production targets, not proof that current placeholder assets are
+accepted.
+
+| Mix Area | Target |
+| --- | --- |
+| Master peak | below -1 dBTP for release captures |
+| Gameplay loudness reference | around -16 LUFS integrated for trailer/gameplay capture checks |
+| UI cue peak | audible but below combat hit confirms |
+| Enemy tell priority | never masked by BGM or ambience |
+| Tool success priority | briefly ducks ambience/music if needed |
+| Reward stinger | short, resolved, never blocks control |
+| Sudden loudness | avoid jump scares; keep important cues readable, not painful |
+
+Validation must include at least one gameplay capture where tool pulse, tool
+success, enemy tell, hit confirm, damage, shortcut open, reward pickup, and UI
+confirm can be heard in context.

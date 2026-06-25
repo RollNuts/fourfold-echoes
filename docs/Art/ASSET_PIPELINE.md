@@ -24,12 +24,22 @@ Final assets must be commercially usable, registered, validated, and visually re
 
 ## Naming
 
-- Hero: `FE_Hero_*`
-- Enemy: `FE_Enemy_*`
-- Boss: `FE_Boss_*`
-- Environment: `FE_Env_*`
-- VFX mesh: `FE_VFX_*`
-- UI/world icon: `FE_UI_*`
+Use the same uppercase area-coded naming as
+`docs/Art/COMPACT_ACTION_ART_DIRECTION.md`.
+
+| Category | Pattern | Example |
+| --- | --- | --- |
+| Hero | `FE_HERO_<NAME>` | `FE_HERO_Bearer` |
+| Props | `FE_PROP_<AREA>_<NAME>_##` | `FE_PROP_R01_RootGate_01` |
+| Terrain | `FE_ENV_<AREA>_<TYPE>_##` | `FE_ENV_R02_FloorCracked_03` |
+| Enemy | `FE_ENEMY_<ROLE>_<NAME>` | `FE_ENEMY_MELEE_Shardling` |
+| Boss | `FE_BOSS_##_<NAME>` | `FE_BOSS_01_RootWarden` |
+| UI/world icon | `FE_UI_<PURPOSE>_<STATE>` | `FE_UI_Tool_Ready` |
+| VFX mesh | `FE_VFX_<SOURCE>_<ACTION>` | `FE_VFX_Tool_Pulse` |
+| Material | `FE_MAT_<AREA_OR_ROLE>_<SURFACE>` | `FE_MAT_R03_CrystalGlow` |
+| Texture | `FE_TEX_<AREA_OR_ROLE>_<SURFACE>_<MAP>` | `FE_TEX_R01_Stone_ALB` |
+
+Area codes are `HUB`, `R01`, `R02`, `R03`, `BOSS`, and `COMMON`.
 
 ## Validation
 

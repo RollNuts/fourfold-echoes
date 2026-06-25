@@ -59,6 +59,16 @@ Reject a screenshot if it contains gray-box art, placeholder SFX-only moments,
 debug labels, impossible camera angles, old prototype content, or features not
 present in the current build.
 
+Each accepted screenshot must record:
+
+- filename
+- build SHA
+- scene
+- camera or capture preset
+- resolution, minimum 1920x1080 for Steam store use
+- whether debug UI is hidden
+- whether every visible feature is implemented
+
 ## トレーラー絵コンテ
 
 ### 45秒版
@@ -112,16 +122,16 @@ rewards, and defeat four bosses in a focused single-player adventure.
 
 ## 翻訳優先リスト
 
-| Priority | Language | Scope | QA Requirement |
-| --- | --- | --- | --- |
-| 1 | English | full store and in-game text | source language review |
-| 2 | Japanese | full store and in-game text | native review before public page |
-| 3 | Simplified Chinese | store first, UI next | glossary and font coverage check |
-| 4 | Traditional Chinese | store first if demand appears | font coverage check |
-| 5 | Korean | store first if demand appears | font coverage check |
-| 6 | French | store page later | UI expansion risk check |
-| 7 | German | store page later | long-text layout check |
-| 8 | Spanish | store page later | long-text layout check |
+| Priority | Locale Code | Language | Scope | QA Requirement |
+| --- | --- | --- | --- | --- |
+| 1 | `en` | English | full store and in-game text | source language review |
+| 2 | `ja` | Japanese | full store and in-game text | native review before public page |
+| 3 | `zh-CN` | Simplified Chinese | store first, UI next | glossary and font coverage check |
+| 4 | `zh-TW` | Traditional Chinese | store first if demand appears | font coverage check |
+| 5 | `ko` | Korean | store first if demand appears | font coverage check |
+| 6 | `fr` | French | store page later | UI expansion risk check |
+| 7 | `de` | German | store page later | long-text layout check |
+| 8 | `es` | Spanish | store page later | long-text layout check |
 
 Glossary priority:
 

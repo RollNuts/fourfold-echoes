@@ -49,6 +49,23 @@ Status: canonical after D-020.
 | VFX | 12 max in slice | n/a | 256-512 flipbooks | tool, combat, reward, boss |
 | UI icons | 12 max in slice | n/a | 256 max | no icon bloat |
 
+## VFX / Animation Density Rules
+
+| Area | Upper Bound | Reason |
+| --- | ---: | --- |
+| Simultaneous player VFX | 2 gameplay effects | tool and attack must not obscure each other |
+| Simultaneous enemy tell VFX | 3 active tells | top-down danger must remain readable |
+| Reward VFX | 1 beam + 1 pickup burst | reward should feel good without visual spam |
+| Boss screen VFX | 1 boss tell + 1 player effect + 1 arena state | keep 30fps/Deck readability target realistic |
+| Hero animation set | 6 core clips | idle, move, attack, dodge, hit, death |
+| Normal enemy animation set | 6 core clips | idle, move, tell, attack, hit, death |
+| Miniboss animation set | 8 core clips | normal enemy set plus 2 signature tells |
+| Boss animation set | 10-12 clips | enough state change without cinematic bloat |
+
+Every VFX must answer a gameplay question: what happened, where is danger, what
+can be used, or what reward was earned. Decorative loops are cut before any
+readability effect is cut.
+
 ## 命名規則
 
 | Category | Pattern | Example |

@@ -14,14 +14,15 @@ current game is fun, marketable, or visually ready.
 | Forge/Game IR check | PASS | `node tools/forge/check.mjs` |
 | Product lane split | PASS locally | `artifacts/Reports/veripsa-current-split.md` |
 | D-020 art/audio docs | PASS locally | PR-B validation and D-020 registers |
+| D-020 playable smoke | PASS locally | `artifacts/Reports/unity-product-validation.md`; movement, dodge, attack hit, enemy hit, tool activation |
 
 ## Not Yet Verified
 
 | Area | Required Evidence |
 | --- | --- |
-| Controllable D-020 Region 01 room | Unity playthrough capture from current scene |
-| Player movement/camera/attack/dodge | controller and keyboard smoke test |
-| One exploration tool | valid target, invalid target, cooldown/ready, route response |
+| Production-styled D-020 Region 01 room | Unity playthrough capture from styled current scene |
+| Controller and keyboard input parity | controller and keyboard smoke test |
+| Full exploration tool behavior | valid target, invalid target, cooldown/ready, route response |
 | Two gimmick rooms | same tool used in two different room contexts |
 | Shortcut | shortcut opens, remains open after save/load |
 | Two enemies | readable tells, hit confirm, defeat, retry loop |

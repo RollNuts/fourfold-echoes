@@ -33,6 +33,50 @@ Ask players for:
 - save file if relevant
 - screenshot or short video if available
 
+## Response Templates
+
+### Initial Bug Acknowledgement
+
+Thanks for the report. We are checking this against the current build. If you
+can, please send your build version, platform, input device, language, last
+scene or boss, and whether this happened after loading a save.
+
+### Request For Save / Logs
+
+We need one more piece of evidence to reproduce this safely. Please send the
+save file, crash log if one exists, and the last room or boss entered before the
+issue appeared. Do not delete the affected save until we confirm whether it is
+recoverable.
+
+### Workaround Reply
+
+We have not shipped a fix yet. Current workaround: `<workaround or none>`. We
+will update the known-issues post when a verified fix is scheduled.
+
+### Duplicate Reply
+
+This matches an issue we are already tracking as `<issue id>`. We linked your
+details to the existing report and will update the main known-issues thread
+when the status changes.
+
+### Cannot Reproduce / Watchlist Reply
+
+We could not reproduce this with the current information. Because it may affect
+progress, saves, crashes, or controls, it remains on the watchlist. Additional
+save files, logs, or short videos will help us verify it.
+
+### Fixed In Next Build
+
+We reproduced this and have a fix verified internally. It is scheduled for the
+next build after regression checks for save, controller, and affected boss or
+room progression pass.
+
+### Post-Patch Closure
+
+This issue should be fixed in build `<version>`. Please restart Steam to update.
+If it still happens on that build, reply with your save file and build version
+so we can reopen the report.
+
 ## Triage Routing
 
 | Report Type | Priority Owner |
