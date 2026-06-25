@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "generatedAtUtc": "2026-06-25T18:49:38.552Z",
+  "scope": "D-020 vertical slice evidence snapshot",
+  "caveat": "This is not a runtime profiler capture. It summarizes current scene, asset, and screenshot evidence until a real playthrough/profiler scenario exists.",
+  "targets": {
+    "pcBaseline": "1080p / 60fps",
+    "steamDeck": "target, not yet verified",
+    "ps5Readiness": "asset budgets and platform-safe structure only; no PS5 build claim"
+  },
+  "unityMetrics": {
+    "sceneObjects": 116,
+    "sceneRenderers": 103,
+    "sceneAudioSources": 1,
+    "sceneLodGroups": 0,
+    "sceneMissingMaterials": 0,
+    "sceneMissingScripts": 0,
+    "sceneNegativeScaleObjects": 0,
+    "materialAssets": 10,
+    "textureAssets": 0,
+    "audioClipAssets": 7,
+    "meshAssets": 0,
+    "prefabAssets": 0,
+    "prefabsWithLod": 0,
+    "sceneAssets": 1
+  },
+  "visualEvidence": [
+    {
+      "path": "artifacts/Previews/d020-slice-camera.png",
+      "exists": true,
+      "sizeBytes": 196672,
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "path": "artifacts/Previews/d020-tool-node-read.png",
+      "exists": true,
+      "sizeBytes": 293457,
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "path": "artifacts/Previews/d020-reward-read.png",
+      "exists": true,
+      "sizeBytes": 326514,
+      "width": 1280,
+      "height": 800
+    }
+  ],
+  "d020Screenshot": {
+    "path": "artifacts/Previews/d020-slice-camera.png",
+    "exists": true,
+    "sizeBytes": 196672,
+    "width": 1280,
+    "height": 800
+  },
+  "d020ToolRead": {
+    "path": "artifacts/Previews/d020-tool-node-read.png",
+    "exists": true,
+    "sizeBytes": 293457,
+    "width": 1280,
+    "height": 800
+  },
+  "d020RewardRead": {
+    "path": "artifacts/Previews/d020-reward-read.png",
+    "exists": true,
+    "sizeBytes": 326514,
+    "width": 1280,
+    "height": 800
+  },
+  "buildArtifact": {
+    "path": "Build/D020Slice/macos/FourfoldEchoesD020Slice.app",
+    "exists": true,
+    "sizeBytes": 106559656
+  },
+  "d020Runtime": {
+    "scenePath": "Assets/Scenes/D020VerticalSlice.unity",
+    "sceneExists": true,
+    "toolRuntimePath": "Assets/Scripts/ExplorationTool.cs",
+    "toolRuntimeExists": true,
+    "status": "one_tool_scene_proof"
+  },
+  "knownGaps": [
+    "No frame-time profiler sample has been captured yet.",
+    "No Steam Deck measurement has been captured yet.",
+    "No PS5 hardware or platform-module verification exists.",
+    "D-020 slice is technical scene evidence, not store-ready art.",
+    "Blender pilot assets and production art are intentionally outside this capture/build lane.",
+    "No complete 30-minute vertical slice with hub, region, miniboss, boss, save/load, final SFX, and final music exists yet."
+  ]
+}
