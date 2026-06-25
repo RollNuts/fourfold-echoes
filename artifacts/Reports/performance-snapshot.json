@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T19:46:49.967Z",
+  "generatedAtUtc": "2026-06-25T20:05:03.451Z",
   "scope": "D-020 vertical slice evidence snapshot",
   "caveat": "This is not a runtime profiler capture. It summarizes current scene, asset, and screenshot evidence until a real playthrough/profiler scenario exists.",
   "targets": {
@@ -11,14 +11,14 @@
   "unityMetrics": {
     "sceneObjects": 201,
     "sceneRenderers": 183,
-    "sceneAudioSources": 1,
+    "sceneAudioSources": 2,
     "sceneLodGroups": 0,
     "sceneMissingMaterials": 0,
     "sceneMissingScripts": 0,
     "sceneNegativeScaleObjects": 0,
     "materialAssets": 10,
     "textureAssets": 0,
-    "audioClipAssets": 7,
+    "audioClipAssets": 10,
     "meshAssets": 0,
     "prefabAssets": 0,
     "prefabsWithLod": 0,
@@ -127,7 +127,7 @@
   "buildArtifact": {
     "path": "Build/D020Slice/macos/FourfoldEchoesD020Slice.app",
     "exists": true,
-    "sizeBytes": 106613896
+    "sizeBytes": 106646772
   },
   "d020Runtime": {
     "scenePath": "Assets/Scenes/D020VerticalSlice.unity",

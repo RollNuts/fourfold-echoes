@@ -88,7 +88,8 @@ const audioInventory = {
   missingRegisteredFiles: audioFileAudit.missingRegisteredFiles,
   unregisteredAudioFiles: audioFileAudit.unregisteredAudioFiles,
   licenseCoverage: summarizeAudioLicenseCoverage(audioRows, licenseText),
-  knownGaps: buildAudioKnownGaps(registeredCues, audioFileAudit)
+  runtimeWiring: buildAudioRuntimeWiring(unityReport),
+  knownGaps: buildAudioKnownGaps(registeredCues, audioFileAudit, unityReport)
 };
 
 const finalStatus = {
@@ -309,10 +310,20 @@ function summarizeAudioLicenseCoverage(rows, licenseTextValue) {
   };
 }
 
-function buildAudioKnownGaps(cues, audit) {
+function buildAudioRuntimeWiring(report) {
+  const findings = Array.isArray(report?.findings) ? report.findings : [];
+  return {
+    sceneAudioSources: report?.metrics?.sceneAudioSources ?? null,
+    importedAudioClipAssets: report?.metrics?.audioClipAssets ?? null,
+    d020PlayableSmokePassed: findings.some((finding) => finding.code === "d020.playable_smoke" && finding.severity === "info")
+  };
+}
+
+function buildAudioKnownGaps(cues, audit, report) {
   const gaps = [];
   const needed = cues.filter((cue) => cue.status === "needed").map((cue) => cue.assetId);
   const prototype = cues.filter((cue) => cue.acceptanceStatus === "prototype_only" || cue.acceptanceStatus === "visual_review_only").map((cue) => cue.assetId);
+  const wiring = buildAudioRuntimeWiring(report);
 
   if (audit.missingRegisteredFiles.length > 0) {
     gaps.push(`${audit.missingRegisteredFiles.length} registered audio path(s) are missing on disk.`);
@@ -326,7 +337,11 @@ function buildAudioKnownGaps(cues, audit) {
   if (prototype.length > 0) {
     gaps.push(`${prototype.length} generated prototype cue(s) are present for readability evidence only and are not release audio.`);
   }
-  gaps.push("Generated/prototype SFX are asset inventory evidence only until D-020 gameplay events or scene AudioSources wire them in.");
+  if (wiring.d020PlayableSmokePassed && wiring.sceneAudioSources > 0) {
+    gaps.push("Generated/prototype SFX are wired into D-020 gameplay evidence, but remain non-final release audio.");
+  } else {
+    gaps.push("Generated/prototype SFX are asset inventory evidence only until D-020 gameplay events or scene AudioSources wire them in.");
+  }
   return gaps;
 }
 
@@ -383,6 +398,8 @@ ${inventory.registeredCues.map((cue) => `| \`${cue.assetId}\` | ${cue.category} 
 - Repository audio files: ${inventory.repositoryAudioFileCount}
 - Registered paths missing on disk: ${inventory.missingRegisteredFiles.length}
 - Unregistered audio files: ${inventory.unregisteredAudioFiles.length}
+- Scene AudioSources: ${inventory.runtimeWiring.sceneAudioSources ?? "unknown"}
+- D-020 playable smoke audio wiring: ${inventory.runtimeWiring.d020PlayableSmokePassed ? "passed" : "not verified"}
 
 ### Missing Registered Files
 

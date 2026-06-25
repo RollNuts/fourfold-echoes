@@ -81,10 +81,19 @@ namespace FourfoldEchoes.Editor
             RequireComponent<D020PlayerController>("D020 Player");
             RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
             var tool = FindSceneObject("D020 Runtime Hook").GetComponent<ExplorationTool>();
+            var player = FindSceneObject("D020 Player").GetComponent<D020PlayerController>();
             if (tool.NodeCount < 2)
             {
                 throw new InvalidOperationException("D-020 runtime hook must reference two exploration nodes for the two-gimmick-room proof.");
             }
+
+            RequireAudioClip(player.attackClip, "D-020 player attack SFX");
+            RequireAudioClip(player.hitClip, "D-020 player hit-confirm SFX");
+            RequireAudioClip(player.enemyDefeatClip, "D-020 enemy defeat SFX");
+            RequireAudioClip(player.dodgeClip, "D-020 player dodge SFX");
+            RequireAudioClip(tool.pulse, "D-020 exploration tool pulse SFX");
+            RequireAudioClip(tool.targetHit, "D-020 exploration tool target-hit SFX");
+            RequireAudioClip(tool.fail, "D-020 exploration tool fail SFX");
 
             if (Camera.main == null)
             {
@@ -262,12 +271,20 @@ namespace FourfoldEchoes.Editor
             var attackRead = CreatePrimitive(player.transform, PrimitiveType.Cylinder, "D020 Player Attack Read", assets.tool, new Vector3(0f, 0.045f, 0.92f), new Vector3(0.98f, 0.022f, 0.52f));
             attackRead.SetActive(false);
 
+            var audioSource = player.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f;
+            audioSource.volume = 0.76f;
             var controller = player.AddComponent<D020PlayerController>();
             controller.attackRead = attackRead;
             controller.attackRange = 1.45f;
             controller.moveSpeed = 3.35f;
             controller.minBounds = new Vector2(-4.1f, -2.8f);
             controller.maxBounds = new Vector2(10.3f, 2.8f);
+            controller.attackClip = LoadAudioClip("attack_basic.wav");
+            controller.hitClip = LoadAudioClip("hit_enemy.wav");
+            controller.enemyDefeatClip = LoadAudioClip("enemy_death.wav");
+            controller.dodgeClip = LoadAudioClip("dodge.wav");
             return player;
         }
 
@@ -409,9 +426,32 @@ namespace FourfoldEchoes.Editor
             tool.nodes = nodes;
             tool.range = 2.8f;
             tool.cooldownSeconds = 0.42f;
+            tool.pulse = LoadAudioClip("tool_pulse.wav");
+            tool.targetHit = LoadAudioClip("tool_target_hit.wav");
+            tool.fail = LoadAudioClip("tool_fail.wav");
             var pulseRead = CreatePrimitive(player, PrimitiveType.Cylinder, "D020 Tool Pulse Read", assets.tool, new Vector3(0f, 0.055f, 0f), new Vector3(1.08f, 0.035f, 1.08f));
             pulseRead.SetActive(false);
             tool.pulseRead = pulseRead;
+        }
+
+        private static AudioClip LoadAudioClip(string filename)
+        {
+            var path = $"Assets/Audio/Generated/{filename}";
+            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            if (clip == null)
+            {
+                throw new FileNotFoundException($"Required D-020 generated audio clip is missing: {path}", path);
+            }
+
+            return clip;
+        }
+
+        private static void RequireAudioClip(AudioClip clip, string label)
+        {
+            if (clip == null)
+            {
+                throw new InvalidOperationException($"{label} is not assigned.");
+            }
         }
 
         private static GameObject CreateBlock(Transform parent, string name, Material material, Vector3 localPosition, Vector3 localScale)

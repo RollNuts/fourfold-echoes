@@ -23,6 +23,13 @@ namespace FourfoldEchoes.Editor
             Require(shortcutNode != null, "D-020 smoke requires the shortcut ExplorationNode.");
             Require(secondNode != null, "D-020 smoke requires the second-room ExplorationNode.");
             Require(tool.NodeCount >= 2, "D-020 smoke requires the tool to reference two exploration nodes.");
+            Require(player.attackClip != null, "D-020 player attack SFX is not assigned.");
+            Require(player.hitClip != null, "D-020 player hit SFX is not assigned.");
+            Require(player.enemyDefeatClip != null, "D-020 enemy defeat SFX is not assigned.");
+            Require(player.dodgeClip != null, "D-020 player dodge SFX is not assigned.");
+            Require(tool.pulse != null, "D-020 tool pulse SFX is not assigned.");
+            Require(tool.targetHit != null, "D-020 tool target-hit SFX is not assigned.");
+            Require(tool.fail != null, "D-020 tool fail SFX is not assigned.");
 
             var start = player.transform.position;
             player.Tick(new Vector2(1f, 1f), false, false, 0.5f);

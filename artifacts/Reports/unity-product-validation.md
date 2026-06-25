@@ -1,6 +1,6 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-25T19:44:20.6068060Z`
+Generated UTC: `2026-06-25T20:04:54.9283950Z`
 
 ## Metrics
 
@@ -8,14 +8,14 @@ Generated UTC: `2026-06-25T19:44:20.6068060Z`
 | --- | ---: |
 | Active scene objects | 201 |
 | Renderers | 183 |
-| AudioSources | 1 |
+| AudioSources | 2 |
 | LODGroups | 0 |
 | Missing material slots | 0 |
 | Missing scripts | 0 |
 | Negative scale objects | 0 |
 | Material assets | 10 |
 | Texture assets | 0 |
-| AudioClip assets | 7 |
+| AudioClip assets | 10 |
 | Mesh assets | 0 |
 | Prefab assets | 0 |
 | Prefabs with LODGroup | 0 |
