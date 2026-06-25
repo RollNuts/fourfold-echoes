@@ -66,6 +66,8 @@ const lanes = [
     name: "d020-tool-runtime",
     order: 5,
     patterns: [
+      /^Assets\/Scripts\/D020EnemyDummy\.cs(\.meta)?$/,
+      /^Assets\/Scripts\/D020PlayerController\.cs(\.meta)?$/,
       /^Assets\/Scripts\/ExplorationTool\.cs(\.meta)?$/,
       /^Assets\/Scripts\/ExplorationNode\.cs(\.meta)?$/
     ]
@@ -89,6 +91,7 @@ const lanes = [
     order: 7,
     patterns: [
       /^\.gitignore$/,
+      /^Assets\/Editor\/FourfoldD020PlayableSmoke\.cs(\.meta)?$/,
       /^Assets\/Editor\/FourfoldUnityEvidenceCapture\.cs$/,
       /^Assets\/Editor\/FourfoldUnityBuild\.cs$/,
       /^Scripts\/Build\//,
