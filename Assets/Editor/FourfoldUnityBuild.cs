@@ -9,9 +9,28 @@ namespace FourfoldEchoes.Editor
     public static class FourfoldUnityBuild
     {
         private const string GateAScenePath = "Assets/Scenes/AshenThresholdSpike.unity";
+        private const string D020SliceScenePath = FourfoldD020SliceSceneBuilder.ScenePath;
         private const string DefaultBuildRoot = "Build/GateA";
+        private const string DefaultD020SliceBuildRoot = "Build/D020Slice";
         private const string ProductName = "FourfoldEchoesGateA";
+        private const string D020SliceProductName = "FourfoldEchoesD020Slice";
         private const string CompanyName = "RollNuts";
+
+        public static void BuildCurrentD020Slice()
+        {
+            var target = GetRequestedTarget();
+            var buildRoot = GetRequestedBuildRoot(DefaultD020SliceBuildRoot);
+            var artifactPath = GetArtifactPath(buildRoot, target, D020SliceProductName);
+
+            if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, target))
+            {
+                throw new InvalidOperationException(
+                    $"Unity standalone build target is not installed or supported in this editor: {target}");
+            }
+
+            FourfoldD020SliceSceneBuilder.BuildAndValidate();
+            BuildScene(target, artifactPath, D020SliceScenePath, D020SliceProductName, "D-020 vertical slice");
+        }
 
         public static void BuildGateA()
         {
@@ -47,48 +66,7 @@ namespace FourfoldEchoes.Editor
                 throw new FileNotFoundException("Gate A scene was not generated before build.", GateAScenePath);
             }
 
-            var artifactDirectory = Path.GetDirectoryName(artifactPath);
-            if (!string.IsNullOrWhiteSpace(artifactDirectory))
-            {
-                Directory.CreateDirectory(artifactDirectory);
-            }
-
-            var originalProductName = PlayerSettings.productName;
-            var originalCompanyName = PlayerSettings.companyName;
-            BuildReport report;
-            try
-            {
-                PlayerSettings.productName = ProductName;
-                PlayerSettings.companyName = CompanyName;
-
-                report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
-                {
-                    scenes = new[] { GateAScenePath },
-                    locationPathName = artifactPath,
-                    target = target,
-                    options = BuildOptions.None
-                });
-            }
-            finally
-            {
-                PlayerSettings.productName = originalProductName;
-                PlayerSettings.companyName = originalCompanyName;
-            }
-
-            var summary = report.summary;
-            if (summary.result != BuildResult.Succeeded)
-            {
-                throw new InvalidOperationException(
-                    $"FOURFOLD Gate A build failed: target={target} result={summary.result} errors={summary.totalErrors}");
-            }
-
-            if (!ArtifactExists(artifactPath))
-            {
-                throw new FileNotFoundException("Unity reported success, but the build artifact was not found.", artifactPath);
-            }
-
-            Debug.Log(
-                $"FOURFOLD Gate A build succeeded: target={target} artifact={Path.GetFullPath(artifactPath)} sizeBytes={CalculateSizeBytes(artifactPath)}");
+            BuildScene(target, artifactPath, GateAScenePath, ProductName, "Gate A");
         }
 
         private static BuildTarget GetRequestedTarget()
@@ -121,7 +99,7 @@ namespace FourfoldEchoes.Editor
             }
         }
 
-        private static string GetRequestedBuildRoot()
+        private static string GetRequestedBuildRoot(string defaultBuildRoot = DefaultBuildRoot)
         {
             var value = GetArgument("--fourfoldBuildDir");
             if (string.IsNullOrWhiteSpace(value))
@@ -130,7 +108,7 @@ namespace FourfoldEchoes.Editor
             }
             if (string.IsNullOrWhiteSpace(value))
             {
-                value = DefaultBuildRoot;
+                value = defaultBuildRoot;
             }
 
             var repoRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
@@ -139,17 +117,68 @@ namespace FourfoldEchoes.Editor
 
         private static string GetArtifactPath(string buildRoot, BuildTarget target)
         {
+            return GetArtifactPath(buildRoot, target, ProductName);
+        }
+
+        private static string GetArtifactPath(string buildRoot, BuildTarget target, string productName)
+        {
             switch (target)
             {
                 case BuildTarget.StandaloneOSX:
-                    return Path.Combine(buildRoot, "macos", ProductName + ".app");
+                    return Path.Combine(buildRoot, "macos", productName + ".app");
 
                 case BuildTarget.StandaloneWindows64:
-                    return Path.Combine(buildRoot, "windows", ProductName + ".exe");
+                    return Path.Combine(buildRoot, "windows", productName + ".exe");
 
                 default:
                     throw new InvalidOperationException($"Unsupported Gate A build target: {target}");
             }
+        }
+
+        private static void BuildScene(BuildTarget target, string artifactPath, string scenePath, string productName, string label)
+        {
+            var artifactDirectory = Path.GetDirectoryName(artifactPath);
+            if (!string.IsNullOrWhiteSpace(artifactDirectory))
+            {
+                Directory.CreateDirectory(artifactDirectory);
+            }
+
+            var originalProductName = PlayerSettings.productName;
+            var originalCompanyName = PlayerSettings.companyName;
+            BuildReport report;
+            try
+            {
+                PlayerSettings.productName = productName;
+                PlayerSettings.companyName = CompanyName;
+
+                report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+                {
+                    scenes = new[] { scenePath },
+                    locationPathName = artifactPath,
+                    target = target,
+                    options = BuildOptions.None
+                });
+            }
+            finally
+            {
+                PlayerSettings.productName = originalProductName;
+                PlayerSettings.companyName = originalCompanyName;
+            }
+
+            var summary = report.summary;
+            if (summary.result != BuildResult.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    $"FOURFOLD {label} build failed: target={target} result={summary.result} errors={summary.totalErrors}");
+            }
+
+            if (!ArtifactExists(artifactPath))
+            {
+                throw new FileNotFoundException("Unity reported success, but the build artifact was not found.", artifactPath);
+            }
+
+            Debug.Log(
+                $"FOURFOLD {label} build succeeded: target={target} artifact={Path.GetFullPath(artifactPath)} sizeBytes={CalculateSizeBytes(artifactPath)}");
         }
 
         private static bool ArtifactExists(string artifactPath)

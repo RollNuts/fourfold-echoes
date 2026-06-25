@@ -4,9 +4,13 @@
 !logs/
 !test-results/
 !Reports/
+!Previews/
 !screenshots/.gitkeep
 !logs/.gitkeep
 !test-results/.gitkeep
 !Reports/.gitkeep
 !Reports/*.md
 !Reports/*.json
+!Previews/.gitkeep
+!Previews/README.md
+!Previews/d020-*.png
