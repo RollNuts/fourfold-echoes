@@ -1,6 +1,6 @@
 # Performance Snapshot
 
-Generated UTC: `2026-06-25T19:33:57.505Z`
+Generated UTC: `2026-06-25T19:46:49.967Z`
 
 Scope: D-020 vertical slice evidence snapshot
 
@@ -10,8 +10,8 @@ This is not a runtime profiler capture. It summarizes current scene, asset, and 
 
 | Metric | Value |
 | --- | ---: |
-| Scene objects | 185 |
-| Renderers | 167 |
+| Scene objects | 201 |
+| Renderers | 183 |
 | LODGroups | 0 |
 | Missing materials | 0 |
 | Missing scripts | 0 |
@@ -24,6 +24,7 @@ This is not a runtime profiler capture. It summarizes current scene, asset, and 
 - `artifacts/Previews/d020-slice-camera.png`: 1280x800
 - `artifacts/Previews/d020-tool-node-read.png`: 1280x800
 - `artifacts/Previews/d020-reward-read.png`: 1280x800
+- `artifacts/Previews/d020-silhouette-read.png`: 1280x800
 - `artifacts/Previews/d020-playable-attack-read.png`: 1280x800
 - `artifacts/Previews/d020-second-gimmick-room-read.png`: 1280x800
 - `artifacts/Previews/d020-second-gimmick-solved.png`: 1280x800

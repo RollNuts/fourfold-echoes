@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T19:33:57.505Z",
+  "generatedAtUtc": "2026-06-25T19:46:49.967Z",
   "scope": "D-020 vertical slice evidence snapshot",
   "caveat": "This is not a runtime profiler capture. It summarizes current scene, asset, and screenshot evidence until a real playthrough/profiler scenario exists.",
   "targets": {
@@ -9,8 +9,8 @@
     "ps5Readiness": "asset budgets and platform-safe structure only; no PS5 build claim"
   },
   "unityMetrics": {
-    "sceneObjects": 185,
-    "sceneRenderers": 167,
+    "sceneObjects": 201,
+    "sceneRenderers": 183,
     "sceneAudioSources": 1,
     "sceneLodGroups": 0,
     "sceneMissingMaterials": 0,
@@ -28,42 +28,49 @@
     {
       "path": "artifacts/Previews/d020-slice-camera.png",
       "exists": true,
-      "sizeBytes": 206127,
+      "sizeBytes": 209059,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-tool-node-read.png",
       "exists": true,
-      "sizeBytes": 299244,
+      "sizeBytes": 305329,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-reward-read.png",
       "exists": true,
-      "sizeBytes": 413311,
+      "sizeBytes": 420177,
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "path": "artifacts/Previews/d020-silhouette-read.png",
+      "exists": true,
+      "sizeBytes": 391725,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-playable-attack-read.png",
       "exists": true,
-      "sizeBytes": 428341,
+      "sizeBytes": 436815,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-second-gimmick-room-read.png",
       "exists": true,
-      "sizeBytes": 254383,
+      "sizeBytes": 259289,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-second-gimmick-solved.png",
       "exists": true,
-      "sizeBytes": 259797,
+      "sizeBytes": 265672,
       "width": 1280,
       "height": 800
     }
@@ -71,49 +78,56 @@
   "d020Screenshot": {
     "path": "artifacts/Previews/d020-slice-camera.png",
     "exists": true,
-    "sizeBytes": 206127,
+    "sizeBytes": 209059,
     "width": 1280,
     "height": 800
   },
   "d020ToolRead": {
     "path": "artifacts/Previews/d020-tool-node-read.png",
     "exists": true,
-    "sizeBytes": 299244,
+    "sizeBytes": 305329,
     "width": 1280,
     "height": 800
   },
   "d020RewardRead": {
     "path": "artifacts/Previews/d020-reward-read.png",
     "exists": true,
-    "sizeBytes": 413311,
+    "sizeBytes": 420177,
+    "width": 1280,
+    "height": 800
+  },
+  "d020SilhouetteRead": {
+    "path": "artifacts/Previews/d020-silhouette-read.png",
+    "exists": true,
+    "sizeBytes": 391725,
     "width": 1280,
     "height": 800
   },
   "d020PlayableAttackRead": {
     "path": "artifacts/Previews/d020-playable-attack-read.png",
     "exists": true,
-    "sizeBytes": 428341,
+    "sizeBytes": 436815,
     "width": 1280,
     "height": 800
   },
   "d020SecondGimmickRead": {
     "path": "artifacts/Previews/d020-second-gimmick-room-read.png",
     "exists": true,
-    "sizeBytes": 254383,
+    "sizeBytes": 259289,
     "width": 1280,
     "height": 800
   },
   "d020SecondGimmickSolved": {
     "path": "artifacts/Previews/d020-second-gimmick-solved.png",
     "exists": true,
-    "sizeBytes": 259797,
+    "sizeBytes": 265672,
     "width": 1280,
     "height": 800
   },
   "buildArtifact": {
     "path": "Build/D020Slice/macos/FourfoldEchoesD020Slice.app",
     "exists": true,
-    "sizeBytes": 106604332
+    "sizeBytes": 106613896
   },
   "d020Runtime": {
     "scenePath": "Assets/Scenes/D020VerticalSlice.unity",

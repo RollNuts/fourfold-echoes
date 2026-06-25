@@ -1,6 +1,6 @@
 # Final Status Report
 
-Generated UTC: `2026-06-25T19:33:57.505Z`
+Generated UTC: `2026-06-25T19:46:49.967Z`
 
 ## Final Product Definition
 
@@ -17,10 +17,11 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 | D-020 slice screenshot | `artifacts/Previews/d020-slice-camera.png` |
 | D-020 tool screenshot | `artifacts/Previews/d020-tool-node-read.png` |
 | D-020 reward screenshot | `artifacts/Previews/d020-reward-read.png` |
+| D-020 silhouette screenshot | `artifacts/Previews/d020-silhouette-read.png` |
 | D-020 playable attack screenshot | `artifacts/Previews/d020-playable-attack-read.png` |
 | D-020 second gimmick screenshot | `artifacts/Previews/d020-second-gimmick-room-read.png` |
 | D-020 second gimmick solved screenshot | `artifacts/Previews/d020-second-gimmick-solved.png` |
-| Visual evidence shots | 6 generated |
+| Visual evidence shots | 7 generated |
 | Performance snapshot | `artifacts/Reports/performance-snapshot.json` |
 | Audio inventory | `artifacts/Reports/audio-inventory.json` |
 | D-020 tool runtime | `Assets/Scripts/ExplorationTool.cs` |

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T19:33:57.505Z",
+  "generatedAtUtc": "2026-06-25T19:46:49.967Z",
   "finalProductDefinition": "Steam-first, buy-to-play, single-player top-down classic action-adventure.",
   "canonicalHook": "Leave one hub, explore three compact handcrafted regions, master one exploration tool, open shortcuts, earn relic rewards, and defeat four bosses.",
   "currentEvidence": {
@@ -9,6 +9,7 @@
     "d020SliceScreenshot": "artifacts/Previews/d020-slice-camera.png",
     "d020ToolScreenshot": "artifacts/Previews/d020-tool-node-read.png",
     "d020RewardScreenshot": "artifacts/Previews/d020-reward-read.png",
+    "d020SilhouetteScreenshot": "artifacts/Previews/d020-silhouette-read.png",
     "d020PlayableAttackScreenshot": "artifacts/Previews/d020-playable-attack-read.png",
     "d020SecondGimmickScreenshot": "artifacts/Previews/d020-second-gimmick-room-read.png",
     "d020SecondGimmickSolvedScreenshot": "artifacts/Previews/d020-second-gimmick-solved.png",
@@ -16,6 +17,7 @@
       "artifacts/Previews/d020-slice-camera.png",
       "artifacts/Previews/d020-tool-node-read.png",
       "artifacts/Previews/d020-reward-read.png",
+      "artifacts/Previews/d020-silhouette-read.png",
       "artifacts/Previews/d020-playable-attack-read.png",
       "artifacts/Previews/d020-second-gimmick-room-read.png",
       "artifacts/Previews/d020-second-gimmick-solved.png"

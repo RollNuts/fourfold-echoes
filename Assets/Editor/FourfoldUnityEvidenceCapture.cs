@@ -81,6 +81,12 @@ namespace FourfoldEchoes.Editor
                 new Vector3(5.6f, 6.4f, -4.8f),
                 new Vector3(2.1f, 0.45f, -1.0f),
                 3.8f);
+            CaptureCameraFromPose(
+                camera,
+                Path.Combine(outputDirectory, "d020-silhouette-read.png"),
+                new Vector3(5.25f, 6.25f, -4.65f),
+                new Vector3(0.75f, 0.55f, -0.18f),
+                3.65f);
             if (secondNode != null)
             {
                 secondNode.SetSolved(false);

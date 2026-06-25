@@ -1,13 +1,13 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-25T19:33:14.1543030Z`
+Generated UTC: `2026-06-25T19:44:20.6068060Z`
 
 ## Metrics
 
 | Metric | Value |
 | --- | ---: |
-| Active scene objects | 185 |
-| Renderers | 167 |
+| Active scene objects | 201 |
+| Renderers | 183 |
 | AudioSources | 1 |
 | LODGroups | 0 |
 | Missing material slots | 0 |

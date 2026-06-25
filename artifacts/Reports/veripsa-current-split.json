@@ -1,5 +1,5 @@
 {
-  "generatedUtc": "2026-06-25T19:33:56.908Z",
+  "generatedUtc": "2026-06-25T19:46:50.041Z",
   "coreSource": "GitHub Veripsa checks; local veripsa CLI unavailable",
   "coreObservations": [
     {
@@ -13,7 +13,7 @@
       "implication": "New Unity editor/tool files were not in main's graph, so Core treated them as unknown. Split new C# runtime, editor scene generation, and capture/build tooling into separate PRs instead of landing them with docs."
     }
   ],
-  "dirtyFileCount": 25,
+  "dirtyFileCount": 21,
   "lanes": [
     {
       "id": "PR-A",
@@ -42,27 +42,13 @@
       "id": "PR-D",
       "name": "validation-sync",
       "order": 4,
-      "files": [
-        {
-          "status": " M",
-          "path": "artifacts/Reports/veripsa-current-split.json"
-        },
-        {
-          "status": " M",
-          "path": "artifacts/Reports/veripsa-current-split.md"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E1",
       "name": "d020-tool-runtime",
       "order": 5,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Scripts/ExplorationTool.cs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E2",
@@ -99,6 +85,18 @@
         {
           "status": " M",
           "path": "artifacts/Previews/d020-reward-read.png"
+        },
+        {
+          "status": " M",
+          "path": "artifacts/Previews/d020-second-gimmick-before.png"
+        },
+        {
+          "status": " M",
+          "path": "artifacts/Previews/d020-second-gimmick-room-read.png"
+        },
+        {
+          "status": " M",
+          "path": "artifacts/Previews/d020-second-gimmick-solved.png"
         },
         {
           "status": " M",
@@ -142,15 +140,7 @@
         },
         {
           "status": "??",
-          "path": "artifacts/Previews/d020-second-gimmick-before.png"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Previews/d020-second-gimmick-room-read.png"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Previews/d020-second-gimmick-solved.png"
+          "path": "artifacts/Previews/d020-silhouette-read.png"
         }
       ]
     },
@@ -158,12 +148,7 @@
       "id": "PR-F",
       "name": "historical-proof-cleanup",
       "order": 8,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Editor/FourfoldProductValidator.cs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-G",
@@ -178,10 +163,5 @@
       "files": []
     }
   ],
-  "unknown": [
-    {
-      "status": " M",
-      "path": "Assets/Editor/FourfoldD020PlayableSmoke.cs"
-    }
-  ]
+  "unknown": []
 }

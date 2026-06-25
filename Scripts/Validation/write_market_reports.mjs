@@ -11,6 +11,7 @@ const unityReport = readJson("artifacts/Reports/unity-product-validation.json");
 const d020Screenshot = inspectPng("artifacts/Previews/d020-slice-camera.png");
 const d020ToolRead = inspectPng("artifacts/Previews/d020-tool-node-read.png");
 const d020RewardRead = inspectPng("artifacts/Previews/d020-reward-read.png");
+const d020SilhouetteRead = inspectPng("artifacts/Previews/d020-silhouette-read.png");
 const d020PlayableAttackRead = inspectPng("artifacts/Previews/d020-playable-attack-read.png");
 const d020SecondGimmickRead = inspectPng("artifacts/Previews/d020-second-gimmick-room-read.png");
 const d020SecondGimmickSolved = inspectPng("artifacts/Previews/d020-second-gimmick-solved.png");
@@ -18,6 +19,7 @@ const requiredVisualEvidence = [
   "artifacts/Previews/d020-slice-camera.png",
   "artifacts/Previews/d020-tool-node-read.png",
   "artifacts/Previews/d020-reward-read.png",
+  "artifacts/Previews/d020-silhouette-read.png",
   "artifacts/Previews/d020-playable-attack-read.png",
   "artifacts/Previews/d020-second-gimmick-room-read.png",
   "artifacts/Previews/d020-second-gimmick-solved.png"
@@ -49,6 +51,7 @@ const performanceSnapshot = {
   d020Screenshot,
   d020ToolRead,
   d020RewardRead,
+  d020SilhouetteRead,
   d020PlayableAttackRead,
   d020SecondGimmickRead,
   d020SecondGimmickSolved,
@@ -99,6 +102,7 @@ const finalStatus = {
     d020SliceScreenshot: d020Screenshot.exists ? d020Screenshot.path : null,
     d020ToolScreenshot: d020ToolRead.exists ? d020ToolRead.path : null,
     d020RewardScreenshot: d020RewardRead.exists ? d020RewardRead.path : null,
+    d020SilhouetteScreenshot: d020SilhouetteRead.exists ? d020SilhouetteRead.path : null,
     d020PlayableAttackScreenshot: d020PlayableAttackRead.exists ? d020PlayableAttackRead.path : null,
     d020SecondGimmickScreenshot: d020SecondGimmickRead.exists ? d020SecondGimmickRead.path : null,
     d020SecondGimmickSolvedScreenshot: d020SecondGimmickSolved.exists ? d020SecondGimmickSolved.path : null,
@@ -443,6 +447,7 @@ Canonical hook: ${status.canonicalHook}
 | D-020 slice screenshot | \`${status.currentEvidence.d020SliceScreenshot ?? "missing"}\` |
 | D-020 tool screenshot | \`${status.currentEvidence.d020ToolScreenshot ?? "missing"}\` |
 | D-020 reward screenshot | \`${status.currentEvidence.d020RewardScreenshot ?? "missing"}\` |
+| D-020 silhouette screenshot | \`${status.currentEvidence.d020SilhouetteScreenshot ?? "missing"}\` |
 | D-020 playable attack screenshot | \`${status.currentEvidence.d020PlayableAttackScreenshot ?? "missing"}\` |
 | D-020 second gimmick screenshot | \`${status.currentEvidence.d020SecondGimmickScreenshot ?? "missing"}\` |
 | D-020 second gimmick solved screenshot | \`${status.currentEvidence.d020SecondGimmickSolvedScreenshot ?? "missing"}\` |

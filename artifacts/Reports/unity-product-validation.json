@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T19:33:14.1511590Z",
+  "generatedAtUtc": "2026-06-25T19:44:20.6038080Z",
   "metrics": {
-    "sceneObjects": 185,
-    "sceneRenderers": 167,
+    "sceneObjects": 201,
+    "sceneRenderers": 183,
     "sceneAudioSources": 1,
     "sceneLodGroups": 0,
     "sceneMissingMaterials": 0,
