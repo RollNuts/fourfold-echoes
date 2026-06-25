@@ -15,13 +15,13 @@ audio.sfx.footstep_common,Common Footstep,SFX,player movement readability,P1,nee
 audio.sfx.player_landing,Player Landing,SFX,player movement readability,P1,needed,TBD,TBD,not_started,Required movement cue from D-020.
 audio.sfx.shield_armor_hit,Shield/Armor Hit,SFX,armored hit confirm,P0,needed,TBD,TBD,not_started,Required combat cue from D-020.
 audio.sfx.player_damage,Player Damage,SFX,player damage readability,P0,needed,TBD,TBD,not_started,Required combat cue from D-020.
-audio.sfx.enemy_death,Enemy Death,SFX,enemy defeat readability,P0,needed,TBD,TBD,not_started,Required combat and enemy cue from D-020.
+audio.sfx.enemy_death,Enemy Death,SFX,enemy defeat readability,P0,generated_pilot,Assets/Audio/Generated/enemy_death.wav,repository-authored,d020_pilot,Early D-020 defeat cue; review or replace before Steam capture.
 audio.sfx.guard_start,Guard Start,SFX,defense feedback,P1,needed,TBD,TBD,not_started,Required only if guard ships in the slice.
 audio.sfx.guard_hit,Guard Hit,SFX,defense hit feedback,P1,needed,TBD,TBD,not_started,Required only if guard ships in the slice.
 audio.sfx.parry_success,Parry Success,SFX,defense success feedback,P2,needed,TBD,TBD,not_started,Registered for D-020 parry/success coverage if parry ships in the slice.
 audio.sfx.enemy_notice,Enemy Notice,SFX,enemy awareness readability,P0,needed,TBD,TBD,not_started,Required enemy cue from D-020.
-audio.sfx.tool_target_hit,Exploration Tool Target Hit,SFX,tool success,P0,needed,TBD,TBD,not_started,Required for one-tool MVP.
-audio.sfx.tool_fail,Exploration Tool Fail,SFX,tool no-target feedback,P0,needed,TBD,TBD,not_started,Required for one-tool MVP.
+audio.sfx.tool_target_hit,Exploration Tool Target Hit,SFX,tool success,P0,generated_pilot,Assets/Audio/Generated/tool_target_hit.wav,repository-authored,d020_pilot,Confirms valid target for one-tool MVP; review or replace before Steam capture.
+audio.sfx.tool_fail,Exploration Tool Fail,SFX,tool no-target feedback,P0,generated_pilot,Assets/Audio/Generated/tool_fail.wav,repository-authored,d020_pilot,Short low fail cue for one-tool MVP; review or replace before Steam capture.
 audio.sfx.enemy_tell,Enemy Tell,SFX,combat readability,P0,needed,TBD,TBD,not_started,Required before damage.
 audio.sfx.enemy_attack,Enemy Attack,SFX,enemy attack readability,P0,needed,TBD,TBD,not_started,Required enemy cue from D-020.
 audio.sfx.enemy_damage,Enemy Damage,SFX,enemy damage feedback,P0,needed,TBD,TBD,not_started,Required enemy cue from D-020.

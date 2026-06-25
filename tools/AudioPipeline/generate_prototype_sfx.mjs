@@ -10,9 +10,12 @@ const outputDir = path.join(repo, "Assets/Audio/Generated");
 const cues = [
   { file: "attack_basic.wav", seconds: 0.28, render: renderAttack },
   { file: "hit_enemy.wav", seconds: 0.24, render: renderHit },
+  { file: "enemy_death.wav", seconds: 0.46, render: renderEnemyDeath },
   { file: "dodge.wav", seconds: 0.22, render: renderDodge },
   { file: "relic_pickup.wav", seconds: 0.42, render: renderRelicPickup },
   { file: "tool_pulse.wav", seconds: 0.48, render: renderToolPulse },
+  { file: "tool_target_hit.wav", seconds: 0.36, render: renderToolTargetHit },
+  { file: "tool_fail.wav", seconds: 0.26, render: renderToolFail },
   { file: "shortcut_open.wav", seconds: 0.56, render: renderShortcutOpen },
   { file: "discovery_stinger.wav", seconds: 0.72, render: renderDiscovery }
 ];
@@ -61,6 +64,13 @@ function renderHit(time, progress, random) {
   return body + crack + grit;
 }
 
+function renderEnemyDeath(time, progress, random) {
+  const collapse = sine(chirp(time, 160, 42, progress)) * envelope(progress, 0.006, 0.72) * 0.42;
+  const shards = noise(random) * envelope(progress, 0.004, 0.42) * (1 - progress * 0.35) * 0.2;
+  const lowBell = sine(196 * time) * envelope(Math.max(0, progress - 0.22), 0.03, 0.82) * 0.12;
+  return collapse + shards + lowBell;
+}
+
 function renderDodge(time, progress, random) {
   const whoosh = noise(random) * Math.sin(Math.PI * progress) * 0.24;
   const lift = sine(chirp(time, 320, 640, progress)) * envelope(progress, 0.02, 0.72) * 0.12;
@@ -80,6 +90,20 @@ function renderToolPulse(time, progress, random) {
   const undertone = sine(55 * time) * envelope(progress, 0.03, 0.8) * 0.16;
   const sparkle = noise(random) * Math.sin(Math.PI * progress) * 0.08;
   return shimmer + undertone + sparkle;
+}
+
+function renderToolTargetHit(time, progress, random) {
+  const lock = sine(chirp(time, 480, 1020, progress)) * envelope(progress, 0.008, 0.68) * 0.22;
+  const chime = sine(784 * time) * envelope(Math.max(0, progress - 0.14), 0.018, 0.82) * 0.18;
+  const grain = noise(random) * Math.sin(Math.PI * progress) * 0.06;
+  return lock + chime + grain;
+}
+
+function renderToolFail(time, progress, random) {
+  const dull = sine(chirp(time, 220, 95, progress)) * envelope(progress, 0.006, 0.55) * 0.2;
+  const thud = sine(72 * time) * envelope(progress, 0.002, 0.28) * 0.24;
+  const dust = noise(random) * envelope(progress, 0.01, 0.38) * 0.08;
+  return dull + thud + dust;
 }
 
 function renderShortcutOpen(time, progress, random) {
