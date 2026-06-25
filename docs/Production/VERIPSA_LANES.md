@@ -36,7 +36,7 @@ file-overlap and land-order verdict as the coordination source.
 | PR-A | `product-canon` | D-020 spec reset and source-of-truth docs | `README.md`, `AGENTS.md`, `docs/DECISIONS.md`, `docs/Product/*`, `game-spec/project.yaml`, `game-spec/scenes/d020-vertical-slice.yaml`, `game-spec/entities/d020-vertical-slice.yaml`, `game-spec/scenarios/d020-tool-room-read.yaml` | 1 |
 | PR-B | `art-audio-direction` | art/audio budgets, naming, cue registers, quality gates | `docs/Art/*`, `docs/Audio/*`, `docs/ASSET_RIGHTS.md`, `tools/AudioPipeline/*`, `Assets/Audio/Generated/*` | 2 |
 | PR-C | `production-release-plans` | vertical slice, scope control, QA, store/release/tech plan | `docs/Production/*`, `docs/QA/*`, `docs/Marketing/*`, `docs/Release/*`, `docs/Legal/*`, `docs/Tech/*` | 3 |
-| PR-D | `validation-sync` | update generated reports and checks to reject old scope | `Scripts/Validation/*`, `tools/forge/check.mjs`, `commands/samples/inspect-d020-slice.json`, `artifacts/Reports/*`, `.gitignore`, `artifacts/.gitignore` | 4 |
+| PR-D | `validation-sync` | update static checks and Core split reports to reject old scope | `Scripts/Validation/validate_repo.mjs`, `Scripts/Validation/write_veripsa_split_report.mjs`, `tools/forge/check.mjs`, `commands/samples/inspect-d020-slice.json`, `artifacts/Reports/veripsa-current-split.*`, `artifacts/.gitignore` | 4 |
 | PR-E1 | `d020-tool-runtime` | smallest runtime contract for the one exploration tool | `Assets/Scripts/ExplorationTool.cs`, `Assets/Scripts/ExplorationTool.cs.meta`, `Assets/Scripts/ExplorationNode.cs`, `Assets/Scripts/ExplorationNode.cs.meta` | after A-D |
 | PR-E2 | `d020-scene-evidence` | D-020 generated scene and editor builder only | `Assets/Editor/FourfoldD020SliceSceneBuilder.cs`, `Assets/Editor/FourfoldD020SliceSceneBuilder.cs.meta`, `Assets/Scenes/D020VerticalSlice.unity`, `Assets/Scenes/D020VerticalSlice.unity.meta`, `Assets/Art/Generated/D020/*` | after E1 |
 | PR-E3 | `d020-capture-build` | capture/build/validation wiring for the D-020 slice | `Assets/Editor/FourfoldUnityEvidenceCapture.cs`, `Assets/Editor/FourfoldUnityBuild.cs`, `Scripts/Build/build_current.sh`, `Scripts/Validation/run_all.sh`, `Scripts/Validation/write_market_reports.mjs`, `tools/unity_capture_d020_slice.sh`, `artifacts/Previews/d020-*.png`, `artifacts/Reports/*` | after E2 |
@@ -54,8 +54,8 @@ file-overlap and land-order verdict as the coordination source.
 - `game-spec/*d020*` belongs with PR-A because it tells Forge and future agents
   what scene is current. Historical ProductReview Game IR should not remain in
   the active Game IR tree.
-- `Scripts/Validation/*` should land after canonical docs, otherwise generated
-  reports may lock old wording.
+- Static validation scripts should land after canonical docs, otherwise reports
+  may lock old wording. Unity execution/report scripts stay in PR-E3.
 - `Scripts/Validation/validate_repo.mjs` now owns the D-020 stale-scope guard.
   It should reject current-scope reintroductions of old open-world/Echo Phase
   language in entry docs, Tech architecture, Game IR, Forge checks, and market
