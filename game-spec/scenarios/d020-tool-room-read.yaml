@@ -1,0 +1,23 @@
+version: 1
+scenario:
+  id: scenario.d020.tool_room_read
+  scene: scene.d020_vertical_slice
+  seed: 0
+  purpose: Verify the current D-020 evidence scene reads as a one-tool top-down action-adventure room.
+  expected:
+    objects:
+      - D020 Player
+      - D020 Enemy Read Target
+      - D020 Exploration Tool Node
+      - D020 Shortcut Route
+      - D020 Relic Chest
+    semantic_reads:
+      - player can be found immediately
+      - enemy is visually distinct from player
+      - exploration tool node has a clear target read
+      - shortcut response is visible after tool activation
+      - reward is visible without inventory UI
+    evidence:
+      - artifacts/Previews/d020-slice-camera.png
+      - artifacts/Previews/d020-tool-node-read.png
+      - artifacts/Previews/d020-reward-read.png

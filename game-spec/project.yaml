@@ -3,7 +3,36 @@ project:
   id: project.fourfold_echoes
   title: FOURFOLD ECHOES
   target_unity_version: 6000.3.18f1
-  first_scene: scene.ashen_threshold
+  first_scene: scene.d020_vertical_slice
+  canonical_product:
+    v1_scope: single_player
+    business_model: premium_buy_to_play
+    first_platform: steam_windows
+    world_shape: compact_handcrafted_regions
+    camera: top_down
+    core_hook: one_exploration_tool_mastery
+    hub_count: 1
+    region_count_max: 3
+    boss_count_max: 4
+    exploration_tool_count_max: 1
+    non_goals:
+      - online_coop_v1
+      - matchmaking
+      - dedicated_server
+      - extraction_run_loop
+      - equipped_skill_loss_on_defeat
+      - open_world
+      - echo_phase_world_state_switching
+      - inventory
+      - crafting
+      - quest_log
+      - social_systems
+      - day_night_cycle
+      - fishing
+      - farming
+      - base_building
+      - multiple_exploration_tools
+      - unreviewed_ai_generated_shipped_assets
   director_review:
     primary_outputs:
       - screenshot

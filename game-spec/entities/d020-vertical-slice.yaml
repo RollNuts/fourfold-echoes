@@ -1,0 +1,46 @@
+version: 1
+entities:
+  - id: entity.d020.player
+    archetype: player.visual_read_target
+    scene: scene.d020_vertical_slice
+    gameplay_role: current_player_identity_placeholder
+    acceptance:
+      - must be easy to locate from top-down camera
+      - must show the one exploration tool silhouette
+      - placeholder mesh is evidence only, not production art
+
+  - id: entity.d020.enemy_read_target
+    archetype: enemy.visual_read_target
+    scene: scene.d020_vertical_slice
+    gameplay_role: current_threat_identity_placeholder
+    acceptance:
+      - must not be confused with player
+      - must occupy a clear combat-read position
+      - placeholder mesh is evidence only, not production art
+
+  - id: entity.d020.exploration_tool_node
+    archetype: interactable.exploration_node
+    scene: scene.d020_vertical_slice
+    gameplay_role: one_tool_reactive_target
+    acceptance:
+      - idle state readable without text
+      - activated state reveals or opens the shortcut response
+      - uses `ExplorationNode`, not Echo Phase/world-state code
+
+  - id: entity.d020.shortcut_route
+    archetype: route.shortcut_response
+    scene: scene.d020_vertical_slice
+    gameplay_role: visible_tool_consequence
+    acceptance:
+      - hidden or muted before tool response
+      - obvious route after response
+      - must become a saved progress flag in the playable slice
+
+  - id: entity.d020.relic_chest
+    archetype: reward.relic_chest
+    scene: scene.d020_vertical_slice
+    gameplay_role: reward_read_target
+    acceptance:
+      - readable as reward from top-down camera
+      - must not imply inventory, crafting, or random loot economy
+      - final slice needs open/pickup/save behavior

@@ -2,41 +2,53 @@
 
 Private commercial Unity project for FOURFOLD ECHOES.
 
-FOURFOLD ECHOES is a fixed-angle 3D action RPG / hack-and-slash with Echo
-Phase combat, environmental puzzle pressure, loot carry-home, and solo-first
-co-op-ready structure.
+FOURFOLD ECHOES is being reset toward a Steam-first, single-player,
+premium-indie compact top-down classic action-adventure. The canonical direction
+is a focused fantasy game built around one exploration tool, three compact
+handcrafted regions, four bosses, readable combat, shortcuts, relic rewards, and
+strong stylized art/audio.
 
 This repository is private because it contains the commercial runtime path,
 production technique, future assets, polish direction, and Steam-facing product
 work. Public Veripsa dogfood should stay in the public demo repository; shipping
 game work belongs here.
 
-## Current Gate
+## Current Canon
 
-Gate A: one playable Unity room.
+The current product target is documented in:
 
-- Move
-- Attack
-- Dodge
-- Phase switch
-- Ember altar interaction
-- Enemy defeat
-- Gate claim
-- Procedural placeholder audio
-- Fixed-angle 3D block room
+- `docs/Product/CANONICAL_PRODUCT_SPEC.md`
+- `docs/Product/MVP_BLUEPRINT.md`
+- `docs/Product/MARKET_TARGET.md`
+- `docs/Product/CORE_SYSTEMS.md`
+- `docs/Product/VERTICAL_SLICE_CONTENT.md`
+- `docs/Product/SCOPE_BOUNDARIES.md`
 
-## Unity
+`docs/Product/REPO_TIMELINE_AUDIT.md`, Gate A, ProductReviewSandbox, Echo Phase,
+and compact-open-world references are historical context unless D-020 documents
+explicitly re-accept them. D-020 is the current source of truth.
+
+## Historical Prototypes
+
+Older Gate A and ProductReviewSandbox work is historical prototype evidence.
+It is not the product core, not the current control contract, and not the visual
+target. Use `docs/Product/REPO_TIMELINE_AUDIT.md` when legacy context is needed.
+
+## Unity Direction
 
 Target editor: Unity 6.3 LTS `6000.3.18f1`.
 
-The scene is generated from project-authored C# and Unity primitive geometry.
-No third-party art, animation, audio, model, font, or texture asset is committed
-in this first gate.
+The current product scene target is `scene.d020_vertical_slice` in `game-spec`.
+It is the first canonical D-020 proof target, not the old Gate A room.
+
+The next runtime proof must become a controllable Region 01 test room with
+movement, camera, normal attack, dodge, one enemy, the single exploration tool,
+one shortcut response, one reward, and non-placeholder core SFX.
 
 ## Repository Hygiene
 
-- `.gitignore` excludes Unity caches, local editor files, generated Gate A
-  validation output, local evidence, and shipping artifacts.
+- `.gitignore` excludes Unity caches, local editor files, generated validation
+  output, local evidence, and shipping artifacts.
 - `.gitattributes` normalizes text/YAML Unity files and routes commercial binary
   asset formats through Git LFS when they are intentionally tracked.
 - Track Unity `.meta` files beside every committed Unity asset. Missing or
@@ -62,9 +74,9 @@ See `docs/MCP_SECURITY.md`.
 
 ## Veripsa Forge
 
-The Unity path is managed through Veripsa Forge: AI agents edit stable game
-specification files, GitHub and Veripsa Core coordinate PRs, and Unity produces
-screenshots, logs, tests, and builds as evidence.
+The Forge documents are retained as prototype infrastructure. They may be
+generalized later, but product work must not bend itself around old prototype
+shape.
 
 Start here:
 
@@ -74,69 +86,15 @@ Start here:
 - `docs/forge/EDITOR_AUTOMATION.md`
 - `docs/forge/MVP.md`
 
-Local contract checks:
+Local contract checks that are valid for this canon lane:
 
 ```sh
 node tools/forge/check.mjs
 tools/forge/forge inspect project
-tools/forge/forge inspect scene scene.ashen_threshold
-tools/forge/forge validate command commands/samples/run-room-spike.json
+tools/forge/forge inspect scene scene.d020_vertical_slice
 ```
 
-Unity mediator command:
-
-```sh
-tools/unity_forge_command.sh commands/samples/run-room-spike.json
-```
-
-## Generate Scene
-
-Run the Gate A Unity validation:
-
-```sh
-tools/unity_gate_a.sh
-```
-
-This generates and validates `Assets/Scenes/AshenThresholdSpike.unity`.
-Set `UNITY_EDITOR` if Unity is installed outside the default Hub path.
-
-To capture the generated camera view as local evidence:
-
-```sh
-tools/unity_capture_gate_a.sh
-```
-
-## Build Gate A
-
-Build the generated Gate A playable app from the terminal:
-
-```sh
-tools/unity_build_gate_a.sh
-```
-
-The default artifact is the ignored macOS standalone app at
-`Build/GateA/macos/FourfoldEchoesGateA.app`. Use `--run` to open it after a
-successful build:
-
-```sh
-tools/unity_build_gate_a.sh --run
-```
-
-Set `UNITY_EDITOR` if Unity is installed outside the default Hub path. Use
-`FOURFOLD_BUILD_DIR` or `--output-dir` to place uncommitted build artifacts in a
-different ignored/local directory. Windows can be requested with
-`tools/unity_build_gate_a.sh --target windows`, but it depends on the Unity
-Windows standalone module being installed and is not the verified Gate A path.
-
-## Controls
-
-- Move: WASD / arrows
-- Attack: J / left click
-- Dodge: Space, commits in the current facing direction and briefly grants
-  invulnerability
-- Phase: [ / ]
-- Phase action: hold K near altar while Ember is active
-- Claim gate: E / right click
-
-The in-game HUD shows dodge/attack recovery, chain timing, altar heat, the
-current objective, and the hollow strike tell when the enemy is winding up.
+Legacy prototype commands must not be advertised from this canonical README.
+If a later maintenance task needs them, document that task in a dedicated
+historical tooling note instead of turning the old prototype back into the
+project entrypoint.

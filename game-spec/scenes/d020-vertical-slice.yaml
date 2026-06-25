@@ -1,0 +1,27 @@
+version: 1
+scene:
+  id: scene.d020_vertical_slice
+  name: D020 Vertical Slice Evidence
+  purpose: Current D-020 evidence scene for the one-tool compact top-down action-adventure direction.
+  canonical: true
+  product_state: d020_evidence
+  unity_scene: Assets/Scenes/D020VerticalSlice.unity
+  camera:
+    id: camera.d020_top_down
+    mode: top_down_orthographic_review
+    resolution:
+      width: 1280
+      height: 800
+  entities:
+    - entity.d020.player
+    - entity.d020.enemy_read_target
+    - entity.d020.exploration_tool_node
+    - entity.d020.shortcut_route
+    - entity.d020.relic_chest
+  verification:
+    scenarios:
+      - scenario.d020.tool_room_read
+    captures:
+      - artifacts/Previews/d020-slice-camera.png
+      - artifacts/Previews/d020-tool-node-read.png
+      - artifacts/Previews/d020-reward-read.png
