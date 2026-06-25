@@ -139,6 +139,11 @@ namespace FourfoldEchoes.Product
 
         private void Play(AudioClip clip)
         {
+            if (audioSource == null)
+            {
+                audioSource = GetComponent<AudioSource>();
+            }
+
             if (audioSource != null && clip != null)
             {
                 audioSource.PlayOneShot(clip);

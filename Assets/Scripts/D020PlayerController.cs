@@ -21,6 +21,13 @@ namespace FourfoldEchoes.Product
         public int attackDamage = 1;
         public GameObject attackRead;
 
+        [Header("Audio")]
+        public AudioClip attackClip;
+        public AudioClip hitClip;
+        public AudioClip enemyDefeatClip;
+        public AudioClip dodgeClip;
+
+        private AudioSource audioSource;
         private float attackCooldown;
         private float dodgeCooldown;
         private float attackReadTimer;
@@ -34,6 +41,15 @@ namespace FourfoldEchoes.Product
 
         private void Awake()
         {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 0f;
+                audioSource.volume = 0.76f;
+            }
+
             if (attackRead != null)
             {
                 attackRead.SetActive(false);
@@ -97,6 +113,7 @@ namespace FourfoldEchoes.Product
             AttackCount++;
             attackCooldown = Mathf.Max(0f, attackCooldownSeconds);
             attackReadTimer = 0.14f;
+            Play(attackClip);
             if (attackRead != null)
             {
                 attackRead.SetActive(true);
@@ -117,6 +134,7 @@ namespace FourfoldEchoes.Product
                 if (delta.magnitude <= attackRange && enemy.TakeHit(attackDamage))
                 {
                     AttackHitCount++;
+                    Play(enemy.IsDefeated ? enemyDefeatClip : hitClip);
                     hit = true;
                 }
             }
@@ -141,6 +159,7 @@ namespace FourfoldEchoes.Product
             Face(direction);
             DodgeCount++;
             dodgeCooldown = Mathf.Max(0f, dodgeCooldownSeconds);
+            Play(dodgeClip);
             return true;
         }
 
@@ -198,6 +217,19 @@ namespace FourfoldEchoes.Product
         private bool IsAttackPressed()
         {
             return Input.GetKeyDown(attackKey) || Input.GetMouseButtonDown(0);
+        }
+
+        private void Play(AudioClip clip)
+        {
+            if (audioSource == null)
+            {
+                audioSource = GetComponent<AudioSource>();
+            }
+
+            if (audioSource != null && clip != null)
+            {
+                audioSource.PlayOneShot(clip);
+            }
         }
     }
 }
