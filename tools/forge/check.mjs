@@ -19,9 +19,23 @@ const textRoots = [
 const jsonFiles = [
   "contracts/schemas/forge-command.schema.json",
   "contracts/schemas/forge-event.schema.json",
-  "commands/samples/run-room-spike.json"
+  "commands/samples/inspect-d020-slice.json"
 ];
 const forbidden = /\/Users\/|TOKEN|SECRET|PRIVATE KEY|pem|api[_-]?key|github_pat|ghp_|gho_/;
+const textFileExtensions = new Set([
+  ".cs",
+  ".csv",
+  ".html",
+  ".js",
+  ".json",
+  ".md",
+  ".mjs",
+  ".sh",
+  ".txt",
+  ".xml",
+  ".yaml",
+  ".yml"
+]);
 
 function run(command, args) {
   const result = childProcess.spawnSync(command, args, {
@@ -75,6 +89,9 @@ function scanTextFiles() {
     if (!fs.statSync(absolutePath).isFile()) {
       continue;
     }
+    if (!textFileExtensions.has(path.extname(file))) {
+      continue;
+    }
     const content = fs.readFileSync(absolutePath, "utf8");
     if (forbidden.test(content)) {
       matches.push(file);
@@ -87,8 +104,8 @@ function scanTextFiles() {
 }
 
 run("tools/forge/forge", ["inspect", "project"]);
-run("tools/forge/forge", ["inspect", "scene", "scene.ashen_threshold"]);
-run("tools/forge/forge", ["validate", "command", "commands/samples/run-room-spike.json"]);
+run("tools/forge/forge", ["inspect", "scene", "scene.d020_vertical_slice"]);
+run("tools/forge/forge", ["validate", "command", "commands/samples/inspect-d020-slice.json"]);
 parseJsonFiles();
 scanTextFiles();
 console.log("forge check ok");

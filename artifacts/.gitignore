@@ -3,6 +3,10 @@
 !screenshots/
 !logs/
 !test-results/
+!Reports/
 !screenshots/.gitkeep
 !logs/.gitkeep
 !test-results/.gitkeep
+!Reports/.gitkeep
+!Reports/*.md
+!Reports/*.json

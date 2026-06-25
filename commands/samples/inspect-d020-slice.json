@@ -1,0 +1,11 @@
+{
+  "commandId": "cmd.d020_slice.inspect_project",
+  "action": "inspect_project",
+  "sceneId": "scene.d020_vertical_slice",
+  "seed": 0,
+  "evidence": {
+    "screenshot": false,
+    "video": false,
+    "playmodeLog": false
+  }
+}
