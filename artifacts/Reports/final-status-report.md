@@ -1,6 +1,6 @@
 # Final Status Report
 
-Generated UTC: `2026-06-25T18:49:38.552Z`
+Generated UTC: `2026-06-25T19:03:53.937Z`
 
 ## Final Product Definition
 
@@ -17,10 +17,13 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 | D-020 slice screenshot | `artifacts/Previews/d020-slice-camera.png` |
 | D-020 tool screenshot | `artifacts/Previews/d020-tool-node-read.png` |
 | D-020 reward screenshot | `artifacts/Previews/d020-reward-read.png` |
-| Visual evidence shots | 3 generated |
+| D-020 playable attack screenshot | `artifacts/Previews/d020-playable-attack-read.png` |
+| Visual evidence shots | 4 generated |
 | Performance snapshot | `artifacts/Reports/performance-snapshot.json` |
 | Audio inventory | `artifacts/Reports/audio-inventory.json` |
 | D-020 tool runtime | `Assets/Scripts/ExplorationTool.cs` |
+| D-020 player runtime | `Assets/Scripts/D020PlayerController.cs` |
+| D-020 enemy runtime | `Assets/Scripts/D020EnemyDummy.cs` |
 | Build artifact | `Build/D020Slice/macos/FourfoldEchoesD020Slice.app` |
 
 ## Market Ready Status
@@ -38,9 +41,8 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 
 ## Exact Next Highest-Leverage Work
 
-- Turn D020VerticalSlice from static evidence into the first controllable Region 01 test room with movement, camera, normal attack, dodge, one enemy, and tool response.
 - Add a second gimmick room that reuses the same ExplorationTool differently without adding a new system.
 - Replace pilot hero/tool/enemy with production-intent stylized silhouettes and turnaround evidence.
 - Add a non-placeholder tool pulse SFX, target-hit SFX, attack hit SFX, enemy tell SFX, and discovery stinger.
-- Add an automated runtime input smoke test that proves movement, attack, dodge, tool use, and SFX wiring in a build or PlayMode.
+- Extend the automated runtime smoke to cover SFX wiring and a build-level input replay.
 - Capture a frame-time profiler sample for the current playable test scene.

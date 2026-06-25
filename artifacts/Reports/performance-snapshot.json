@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T18:49:38.552Z",
+  "generatedAtUtc": "2026-06-25T19:03:53.937Z",
   "scope": "D-020 vertical slice evidence snapshot",
   "caveat": "This is not a runtime profiler capture. It summarizes current scene, asset, and screenshot evidence until a real playthrough/profiler scenario exists.",
   "targets": {
@@ -9,8 +9,8 @@
     "ps5Readiness": "asset budgets and platform-safe structure only; no PS5 build claim"
   },
   "unityMetrics": {
-    "sceneObjects": 116,
-    "sceneRenderers": 103,
+    "sceneObjects": 118,
+    "sceneRenderers": 105,
     "sceneAudioSources": 1,
     "sceneLodGroups": 0,
     "sceneMissingMaterials": 0,
@@ -45,6 +45,13 @@
       "sizeBytes": 326514,
       "width": 1280,
       "height": 800
+    },
+    {
+      "path": "artifacts/Previews/d020-playable-attack-read.png",
+      "exists": true,
+      "sizeBytes": 390273,
+      "width": 1280,
+      "height": 800
     }
   ],
   "d020Screenshot": {
@@ -68,17 +75,28 @@
     "width": 1280,
     "height": 800
   },
+  "d020PlayableAttackRead": {
+    "path": "artifacts/Previews/d020-playable-attack-read.png",
+    "exists": true,
+    "sizeBytes": 390273,
+    "width": 1280,
+    "height": 800
+  },
   "buildArtifact": {
     "path": "Build/D020Slice/macos/FourfoldEchoesD020Slice.app",
     "exists": true,
-    "sizeBytes": 106559656
+    "sizeBytes": 106566220
   },
   "d020Runtime": {
     "scenePath": "Assets/Scenes/D020VerticalSlice.unity",
     "sceneExists": true,
     "toolRuntimePath": "Assets/Scripts/ExplorationTool.cs",
     "toolRuntimeExists": true,
-    "status": "one_tool_scene_proof"
+    "playerRuntimePath": "Assets/Scripts/D020PlayerController.cs",
+    "playerRuntimeExists": true,
+    "enemyRuntimePath": "Assets/Scripts/D020EnemyDummy.cs",
+    "enemyRuntimeExists": true,
+    "status": "one_tool_playable_smoke"
   },
   "knownGaps": [
     "No frame-time profiler sample has been captured yet.",

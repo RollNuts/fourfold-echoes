@@ -1,6 +1,6 @@
 # Performance Snapshot
 
-Generated UTC: `2026-06-25T18:49:38.552Z`
+Generated UTC: `2026-06-25T19:03:53.937Z`
 
 Scope: D-020 vertical slice evidence snapshot
 
@@ -10,20 +10,21 @@ This is not a runtime profiler capture. It summarizes current scene, asset, and 
 
 | Metric | Value |
 | --- | ---: |
-| Scene objects | 116 |
-| Renderers | 103 |
+| Scene objects | 118 |
+| Renderers | 105 |
 | LODGroups | 0 |
 | Missing materials | 0 |
 | Missing scripts | 0 |
 | Build artifact size | 101.6 mb |
 | D-020 screenshot | 1280x800 |
-| D-020 runtime proof | one_tool_scene_proof |
+| D-020 runtime proof | one_tool_playable_smoke |
 
 ## Visual Evidence
 
 - `artifacts/Previews/d020-slice-camera.png`: 1280x800
 - `artifacts/Previews/d020-tool-node-read.png`: 1280x800
 - `artifacts/Previews/d020-reward-read.png`: 1280x800
+- `artifacts/Previews/d020-playable-attack-read.png`: 1280x800
 
 ## Known Gaps
 

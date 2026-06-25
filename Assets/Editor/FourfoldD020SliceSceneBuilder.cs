@@ -41,7 +41,7 @@ namespace FourfoldEchoes.Editor
             var root = new GameObject("D020 Slice World");
             CreateRoom(root.transform, assets);
             var player = CreatePlayer(root.transform, assets);
-            CreateEnemy(root.transform, assets);
+            CreateEnemy(root.transform, assets, player.transform);
             CreateChest(root.transform, assets);
             var node = CreateExplorationToolProof(root.transform, assets);
             CreateRuntimeHook(player.transform, node, assets);
@@ -72,6 +72,8 @@ namespace FourfoldEchoes.Editor
             Require("D020 Top Down Camera");
             RequireComponent<ExplorationTool>("D020 Runtime Hook");
             RequireComponent<ExplorationNode>("D020 Exploration Tool Node");
+            RequireComponent<D020PlayerController>("D020 Player");
+            RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
 
             if (Camera.main == null)
             {
@@ -219,10 +221,19 @@ namespace FourfoldEchoes.Editor
             CreatePrimitive(player.transform, PrimitiveType.Sphere, "D020 Player Head", assets.player, new Vector3(0f, 1.39f, 0f), new Vector3(0.36f, 0.34f, 0.36f));
             CreateBlock(player.transform, "D020 Player Cape", assets.playerCape, new Vector3(-0.12f, 0.74f, -0.18f), new Vector3(0.55f, 0.88f, 0.11f));
             CreateBlock(player.transform, "D020 One Tool Held Read", assets.tool, new Vector3(0.47f, 0.86f, -0.05f), new Vector3(0.15f, 0.92f, 0.12f), Quaternion.Euler(0f, 0f, -25f));
+            var attackRead = CreatePrimitive(player.transform, PrimitiveType.Cylinder, "D020 Player Attack Read", assets.tool, new Vector3(0f, 0.045f, 0.88f), new Vector3(0.86f, 0.022f, 0.46f));
+            attackRead.SetActive(false);
+
+            var controller = player.AddComponent<D020PlayerController>();
+            controller.attackRead = attackRead;
+            controller.attackRange = 1.45f;
+            controller.moveSpeed = 3.35f;
+            controller.minBounds = new Vector2(-4.1f, -2.8f);
+            controller.maxBounds = new Vector2(4.1f, 2.8f);
             return player;
         }
 
-        private static void CreateEnemy(Transform root, GeneratedAssets assets)
+        private static void CreateEnemy(Transform root, GeneratedAssets assets, Transform player)
         {
             var enemy = new GameObject("D020 Enemy Read Target");
             enemy.transform.SetParent(root);
@@ -233,7 +244,16 @@ namespace FourfoldEchoes.Editor
             CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Enemy Tell Core", assets.enemyTell, new Vector3(0f, 1.06f, -0.22f), new Vector3(0.26f, 0.26f, 0.14f));
             CreateBlock(enemy.transform, "D020 Enemy Left Arm", assets.enemy, new Vector3(-0.55f, 0.72f, 0f), new Vector3(0.22f, 0.58f, 0.20f), Quaternion.Euler(0f, 0f, 18f));
             CreateBlock(enemy.transform, "D020 Enemy Right Arm", assets.enemy, new Vector3(0.55f, 0.72f, 0f), new Vector3(0.22f, 0.58f, 0.20f), Quaternion.Euler(0f, 0f, -18f));
-            CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Enemy Attack Read", assets.enemyTell, new Vector3(0f, 0.035f, -0.9f), new Vector3(0.95f, 0.025f, 0.95f));
+            var tellRead = CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Enemy Attack Read", assets.enemyTell, new Vector3(0f, 0.035f, -0.9f), new Vector3(0.95f, 0.025f, 0.95f));
+            var defeatedRead = CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Enemy Defeated Shard", assets.route, new Vector3(0f, 0.24f, 0f), new Vector3(0.42f, 0.20f, 0.42f));
+            defeatedRead.SetActive(false);
+
+            var dummy = enemy.AddComponent<D020EnemyDummy>();
+            dummy.target = player;
+            dummy.tellRead = tellRead;
+            dummy.defeatedRead = defeatedRead;
+            dummy.maxHealth = 3;
+            dummy.slowChaseSpeed = 0.45f;
         }
 
         private static void CreateChest(Transform root, GeneratedAssets assets)

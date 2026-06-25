@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T18:49:38.552Z",
+  "generatedAtUtc": "2026-06-25T19:03:53.937Z",
   "finalProductDefinition": "Steam-first, buy-to-play, single-player top-down classic action-adventure.",
   "canonicalHook": "Leave one hub, explore three compact handcrafted regions, master one exploration tool, open shortcuts, earn relic rewards, and defeat four bosses.",
   "currentEvidence": {
@@ -9,14 +9,18 @@
     "d020SliceScreenshot": "artifacts/Previews/d020-slice-camera.png",
     "d020ToolScreenshot": "artifacts/Previews/d020-tool-node-read.png",
     "d020RewardScreenshot": "artifacts/Previews/d020-reward-read.png",
+    "d020PlayableAttackScreenshot": "artifacts/Previews/d020-playable-attack-read.png",
     "visualEvidence": [
       "artifacts/Previews/d020-slice-camera.png",
       "artifacts/Previews/d020-tool-node-read.png",
-      "artifacts/Previews/d020-reward-read.png"
+      "artifacts/Previews/d020-reward-read.png",
+      "artifacts/Previews/d020-playable-attack-read.png"
     ],
     "performanceSnapshot": "artifacts/Reports/performance-snapshot.json",
     "audioInventory": "artifacts/Reports/audio-inventory.json",
     "d020ToolRuntime": "Assets/Scripts/ExplorationTool.cs",
+    "d020PlayerRuntime": "Assets/Scripts/D020PlayerController.cs",
+    "d020EnemyRuntime": "Assets/Scripts/D020EnemyDummy.cs",
     "buildArtifact": "Build/D020Slice/macos/FourfoldEchoesD020Slice.app"
   },
   "marketReadyStatus": "not_market_ready",
@@ -29,11 +33,10 @@
     "Steam screenshot set is not production-ready."
   ],
   "nextHighestLeverageWork": [
-    "Turn D020VerticalSlice from static evidence into the first controllable Region 01 test room with movement, camera, normal attack, dodge, one enemy, and tool response.",
     "Add a second gimmick room that reuses the same ExplorationTool differently without adding a new system.",
     "Replace pilot hero/tool/enemy with production-intent stylized silhouettes and turnaround evidence.",
     "Add a non-placeholder tool pulse SFX, target-hit SFX, attack hit SFX, enemy tell SFX, and discovery stinger.",
-    "Add an automated runtime input smoke test that proves movement, attack, dodge, tool use, and SFX wiring in a build or PlayMode.",
+    "Extend the automated runtime smoke to cover SFX wiring and a build-level input replay.",
     "Capture a frame-time profiler sample for the current playable test scene."
   ]
 }

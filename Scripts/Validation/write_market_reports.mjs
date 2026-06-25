@@ -11,14 +11,18 @@ const unityReport = readJson("artifacts/Reports/unity-product-validation.json");
 const d020Screenshot = inspectPng("artifacts/Previews/d020-slice-camera.png");
 const d020ToolRead = inspectPng("artifacts/Previews/d020-tool-node-read.png");
 const d020RewardRead = inspectPng("artifacts/Previews/d020-reward-read.png");
+const d020PlayableAttackRead = inspectPng("artifacts/Previews/d020-playable-attack-read.png");
 const requiredVisualEvidence = [
   "artifacts/Previews/d020-slice-camera.png",
   "artifacts/Previews/d020-tool-node-read.png",
-  "artifacts/Previews/d020-reward-read.png"
+  "artifacts/Previews/d020-reward-read.png",
+  "artifacts/Previews/d020-playable-attack-read.png"
 ].map(inspectPng);
 const buildArtifact = inspectPath("Build/D020Slice/macos/FourfoldEchoesD020Slice.app");
 const d020Scene = inspectPath("Assets/Scenes/D020VerticalSlice.unity");
 const d020ToolRuntime = inspectPath("Assets/Scripts/ExplorationTool.cs");
+const d020PlayerRuntime = inspectPath("Assets/Scripts/D020PlayerController.cs");
+const d020EnemyRuntime = inspectPath("Assets/Scripts/D020EnemyDummy.cs");
 const audioRows = readCsv("docs/Audio/ASSET_REGISTER.csv");
 const licenseText = readText("docs/Legal/LICENSES.md");
 const audioFiles = findAudioFiles("Assets/Audio");
@@ -41,13 +45,18 @@ const performanceSnapshot = {
   d020Screenshot,
   d020ToolRead,
   d020RewardRead,
+  d020PlayableAttackRead,
   buildArtifact,
   d020Runtime: {
     scenePath: d020Scene.path,
     sceneExists: d020Scene.exists,
     toolRuntimePath: d020ToolRuntime.path,
     toolRuntimeExists: d020ToolRuntime.exists,
-    status: d020Scene.exists && d020ToolRuntime.exists ? "one_tool_scene_proof" : "missing"
+    playerRuntimePath: d020PlayerRuntime.path,
+    playerRuntimeExists: d020PlayerRuntime.exists,
+    enemyRuntimePath: d020EnemyRuntime.path,
+    enemyRuntimeExists: d020EnemyRuntime.exists,
+    status: d020Scene.exists && d020ToolRuntime.exists && d020PlayerRuntime.exists && d020EnemyRuntime.exists ? "one_tool_playable_smoke" : "missing"
   },
   knownGaps: [
     "No frame-time profiler sample has been captured yet.",
@@ -84,10 +93,13 @@ const finalStatus = {
     d020SliceScreenshot: d020Screenshot.exists ? d020Screenshot.path : null,
     d020ToolScreenshot: d020ToolRead.exists ? d020ToolRead.path : null,
     d020RewardScreenshot: d020RewardRead.exists ? d020RewardRead.path : null,
+    d020PlayableAttackScreenshot: d020PlayableAttackRead.exists ? d020PlayableAttackRead.path : null,
     visualEvidence: requiredVisualEvidence.filter((evidence) => evidence.exists).map((evidence) => evidence.path),
     performanceSnapshot: "artifacts/Reports/performance-snapshot.json",
     audioInventory: "artifacts/Reports/audio-inventory.json",
     d020ToolRuntime: d020ToolRuntime.exists ? d020ToolRuntime.path : null,
+    d020PlayerRuntime: d020PlayerRuntime.exists ? d020PlayerRuntime.path : null,
+    d020EnemyRuntime: d020EnemyRuntime.exists ? d020EnemyRuntime.path : null,
     buildArtifact: buildArtifact.exists ? buildArtifact.path : null
   },
   marketReadyStatus: "not_market_ready",
@@ -100,11 +112,10 @@ const finalStatus = {
     "Steam screenshot set is not production-ready."
   ],
   nextHighestLeverageWork: [
-    "Turn D020VerticalSlice from static evidence into the first controllable Region 01 test room with movement, camera, normal attack, dodge, one enemy, and tool response.",
     "Add a second gimmick room that reuses the same ExplorationTool differently without adding a new system.",
     "Replace pilot hero/tool/enemy with production-intent stylized silhouettes and turnaround evidence.",
     "Add a non-placeholder tool pulse SFX, target-hit SFX, attack hit SFX, enemy tell SFX, and discovery stinger.",
-    "Add an automated runtime input smoke test that proves movement, attack, dodge, tool use, and SFX wiring in a build or PlayMode.",
+    "Extend the automated runtime smoke to cover SFX wiring and a build-level input replay.",
     "Capture a frame-time profiler sample for the current playable test scene."
   ]
 };
@@ -425,10 +436,13 @@ Canonical hook: ${status.canonicalHook}
 | D-020 slice screenshot | \`${status.currentEvidence.d020SliceScreenshot ?? "missing"}\` |
 | D-020 tool screenshot | \`${status.currentEvidence.d020ToolScreenshot ?? "missing"}\` |
 | D-020 reward screenshot | \`${status.currentEvidence.d020RewardScreenshot ?? "missing"}\` |
+| D-020 playable attack screenshot | \`${status.currentEvidence.d020PlayableAttackScreenshot ?? "missing"}\` |
 | Visual evidence shots | ${status.currentEvidence.visualEvidence?.length ?? 0} generated |
 | Performance snapshot | \`${status.currentEvidence.performanceSnapshot}\` |
 | Audio inventory | \`${status.currentEvidence.audioInventory}\` |
 | D-020 tool runtime | \`${status.currentEvidence.d020ToolRuntime ?? "missing"}\` |
+| D-020 player runtime | \`${status.currentEvidence.d020PlayerRuntime ?? "missing"}\` |
+| D-020 enemy runtime | \`${status.currentEvidence.d020EnemyRuntime ?? "missing"}\` |
 | Build artifact | \`${status.currentEvidence.buildArtifact ?? "missing"}\` |
 
 ## Market Ready Status

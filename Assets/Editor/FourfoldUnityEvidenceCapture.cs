@@ -34,6 +34,8 @@ namespace FourfoldEchoes.Editor
             Directory.CreateDirectory(outputDirectory);
             var shortcutNode = FindSceneObject("D020 Exploration Tool Node")?.GetComponent<ExplorationNode>();
             var shortcutRoute = FindSceneObject("D020 Shortcut Route");
+            var player = UnityEngine.Object.FindFirstObjectByType<D020PlayerController>();
+            var enemy = UnityEngine.Object.FindFirstObjectByType<D020EnemyDummy>();
 
             var outputPath = Path.Combine(outputDirectory, "d020-slice-camera.png");
             if (shortcutNode != null)
@@ -65,6 +67,18 @@ namespace FourfoldEchoes.Editor
                 new Vector3(5.6f, 6.4f, -4.8f),
                 new Vector3(2.1f, 0.45f, -1.0f),
                 3.8f);
+            if (player != null && enemy != null)
+            {
+                enemy.ResetEnemy();
+                player.ResetForSmoke(enemy.transform.position + new Vector3(0f, 0f, -0.95f));
+                player.TryAttack();
+                CaptureCameraFromPose(
+                    camera,
+                    Path.Combine(outputDirectory, "d020-playable-attack-read.png"),
+                    new Vector3(4.9f, 6.25f, -4.55f),
+                    new Vector3(1.0f, 0.45f, -0.05f),
+                    3.25f);
+            }
 
             Debug.Log($"FOURFOLD D-020 vertical slice camera evidence captured: {outputPath}");
         }
