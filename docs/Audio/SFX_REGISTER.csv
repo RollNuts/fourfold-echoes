@@ -1,0 +1,43 @@
+asset_id,display_name,category,gameplay_role,priority,status,unity_path,license,acceptance_status,notes
+audio.sfx.normal_swing,Basic Attack,SFX,attack feedback,P0,generated_pilot,Assets/Audio/Generated/attack_basic.wav,repository-authored,d020_pilot,Early D-020 combat cue; review or replace before Steam capture.
+audio.sfx.enemy_hit_confirm,Enemy Hit,SFX,hit confirm,P0,generated_pilot,Assets/Audio/Generated/hit_enemy.wav,repository-authored,d020_pilot,Early D-020 hit cue; review or replace before Steam capture.
+audio.sfx.player_dodge,Dodge,SFX,dodge feedback,P0,generated_pilot,Assets/Audio/Generated/dodge.wav,repository-authored,d020_pilot,Early D-020 movement cue; review or replace before Steam capture.
+audio.sfx.tool_pulse,Exploration Tool Pulse,SFX,tool use,P0,generated_pilot,Assets/Audio/Generated/tool_pulse.wav,repository-authored,d020_pilot,Must sync with the one exploration tool VFX.
+audio.sfx.shortcut_open,Shortcut Open,SFX,progress feedback,P0,generated_pilot,Assets/Audio/Generated/shortcut_open.wav,repository-authored,d020_pilot,Confirms route change without extra UI explanation.
+audio.sfx.relic_pickup,Relic Pickup,SFX,reward feedback,P0,generated_pilot,Assets/Audio/Generated/relic_pickup.wav,repository-authored,d020_pilot,Early D-020 reward cue; review or replace before Steam capture.
+audio.sfx.discovery_stinger,Discovery Stinger,SFX,secret/landmark feedback,P1,generated_pilot,Assets/Audio/Generated/discovery_stinger.wav,repository-authored,d020_pilot,Short discovery cue; review or replace before Steam capture.
+audio.sfx.ui_select,UI Select,SFX,UI select feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
+audio.sfx.ui_confirm,UI Confirm,SFX,UI confirm feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
+audio.sfx.ui_back,UI Back,SFX,UI back feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
+audio.sfx.ui_error,UI Error,SFX,UI error feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
+audio.sfx.ui_pause,UI Pause,SFX,pause menu feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
+audio.sfx.footstep_common,Common Footstep,SFX,player movement readability,P1,needed,TBD,TBD,not_started,Required movement cue from D-020.
+audio.sfx.player_landing,Player Landing,SFX,player movement readability,P1,needed,TBD,TBD,not_started,Required movement cue from D-020.
+audio.sfx.shield_armor_hit,Shield/Armor Hit,SFX,armored hit confirm,P0,needed,TBD,TBD,not_started,Required combat cue from D-020.
+audio.sfx.player_damage,Player Damage,SFX,player damage readability,P0,needed,TBD,TBD,not_started,Required combat cue from D-020.
+audio.sfx.enemy_death,Enemy Death,SFX,enemy defeat readability,P0,needed,TBD,TBD,not_started,Required combat and enemy cue from D-020.
+audio.sfx.guard_start,Guard Start,SFX,defense feedback,P1,needed,TBD,TBD,not_started,Required only if guard ships in the slice.
+audio.sfx.guard_hit,Guard Hit,SFX,defense hit feedback,P1,needed,TBD,TBD,not_started,Required only if guard ships in the slice.
+audio.sfx.parry_success,Parry Success,SFX,defense success feedback,P2,needed,TBD,TBD,not_started,Registered for D-020 parry/success coverage if parry ships in the slice.
+audio.sfx.enemy_notice,Enemy Notice,SFX,enemy awareness readability,P0,needed,TBD,TBD,not_started,Required enemy cue from D-020.
+audio.sfx.tool_target_hit,Exploration Tool Target Hit,SFX,tool success,P0,needed,TBD,TBD,not_started,Required for one-tool MVP.
+audio.sfx.tool_fail,Exploration Tool Fail,SFX,tool no-target feedback,P0,needed,TBD,TBD,not_started,Required for one-tool MVP.
+audio.sfx.enemy_tell,Enemy Tell,SFX,combat readability,P0,needed,TBD,TBD,not_started,Required before damage.
+audio.sfx.enemy_attack,Enemy Attack,SFX,enemy attack readability,P0,needed,TBD,TBD,not_started,Required enemy cue from D-020.
+audio.sfx.enemy_damage,Enemy Damage,SFX,enemy damage feedback,P0,needed,TBD,TBD,not_started,Required enemy cue from D-020.
+audio.sfx.boss_intro_hit,Boss Intro Hit,SFX,boss entrance impact,P0,needed,TBD,TBD,not_started,Required boss cue from D-020.
+audio.sfx.boss_tell,Boss Tell,SFX,boss attack readability,P0,needed,TBD,TBD,not_started,Boss tells outrank music.
+audio.sfx.boss_impact,Boss Impact,SFX,boss hit readability,P0,needed,TBD,TBD,not_started,Required boss cue from D-020.
+audio.sfx.boss_transition,Boss Transition,SFX,boss transition readability,P0,needed,TBD,TBD,not_started,Required boss cue from D-020.
+audio.sfx.boss_defeat,Boss Defeat,SFX,boss victory feedback,P0,needed,TBD,TBD,not_started,Required boss cue from D-020.
+audio.sfx.tool_equip_ready,Exploration Tool Equip/Ready,SFX,tool readiness feedback,P0,needed,TBD,TBD,not_started,Required exploration tool cue from D-020.
+audio.sfx.tool_near_response,Exploration Tool Near Response,SFX,tool proximity feedback,P0,needed,TBD,TBD,not_started,Required exploration tool cue from D-020.
+audio.sfx.tool_cooldown_ready,Exploration Tool Cooldown/Ready,SFX,tool cooldown feedback,P0,needed,TBD,TBD,not_started,Required exploration tool cue from D-020.
+audio.sfx.pedestal_wake,Pedestal Wake,SFX,gimmick activation feedback,P0,needed,TBD,TBD,not_started,Required gimmick cue from D-020.
+audio.sfx.mechanism_move,Mechanism Move,SFX,gimmick movement feedback,P0,needed,TBD,TBD,not_started,Required gimmick cue from D-020.
+audio.sfx.chest_open,Chest Open,SFX,reward container feedback,P1,needed,TBD,TBD,not_started,Required reward cue from D-020.
+audio.sfx.relic_appear,Relic Appear,SFX,reward reveal feedback,P1,needed,TBD,TBD,not_started,Required reward cue from D-020.
+audio.sfx.pickup,Pickup,SFX,reward pickup feedback,P1,needed,TBD,TBD,not_started,Required reward cue from D-020.
+audio.sfx.system_save,System Save,SFX,save confirmation,P1,needed,TBD,TBD,not_started,Required system cue from D-020.
+audio.sfx.system_load_continue,System Load/Continue,SFX,load confirmation,P1,needed,TBD,TBD,not_started,Required system cue from D-020.
+audio.sfx.settings_apply,Settings Apply,SFX,settings confirmation,P1,needed,TBD,TBD,not_started,Required system cue from D-020.
