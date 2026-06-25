@@ -25,6 +25,7 @@ namespace FourfoldEchoes.Product
 
         public bool IsReady => cooldownTimer <= 0f;
         public float Cooldown01 => cooldownSeconds <= 0f ? 0f : Mathf.Clamp01(cooldownTimer / cooldownSeconds);
+        public int NodeCount => nodes == null ? 0 : nodes.Length;
 
         private void Awake()
         {
@@ -96,6 +97,16 @@ namespace FourfoldEchoes.Product
 
             Play(fail);
             return false;
+        }
+
+        public void ResetForSmoke()
+        {
+            cooldownTimer = 0f;
+            pulseTimer = 0f;
+            if (pulseRead != null)
+            {
+                pulseRead.SetActive(false);
+            }
         }
 
         private ExplorationNode FindBestNode()

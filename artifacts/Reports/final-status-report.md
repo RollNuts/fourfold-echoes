@@ -1,6 +1,6 @@
 # Final Status Report
 
-Generated UTC: `2026-06-25T19:03:53.937Z`
+Generated UTC: `2026-06-25T19:33:57.505Z`
 
 ## Final Product Definition
 
@@ -18,7 +18,9 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 | D-020 tool screenshot | `artifacts/Previews/d020-tool-node-read.png` |
 | D-020 reward screenshot | `artifacts/Previews/d020-reward-read.png` |
 | D-020 playable attack screenshot | `artifacts/Previews/d020-playable-attack-read.png` |
-| Visual evidence shots | 4 generated |
+| D-020 second gimmick screenshot | `artifacts/Previews/d020-second-gimmick-room-read.png` |
+| D-020 second gimmick solved screenshot | `artifacts/Previews/d020-second-gimmick-solved.png` |
+| Visual evidence shots | 6 generated |
 | Performance snapshot | `artifacts/Reports/performance-snapshot.json` |
 | Audio inventory | `artifacts/Reports/audio-inventory.json` |
 | D-020 tool runtime | `Assets/Scripts/ExplorationTool.cs` |
@@ -33,7 +35,6 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 ## Blockers
 
 - No top-down hub/region/boss vertical slice exists.
-- No two gimmick rooms prove repeated use of the single exploration tool.
 - Production hero/tool/enemy/boss silhouettes are not approved.
 - Final music and release-quality core SFX are not implemented.
 - No measured frame-time profiler scenario exists.
@@ -41,7 +42,7 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 
 ## Exact Next Highest-Leverage Work
 
-- Add a second gimmick room that reuses the same ExplorationTool differently without adding a new system.
+- Add a full Region 01 playable path that connects hub entry, two gimmick rooms, shortcut, reward, enemy pressure, and boss entry without adding systems.
 - Replace pilot hero/tool/enemy with production-intent stylized silhouettes and turnaround evidence.
 - Add a non-placeholder tool pulse SFX, target-hit SFX, attack hit SFX, enemy tell SFX, and discovery stinger.
 - Extend the automated runtime smoke to cover SFX wiring and a build-level input replay.

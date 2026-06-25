@@ -1,13 +1,13 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-25T19:03:22.2483550Z`
+Generated UTC: `2026-06-25T19:33:14.1543030Z`
 
 ## Metrics
 
 | Metric | Value |
 | --- | ---: |
-| Active scene objects | 118 |
-| Renderers | 105 |
+| Active scene objects | 185 |
+| Renderers | 167 |
 | AudioSources | 1 |
 | LODGroups | 0 |
 | Missing material slots | 0 |
@@ -24,8 +24,8 @@ Generated UTC: `2026-06-25T19:03:22.2483550Z`
 ## Findings
 
 - **info** `render.pipeline`: Built-in render pipeline is active.
-- **info** `d020.slice`: D-020 vertical slice evidence scene generated and validated with player, one tool node, shortcut route, enemy, and relic chest.
-- **info** `d020.playable_smoke`: D-020 playable smoke passed for movement, dodge, normal attack, enemy hit, and one-tool node activation.
+- **info** `d020.slice`: D-020 vertical slice evidence scene generated and validated with player, two one-tool nodes, shortcut route, second reward route, enemy, and relic chests.
+- **info** `d020.playable_smoke`: D-020 playable smoke passed for movement, dodge, normal attack, enemy hit, and two one-tool node activations.
 - **info** `prototype.gate_a`: Legacy Gate A generation skipped. Set FOURFOLD_INCLUDE_LEGACY_GATE_A=1 to validate the old harness explicitly.
 - **warn** `prefab.assets`: No prefab assets found. Production content is not prefabbed yet.
 - **warn** `texture.assets`: No production texture assets found. Store-quality art pass has not started.
@@ -33,4 +33,4 @@ Generated UTC: `2026-06-25T19:03:22.2483550Z`
 
 ## Product Interpretation
 
-This report validates technical hygiene only. D020VerticalSlice is the current D-020 evidence path for the first single ExplorationTool + ExplorationNode loop, now including a batchmode playable smoke for movement, dodge, normal attack, enemy hit, and tool activation. Historical ProductReview evidence is deliberately outside this lane.
+This report validates technical hygiene only. D020VerticalSlice is the current D-020 evidence path for one ExplorationTool reused across two room problems, now including a batchmode playable smoke for movement, dodge, normal attack, enemy hit, shortcut activation, and second-room reward-route activation. Historical ProductReview evidence is deliberately outside this lane.

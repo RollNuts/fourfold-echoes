@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T19:03:53.937Z",
+  "generatedAtUtc": "2026-06-25T19:33:57.505Z",
   "finalProductDefinition": "Steam-first, buy-to-play, single-player top-down classic action-adventure.",
   "canonicalHook": "Leave one hub, explore three compact handcrafted regions, master one exploration tool, open shortcuts, earn relic rewards, and defeat four bosses.",
   "currentEvidence": {
@@ -10,11 +10,15 @@
     "d020ToolScreenshot": "artifacts/Previews/d020-tool-node-read.png",
     "d020RewardScreenshot": "artifacts/Previews/d020-reward-read.png",
     "d020PlayableAttackScreenshot": "artifacts/Previews/d020-playable-attack-read.png",
+    "d020SecondGimmickScreenshot": "artifacts/Previews/d020-second-gimmick-room-read.png",
+    "d020SecondGimmickSolvedScreenshot": "artifacts/Previews/d020-second-gimmick-solved.png",
     "visualEvidence": [
       "artifacts/Previews/d020-slice-camera.png",
       "artifacts/Previews/d020-tool-node-read.png",
       "artifacts/Previews/d020-reward-read.png",
-      "artifacts/Previews/d020-playable-attack-read.png"
+      "artifacts/Previews/d020-playable-attack-read.png",
+      "artifacts/Previews/d020-second-gimmick-room-read.png",
+      "artifacts/Previews/d020-second-gimmick-solved.png"
     ],
     "performanceSnapshot": "artifacts/Reports/performance-snapshot.json",
     "audioInventory": "artifacts/Reports/audio-inventory.json",
@@ -26,14 +30,13 @@
   "marketReadyStatus": "not_market_ready",
   "blockers": [
     "No top-down hub/region/boss vertical slice exists.",
-    "No two gimmick rooms prove repeated use of the single exploration tool.",
     "Production hero/tool/enemy/boss silhouettes are not approved.",
     "Final music and release-quality core SFX are not implemented.",
     "No measured frame-time profiler scenario exists.",
     "Steam screenshot set is not production-ready."
   ],
   "nextHighestLeverageWork": [
-    "Add a second gimmick room that reuses the same ExplorationTool differently without adding a new system.",
+    "Add a full Region 01 playable path that connects hub entry, two gimmick rooms, shortcut, reward, enemy pressure, and boss entry without adding systems.",
     "Replace pilot hero/tool/enemy with production-intent stylized silhouettes and turnaround evidence.",
     "Add a non-placeholder tool pulse SFX, target-hit SFX, attack hit SFX, enemy tell SFX, and discovery stinger.",
     "Extend the automated runtime smoke to cover SFX wiring and a build-level input replay.",

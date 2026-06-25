@@ -12,11 +12,15 @@ const d020Screenshot = inspectPng("artifacts/Previews/d020-slice-camera.png");
 const d020ToolRead = inspectPng("artifacts/Previews/d020-tool-node-read.png");
 const d020RewardRead = inspectPng("artifacts/Previews/d020-reward-read.png");
 const d020PlayableAttackRead = inspectPng("artifacts/Previews/d020-playable-attack-read.png");
+const d020SecondGimmickRead = inspectPng("artifacts/Previews/d020-second-gimmick-room-read.png");
+const d020SecondGimmickSolved = inspectPng("artifacts/Previews/d020-second-gimmick-solved.png");
 const requiredVisualEvidence = [
   "artifacts/Previews/d020-slice-camera.png",
   "artifacts/Previews/d020-tool-node-read.png",
   "artifacts/Previews/d020-reward-read.png",
-  "artifacts/Previews/d020-playable-attack-read.png"
+  "artifacts/Previews/d020-playable-attack-read.png",
+  "artifacts/Previews/d020-second-gimmick-room-read.png",
+  "artifacts/Previews/d020-second-gimmick-solved.png"
 ].map(inspectPng);
 const buildArtifact = inspectPath("Build/D020Slice/macos/FourfoldEchoesD020Slice.app");
 const d020Scene = inspectPath("Assets/Scenes/D020VerticalSlice.unity");
@@ -46,6 +50,8 @@ const performanceSnapshot = {
   d020ToolRead,
   d020RewardRead,
   d020PlayableAttackRead,
+  d020SecondGimmickRead,
+  d020SecondGimmickSolved,
   buildArtifact,
   d020Runtime: {
     scenePath: d020Scene.path,
@@ -56,7 +62,7 @@ const performanceSnapshot = {
     playerRuntimeExists: d020PlayerRuntime.exists,
     enemyRuntimePath: d020EnemyRuntime.path,
     enemyRuntimeExists: d020EnemyRuntime.exists,
-    status: d020Scene.exists && d020ToolRuntime.exists && d020PlayerRuntime.exists && d020EnemyRuntime.exists ? "one_tool_playable_smoke" : "missing"
+    status: d020Scene.exists && d020ToolRuntime.exists && d020PlayerRuntime.exists && d020EnemyRuntime.exists ? "two_gimmick_rooms_one_tool_smoke" : "missing"
   },
   knownGaps: [
     "No frame-time profiler sample has been captured yet.",
@@ -94,6 +100,8 @@ const finalStatus = {
     d020ToolScreenshot: d020ToolRead.exists ? d020ToolRead.path : null,
     d020RewardScreenshot: d020RewardRead.exists ? d020RewardRead.path : null,
     d020PlayableAttackScreenshot: d020PlayableAttackRead.exists ? d020PlayableAttackRead.path : null,
+    d020SecondGimmickScreenshot: d020SecondGimmickRead.exists ? d020SecondGimmickRead.path : null,
+    d020SecondGimmickSolvedScreenshot: d020SecondGimmickSolved.exists ? d020SecondGimmickSolved.path : null,
     visualEvidence: requiredVisualEvidence.filter((evidence) => evidence.exists).map((evidence) => evidence.path),
     performanceSnapshot: "artifacts/Reports/performance-snapshot.json",
     audioInventory: "artifacts/Reports/audio-inventory.json",
@@ -105,14 +113,13 @@ const finalStatus = {
   marketReadyStatus: "not_market_ready",
   blockers: [
     "No top-down hub/region/boss vertical slice exists.",
-    "No two gimmick rooms prove repeated use of the single exploration tool.",
     "Production hero/tool/enemy/boss silhouettes are not approved.",
     "Final music and release-quality core SFX are not implemented.",
     "No measured frame-time profiler scenario exists.",
     "Steam screenshot set is not production-ready."
   ],
   nextHighestLeverageWork: [
-    "Add a second gimmick room that reuses the same ExplorationTool differently without adding a new system.",
+    "Add a full Region 01 playable path that connects hub entry, two gimmick rooms, shortcut, reward, enemy pressure, and boss entry without adding systems.",
     "Replace pilot hero/tool/enemy with production-intent stylized silhouettes and turnaround evidence.",
     "Add a non-placeholder tool pulse SFX, target-hit SFX, attack hit SFX, enemy tell SFX, and discovery stinger.",
     "Extend the automated runtime smoke to cover SFX wiring and a build-level input replay.",
@@ -437,6 +444,8 @@ Canonical hook: ${status.canonicalHook}
 | D-020 tool screenshot | \`${status.currentEvidence.d020ToolScreenshot ?? "missing"}\` |
 | D-020 reward screenshot | \`${status.currentEvidence.d020RewardScreenshot ?? "missing"}\` |
 | D-020 playable attack screenshot | \`${status.currentEvidence.d020PlayableAttackScreenshot ?? "missing"}\` |
+| D-020 second gimmick screenshot | \`${status.currentEvidence.d020SecondGimmickScreenshot ?? "missing"}\` |
+| D-020 second gimmick solved screenshot | \`${status.currentEvidence.d020SecondGimmickSolvedScreenshot ?? "missing"}\` |
 | Visual evidence shots | ${status.currentEvidence.visualEvidence?.length ?? 0} generated |
 | Performance snapshot | \`${status.currentEvidence.performanceSnapshot}\` |
 | Audio inventory | \`${status.currentEvidence.audioInventory}\` |

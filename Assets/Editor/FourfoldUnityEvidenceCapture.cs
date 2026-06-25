@@ -34,6 +34,8 @@ namespace FourfoldEchoes.Editor
             Directory.CreateDirectory(outputDirectory);
             var shortcutNode = FindSceneObject("D020 Exploration Tool Node")?.GetComponent<ExplorationNode>();
             var shortcutRoute = FindSceneObject("D020 Shortcut Route");
+            var secondNode = FindSceneObject("D020 Second Tool Node")?.GetComponent<ExplorationNode>();
+            var secondRewardRoute = FindSceneObject("D020 Second Reward Route");
             var player = UnityEngine.Object.FindFirstObjectByType<D020PlayerController>();
             var enemy = UnityEngine.Object.FindFirstObjectByType<D020EnemyDummy>();
 
@@ -46,6 +48,14 @@ namespace FourfoldEchoes.Editor
             {
                 shortcutRoute.SetActive(false);
             }
+            if (secondNode != null)
+            {
+                secondNode.SetSolved(false);
+            }
+            else if (secondRewardRoute != null)
+            {
+                secondRewardRoute.SetActive(false);
+            }
             CaptureCamera(camera, outputPath);
             if (shortcutNode != null)
             {
@@ -54,6 +64,10 @@ namespace FourfoldEchoes.Editor
             else if (shortcutRoute != null)
             {
                 shortcutRoute.SetActive(true);
+            }
+            if (secondNode != null)
+            {
+                secondNode.SetSolved(false);
             }
             CaptureCameraFromPose(
                 camera,
@@ -67,6 +81,40 @@ namespace FourfoldEchoes.Editor
                 new Vector3(5.6f, 6.4f, -4.8f),
                 new Vector3(2.1f, 0.45f, -1.0f),
                 3.8f);
+            if (secondNode != null)
+            {
+                secondNode.SetSolved(false);
+            }
+            else if (secondRewardRoute != null)
+            {
+                secondRewardRoute.SetActive(false);
+            }
+            CaptureCameraFromPose(
+                camera,
+                Path.Combine(outputDirectory, "d020-second-gimmick-before.png"),
+                new Vector3(11.45f, 7.45f, -5.45f),
+                new Vector3(7.65f, 0.35f, -0.35f),
+                4.05f);
+            CaptureCameraFromPose(
+                camera,
+                Path.Combine(outputDirectory, "d020-second-gimmick-room-read.png"),
+                new Vector3(11.45f, 7.45f, -5.45f),
+                new Vector3(7.65f, 0.35f, -0.35f),
+                4.05f);
+            if (secondNode != null)
+            {
+                secondNode.SetSolved(true);
+            }
+            else if (secondRewardRoute != null)
+            {
+                secondRewardRoute.SetActive(true);
+            }
+            CaptureCameraFromPose(
+                camera,
+                Path.Combine(outputDirectory, "d020-second-gimmick-solved.png"),
+                new Vector3(11.45f, 7.45f, -5.45f),
+                new Vector3(8.10f, 0.35f, 0.15f),
+                4.05f);
             if (player != null && enemy != null)
             {
                 enemy.ResetEnemy();

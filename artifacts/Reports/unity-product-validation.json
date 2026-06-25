@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T19:03:22.2450700Z",
+  "generatedAtUtc": "2026-06-25T19:33:14.1511590Z",
   "metrics": {
-    "sceneObjects": 118,
-    "sceneRenderers": 105,
+    "sceneObjects": 185,
+    "sceneRenderers": 167,
     "sceneAudioSources": 1,
     "sceneLodGroups": 0,
     "sceneMissingMaterials": 0,
@@ -19,8 +19,8 @@
   },
   "findings": [
     {"severity": "info", "code": "render.pipeline", "message": "Built-in render pipeline is active."},
-    {"severity": "info", "code": "d020.slice", "message": "D-020 vertical slice evidence scene generated and validated with player, one tool node, shortcut route, enemy, and relic chest."},
-    {"severity": "info", "code": "d020.playable_smoke", "message": "D-020 playable smoke passed for movement, dodge, normal attack, enemy hit, and one-tool node activation."},
+    {"severity": "info", "code": "d020.slice", "message": "D-020 vertical slice evidence scene generated and validated with player, two one-tool nodes, shortcut route, second reward route, enemy, and relic chests."},
+    {"severity": "info", "code": "d020.playable_smoke", "message": "D-020 playable smoke passed for movement, dodge, normal attack, enemy hit, and two one-tool node activations."},
     {"severity": "info", "code": "prototype.gate_a", "message": "Legacy Gate A generation skipped. Set FOURFOLD_INCLUDE_LEGACY_GATE_A=1 to validate the old harness explicitly."},
     {"severity": "warn", "code": "prefab.assets", "message": "No prefab assets found. Production content is not prefabbed yet."},
     {"severity": "warn", "code": "texture.assets", "message": "No production texture assets found. Store-quality art pass has not started."},

@@ -43,8 +43,9 @@ namespace FourfoldEchoes.Editor
             var player = CreatePlayer(root.transform, assets);
             CreateEnemy(root.transform, assets, player.transform);
             CreateChest(root.transform, assets);
-            var node = CreateExplorationToolProof(root.transform, assets);
-            CreateRuntimeHook(player.transform, node, assets);
+            var shortcutNode = CreateExplorationToolProof(root.transform, assets);
+            var secondNode = CreateSecondGimmickProof(root.transform, assets);
+            CreateRuntimeHook(player.transform, new[] { shortcutNode, secondNode }, assets);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[]
@@ -69,11 +70,21 @@ namespace FourfoldEchoes.Editor
             Require("D020 Relic Chest");
             Require("D020 Exploration Tool Node");
             Require("D020 Shortcut Route");
+            Require("D020 Second Gimmick Room");
+            Require("D020 Second Tool Node");
+            Require("D020 Second Reward Route");
+            Require("D020 Second Relic Chest");
             Require("D020 Top Down Camera");
             RequireComponent<ExplorationTool>("D020 Runtime Hook");
             RequireComponent<ExplorationNode>("D020 Exploration Tool Node");
+            RequireComponent<ExplorationNode>("D020 Second Tool Node");
             RequireComponent<D020PlayerController>("D020 Player");
             RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
+            var tool = FindSceneObject("D020 Runtime Hook").GetComponent<ExplorationTool>();
+            if (tool.NodeCount < 2)
+            {
+                throw new InvalidOperationException("D-020 runtime hook must reference two exploration nodes for the two-gimmick-room proof.");
+            }
 
             if (Camera.main == null)
             {
@@ -145,11 +156,11 @@ namespace FourfoldEchoes.Editor
         private static Camera CreateCamera()
         {
             var cameraObject = new GameObject("D020 Top Down Camera") { tag = "MainCamera" };
-            cameraObject.transform.position = new Vector3(6.2f, 9.4f, -7.2f);
-            cameraObject.transform.rotation = Quaternion.LookRotation(new Vector3(0.2f, 0.4f, -0.15f) - cameraObject.transform.position, Vector3.up);
+            cameraObject.transform.position = new Vector3(8.8f, 11.2f, -8.6f);
+            cameraObject.transform.rotation = Quaternion.LookRotation(new Vector3(3.3f, 0.35f, -0.05f) - cameraObject.transform.position, Vector3.up);
             var camera = cameraObject.AddComponent<Camera>();
             camera.orthographic = true;
-            camera.orthographicSize = 5.6f;
+            camera.orthographicSize = 7.0f;
             camera.nearClipPlane = 0.1f;
             camera.farClipPlane = 90f;
             camera.clearFlags = CameraClearFlags.SolidColor;
@@ -206,6 +217,29 @@ namespace FourfoldEchoes.Editor
             CreateBlock(room.transform, "D020 Shortcut Gap Right", assets.floorDark, new Vector3(-4.55f, 0.28f, -1.15f), new Vector3(0.28f, 0.56f, 1.1f));
             CreateBlock(room.transform, "D020 Main Path Line A", assets.route, new Vector3(-1.2f, 0.025f, -1.6f), new Vector3(1.2f, 0.05f, 0.14f), Quaternion.Euler(0f, 16f, 0f));
             CreateBlock(room.transform, "D020 Main Path Line B", assets.route, new Vector3(0.2f, 0.025f, -1.25f), new Vector3(1.2f, 0.05f, 0.14f), Quaternion.Euler(0f, -8f, 0f));
+
+            CreateBlock(room.transform, "D020 Room Link", assets.route, new Vector3(4.55f, 0.02f, -0.15f), new Vector3(1.4f, 0.05f, 0.24f), Quaternion.Euler(0f, 8f, 0f));
+
+            var secondRoom = new GameObject("D020 Second Gimmick Room");
+            secondRoom.transform.SetParent(root);
+            for (var x = 5; x <= 10; x++)
+            {
+                for (var z = -3; z <= 3; z++)
+                {
+                    var edge = x == 10 || Mathf.Abs(z) == 3;
+                    var material = edge ? assets.floorDark : assets.floor;
+                    CreateBlock(secondRoom.transform, $"D020 Second Floor {x},{z}", material, new Vector3(x, -0.075f, z), new Vector3(0.94f, 0.15f, 0.94f));
+                }
+            }
+
+            for (var z = -2; z <= 2; z += 2)
+            {
+                CreateBlock(secondRoom.transform, $"D020 Second Low East Wall {z}", assets.floorDark, new Vector3(10.48f, 0.32f, z), new Vector3(0.28f, 0.64f, 1.15f));
+            }
+
+            CreateBlock(secondRoom.transform, "D020 Second Entry Marker", assets.tool, new Vector3(5.25f, 0.045f, -0.1f), new Vector3(0.72f, 0.055f, 0.18f), Quaternion.Euler(0f, -14f, 0f));
+            CreateBlock(secondRoom.transform, "D020 Second Hidden Path Hint A", assets.floorDark, new Vector3(7.2f, 0.035f, 1.25f), new Vector3(0.7f, 0.05f, 0.12f), Quaternion.Euler(0f, 35f, 0f));
+            CreateBlock(secondRoom.transform, "D020 Second Hidden Path Hint B", assets.floorDark, new Vector3(8.05f, 0.035f, 1.58f), new Vector3(0.7f, 0.05f, 0.12f), Quaternion.Euler(0f, 18f, 0f));
         }
 
         private static GameObject CreatePlayer(Transform root, GeneratedAssets assets)
@@ -229,7 +263,7 @@ namespace FourfoldEchoes.Editor
             controller.attackRange = 1.45f;
             controller.moveSpeed = 3.35f;
             controller.minBounds = new Vector2(-4.1f, -2.8f);
-            controller.maxBounds = new Vector2(4.1f, 2.8f);
+            controller.maxBounds = new Vector2(10.3f, 2.8f);
             return player;
         }
 
@@ -305,7 +339,49 @@ namespace FourfoldEchoes.Editor
             return node;
         }
 
-        private static void CreateRuntimeHook(Transform player, ExplorationNode node, GeneratedAssets assets)
+        private static ExplorationNode CreateSecondGimmickProof(Transform root, GeneratedAssets assets)
+        {
+            var proof = new GameObject("D020 Second Tool Proof");
+            proof.transform.SetParent(root);
+
+            var response = new GameObject("D020 Second Reward Route");
+            response.transform.SetParent(proof.transform);
+            response.transform.position = Vector3.zero;
+            CreateBlock(response.transform, "D020 Second Reward Slab A", assets.route, new Vector3(7.28f, 0.07f, 1.18f), new Vector3(0.78f, 0.07f, 0.32f), Quaternion.Euler(0f, 22f, 0f));
+            CreateBlock(response.transform, "D020 Second Reward Slab B", assets.route, new Vector3(8.02f, 0.08f, 1.46f), new Vector3(0.78f, 0.07f, 0.32f), Quaternion.Euler(0f, 14f, 0f));
+            CreateBlock(response.transform, "D020 Second Reward Slab C", assets.route, new Vector3(8.76f, 0.09f, 1.65f), new Vector3(0.78f, 0.07f, 0.32f), Quaternion.Euler(0f, 5f, 0f));
+            CreatePrimitive(response.transform, PrimitiveType.Sphere, "D020 Second Route Spark A", assets.tool, new Vector3(7.68f, 0.44f, 1.32f), new Vector3(0.18f, 0.18f, 0.18f));
+            CreatePrimitive(response.transform, PrimitiveType.Sphere, "D020 Second Route Spark B", assets.tool, new Vector3(8.74f, 0.5f, 1.64f), new Vector3(0.18f, 0.18f, 0.18f));
+
+            var chest = new GameObject("D020 Second Relic Chest");
+            chest.transform.SetParent(response.transform);
+            chest.transform.position = new Vector3(9.45f, 0.14f, 1.8f);
+            chest.transform.rotation = Quaternion.Euler(0f, -36f, 0f);
+            CreateBlock(chest.transform, "D020 Second Chest Base", assets.chest, Vector3.zero, new Vector3(0.70f, 0.38f, 0.52f));
+            CreateBlock(chest.transform, "D020 Second Chest Lid", assets.route, new Vector3(0f, 0.31f, 0f), new Vector3(0.74f, 0.13f, 0.56f));
+            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Second Visible Relic", assets.relic, new Vector3(0f, 0.66f, 0f), new Vector3(0.22f, 0.32f, 0.22f));
+
+            var nodeObject = new GameObject("D020 Second Tool Node");
+            nodeObject.transform.SetParent(proof.transform);
+            nodeObject.transform.position = new Vector3(6.85f, 0.1f, -1.7f);
+            var footprint = CreatePrimitive(nodeObject.transform, PrimitiveType.Cylinder, "D020 Second Node Footprint", assets.tool, Vector3.zero, new Vector3(0.58f, 0.026f, 0.58f));
+            CreateBlock(nodeObject.transform, "D020 Second Node Pedestal", assets.floorDark, new Vector3(0f, 0.18f, 0f), new Vector3(0.44f, 0.32f, 0.44f));
+            CreatePrimitive(nodeObject.transform, PrimitiveType.Sphere, "D020 Second Node Idle Lens", assets.tool, new Vector3(0f, 0.54f, 0f), new Vector3(0.20f, 0.16f, 0.20f));
+            var activeRead = CreateBlock(nodeObject.transform, "D020 Second Node Active Beam", assets.relic, new Vector3(0f, 0.74f, 0f), new Vector3(0.12f, 0.52f, 0.12f), Quaternion.Euler(0f, 0f, 45f));
+            activeRead.SetActive(false);
+            response.SetActive(false);
+
+            var node = nodeObject.AddComponent<ExplorationNode>();
+            node.activationRadius = 2.4f;
+            node.responseTarget = response;
+            node.idleRead = footprint;
+            node.activeRead = activeRead;
+            node.highlightRenderers = response.GetComponentsInChildren<Renderer>(true);
+            node.ResetNode();
+            return node;
+        }
+
+        private static void CreateRuntimeHook(Transform player, ExplorationNode[] nodes, GeneratedAssets assets)
         {
             var hookObject = new GameObject("D020 Runtime Hook");
             var audioSource = hookObject.AddComponent<AudioSource>();
@@ -314,10 +390,12 @@ namespace FourfoldEchoes.Editor
 
             var tool = hookObject.AddComponent<ExplorationTool>();
             tool.player = player;
-            tool.nodes = new[] { node };
+            tool.nodes = nodes;
             tool.range = 2.8f;
             tool.cooldownSeconds = 0.42f;
-            tool.pulseRead = node.idleRead;
+            var pulseRead = CreatePrimitive(player, PrimitiveType.Cylinder, "D020 Tool Pulse Read", assets.tool, new Vector3(0f, 0.055f, 0f), new Vector3(1.08f, 0.035f, 1.08f));
+            pulseRead.SetActive(false);
+            tool.pulseRead = pulseRead;
         }
 
         private static GameObject CreateBlock(Transform parent, string name, Material material, Vector3 localPosition, Vector3 localScale)
