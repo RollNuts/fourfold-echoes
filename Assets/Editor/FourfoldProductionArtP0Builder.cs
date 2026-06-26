@@ -172,18 +172,22 @@ namespace FourfoldEchoes.Editor
         {
             var root = new GameObject("FE_HERO_P0");
             AddPart(root.transform, "FE_HERO_P0_ControlRing", meshes.disc, materials.heroAura, new Vector3(0f, 0.035f, 0f), Quaternion.identity, new Vector3(1.35f, 0.05f, 1.35f));
-            AddPart(root.transform, "FE_HERO_P0_LeftBoot", meshes.box, materials.dark, new Vector3(-0.18f, 0.18f, 0.12f), Quaternion.identity, new Vector3(0.28f, 0.36f, 0.46f));
-            AddPart(root.transform, "FE_HERO_P0_RightBoot", meshes.box, materials.dark, new Vector3(0.19f, 0.18f, -0.10f), Quaternion.identity, new Vector3(0.28f, 0.36f, 0.46f));
-            AddPart(root.transform, "FE_HERO_P0_Tunic", meshes.taperedBody, materials.heroIvory, new Vector3(0f, 0.84f, 0f), Quaternion.identity, new Vector3(0.78f, 1.02f, 0.58f));
-            AddPart(root.transform, "FE_HERO_P0_Cloak", meshes.cloak, materials.heroCloak, new Vector3(-0.20f, 0.84f, -0.33f), Quaternion.Euler(0f, 0f, -2f), new Vector3(0.98f, 1.16f, 0.32f));
-            AddPart(root.transform, "FE_HERO_P0_LeftSleeve", meshes.blade, materials.heroCloak, new Vector3(-0.46f, 0.94f, 0.10f), Quaternion.Euler(0f, 0f, 70f), new Vector3(0.20f, 0.58f, 0.14f));
-            AddPart(root.transform, "FE_HERO_P0_RightSleeve", meshes.blade, materials.heroCloak, new Vector3(0.46f, 0.94f, -0.08f), Quaternion.Euler(0f, 0f, -65f), new Vector3(0.20f, 0.60f, 0.14f));
-            AddPart(root.transform, "FE_HERO_P0_Head", meshes.lowPolyGem, materials.heroIvory, new Vector3(0f, 1.58f, 0f), Quaternion.identity, new Vector3(0.38f, 0.42f, 0.38f));
-            AddPart(root.transform, "FE_HERO_P0_FaceRead", meshes.blade, materials.dark, new Vector3(0.03f, 1.55f, 0.22f), Quaternion.Euler(84f, 0f, 180f), new Vector3(0.22f, 0.16f, 0.08f));
-            AddPart(root.transform, "FE_HERO_P0_Crest", meshes.blade, materials.gold, new Vector3(0f, 1.94f, -0.04f), Quaternion.Euler(84f, 0f, 0f), new Vector3(0.34f, 0.20f, 0.20f));
-            AddPart(root.transform, "D020 Player Sword Read", meshes.blade, materials.steel, new Vector3(0.45f, 0.95f, 0.36f), Quaternion.Euler(18f, 0f, -18f), new Vector3(0.20f, 0.92f, 0.15f));
-            AddPart(root.transform, "FE_HERO_P0_ToolSocket", meshes.toolRod, materials.toolGlow, new Vector3(0.66f, 1.05f, -0.18f), Quaternion.Euler(0f, 0f, -20f), new Vector3(0.36f, 0.82f, 0.36f));
-            AddBoxCollider(root, new Vector3(0f, 0.82f, 0f), new Vector3(0.75f, 1.65f, 0.75f));
+            AddPart(root.transform, "FE_HERO_P0_LeftChunkBoot", meshes.box, materials.dark, new Vector3(-0.22f, 0.17f, 0.16f), Quaternion.Euler(0f, -8f, 0f), new Vector3(0.34f, 0.34f, 0.52f));
+            AddPart(root.transform, "FE_HERO_P0_RightChunkBoot", meshes.box, materials.dark, new Vector3(0.23f, 0.17f, -0.10f), Quaternion.Euler(0f, 8f, 0f), new Vector3(0.34f, 0.34f, 0.52f));
+            AddPart(root.transform, "FE_HERO_P0_RobeSkirt", meshes.taperedBody, materials.heroCloak, new Vector3(0f, 0.55f, 0f), Quaternion.identity, new Vector3(0.92f, 0.62f, 0.70f));
+            AddPart(root.transform, "FE_HERO_P0_RoundedTunic", meshes.sphere, materials.heroIvory, new Vector3(0f, 1.02f, 0f), Quaternion.identity, new Vector3(0.82f, 0.86f, 0.66f));
+            AddPart(root.transform, "FE_HERO_P0_BackCloakShell", meshes.cloak, materials.heroCloak, new Vector3(-0.18f, 0.92f, -0.40f), Quaternion.Euler(0f, 0f, -2f), new Vector3(1.18f, 1.26f, 0.42f));
+            AddPart(root.transform, "FE_HERO_P0_LeftMitten", meshes.sphere, materials.heroCloak, new Vector3(-0.52f, 1.06f, 0.14f), Quaternion.identity, new Vector3(0.30f, 0.34f, 0.26f));
+            AddPart(root.transform, "FE_HERO_P0_RightMitten", meshes.sphere, materials.heroCloak, new Vector3(0.54f, 1.04f, -0.10f), Quaternion.identity, new Vector3(0.30f, 0.34f, 0.26f));
+            AddPart(root.transform, "FE_HERO_P0_BigHead", meshes.sphere, materials.heroIvory, new Vector3(0f, 1.64f, 0.02f), Quaternion.identity, new Vector3(0.58f, 0.58f, 0.52f));
+            AddPart(root.transform, "FE_HERO_P0_HoodCap", meshes.sphere, materials.heroCloak, new Vector3(-0.02f, 1.72f, -0.08f), Quaternion.identity, new Vector3(0.68f, 0.48f, 0.56f));
+            AddPart(root.transform, "FE_HERO_P0_FaceMask", meshes.box, materials.dark, new Vector3(0.02f, 1.58f, 0.31f), Quaternion.Euler(0f, 0f, 0f), new Vector3(0.34f, 0.18f, 0.045f));
+            AddPart(root.transform, "FE_HERO_P0_BrowCrest", meshes.blade, materials.gold, new Vector3(0f, 1.98f, 0.02f), Quaternion.Euler(82f, 0f, 0f), new Vector3(0.44f, 0.24f, 0.22f));
+            AddPart(root.transform, "FE_HERO_P0_ChunkSwordBlade", meshes.blade, materials.steel, new Vector3(0.64f, 1.02f, 0.36f), Quaternion.Euler(18f, 0f, -26f), new Vector3(0.34f, 1.08f, 0.20f));
+            AddPart(root.transform, "FE_HERO_P0_ChunkSwordGuard", meshes.box, materials.gold, new Vector3(0.45f, 0.62f, 0.26f), Quaternion.Euler(18f, 0f, -26f), new Vector3(0.46f, 0.10f, 0.12f));
+            AddPart(root.transform, "FE_HERO_P0_ChunkSwordGrip", meshes.box, materials.dark, new Vector3(0.36f, 0.48f, 0.22f), Quaternion.Euler(18f, 0f, -26f), new Vector3(0.16f, 0.34f, 0.12f));
+            AddPart(root.transform, "FE_HERO_P0_ToolSocketGem", meshes.lowPolyGem, materials.toolGlow, new Vector3(0.74f, 1.20f, -0.20f), Quaternion.identity, new Vector3(0.28f, 0.34f, 0.28f));
+            AddBoxCollider(root, new Vector3(0f, 0.92f, 0f), new Vector3(0.92f, 1.84f, 0.86f));
             SavePrefab(root, HeroPrefabPath);
         }
 
@@ -203,17 +207,18 @@ namespace FourfoldEchoes.Editor
         {
             var root = new GameObject("FE_ENEMY_MELEE_SHARDLING_P0");
             AddPart(root.transform, "FE_ENEMY_P0_DangerRing", meshes.disc, materials.enemyTell, new Vector3(0f, 0.035f, -0.55f), Quaternion.identity, new Vector3(1.34f, 0.04f, 1.34f));
-            AddPart(root.transform, "FE_ENEMY_P0_LeftClawFoot", meshes.blade, materials.enemyArmor, new Vector3(-0.36f, 0.20f, 0.28f), Quaternion.Euler(72f, 0f, 22f), new Vector3(0.24f, 0.40f, 0.16f));
-            AddPart(root.transform, "FE_ENEMY_P0_RightClawFoot", meshes.blade, materials.enemyArmor, new Vector3(0.36f, 0.20f, -0.24f), Quaternion.Euler(72f, 0f, -22f), new Vector3(0.24f, 0.40f, 0.16f));
-            AddPart(root.transform, "FE_ENEMY_P0_Body", meshes.taperedBody, materials.enemyInk, new Vector3(0f, 0.74f, 0f), Quaternion.identity, new Vector3(1.12f, 1.20f, 0.92f));
-            AddPart(root.transform, "FE_ENEMY_P0_ChestPlate", meshes.taperedBody, materials.enemyArmor, new Vector3(0f, 0.95f, -0.30f), Quaternion.identity, new Vector3(0.58f, 0.50f, 0.16f));
-            AddPart(root.transform, "FE_ENEMY_P0_ShardHead", meshes.lowPolyGem, materials.enemyArmor, new Vector3(0f, 1.52f, -0.04f), Quaternion.identity, new Vector3(0.56f, 0.52f, 0.44f));
-            AddPart(root.transform, "FE_ENEMY_P0_LeftHorn", meshes.blade, materials.enemyTell, new Vector3(-0.32f, 1.88f, -0.02f), Quaternion.Euler(0f, 0f, 38f), new Vector3(0.18f, 0.48f, 0.12f));
-            AddPart(root.transform, "FE_ENEMY_P0_RightHorn", meshes.blade, materials.enemyTell, new Vector3(0.32f, 1.88f, -0.02f), Quaternion.Euler(0f, 0f, -38f), new Vector3(0.18f, 0.48f, 0.12f));
-            AddPart(root.transform, "FE_ENEMY_P0_LeftSpike", meshes.blade, materials.enemyArmor, new Vector3(-0.66f, 1.18f, 0.04f), Quaternion.Euler(0f, 0f, 62f), new Vector3(0.28f, 0.72f, 0.18f));
-            AddPart(root.transform, "FE_ENEMY_P0_RightSpike", meshes.blade, materials.enemyArmor, new Vector3(0.66f, 1.18f, 0.04f), Quaternion.Euler(0f, 0f, -62f), new Vector3(0.28f, 0.72f, 0.18f));
-            AddPart(root.transform, "D020 Enemy Heavy Club Read", meshes.club, materials.enemyArmor, new Vector3(0.86f, 0.90f, -0.42f), Quaternion.Euler(18f, 0f, -26f), new Vector3(0.42f, 1.04f, 0.30f));
-            AddPart(root.transform, "FE_ENEMY_P0_TellCore", meshes.lowPolyGem, materials.enemyTell, new Vector3(0f, 1.20f, -0.48f), Quaternion.identity, new Vector3(0.36f, 0.34f, 0.20f));
+            AddPart(root.transform, "FE_ENEMY_P0_LeftClawFoot", meshes.blade, materials.enemyArmor, new Vector3(-0.42f, 0.20f, 0.30f), Quaternion.Euler(72f, 0f, 22f), new Vector3(0.34f, 0.48f, 0.20f));
+            AddPart(root.transform, "FE_ENEMY_P0_RightClawFoot", meshes.blade, materials.enemyArmor, new Vector3(0.42f, 0.20f, -0.24f), Quaternion.Euler(72f, 0f, -22f), new Vector3(0.34f, 0.48f, 0.20f));
+            AddPart(root.transform, "FE_ENEMY_P0_HunchedBody", meshes.sphere, materials.enemyInk, new Vector3(0f, 0.82f, 0f), Quaternion.identity, new Vector3(1.20f, 1.08f, 0.98f));
+            AddPart(root.transform, "FE_ENEMY_P0_ArmorBelly", meshes.taperedBody, materials.enemyArmor, new Vector3(0f, 0.86f, -0.38f), Quaternion.Euler(8f, 0f, 0f), new Vector3(0.70f, 0.66f, 0.20f));
+            AddPart(root.transform, "FE_ENEMY_P0_ShardHead", meshes.sphere, materials.enemyArmor, new Vector3(0f, 1.52f, -0.08f), Quaternion.identity, new Vector3(0.68f, 0.54f, 0.52f));
+            AddPart(root.transform, "FE_ENEMY_P0_MaskFace", meshes.box, materials.enemyTell, new Vector3(0f, 1.42f, -0.42f), Quaternion.identity, new Vector3(0.42f, 0.20f, 0.055f));
+            AddPart(root.transform, "FE_ENEMY_P0_LeftHorn", meshes.blade, materials.enemyTell, new Vector3(-0.42f, 1.90f, -0.02f), Quaternion.Euler(0f, 0f, 42f), new Vector3(0.22f, 0.58f, 0.14f));
+            AddPart(root.transform, "FE_ENEMY_P0_RightHorn", meshes.blade, materials.enemyTell, new Vector3(0.42f, 1.90f, -0.02f), Quaternion.Euler(0f, 0f, -42f), new Vector3(0.22f, 0.58f, 0.14f));
+            AddPart(root.transform, "FE_ENEMY_P0_LeftShoulderShard", meshes.blade, materials.enemyArmor, new Vector3(-0.76f, 1.18f, 0.04f), Quaternion.Euler(0f, 0f, 60f), new Vector3(0.36f, 0.78f, 0.22f));
+            AddPart(root.transform, "FE_ENEMY_P0_RightShoulderShard", meshes.blade, materials.enemyArmor, new Vector3(0.76f, 1.18f, 0.04f), Quaternion.Euler(0f, 0f, -60f), new Vector3(0.36f, 0.78f, 0.22f));
+            AddPart(root.transform, "D020 Enemy Heavy Club Read", meshes.club, materials.enemyArmor, new Vector3(0.96f, 0.90f, -0.44f), Quaternion.Euler(18f, 0f, -26f), new Vector3(0.54f, 1.08f, 0.36f));
+            AddPart(root.transform, "FE_ENEMY_P0_TellCore", meshes.lowPolyGem, materials.enemyTell, new Vector3(0f, 1.08f, -0.56f), Quaternion.identity, new Vector3(0.46f, 0.42f, 0.24f));
             AddBoxCollider(root, new Vector3(0f, 0.82f, 0f), new Vector3(1.10f, 1.64f, 0.95f));
             SavePrefab(root, EnemyPrefabPath);
         }
@@ -274,6 +279,7 @@ namespace FourfoldEchoes.Editor
             {
                 box = BuiltinMesh("Cube"),
                 disc = BuiltinMesh("Cylinder"),
+                sphere = BuiltinMesh("Sphere"),
                 taperedBody = SaveMesh("FE_MESH_P0_TaperedBody", CreateTaperedPrism(0.70f, 0.52f, 1.0f, 0.62f)),
                 lowPolyGem = SaveMesh("FE_MESH_P0_LowPolyGem", CreateBipyramid(0.5f, 1.0f)),
                 blade = SaveMesh("FE_MESH_P0_TaperedBlade", CreateBlade()),
@@ -336,7 +342,12 @@ namespace FourfoldEchoes.Editor
 
         private static Mesh BuiltinMesh(string primitiveName)
         {
-            var primitive = GameObject.CreatePrimitive(primitiveName == "Cylinder" ? PrimitiveType.Cylinder : PrimitiveType.Cube);
+            var primitive = GameObject.CreatePrimitive(primitiveName switch
+            {
+                "Cylinder" => PrimitiveType.Cylinder,
+                "Sphere" => PrimitiveType.Sphere,
+                _ => PrimitiveType.Cube
+            });
             var mesh = primitive.GetComponent<MeshFilter>().sharedMesh;
             UnityEngine.Object.DestroyImmediate(primitive);
             return mesh;
@@ -652,6 +663,7 @@ namespace FourfoldEchoes.Editor
         {
             public Mesh box;
             public Mesh disc;
+            public Mesh sphere;
             public Mesh taperedBody;
             public Mesh lowPolyGem;
             public Mesh blade;
