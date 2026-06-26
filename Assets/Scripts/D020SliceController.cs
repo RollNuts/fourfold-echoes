@@ -91,6 +91,7 @@ namespace FourfoldEchoes.Product
         private const string SaveKeySecondRewardClaimed = "fourfold.d020.slice.second_reward_claimed";
         private const string SaveKeyReturnedToHub = "fourfold.d020.slice.returned_to_hub";
         private const string SaveKeyClearCount = "fourfold.d020.slice.clear_count";
+        private const string SaveKeyBestClearTime = "fourfold.d020.slice.best_clear_time";
         private const string SaveKeySkillStock = "fourfold.d020.skill.lumen_edge.stock";
         private const string SaveKeyEquippedSkill = "fourfold.d020.skill.equipped";
         private const string SaveKeyLostSkillCount = "fourfold.d020.skill.lost_count";
@@ -134,6 +135,9 @@ namespace FourfoldEchoes.Product
         private int equippedSkill;
         private int lostSkillCount;
         private int clearCount;
+        private float runTimerSeconds;
+        private float bestClearTimeSeconds;
+        private float lastReturnTimeSeconds;
         private bool skillAwardedThisRun;
         private bool firstRewardClaimedThisRun;
         private bool secondRewardClaimedThisRun;
@@ -141,6 +145,7 @@ namespace FourfoldEchoes.Product
         private bool lostSkillThisRun;
         private bool returnedToHubThisRun;
         private bool returnRegisteredThisRun;
+        private bool bestClearTimeImproved;
         private int pendingSkillRewards;
         private FourfoldProgressData progressData;
         private GameObject attackRead;
@@ -241,6 +246,7 @@ namespace FourfoldEchoes.Product
 
         private void Update()
         {
+            UpdateToolInputLock();
             if (Pressed(retryKey, gamepadRetryKey))
             {
                 ResetRun();
@@ -264,6 +270,11 @@ namespace FourfoldEchoes.Product
             dodgeTimer = Mathf.Max(0f, dodgeTimer - dt);
             dodgeCooldownTimer = Mathf.Max(0f, dodgeCooldownTimer - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
+            if (!runFailed && !returnedToHubThisRun)
+            {
+                runTimerSeconds += dt;
+            }
+
             UpdateMusicState();
 
             if (runFailed || runCleared)
@@ -486,6 +497,7 @@ namespace FourfoldEchoes.Product
                 runFailed = true;
                 ApplyFailureSkillLoss();
                 SetRewardReady(false);
+                UpdateToolInputLock();
             }
         }
 
@@ -629,6 +641,7 @@ namespace FourfoldEchoes.Product
             AwardSkillReward();
             previousShortcutLoaded = ToolGateSolved();
             runCleared = secondToolNode == null || secondRewardClaimPoint == null;
+            UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.92f);
             if (rewardReadyRead != null)
             {
@@ -659,6 +672,7 @@ namespace FourfoldEchoes.Product
             rewardClaimed = true;
             runCleared = true;
             previousReturnedToHubLoaded = false;
+            UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.86f);
             if (secondRewardReadyRead != null)
             {
@@ -712,6 +726,7 @@ namespace FourfoldEchoes.Product
             previousClearLoaded = true;
             previousRewardLoaded = previousRewardLoaded || firstRewardClaimedThisRun;
             previousSecondRewardLoaded = previousSecondRewardLoaded || secondRewardClaimedThisRun;
+            RegisterReturnedClearTime();
             if (pendingSkillRewards > 0)
             {
                 skillStock += pendingSkillRewards;
@@ -740,6 +755,7 @@ namespace FourfoldEchoes.Product
                 returnGateClaimRead.SetActive(false);
             }
             PlayCue(rewardReadyClip, 0.58f);
+            UpdateToolInputLock();
             return true;
         }
 
@@ -759,6 +775,7 @@ namespace FourfoldEchoes.Product
         private void ResetRun()
         {
             SetPaused(false);
+            RecordAbandonedPendingRewards();
             playerHealth = PlayerMaxHealth;
             playerInvulnerableTimer = 0f;
             runFailed = false;
@@ -773,6 +790,9 @@ namespace FourfoldEchoes.Product
             returnedToHubThisRun = false;
             returnRegisteredThisRun = false;
             pendingSkillRewards = 0;
+            runTimerSeconds = 0f;
+            lastReturnTimeSeconds = 0f;
+            bestClearTimeImproved = false;
             attackTimer = 0f;
             attackReadTimer = 0f;
             dodgeTimer = 0f;
@@ -832,6 +852,39 @@ namespace FourfoldEchoes.Product
                 secondToolNode.SetSolved(previousSecondNodeLoaded);
             }
             SetRewardReady(false);
+            UpdateToolInputLock();
+        }
+
+        private void RecordAbandonedPendingRewards()
+        {
+            if (pendingSkillRewards <= 0 || returnedToHubThisRun)
+            {
+                return;
+            }
+
+            lostSkillCount += pendingSkillRewards;
+            pendingSkillRewards = 0;
+            lostSkillThisRun = true;
+            if (skillStock <= 0)
+            {
+                equippedSkill = SkillNone;
+            }
+
+            PersistProgress();
+        }
+
+        private void RegisterReturnedClearTime()
+        {
+            lastReturnTimeSeconds = Mathf.Max(0.01f, runTimerSeconds);
+            if (bestClearTimeSeconds <= 0f || lastReturnTimeSeconds < bestClearTimeSeconds)
+            {
+                bestClearTimeSeconds = lastReturnTimeSeconds;
+                bestClearTimeImproved = true;
+            }
+            else
+            {
+                bestClearTimeImproved = false;
+            }
         }
 
         private void SetPaused(bool value)
@@ -842,6 +895,7 @@ namespace FourfoldEchoes.Product
             }
 
             paused = value;
+            UpdateToolInputLock();
             if (musicSource == null)
             {
                 return;
@@ -854,6 +908,14 @@ namespace FourfoldEchoes.Product
             else if (currentMusicClip != null && musicSource.clip == currentMusicClip)
             {
                 musicSource.UnPause();
+            }
+        }
+
+        private void UpdateToolInputLock()
+        {
+            if (explorationTool != null)
+            {
+                explorationTool.inputEnabled = !paused && !runFailed && !runCleared;
             }
         }
 
@@ -872,6 +934,7 @@ namespace FourfoldEchoes.Product
             previousSecondRewardLoaded = progressData.d020SecondRewardClaimed && previousClearLoaded;
             previousReturnedToHubLoaded = progressData.d020ReturnedToHub && previousClearLoaded;
             clearCount = Mathf.Max(0, progressData.d020ClearCount);
+            bestClearTimeSeconds = Mathf.Max(0f, progressData.d020BestClearTimeSeconds);
             skillStock = Mathf.Max(0, progressData.d020LumenEdgeStock);
             equippedSkill = progressData.d020EquippedSkill;
             lostSkillCount = Mathf.Max(0, progressData.d020LostSkillCount);
@@ -1186,6 +1249,14 @@ namespace FourfoldEchoes.Product
             return string.Empty;
         }
 
+        private static string FormatRunTime(float seconds)
+        {
+            var safeSeconds = Mathf.Max(0f, seconds);
+            var minutes = Mathf.FloorToInt(safeSeconds / 60f);
+            var wholeSeconds = Mathf.FloorToInt(safeSeconds % 60f);
+            return $"{minutes:0}:{wholeSeconds:00}";
+        }
+
         private bool RewardReady()
         {
             return AllEnemiesDefeated() && ToolGateSolved() && !firstRewardClaimedThisRun;
@@ -1341,6 +1412,7 @@ namespace FourfoldEchoes.Product
             data.d020SecondRewardClaimed = PlayerPrefs.GetInt(SaveKeySecondRewardClaimed, 0) == 1 && data.d020Cleared;
             data.d020ReturnedToHub = PlayerPrefs.GetInt(SaveKeyReturnedToHub, 0) == 1 && data.d020Cleared;
             data.d020ClearCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyClearCount, 0));
+            data.d020BestClearTimeSeconds = Mathf.Max(0f, PlayerPrefs.GetFloat(SaveKeyBestClearTime, 0f));
             data.d020LumenEdgeStock = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeySkillStock, 0));
             data.d020EquippedSkill = PlayerPrefs.GetInt(SaveKeyEquippedSkill, SkillNone);
             data.d020LostSkillCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyLostSkillCount, 0));
@@ -1354,13 +1426,14 @@ namespace FourfoldEchoes.Product
             }
 
             progressData.currentScene = "scene.d020_vertical_slice";
-            progressData.d020Cleared = previousClearLoaded || runCleared;
+            progressData.d020Cleared = previousClearLoaded;
             progressData.d020ShortcutOpened = previousShortcutLoaded;
-            progressData.d020RewardClaimed = previousRewardLoaded || rewardClaimed;
+            progressData.d020RewardClaimed = previousRewardLoaded;
             progressData.d020SecondNodeOpened = previousSecondNodeLoaded;
             progressData.d020SecondRewardClaimed = previousSecondRewardLoaded;
             progressData.d020ReturnedToHub = previousReturnedToHubLoaded;
             progressData.d020ClearCount = Mathf.Max(0, clearCount);
+            progressData.d020BestClearTimeSeconds = Mathf.Max(0f, bestClearTimeSeconds);
             progressData.d020LumenEdgeStock = Mathf.Max(0, skillStock);
             progressData.d020EquippedSkill = equippedSkill;
             progressData.d020LostSkillCount = Mathf.Max(0, lostSkillCount);
@@ -1377,6 +1450,7 @@ namespace FourfoldEchoes.Product
             PlayerPrefs.SetInt(SaveKeySecondRewardClaimed, progressData.d020SecondRewardClaimed ? 1 : 0);
             PlayerPrefs.SetInt(SaveKeyReturnedToHub, progressData.d020ReturnedToHub ? 1 : 0);
             PlayerPrefs.SetInt(SaveKeyClearCount, progressData.d020ClearCount);
+            PlayerPrefs.SetFloat(SaveKeyBestClearTime, progressData.d020BestClearTimeSeconds);
             PlayerPrefs.SetInt(SaveKeySkillStock, progressData.d020LumenEdgeStock);
             PlayerPrefs.SetInt(SaveKeyEquippedSkill, progressData.d020EquippedSkill);
             PlayerPrefs.SetInt(SaveKeyLostSkillCount, progressData.d020LostSkillCount);
@@ -1581,12 +1655,19 @@ namespace FourfoldEchoes.Product
                 : pendingSkillRewards > 0
                     ? $"Return to bank {pendingSkillRewards} skill reward(s)"
                     : "Clear the boss, claim both relics, return to hub";
+            var timeState = returnedToHubThisRun && lastReturnTimeSeconds > 0f
+                ? $"Returned {FormatRunTime(lastReturnTimeSeconds)}{(bestClearTimeImproved ? "  BEST" : string.Empty)}"
+                : $"Run {FormatRunTime(runTimerSeconds)}";
+            if (bestClearTimeSeconds > 0f)
+            {
+                timeState += $"  Best {FormatRunTime(bestClearTimeSeconds)}";
+            }
 
             GUI.Label(new Rect(30f, 26f, width - 28f, 34f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}{BossHealthSuffix()}", style);
             GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
             GUI.Label(new Rect(30f, 88f, width - 28f, 30f), skillState, style);
             GUI.Label(new Rect(30f, 118f, width - 28f, 52f), objective, style);
-            GUI.Label(new Rect(30f, 164f, width - 28f, 52f), $"{resultState}  Move WASD/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Pause Esc/Menu", style);
+            GUI.Label(new Rect(30f, 164f, width - 28f, 52f), $"{resultState}  {timeState}  Move WASD/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Pause Esc/Menu", style);
 
             if (paused)
             {

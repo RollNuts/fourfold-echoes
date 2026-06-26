@@ -9,6 +9,7 @@ namespace FourfoldEchoes.Product
         public KeyCode alternateUseKey = KeyCode.JoystickButton2;
         public float range = 2.7f;
         public float cooldownSeconds = 0.45f;
+        public bool inputEnabled = true;
 
         [Header("Scene References")]
         public Transform player;
@@ -71,7 +72,7 @@ namespace FourfoldEchoes.Product
                 pulseRead.SetActive(false);
             }
 
-            if (Input.GetKeyDown(useKey) || Input.GetKeyDown(alternateUseKey))
+            if (inputEnabled && (Input.GetKeyDown(useKey) || Input.GetKeyDown(alternateUseKey)))
             {
                 TryUse();
             }
@@ -79,6 +80,11 @@ namespace FourfoldEchoes.Product
 
         public bool TryUse()
         {
+            if (!inputEnabled)
+            {
+                return false;
+            }
+
             if (!IsReady)
             {
                 return false;
