@@ -93,6 +93,12 @@ namespace FourfoldEchoes.Product
             File.Move(tempPath, path);
         }
 
+        public static void DeleteAll()
+        {
+            DeleteIfExists(SavePath());
+            DeleteIfExists(BackupPath());
+        }
+
         public static string SavePath()
         {
             return Path.Combine(Application.persistentDataPath, FileName);
@@ -101,6 +107,14 @@ namespace FourfoldEchoes.Product
         private static string BackupPath()
         {
             return SavePath() + ".bak";
+        }
+
+        private static void DeleteIfExists(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
         }
 
         private static FourfoldProgressData LoadFromPath(string path)

@@ -16,10 +16,13 @@ namespace FourfoldEchoes.Product
 
         [Header("Input")]
         public KeyCode interactKey = KeyCode.E;
+        public KeyCode resetKey = KeyCode.Backspace;
         public KeyCode gamepadInteractKey = KeyCode.JoystickButton3;
+        public KeyCode gamepadResetKey = KeyCode.JoystickButton6;
 
         private const float MoveSpeed = 4.8f;
         private const float InteractionRange = 2.1f;
+        private const float ResetHoldDuration = 1.2f;
         private const float MinX = -6.0f;
         private const float MaxX = 6.0f;
         private const float MinZ = -5.0f;
@@ -27,6 +30,7 @@ namespace FourfoldEchoes.Product
 
         private Vector3 facing = Vector3.forward;
         private FourfoldProgressData progressData;
+        private float resetHoldSeconds;
 
         private void Awake()
         {
@@ -49,6 +53,7 @@ namespace FourfoldEchoes.Product
         {
             MovePlayer(Time.deltaTime);
             UpdateCamera();
+            UpdateResetInput(Time.deltaTime);
 
             if (Pressed(interactKey, gamepadInteractKey))
             {
@@ -86,6 +91,14 @@ namespace FourfoldEchoes.Product
             }
 
             return true;
+        }
+
+        public void ResetProgressForNewGame()
+        {
+            FourfoldProgressSave.DeleteAll();
+            InitializeHubProgress();
+            PlacePlayerAtHubSpawn();
+            resetHoldSeconds = 0f;
         }
 
         public bool CanEnterD020Region()
@@ -131,6 +144,22 @@ namespace FourfoldEchoes.Product
             player.rotation = Quaternion.LookRotation(facing, Vector3.up);
         }
 
+        private void UpdateResetInput(float deltaTime)
+        {
+            if (Input.GetKey(resetKey) || Input.GetKey(gamepadResetKey))
+            {
+                resetHoldSeconds += deltaTime;
+                if (resetHoldSeconds >= ResetHoldDuration)
+                {
+                    ResetProgressForNewGame();
+                }
+
+                return;
+            }
+
+            resetHoldSeconds = 0f;
+        }
+
         private void UpdateCamera()
         {
             if (fixedCamera == null || player == null)
@@ -165,9 +194,15 @@ namespace FourfoldEchoes.Product
         private void OnGUI()
         {
             var cleared = progressData != null && progressData.regionD020Cleared;
+            var clearCount = progressData == null ? 0 : progressData.d020ClearCount;
+            var bestTime = progressData == null || progressData.d020BestClearTimeSeconds <= 0f
+                ? "--"
+                : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
             GUI.Label(new Rect(18f, 18f, 520f, 24f), "HUB: Crossroads");
             GUI.Label(new Rect(18f, 42f, 520f, 24f), cleared ? "D-020 cleared. Re-enter to improve the run." : "Objective: enter D-020 and defeat the boss.");
             GUI.Label(new Rect(18f, 66f, 520f, 24f), CanEnterD020Region() ? "Press E / Y: Enter D-020" : "Move to the gold gate to start the run.");
+            GUI.Label(new Rect(18f, 90f, 520f, 24f), $"D-020 clears: {clearCount}   Best: {bestTime}");
+            GUI.Label(new Rect(18f, 114f, 520f, 24f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Hold Backspace / Select: Reset save");
         }
     }
 }

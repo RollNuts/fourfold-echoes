@@ -12,9 +12,28 @@ namespace FourfoldEchoes.Editor
         private const string D020SliceScenePath = FourfoldD020SliceSceneBuilder.ScenePath;
         private const string DefaultBuildRoot = "Build/GateA";
         private const string DefaultD020SliceBuildRoot = "Build/D020Slice";
+        private const string DefaultProductBuildRoot = "Build/FourfoldEchoes";
         private const string ProductName = "FourfoldEchoesGateA";
         private const string D020SliceProductName = "FourfoldEchoesD020Slice";
+        private const string FullProductName = "FourfoldEchoes";
         private const string CompanyName = "RollNuts";
+
+        public static void BuildCurrentProductLoop()
+        {
+            var target = GetRequestedTarget();
+            var buildRoot = GetRequestedBuildRoot(DefaultProductBuildRoot);
+            var artifactPath = GetArtifactPath(buildRoot, target, FullProductName);
+
+            if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, target))
+            {
+                throw new InvalidOperationException(
+                    $"Unity standalone build target is not installed or supported in this editor: {target}");
+            }
+
+            FourfoldD020SliceSceneBuilder.BuildAndValidate();
+            FourfoldHubSceneBuilder.BuildAndValidate();
+            BuildScenes(target, artifactPath, new[] { FourfoldHubSceneBuilder.ScenePath, D020SliceScenePath }, FullProductName, "Hub+D020 product loop");
+        }
 
         public static void BuildCurrentD020Slice()
         {
@@ -29,7 +48,7 @@ namespace FourfoldEchoes.Editor
             }
 
             FourfoldD020SliceSceneBuilder.BuildAndValidate();
-            BuildScene(target, artifactPath, D020SliceScenePath, D020SliceProductName, "D-020 vertical slice");
+            BuildScenes(target, artifactPath, new[] { D020SliceScenePath }, D020SliceProductName, "D-020 vertical slice");
         }
 
         public static void BuildGateA()
@@ -66,7 +85,7 @@ namespace FourfoldEchoes.Editor
                 throw new FileNotFoundException("Gate A scene was not generated before build.", GateAScenePath);
             }
 
-            BuildScene(target, artifactPath, GateAScenePath, ProductName, "Gate A");
+            BuildScenes(target, artifactPath, new[] { GateAScenePath }, ProductName, "Gate A");
         }
 
         private static BuildTarget GetRequestedTarget()
@@ -135,7 +154,7 @@ namespace FourfoldEchoes.Editor
             }
         }
 
-        private static void BuildScene(BuildTarget target, string artifactPath, string scenePath, string productName, string label)
+        private static void BuildScenes(BuildTarget target, string artifactPath, string[] scenePaths, string productName, string label)
         {
             var artifactDirectory = Path.GetDirectoryName(artifactPath);
             if (!string.IsNullOrWhiteSpace(artifactDirectory))
@@ -153,7 +172,7 @@ namespace FourfoldEchoes.Editor
 
                 report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
                 {
-                    scenes = new[] { scenePath },
+                    scenes = scenePaths,
                     locationPathName = artifactPath,
                     target = target,
                     options = BuildOptions.None

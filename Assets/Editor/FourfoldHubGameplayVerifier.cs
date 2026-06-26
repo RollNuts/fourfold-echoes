@@ -62,7 +62,14 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Hub gameplay verifier failed: D-020 entry did not persist the region scene target.");
                 }
 
-                Debug.Log("FOURFOLD Hub gameplay verifier passed: hub unlock and D-020 entry progress persist.");
+                controller.ResetProgressForNewGame();
+                var resetProgress = FourfoldProgressSave.Load();
+                if (resetProgress.currentScene != FourfoldGameIds.SceneHubCrossroads || !resetProgress.hubUnlocked || !resetProgress.regionD020Unlocked || resetProgress.d020Cleared || resetProgress.d020ClearCount != 0)
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: reset did not return to a clean hub-start progress state.");
+                }
+
+                Debug.Log("FOURFOLD Hub gameplay verifier passed: hub unlock, D-020 entry, and reset progress persist.");
             }
             finally
             {
