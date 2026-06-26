@@ -57,8 +57,11 @@ const requiredFiles = [
   "game-spec/entities/d020-vertical-slice.yaml",
   "game-spec/scenarios/d020-tool-room-read.yaml",
   "commands/samples/inspect-d020-slice.json",
+  "commands/samples/build-d020-slice.json",
+  "commands/samples/capture-d020-slice.json",
   "Scripts/Validation/write_veripsa_split_report.mjs",
-  "Scripts/Validation/check_public_repo_hygiene.mjs"
+  "Scripts/Validation/check_public_repo_hygiene.mjs",
+  "tools/queue_unity_editor_command.sh"
 ];
 
 const secretLikePatterns = [
@@ -122,15 +125,117 @@ for (const check of canonicalTextChecks) {
   }
 }
 
+const requiredSectionChecks = [
+  {
+    file: "docs/Product/MVP_BLUEPRINT.md",
+    headings: [
+      "## 仕様固定メモ",
+      "## 新規プロジェクトのフォルダ構成",
+      "## シーン一覧",
+      "## スクリプト責務一覧",
+      "## データ設計",
+      "## 実装順",
+      "## スコープ外一覧"
+    ]
+  },
+  {
+    file: "docs/Product/CORE_SYSTEMS.md",
+    headings: ["## 必須", "## 不要", "## 後回し"]
+  },
+  {
+    file: "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+    headings: [
+      "## アートピラー",
+      "## 禁止事項",
+      "## 予算表",
+      "## 命名規則",
+      "## 地域別ルック表",
+      "## 最低品質基準",
+      "## 制作フロー"
+    ]
+  },
+  {
+    file: "docs/Audio/COMPACT_ACTION_AUDIO_DIRECTION.md",
+    headings: [
+      "## オーディオピラー",
+      "## 必須SE一覧",
+      "## BGM一覧",
+      "## 探索ツール音設計",
+      "## 実装優先順位",
+      "## マイルストーン完成条件"
+    ]
+  },
+  {
+    file: "docs/Production/VERTICAL_SLICE_PLAN.md",
+    headings: [
+      "## 完成条件チェックリスト",
+      "## 実装順序",
+      "## 担当表",
+      "## リスク表",
+      "## 市場検証可能性メモ"
+    ]
+  },
+  {
+    file: "docs/Production/SCOPE_CONTROL.md",
+    headings: [
+      "## 変更管理テンプレート",
+      "## 上限定義",
+      "## 却下基準",
+      "## 週次レビュー表",
+      "## 3分類表"
+    ]
+  },
+  {
+    file: "docs/QA/STEAM_RELEASE_PLAN.md",
+    headings: [
+      "## Steam発売前チェックリスト",
+      "## Steam Deckテスト表",
+      "## 回帰テスト表",
+      "## コンソール事前対応表",
+      "## 30日運用計画",
+      "## ユーザー告知テンプレート",
+      "## バグ優先度表"
+    ]
+  },
+  {
+    file: "docs/Marketing/STEAM_STORE_PLAN.md",
+    headings: [
+      "## 短文紹介3案",
+      "## 長文紹介",
+      "## タグ優先順",
+      "## スクリーンショット計画",
+      "## トレーラー絵コンテ",
+      "## 告知文",
+      "## 翻訳優先リスト"
+    ]
+  }
+];
+
+for (const check of requiredSectionChecks) {
+  const fullPath = path.join(repo, check.file);
+  if (!fs.existsSync(fullPath)) continue;
+  const text = fs.readFileSync(fullPath, "utf8");
+  for (const heading of check.headings) {
+    if (!text.includes(heading)) {
+      errors.push(`Required objective section missing: ${check.file} needs "${heading}"`);
+    }
+  }
+}
+
 const staleScopeChecks = [
   "README.md",
   "docs/Tech/TECHNICAL_ARCHITECTURE.md",
   "docs/Product/MVP_BLUEPRINT.md",
+  "docs/Product/CORE_SYSTEMS.md",
   "docs/Product/PROJECT_SPEC.md",
   "docs/Product/CANONICAL_PRODUCT_SPEC.md",
   "docs/Production/VERTICAL_SLICE_PLAN.md",
+  "docs/Production/SCOPE_CONTROL.md",
   "docs/Marketing/STEAM_STORE_PLAN.md",
+  "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+  "docs/Audio/COMPACT_ACTION_AUDIO_DIRECTION.md",
   "docs/QA/VALIDATION_REPORT.md",
+  "docs/QA/STEAM_RELEASE_PLAN.md",
   "game-spec/project.yaml",
   "game-spec/scenes/d020-vertical-slice.yaml",
   "game-spec/entities/d020-vertical-slice.yaml",
@@ -179,6 +284,35 @@ for (const file of staleScopeChecks) {
   for (const phrase of forbiddenCurrentScopePhrases) {
     if (text.includes(phrase)) {
       errors.push(`Stale D-019/current-scope phrase in ${file}: "${phrase}"`);
+    }
+  }
+}
+
+const marketingForbiddenClaims = [
+  "Open World",
+  "MMO",
+  "Survival",
+  "Crafting",
+  "Souls-like",
+  "Co-op",
+  "Multiplayer",
+  "Live Service",
+  "Social",
+  "Inventory",
+  "Loot",
+  "Quest",
+  "Open-Ended"
+];
+
+{
+  const file = "docs/Marketing/STEAM_STORE_PLAN.md";
+  const fullPath = path.join(repo, file);
+  if (fs.existsSync(fullPath)) {
+    const text = fs.readFileSync(fullPath, "utf8");
+    for (const phrase of marketingForbiddenClaims) {
+      if (!text.includes(phrase)) {
+        errors.push(`Marketing hard-exclude list must include "${phrase}" in ${file}`);
+      }
     }
   }
 }
