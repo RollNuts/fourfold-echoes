@@ -76,15 +76,21 @@ namespace FourfoldEchoes.Editor
             Require("D020 Second Relic Chest");
             Require("D020 Top Down Camera");
             RequireComponent<ExplorationTool>("D020 Runtime Hook");
+            RequireComponent<D020ProgressSave>("D020 Runtime Hook");
             RequireComponent<ExplorationNode>("D020 Exploration Tool Node");
             RequireComponent<ExplorationNode>("D020 Second Tool Node");
             RequireComponent<D020PlayerController>("D020 Player");
             RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
             var tool = FindSceneObject("D020 Runtime Hook").GetComponent<ExplorationTool>();
+            var progressSave = FindSceneObject("D020 Runtime Hook").GetComponent<D020ProgressSave>();
             var player = FindSceneObject("D020 Player").GetComponent<D020PlayerController>();
             if (tool.NodeCount < 2)
             {
                 throw new InvalidOperationException("D-020 runtime hook must reference two exploration nodes for the two-gimmick-room proof.");
+            }
+            if (progressSave.nodes == null || progressSave.nodes.Length < 2)
+            {
+                throw new InvalidOperationException("D-020 progress save must reference the two exploration nodes.");
             }
 
             RequireAudioClip(player.attackClip, "D-020 player attack SFX");
@@ -432,6 +438,14 @@ namespace FourfoldEchoes.Editor
             var pulseRead = CreatePrimitive(player, PrimitiveType.Cylinder, "D020 Tool Pulse Read", assets.tool, new Vector3(0f, 0.055f, 0f), new Vector3(1.08f, 0.035f, 1.08f));
             pulseRead.SetActive(false);
             tool.pulseRead = pulseRead;
+
+            var progressSave = hookObject.AddComponent<D020ProgressSave>();
+            progressSave.nodes = nodes;
+            progressSave.nodeIds = new[]
+            {
+                "node.d020_shortcut_route",
+                "node.d020_second_reward_route"
+            };
         }
 
         private static AudioClip LoadAudioClip(string filename)

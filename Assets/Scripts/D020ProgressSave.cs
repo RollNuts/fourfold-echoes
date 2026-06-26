@@ -104,7 +104,7 @@ namespace FourfoldEchoes.Product
                 }
 
                 ApplySolvedToNodes();
-                EnsureKnownState();
+                RefreshKnownState();
                 LoadCount++;
                 return true;
             }
@@ -119,7 +119,7 @@ namespace FourfoldEchoes.Product
         {
             solvedIds.Clear();
             ApplySolvedToNodes();
-            EnsureKnownState();
+            RefreshKnownState();
 
             var path = GetSavePath();
             if (File.Exists(path))
@@ -193,6 +193,12 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            RefreshKnownState();
+        }
+
+        private void RefreshKnownState()
+        {
+            var length = nodes == null ? 0 : nodes.Length;
             knownSolved = new bool[length];
             for (var i = 0; i < length; i++)
             {
