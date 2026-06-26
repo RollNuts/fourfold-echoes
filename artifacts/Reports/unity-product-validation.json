@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-26T16:12:48.5643350Z",
+  "generatedAtUtc": "2026-06-26T16:20:55.0686330Z",
   "metrics": {
     "sceneObjects": 533,
     "sceneRenderers": 508,
@@ -20,7 +20,7 @@
   "findings": [
     {"severity": "info", "code": "render.pipeline", "message": "Built-in render pipeline is active."},
     {"severity": "info", "code": "save.service", "message": "Versioned local save validated with settings defaults, roundtrip persistence, backup recovery, and corrupt-save fallback."},
-    {"severity": "info", "code": "d020.slice", "message": "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, unbanked relic abandon confirmation, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."},
+    {"severity": "info", "code": "d020.slice", "message": "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, unbanked relic abandon confirmation, two distinct relic effects, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."},
     {"severity": "info", "code": "hub.crossroads", "message": "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, progress initialization, reset, and return-to-title persistence."},
     {"severity": "info", "code": "title.entry", "message": "Title scene generated and validated with New Game, Continue, Settings volume persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice."},
     {"severity": "info", "code": "steam_deck.readiness", "message": "Title, Hub, and D-020 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings."},

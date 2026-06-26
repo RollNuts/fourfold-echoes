@@ -589,7 +589,7 @@ namespace FourfoldEchoes.Product
             }
 
             attackRead.transform.localPosition = facing.normalized * 0.86f + new Vector3(0f, 0.06f, 0f);
-            var relicBoost = LumenEdgeActive() ? 0.22f : 0f;
+            var relicBoost = AnyRelicActive() ? 0.22f : 0f;
             var pulse = 1.16f + relicBoost + Mathf.Sin(Time.time * 36f) * 0.08f;
             attackRead.transform.localScale = new Vector3(pulse, 0.025f, pulse);
         }
@@ -1230,6 +1230,12 @@ namespace FourfoldEchoes.Product
 
         private float EnemyDamageFor(int index)
         {
+            var damage = EnemyBaseDamageFor(index);
+            return LumenWardActive() ? damage * 0.78f : damage;
+        }
+
+        private float EnemyBaseDamageFor(int index)
+        {
             if (IsBossEnemy(index))
             {
                 return BossEnraged(index) ? BossEnemyDamage + 6f : BossEnemyDamage;
@@ -1350,7 +1356,17 @@ namespace FourfoldEchoes.Product
 
         private bool LumenEdgeActive()
         {
-            return previousRewardLoaded || previousSecondRewardLoaded || firstRewardClaimedThisRun || secondRewardClaimedThisRun;
+            return previousRewardLoaded || firstRewardClaimedThisRun;
+        }
+
+        private bool LumenWardActive()
+        {
+            return previousSecondRewardLoaded || secondRewardClaimedThisRun;
+        }
+
+        private bool AnyRelicActive()
+        {
+            return LumenEdgeActive() || LumenWardActive();
         }
 
         private int ReturnedRelicCount()
@@ -1373,6 +1389,28 @@ namespace FourfoldEchoes.Product
             }
 
             return count;
+        }
+
+        private string RelicStateText()
+        {
+            var returned = ReturnedRelicCount();
+            var run = ClaimedRelicCountThisRun();
+            if (LumenEdgeActive() && LumenWardActive())
+            {
+                return $"Relics Edge + Ward active  +DMG / -DMG  Returned {returned}/2  Run {run}/2";
+            }
+
+            if (LumenEdgeActive())
+            {
+                return $"Relic Lumen Edge active  +DMG  Returned {returned}/2  Run {run}/2";
+            }
+
+            if (LumenWardActive())
+            {
+                return $"Relic Lumen Ward active  -DMG  Returned {returned}/2  Run {run}/2";
+            }
+
+            return $"Relic locked  Returned {returned}/2  Run {run}/2";
         }
 
         private bool AllEnemiesDefeated()
@@ -1957,9 +1995,7 @@ namespace FourfoldEchoes.Product
                 : explorationTool.IsReady
                     ? "Tool READY"
                     : $"Tool cooldown {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%";
-            var relicState = LumenEdgeActive()
-                ? $"Relic Lumen Edge active  Returned {ReturnedRelicCount()}/2  Run {ClaimedRelicCountThisRun()}/2"
-                : $"Relic locked  Returned {ReturnedRelicCount()}/2  Run {ClaimedRelicCountThisRun()}/2";
+            var relicState = RelicStateText();
             var resultState = clearCount > 0
                 ? $"Clears returned {clearCount}"
                 : ClaimedRelicCountThisRun() > 0

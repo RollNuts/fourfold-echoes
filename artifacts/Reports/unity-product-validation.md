@@ -1,6 +1,6 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-26T16:12:48.5702400Z`
+Generated UTC: `2026-06-26T16:20:55.0714680Z`
 
 ## Metrics
 
@@ -25,7 +25,7 @@ Generated UTC: `2026-06-26T16:12:48.5702400Z`
 
 - **info** `render.pipeline`: Built-in render pipeline is active.
 - **info** `save.service`: Versioned local save validated with settings defaults, roundtrip persistence, backup recovery, and corrupt-save fallback.
-- **info** `d020.slice`: D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, unbanked relic abandon confirmation, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking.
+- **info** `d020.slice`: D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, unbanked relic abandon confirmation, two distinct relic effects, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking.
 - **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with a D-020 region gate, progress initialization, reset, and return-to-title persistence.
 - **info** `title.entry`: Title scene generated and validated with New Game, Continue, Settings volume persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice.
 - **info** `steam_deck.readiness`: Title, Hub, and D-020 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings.
@@ -36,4 +36,4 @@ Generated UTC: `2026-06-26T16:12:48.5702400Z`
 
 ## Product Interpretation
 
-This report validates technical hygiene only. Title is the product entry point, HubCrossroads is the playable hub, and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: title entry, hub gate, two normal enemy types, one elite guard, one boss, two tool nodes, two relic rewards, unbanked relic abandon confirmation, failed-run reward loss, return banking, required SFX, two BGM clips, and full-loop reward persistence. Historical ProductReview evidence is deliberately outside this lane.
+This report validates technical hygiene only. Title is the product entry point, HubCrossroads is the playable hub, and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: title entry, hub gate, two normal enemy types, one elite guard, one boss, two tool nodes, two distinct relic effects, unbanked relic abandon confirmation, failed-run reward loss, return banking, required SFX, two BGM clips, and full-loop reward persistence. Historical ProductReview evidence is deliberately outside this lane.

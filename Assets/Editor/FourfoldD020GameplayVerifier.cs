@@ -309,6 +309,7 @@ namespace FourfoldEchoes.Editor
             var tool = RequireComponent<ExplorationTool>(hook, "D020 Runtime Hook");
             ValidateRequiredReferences(controller, tool);
             PrepareControllerForCombat(controller);
+            VerifyRelicIdentityEffects(controller);
 
             for (var i = 0; i < controller.enemies.Length; i++)
             {
@@ -330,7 +331,7 @@ namespace FourfoldEchoes.Editor
                 throw new InvalidOperationException("D-020 combat verifier failed: rewards were not ready after combat defeat and first tool-node solve.");
             }
 
-            Debug.Log("FOURFOLD D-020 combat verifier passed: basic attacks defeat melee, ranged, elite, and boss enemies and unlock reward readiness.");
+            Debug.Log("FOURFOLD D-020 combat verifier passed: basic attacks defeat melee, ranged, elite, and boss enemies, relic effects are distinct, and reward readiness unlocks.");
         }
 
         public static void VerifyExistingSceneDeathRetryAndTitlePath()
@@ -598,6 +599,33 @@ namespace FourfoldEchoes.Editor
             }
         }
 
+        private static void VerifyRelicIdentityEffects(D020SliceController controller)
+        {
+            SetPrivate(controller, "firstRewardClaimedThisRun", false);
+            SetPrivate(controller, "secondRewardClaimedThisRun", false);
+            var baseAttack = InvokePrivateFloat(controller, "CurrentAttackDamage", 0);
+            var baseIncoming = InvokePrivateFloat(controller, "EnemyDamageFor", 0);
+
+            SetPrivate(controller, "firstRewardClaimedThisRun", true);
+            var edgeAttack = InvokePrivateFloat(controller, "CurrentAttackDamage", 0);
+            var edgeText = InvokePrivateString(controller, "RelicStateText");
+            if (edgeAttack <= baseAttack || edgeText.IndexOf("Lumen Edge", StringComparison.Ordinal) < 0 || edgeText.IndexOf("+DMG", StringComparison.Ordinal) < 0)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: first relic does not expose a distinct Lumen Edge damage role.");
+            }
+
+            SetPrivate(controller, "secondRewardClaimedThisRun", true);
+            var wardIncoming = InvokePrivateFloat(controller, "EnemyDamageFor", 0);
+            var bothText = InvokePrivateString(controller, "RelicStateText");
+            if (wardIncoming >= baseIncoming || bothText.IndexOf("Ward", StringComparison.Ordinal) < 0 || bothText.IndexOf("-DMG", StringComparison.Ordinal) < 0)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: second relic does not expose a distinct Lumen Ward defense role.");
+            }
+
+            SetPrivate(controller, "firstRewardClaimedThisRun", false);
+            SetPrivate(controller, "secondRewardClaimedThisRun", false);
+        }
+
         private static void ForceAllEnemiesDefeated(D020SliceController controller)
         {
             var enemyHealth = GetPrivate<float[]>(controller, "enemyHealth");
@@ -703,6 +731,24 @@ namespace FourfoldEchoes.Editor
             try
             {
                 return (float)method.Invoke(target, new object[] { argument });
+            }
+            catch (TargetInvocationException exception) when (exception.InnerException != null)
+            {
+                throw new InvalidOperationException($"D-020 verifier failed inside {methodName}: {exception.InnerException.Message}", exception.InnerException);
+            }
+        }
+
+        private static string InvokePrivateString(object target, string methodName)
+        {
+            var method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+            if (method == null || method.ReturnType != typeof(string))
+            {
+                throw new InvalidOperationException($"D-020 verifier failed: missing private string method {methodName} on {target.GetType().Name}.");
+            }
+
+            try
+            {
+                return (string)method.Invoke(target, Array.Empty<object>());
             }
             catch (TargetInvocationException exception) when (exception.InnerException != null)
             {
