@@ -17,9 +17,6 @@ namespace FourfoldEchoes.Product
         public bool d020ReturnedToHub;
         public int d020ClearCount;
         public float d020BestClearTimeSeconds;
-        public int d020LumenEdgeStock;
-        public int d020EquippedSkill;
-        public int d020LostSkillCount;
     }
 
     public static class FourfoldProgressSave
@@ -130,9 +127,6 @@ namespace FourfoldEchoes.Product
             }
 
             data.d020BestClearTimeSeconds = Mathf.Max(0f, data.d020BestClearTimeSeconds);
-            data.d020LumenEdgeStock = Mathf.Max(0, data.d020LumenEdgeStock);
-            data.d020EquippedSkill = data.d020LumenEdgeStock > 0 ? data.d020EquippedSkill : 0;
-            data.d020LostSkillCount = Mathf.Max(0, data.d020LostSkillCount);
             return data;
         }
     }

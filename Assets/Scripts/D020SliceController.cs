@@ -92,11 +92,6 @@ namespace FourfoldEchoes.Product
         private const string SaveKeyReturnedToHub = "fourfold.d020.slice.returned_to_hub";
         private const string SaveKeyClearCount = "fourfold.d020.slice.clear_count";
         private const string SaveKeyBestClearTime = "fourfold.d020.slice.best_clear_time";
-        private const string SaveKeySkillStock = "fourfold.d020.skill.lumen_edge.stock";
-        private const string SaveKeyEquippedSkill = "fourfold.d020.skill.equipped";
-        private const string SaveKeyLostSkillCount = "fourfold.d020.skill.lost_count";
-        private const int SkillNone = 0;
-        private const int SkillLumenEdge = 1;
         private const float MinX = -9.2f;
         private const float MaxX = 10.6f;
         private const float MinZ = -6.2f;
@@ -131,24 +126,17 @@ namespace FourfoldEchoes.Product
         private bool previousSecondNodeLoaded;
         private bool previousSecondRewardLoaded;
         private bool previousReturnedToHubLoaded;
-        private int skillStock;
-        private int equippedSkill;
-        private int lostSkillCount;
         private int clearCount;
         private float runTimerSeconds;
         private float bestClearTimeSeconds;
         private float lastReturnTimeSeconds;
         private float bossDefeatTimer;
-        private bool skillAwardedThisRun;
         private bool firstRewardClaimedThisRun;
         private bool secondRewardClaimedThisRun;
-        private bool failureLossApplied;
-        private bool lostSkillThisRun;
         private bool returnedToHubThisRun;
         private bool returnRegisteredThisRun;
         private bool bestClearTimeImproved;
         private bool bossDefeatedThisRun;
-        private int pendingSkillRewards;
         private FourfoldProgressData progressData;
         private GameObject attackRead;
         private GameObject rewardClaimRead;
@@ -503,7 +491,6 @@ namespace FourfoldEchoes.Product
             if (playerHealth <= 0f)
             {
                 runFailed = true;
-                ApplyFailureSkillLoss();
                 SetRewardReady(false);
                 UpdateToolInputLock();
             }
@@ -524,8 +511,8 @@ namespace FourfoldEchoes.Product
             }
 
             attackRead.transform.localPosition = facing.normalized * 0.86f + new Vector3(0f, 0.06f, 0f);
-            var skillBoost = EquippedLumenEdge() ? 0.22f : 0f;
-            var pulse = 1.16f + skillBoost + Mathf.Sin(Time.time * 36f) * 0.08f;
+            var relicBoost = LumenEdgeActive() ? 0.22f : 0f;
+            var pulse = 1.16f + relicBoost + Mathf.Sin(Time.time * 36f) * 0.08f;
             attackRead.transform.localScale = new Vector3(pulse, 0.025f, pulse);
         }
 
@@ -646,7 +633,6 @@ namespace FourfoldEchoes.Product
 
             rewardClaimed = true;
             firstRewardClaimedThisRun = true;
-            AwardSkillReward();
             previousShortcutLoaded = ToolGateSolved();
             runCleared = secondToolNode == null || secondRewardClaimPoint == null;
             UpdateToolInputLock();
@@ -674,8 +660,6 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
-            pendingSkillRewards += 1;
-            equippedSkill = SkillLumenEdge;
             secondRewardClaimedThisRun = true;
             rewardClaimed = true;
             runCleared = true;
@@ -735,11 +719,6 @@ namespace FourfoldEchoes.Product
             previousRewardLoaded = previousRewardLoaded || firstRewardClaimedThisRun;
             previousSecondRewardLoaded = previousSecondRewardLoaded || secondRewardClaimedThisRun;
             RegisterReturnedClearTime();
-            if (pendingSkillRewards > 0)
-            {
-                skillStock += pendingSkillRewards;
-                pendingSkillRewards = 0;
-            }
 
             if (!returnRegisteredThisRun)
             {
@@ -783,21 +762,16 @@ namespace FourfoldEchoes.Product
         private void ResetRun()
         {
             SetPaused(false);
-            RecordAbandonedPendingRewards();
             playerHealth = PlayerMaxHealth;
             playerInvulnerableTimer = 0f;
             runFailed = false;
             runCleared = false;
             rewardClaimed = false;
             rewardReadyCuePlayed = false;
-            skillAwardedThisRun = false;
             firstRewardClaimedThisRun = false;
             secondRewardClaimedThisRun = false;
-            failureLossApplied = false;
-            lostSkillThisRun = false;
             returnedToHubThisRun = false;
             returnRegisteredThisRun = false;
-            pendingSkillRewards = 0;
             runTimerSeconds = 0f;
             lastReturnTimeSeconds = 0f;
             bossDefeatTimer = 0f;
@@ -863,24 +837,6 @@ namespace FourfoldEchoes.Product
             }
             SetRewardReady(false);
             UpdateToolInputLock();
-        }
-
-        private void RecordAbandonedPendingRewards()
-        {
-            if (pendingSkillRewards <= 0 || returnedToHubThisRun)
-            {
-                return;
-            }
-
-            lostSkillCount += pendingSkillRewards;
-            pendingSkillRewards = 0;
-            lostSkillThisRun = true;
-            if (skillStock <= 0)
-            {
-                equippedSkill = SkillNone;
-            }
-
-            PersistProgress();
         }
 
         private void RegisterReturnedClearTime()
@@ -957,71 +913,12 @@ namespace FourfoldEchoes.Product
             previousReturnedToHubLoaded = progressData.d020ReturnedToHub && previousClearLoaded;
             clearCount = Mathf.Max(0, progressData.d020ClearCount);
             bestClearTimeSeconds = Mathf.Max(0f, progressData.d020BestClearTimeSeconds);
-            skillStock = Mathf.Max(0, progressData.d020LumenEdgeStock);
-            equippedSkill = progressData.d020EquippedSkill;
-            lostSkillCount = Mathf.Max(0, progressData.d020LostSkillCount);
-
-            if (equippedSkill != SkillNone && skillStock <= 0)
-            {
-                equippedSkill = SkillNone;
-                PersistProgress();
-            }
-            else if (equippedSkill == SkillNone && skillStock > 0)
-            {
-                equippedSkill = SkillLumenEdge;
-                PersistProgress();
-            }
-        }
-
-        private void AwardSkillReward()
-        {
-            if (skillAwardedThisRun)
-            {
-                return;
-            }
-
-            skillAwardedThisRun = true;
-            pendingSkillRewards += 1;
-            equippedSkill = SkillLumenEdge;
-        }
-
-        private void ApplyFailureSkillLoss()
-        {
-            if (failureLossApplied)
-            {
-                return;
-            }
-
-            failureLossApplied = true;
-            if (pendingSkillRewards > 0)
-            {
-                lostSkillCount += pendingSkillRewards;
-                pendingSkillRewards = 0;
-                lostSkillThisRun = true;
-                if (skillStock <= 0)
-                {
-                    equippedSkill = SkillNone;
-                }
-                PersistProgress();
-                return;
-            }
-
-            if (equippedSkill == SkillNone)
-            {
-                return;
-            }
-
-            equippedSkill = SkillNone;
-            skillStock = Mathf.Max(0, skillStock - 1);
-            lostSkillCount += 1;
-            lostSkillThisRun = true;
-            PersistProgress();
         }
 
         private float CurrentAttackDamage(int enemyIndex)
         {
             var baseDamage = IsBossEnemy(enemyIndex) ? 30f : IsEliteEnemy(enemyIndex) ? 36f : enemyIndex == 0 ? 34f : 42f;
-            return EquippedLumenEdge() ? baseDamage + 12f : baseDamage;
+            return LumenEdgeActive() ? baseDamage + 12f : baseDamage;
         }
 
         private float InitialEnemyHealth(int index)
@@ -1236,9 +1133,31 @@ namespace FourfoldEchoes.Product
             return baseScale * (BossEnraged(index) ? 1.18f : 1.08f);
         }
 
-        private bool EquippedLumenEdge()
+        private bool LumenEdgeActive()
         {
-            return equippedSkill == SkillLumenEdge && (skillStock > 0 || pendingSkillRewards > 0);
+            return previousRewardLoaded || previousSecondRewardLoaded || firstRewardClaimedThisRun || secondRewardClaimedThisRun;
+        }
+
+        private int ReturnedRelicCount()
+        {
+            var count = previousRewardLoaded ? 1 : 0;
+            if (previousSecondRewardLoaded)
+            {
+                count += 1;
+            }
+
+            return count;
+        }
+
+        private int ClaimedRelicCountThisRun()
+        {
+            var count = firstRewardClaimedThisRun ? 1 : 0;
+            if (secondRewardClaimedThisRun)
+            {
+                count += 1;
+            }
+
+            return count;
         }
 
         private bool AllEnemiesDefeated()
@@ -1448,9 +1367,6 @@ namespace FourfoldEchoes.Product
             data.d020ReturnedToHub = PlayerPrefs.GetInt(SaveKeyReturnedToHub, 0) == 1 && data.d020Cleared;
             data.d020ClearCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyClearCount, 0));
             data.d020BestClearTimeSeconds = Mathf.Max(0f, PlayerPrefs.GetFloat(SaveKeyBestClearTime, 0f));
-            data.d020LumenEdgeStock = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeySkillStock, 0));
-            data.d020EquippedSkill = PlayerPrefs.GetInt(SaveKeyEquippedSkill, SkillNone);
-            data.d020LostSkillCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyLostSkillCount, 0));
         }
 
         private void PersistProgress()
@@ -1469,9 +1385,6 @@ namespace FourfoldEchoes.Product
             progressData.d020ReturnedToHub = previousReturnedToHubLoaded;
             progressData.d020ClearCount = Mathf.Max(0, clearCount);
             progressData.d020BestClearTimeSeconds = Mathf.Max(0f, bestClearTimeSeconds);
-            progressData.d020LumenEdgeStock = Mathf.Max(0, skillStock);
-            progressData.d020EquippedSkill = equippedSkill;
-            progressData.d020LostSkillCount = Mathf.Max(0, lostSkillCount);
             FourfoldProgressSave.Save(progressData);
             MirrorLegacyPlayerPrefs();
         }
@@ -1486,9 +1399,6 @@ namespace FourfoldEchoes.Product
             PlayerPrefs.SetInt(SaveKeyReturnedToHub, progressData.d020ReturnedToHub ? 1 : 0);
             PlayerPrefs.SetInt(SaveKeyClearCount, progressData.d020ClearCount);
             PlayerPrefs.SetFloat(SaveKeyBestClearTime, progressData.d020BestClearTimeSeconds);
-            PlayerPrefs.SetInt(SaveKeySkillStock, progressData.d020LumenEdgeStock);
-            PlayerPrefs.SetInt(SaveKeyEquippedSkill, progressData.d020EquippedSkill);
-            PlayerPrefs.SetInt(SaveKeyLostSkillCount, progressData.d020LostSkillCount);
             PlayerPrefs.Save();
         }
 
@@ -1662,9 +1572,7 @@ namespace FourfoldEchoes.Product
                     ? "RESULT: returned to hub. Press R to replay the run."
                     : "CLEAR: rewards secured. Press E/Y to return to hub."
                 : runFailed
-                    ? lostSkillThisRun
-                        ? "FAILED: equipped skill shattered. Press R to retry."
-                        : "FAILED: press R to retry."
+                    ? "FAILED: press R to retry."
                     : !ToolGateSolved()
                         ? "Activate the glowing tool node with Q or gamepad X."
                         : BossDefeatedThisRun() && !AllEnemiesDefeated()
@@ -1684,13 +1592,13 @@ namespace FourfoldEchoes.Product
                 : explorationTool.IsReady
                     ? "Tool READY"
                     : $"Tool cooldown {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%";
-            var skillState = EquippedLumenEdge()
-                ? $"Skill Lumen Edge equipped  Stock {skillStock}  Pending {pendingSkillRewards}"
-                : $"Skill empty  Stock {skillStock}  Pending {pendingSkillRewards}";
+            var relicState = LumenEdgeActive()
+                ? $"Relic Lumen Edge active  Returned {ReturnedRelicCount()}/2  Run {ClaimedRelicCountThisRun()}/2"
+                : $"Relic locked  Returned {ReturnedRelicCount()}/2  Run {ClaimedRelicCountThisRun()}/2";
             var resultState = clearCount > 0
                 ? $"Clears returned {clearCount}"
-                : pendingSkillRewards > 0
-                    ? $"Return to bank {pendingSkillRewards} skill reward(s)"
+                : ClaimedRelicCountThisRun() > 0
+                    ? $"Return to save {ClaimedRelicCountThisRun()} relic reward(s)"
                     : "Clear the boss, claim both relics, return to hub";
             var timeState = returnedToHubThisRun && lastReturnTimeSeconds > 0f
                 ? $"Returned {FormatRunTime(lastReturnTimeSeconds)}{(bestClearTimeImproved ? "  BEST" : string.Empty)}"
@@ -1702,7 +1610,7 @@ namespace FourfoldEchoes.Product
 
             GUI.Label(new Rect(30f, 26f, width - 28f, 34f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}{BossHealthSuffix()}", style);
             GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
-            GUI.Label(new Rect(30f, 88f, width - 28f, 30f), skillState, style);
+            GUI.Label(new Rect(30f, 88f, width - 28f, 30f), relicState, style);
             GUI.Label(new Rect(30f, 118f, width - 28f, 52f), objective, style);
             GUI.Label(new Rect(30f, 164f, width - 28f, 52f), $"{resultState}  {timeState}  Move WASD/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Pause Esc/Menu", style);
 
@@ -1722,7 +1630,7 @@ namespace FourfoldEchoes.Product
                 var beatRect = new Rect((Screen.width - beatWidth) * 0.5f, Screen.height * 0.22f, beatWidth, beatHeight);
                 GUI.Box(beatRect, GUIContent.none);
                 GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 20f, beatWidth - 48f, 32f), "BOSS DOWN", style);
-                GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 56f, beatWidth - 48f, 44f), "Secure the relics, then return to bank the skill reward.", style);
+                GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 56f, beatWidth - 48f, 44f), "Secure the relics, then return to save progress.", style);
             }
 
             if (previousReturnedToHubLoaded && !runCleared)
