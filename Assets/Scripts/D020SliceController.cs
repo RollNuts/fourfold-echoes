@@ -51,6 +51,11 @@ namespace FourfoldEchoes.Product
         private const string SaveKeyCleared = "fourfold.d020.slice.cleared";
         private const string SaveKeyShortcutOpened = "fourfold.d020.slice.shortcut_opened";
         private const string SaveKeyRewardClaimed = "fourfold.d020.slice.reward_claimed";
+        private const string SaveKeySkillStock = "fourfold.d020.skill.lumen_edge.stock";
+        private const string SaveKeyEquippedSkill = "fourfold.d020.skill.equipped";
+        private const string SaveKeyLostSkillCount = "fourfold.d020.skill.lost_count";
+        private const int SkillNone = 0;
+        private const int SkillLumenEdge = 1;
         private const float MinX = -9.2f;
         private const float MaxX = 10.6f;
         private const float MinZ = -6.2f;
@@ -79,6 +84,12 @@ namespace FourfoldEchoes.Product
         private bool previousClearLoaded;
         private bool previousShortcutLoaded;
         private bool previousRewardLoaded;
+        private int skillStock;
+        private int equippedSkill;
+        private int lostSkillCount;
+        private bool skillAwardedThisRun;
+        private bool failureLossApplied;
+        private bool lostSkillThisRun;
         private GameObject attackRead;
         private GameObject rewardClaimRead;
         private Material attackMaterial;
@@ -143,6 +154,7 @@ namespace FourfoldEchoes.Product
             previousClearLoaded = PlayerPrefs.GetInt(SaveKeyCleared, 0) == 1;
             previousShortcutLoaded = PlayerPrefs.GetInt(SaveKeyShortcutOpened, 0) == 1;
             previousRewardLoaded = PlayerPrefs.GetInt(SaveKeyRewardClaimed, 0) == 1 && previousClearLoaded;
+            LoadSkillProgress();
             EnsureExplorationReferences();
             if (previousShortcutLoaded && requiredToolNode != null)
             {
@@ -251,7 +263,7 @@ namespace FourfoldEchoes.Product
                 }
 
                 hitAny = true;
-                enemyHealth[i] -= i == 0 ? 34f : 42f;
+                enemyHealth[i] -= CurrentAttackDamage(i);
                 enemy.position += toEnemy.normalized * 0.34f;
                 enemy.localScale = Vector3.one * (enemyHealth[i] <= 0f ? 0.86f : 1.08f);
                 if (enemyHealth[i] <= 0f)
@@ -350,6 +362,7 @@ namespace FourfoldEchoes.Product
             if (playerHealth <= 0f)
             {
                 runFailed = true;
+                ApplyFailureSkillLoss();
                 SetRewardReady(false);
             }
         }
@@ -369,7 +382,8 @@ namespace FourfoldEchoes.Product
             }
 
             attackRead.transform.localPosition = facing.normalized * 0.86f + new Vector3(0f, 0.06f, 0f);
-            var pulse = 1.16f + Mathf.Sin(Time.time * 36f) * 0.08f;
+            var skillBoost = EquippedLumenEdge() ? 0.22f : 0f;
+            var pulse = 1.16f + skillBoost + Mathf.Sin(Time.time * 36f) * 0.08f;
             attackRead.transform.localScale = new Vector3(pulse, 0.025f, pulse);
         }
 
@@ -439,6 +453,7 @@ namespace FourfoldEchoes.Product
 
             rewardClaimed = true;
             runCleared = true;
+            AwardSkillReward();
             PlayerPrefs.SetInt(SaveKeyCleared, 1);
             PlayerPrefs.SetInt(SaveKeyShortcutOpened, ToolGateSolved() ? 1 : 0);
             PlayerPrefs.SetInt(SaveKeyRewardClaimed, 1);
@@ -462,6 +477,9 @@ namespace FourfoldEchoes.Product
             runCleared = false;
             rewardClaimed = false;
             rewardReadyCuePlayed = false;
+            skillAwardedThisRun = false;
+            failureLossApplied = false;
+            lostSkillThisRun = false;
             attackTimer = 0f;
             attackReadTimer = 0f;
             dodgeTimer = 0f;
@@ -506,6 +524,74 @@ namespace FourfoldEchoes.Product
                 requiredToolNode.SetSolved(PlayerPrefs.GetInt(SaveKeyShortcutOpened, 0) == 1);
             }
             SetRewardReady(false);
+        }
+
+        private void LoadSkillProgress()
+        {
+            skillStock = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeySkillStock, 0));
+            equippedSkill = PlayerPrefs.GetInt(SaveKeyEquippedSkill, SkillNone);
+            lostSkillCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyLostSkillCount, 0));
+
+            if (equippedSkill != SkillNone && skillStock <= 0)
+            {
+                equippedSkill = SkillNone;
+                PlayerPrefs.SetInt(SaveKeyEquippedSkill, SkillNone);
+                PlayerPrefs.Save();
+            }
+            else if (equippedSkill == SkillNone && skillStock > 0)
+            {
+                equippedSkill = SkillLumenEdge;
+                PlayerPrefs.SetInt(SaveKeyEquippedSkill, equippedSkill);
+                PlayerPrefs.Save();
+            }
+        }
+
+        private void AwardSkillReward()
+        {
+            if (skillAwardedThisRun)
+            {
+                return;
+            }
+
+            skillAwardedThisRun = true;
+            skillStock += 1;
+            equippedSkill = SkillLumenEdge;
+            PlayerPrefs.SetInt(SaveKeySkillStock, skillStock);
+            PlayerPrefs.SetInt(SaveKeyEquippedSkill, equippedSkill);
+        }
+
+        private void ApplyFailureSkillLoss()
+        {
+            if (failureLossApplied)
+            {
+                return;
+            }
+
+            failureLossApplied = true;
+            if (equippedSkill == SkillNone)
+            {
+                return;
+            }
+
+            equippedSkill = SkillNone;
+            skillStock = Mathf.Max(0, skillStock - 1);
+            lostSkillCount += 1;
+            lostSkillThisRun = true;
+            PlayerPrefs.SetInt(SaveKeyEquippedSkill, SkillNone);
+            PlayerPrefs.SetInt(SaveKeySkillStock, skillStock);
+            PlayerPrefs.SetInt(SaveKeyLostSkillCount, lostSkillCount);
+            PlayerPrefs.Save();
+        }
+
+        private float CurrentAttackDamage(int enemyIndex)
+        {
+            var baseDamage = enemyIndex == 0 ? 34f : 42f;
+            return EquippedLumenEdge() ? baseDamage + 12f : baseDamage;
+        }
+
+        private bool EquippedLumenEdge()
+        {
+            return equippedSkill == SkillLumenEdge && skillStock > 0;
         }
 
         private bool AllEnemiesDefeated()
@@ -696,9 +782,13 @@ namespace FourfoldEchoes.Product
             };
 
             var objective = runCleared
-                ? "CLEAR: reward secured. Press R to replay."
+                ? skillAwardedThisRun
+                    ? "CLEAR: Lumen Edge secured. Press R to replay."
+                    : "CLEAR: reward secured. Press R to replay."
                 : runFailed
-                    ? "FAILED: press R to retry."
+                    ? lostSkillThisRun
+                        ? "FAILED: equipped skill shattered. Press R to retry."
+                        : "FAILED: press R to retry."
                     : !ToolGateSolved()
                         ? "Activate the glowing tool node with Q or gamepad X."
                         : AllEnemiesDefeated()
@@ -710,11 +800,15 @@ namespace FourfoldEchoes.Product
                 : explorationTool.IsReady
                     ? "Tool READY"
                     : $"Tool cooldown {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%";
+            var skillState = EquippedLumenEdge()
+                ? $"Skill Lumen Edge equipped  Stock {skillStock}"
+                : $"Skill empty  Stock {skillStock}";
 
             GUI.Label(new Rect(30f, 26f, width - 28f, 34f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}", style);
             GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
-            GUI.Label(new Rect(30f, 88f, width - 28f, 58f), objective, style);
-            GUI.Label(new Rect(30f, 144f, width - 28f, 34f), "Move WASD/Arrows/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Retry R/Start", style);
+            GUI.Label(new Rect(30f, 88f, width - 28f, 30f), skillState, style);
+            GUI.Label(new Rect(30f, 118f, width - 28f, 52f), objective, style);
+            GUI.Label(new Rect(30f, 164f, width - 28f, 34f), "Move WASD/Arrows/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Retry R/Start", style);
 
             if (previousClearLoaded && !runCleared)
             {
