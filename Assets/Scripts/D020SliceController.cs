@@ -50,6 +50,12 @@ namespace FourfoldEchoes.Product
         private const float EnemyAttackRange = 1.18f;
         private const float EnemyAttackWindup = 0.62f;
         private const float EnemyAttackCooldown = 1.15f;
+        private const float RangedEnemySpeed = 1.30f;
+        private const float RangedPreferredDistance = 4.25f;
+        private const float RangedRetreatDistance = 2.55f;
+        private const float RangedAttackRange = 5.75f;
+        private const float RangedAttackWindup = 0.82f;
+        private const float RangedAttackCooldown = 1.55f;
         private const float BossAttackRange = 2.05f;
         private const float BossAttackWindup = 0.92f;
         private const float BossAttackCooldown = 1.65f;
@@ -161,7 +167,9 @@ namespace FourfoldEchoes.Product
             attackRead.SetActive(false);
             for (var i = 0; i < enemyAttackReads.Length; i++)
             {
-                enemyAttackReads[i] = CreateDisc($"D020 Runtime Enemy Attack Read {i}", enemyAttackMaterial, 1.0f);
+                enemyAttackReads[i] = IsRangedEnemy(i)
+                    ? CreateBeamRead($"D020 Runtime Enemy Aim Read {i}", enemyAttackMaterial)
+                    : CreateDisc($"D020 Runtime Enemy Attack Read {i}", enemyAttackMaterial, 1.0f);
                 enemyAttackReads[i].SetActive(false);
             }
 
@@ -354,7 +362,8 @@ namespace FourfoldEchoes.Product
 
                 var toPlayer = player.position - enemy.position;
                 toPlayer.y = 0f;
-                if (toPlayer.magnitude > EnemySenseRange || toPlayer.sqrMagnitude <= 0.01f)
+                var distance = toPlayer.magnitude;
+                if (distance > EnemySenseRange || toPlayer.sqrMagnitude <= 0.01f)
                 {
                     enemyWindupTimer[i] = 0f;
                     enemyAttackTimer[i] = Mathf.Max(0f, enemyAttackTimer[i] - dt);
@@ -368,7 +377,7 @@ namespace FourfoldEchoes.Product
                 var attackWindup = EnemyAttackWindupFor(i);
                 var attackCooldown = EnemyAttackCooldownFor(i);
 
-                if (toPlayer.magnitude <= attackRange && enemyAttackTimer[i] <= 0f)
+                if (distance <= attackRange && enemyAttackTimer[i] <= 0f)
                 {
                     enemyWindupTimer[i] += dt;
                     if (enemyWindupTimer[i] >= attackWindup)
@@ -381,6 +390,21 @@ namespace FourfoldEchoes.Product
                 }
 
                 enemyWindupTimer[i] = 0f;
+                if (IsRangedEnemy(i))
+                {
+                    var strafe = new Vector3(-desired.z, 0f, desired.x) * Mathf.Sin(Time.time * 1.35f) * 0.62f;
+                    var moveDirection = distance < RangedRetreatDistance
+                        ? -desired + strafe * 0.45f
+                        : distance > RangedPreferredDistance
+                            ? desired + strafe * 0.25f
+                            : strafe;
+                    if (moveDirection.sqrMagnitude > 0.001f)
+                    {
+                        enemy.position += moveDirection.normalized * EnemySpeedFor(i) * dt;
+                    }
+                    continue;
+                }
+
                 var flank = new Vector3(-desired.z, 0f, desired.x) * Mathf.Sin(Time.time * (0.8f + i * 0.35f)) * 0.28f;
                 enemy.position += (desired + flank).normalized * EnemySpeedFor(i) * dt;
             }
@@ -461,6 +485,24 @@ namespace FourfoldEchoes.Product
                 }
 
                 var progress = Mathf.Clamp01(enemyWindupTimer[i] / EnemyAttackWindupFor(i));
+                if (IsRangedEnemy(i))
+                {
+                    var toPlayer = player.position - enemy.position;
+                    toPlayer.y = 0f;
+                    if (toPlayer.sqrMagnitude <= 0.01f)
+                    {
+                        continue;
+                    }
+
+                    var distance = Mathf.Min(toPlayer.magnitude, EnemyAttackRangeFor(i));
+                    var aim = toPlayer.normalized;
+                    read.transform.position = enemy.position + aim * (distance * 0.5f) + new Vector3(0f, 0.10f, 0f);
+                    read.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
+                    var width = Mathf.Lerp(0.12f, 0.26f, progress);
+                    read.transform.localScale = new Vector3(width, 0.035f, Mathf.Max(0.72f, distance));
+                    continue;
+                }
+
                 read.transform.position = enemy.position + new Vector3(0f, 0.07f, 0f);
                 var minRadius = IsBossEnemy(i) ? 1.25f : 0.72f;
                 var maxRadius = IsBossEnemy(i) ? 2.35f : 1.28f;
@@ -804,32 +846,57 @@ namespace FourfoldEchoes.Product
                 return 220f;
             }
 
-            return index == 0 ? 90f : 55f;
+            return IsRangedEnemy(index) ? 62f : 90f;
         }
 
         private float InitialEnemyAttackDelay(int index)
         {
-            return IsBossEnemy(index) ? 0.9f : 0.28f + index * 0.25f;
+            if (IsBossEnemy(index))
+            {
+                return 0.9f;
+            }
+
+            return IsRangedEnemy(index) ? 0.65f : 0.28f + index * 0.25f;
         }
 
         private float EnemyAttackRangeFor(int index)
         {
-            return IsBossEnemy(index) ? BossAttackRange : EnemyAttackRange;
+            if (IsBossEnemy(index))
+            {
+                return BossAttackRange;
+            }
+
+            return IsRangedEnemy(index) ? RangedAttackRange : EnemyAttackRange;
         }
 
         private float EnemyAttackWindupFor(int index)
         {
-            return IsBossEnemy(index) ? BossAttackWindup : EnemyAttackWindup;
+            if (IsBossEnemy(index))
+            {
+                return BossAttackWindup;
+            }
+
+            return IsRangedEnemy(index) ? RangedAttackWindup : EnemyAttackWindup;
         }
 
         private float EnemyAttackCooldownFor(int index)
         {
-            return IsBossEnemy(index) ? BossAttackCooldown : EnemyAttackCooldown + index * 0.22f;
+            if (IsBossEnemy(index))
+            {
+                return BossAttackCooldown;
+            }
+
+            return IsRangedEnemy(index) ? RangedAttackCooldown : EnemyAttackCooldown + index * 0.22f;
         }
 
         private float EnemySpeedFor(int index)
         {
-            return IsBossEnemy(index) ? BossSpeed : EnemySpeed;
+            if (IsBossEnemy(index))
+            {
+                return BossSpeed;
+            }
+
+            return IsRangedEnemy(index) ? RangedEnemySpeed : EnemySpeed;
         }
 
         private float EnemyDamageFor(int index)
@@ -846,6 +913,12 @@ namespace FourfoldEchoes.Product
         {
             var enemy = enemies != null && index >= 0 && index < enemies.Length ? enemies[index] : null;
             return enemy != null && enemy.name.IndexOf("Boss", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private bool IsRangedEnemy(int index)
+        {
+            var enemy = enemies != null && index >= 0 && index < enemies.Length ? enemies[index] : null;
+            return enemy != null && enemy.name.IndexOf("Ranged", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private bool EquippedLumenEdge()
@@ -1152,6 +1225,21 @@ namespace FourfoldEchoes.Product
                 Destroy(collider);
             }
             return disc;
+        }
+
+        private static GameObject CreateBeamRead(string name, Material material)
+        {
+            var beam = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            beam.name = name;
+            beam.transform.localScale = new Vector3(0.16f, 0.035f, 1.0f);
+            var renderer = beam.GetComponent<Renderer>();
+            renderer.sharedMaterial = material;
+            var collider = beam.GetComponent<Collider>();
+            if (collider != null)
+            {
+                Destroy(collider);
+            }
+            return beam;
         }
 
         private void OnGUI()
