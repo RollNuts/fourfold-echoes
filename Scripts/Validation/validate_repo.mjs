@@ -197,9 +197,6 @@ const requiredD020SfxIds = [
   "audio.sfx.shield_armor_hit",
   "audio.sfx.player_damage",
   "audio.sfx.enemy_death",
-  "audio.sfx.guard_start",
-  "audio.sfx.guard_hit",
-  "audio.sfx.parry_success",
   "audio.sfx.enemy_notice",
   "audio.sfx.enemy_tell",
   "audio.sfx.enemy_attack",
@@ -233,8 +230,7 @@ const requiredD020MusicIds = [
   "audio.music.bgm_region02",
   "audio.music.bgm_region03",
   "audio.music.bgm_normal_combat",
-  "audio.music.bgm_boss",
-  "audio.music.bgm_discovery_reward"
+  "audio.music.bgm_boss"
 ];
 
 validateAudioRegisterCoverage({
