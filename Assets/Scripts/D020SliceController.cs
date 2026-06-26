@@ -637,6 +637,12 @@ namespace FourfoldEchoes.Product
                 explorationTool = GetComponent<ExplorationTool>();
             }
 
+            if (explorationTool != null)
+            {
+                explorationTool.useKey = KeyCode.Q;
+                explorationTool.alternateUseKey = KeyCode.JoystickButton2;
+            }
+
             if (requiredToolNode == null && explorationTool != null && explorationTool.nodes != null && explorationTool.nodes.Length > 0)
             {
                 requiredToolNode = explorationTool.nodes[0];
