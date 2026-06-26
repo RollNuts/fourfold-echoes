@@ -4,7 +4,7 @@ This private repository is the commercial runtime path for FOURFOLD ECHOES.
 
 ## Protected Repositories
 
-- Do not delete, rewrite, or repurpose `/Users/murakaminaoya/veripsa-games`.
+- Do not delete, rewrite, or repurpose the separate public Veripsa dogfood repository clone.
 - `veripsa-games` is the public Veripsa dogfood repository and is not the
   shipping game source.
 - Work for the commercial game belongs in this private `fourfold-echoes`

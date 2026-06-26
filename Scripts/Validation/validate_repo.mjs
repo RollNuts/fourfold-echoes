@@ -35,6 +35,7 @@ const requiredFiles = [
   "docs/Production/VERTICAL_SLICE_PLAN.md",
   "docs/Production/SCOPE_CONTROL.md",
   "docs/Production/VERIPSA_LANES.md",
+  "docs/Production/REQUIRED_CHECKS.md",
   "docs/Tech/TECHNICAL_ARCHITECTURE.md",
   "docs/Tech/OPEN_WORLD_SYSTEMS.md",
   "docs/Tech/PHASE_STATE_SYSTEM.md",
@@ -56,7 +57,8 @@ const requiredFiles = [
   "game-spec/entities/d020-vertical-slice.yaml",
   "game-spec/scenarios/d020-tool-room-read.yaml",
   "commands/samples/inspect-d020-slice.json",
-  "Scripts/Validation/write_veripsa_split_report.mjs"
+  "Scripts/Validation/write_veripsa_split_report.mjs",
+  "Scripts/Validation/check_public_repo_hygiene.mjs"
 ];
 
 const secretLikePatterns = [

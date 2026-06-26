@@ -54,6 +54,7 @@ const lanes = [
     patterns: [
       /^artifacts\/\.gitignore$/,
       /^Scripts\/Validation\/validate_repo\.mjs$/,
+      /^Scripts\/Validation\/check_public_repo_hygiene\.mjs$/,
       /^Scripts\/Validation\/write_veripsa_split_report\.mjs$/,
       /^tools\/forge\/check\.mjs$/,
       /^commands\/samples\/inspect-d020-slice\.json$/,

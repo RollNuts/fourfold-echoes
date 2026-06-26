@@ -6,6 +6,7 @@ UNITY_EDITOR="${UNITY_EDITOR:-/Applications/Unity/Hub/Editor/6000.3.18f1/Unity.a
 
 cd "$ROOT"
 
+node Scripts/Validation/check_public_repo_hygiene.mjs
 node Scripts/Validation/validate_repo.mjs
 node tools/forge/check.mjs
 
