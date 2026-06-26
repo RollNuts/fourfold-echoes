@@ -905,6 +905,9 @@ namespace FourfoldEchoes.Product
                 MigrateLegacyPlayerPrefs(progressData);
             }
 
+            progressData.hubUnlocked = true;
+            progressData.regionD020Unlocked = true;
+            progressData.lumenRodUnlocked = true;
             previousClearLoaded = progressData.d020Cleared;
             previousShortcutLoaded = progressData.d020ShortcutOpened;
             previousRewardLoaded = progressData.d020RewardClaimed && previousClearLoaded;
@@ -1472,8 +1475,15 @@ namespace FourfoldEchoes.Product
                 progressData = new FourfoldProgressData();
             }
 
-            progressData.currentScene = "scene.d020_vertical_slice";
+            progressData.currentScene = previousReturnedToHubLoaded ? FourfoldGameIds.SceneHubCrossroads : FourfoldGameIds.SceneD020VerticalSlice;
+            progressData.hubUnlocked = true;
+            progressData.regionD020Unlocked = true;
+            progressData.regionD020Cleared = previousReturnedToHubLoaded && previousClearLoaded;
+            progressData.lastCompletedRegion = progressData.regionD020Cleared ? FourfoldGameIds.RegionD020 : progressData.lastCompletedRegion;
+            progressData.hubSpawnId = previousReturnedToHubLoaded ? FourfoldGameIds.HubSpawnReturnGate : progressData.hubSpawnId;
+            progressData.lumenRodUnlocked = true;
             progressData.d020Cleared = previousClearLoaded;
+            progressData.d020BossDefeated = previousClearLoaded;
             progressData.d020ShortcutOpened = previousShortcutLoaded;
             progressData.d020RewardClaimed = previousRewardLoaded;
             progressData.d020SecondNodeOpened = previousSecondNodeLoaded;

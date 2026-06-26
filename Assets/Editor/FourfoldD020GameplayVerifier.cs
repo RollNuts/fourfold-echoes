@@ -182,6 +182,16 @@ namespace FourfoldEchoes.Editor
                         throw new InvalidOperationException("D-020 full-loop verifier failed: clear count or best clear time was not persisted.");
                     }
 
+                    if (saved.currentScene != FourfoldGameIds.SceneHubCrossroads || !saved.hubUnlocked || !saved.regionD020Unlocked || !saved.regionD020Cleared || !saved.lumenRodUnlocked)
+                    {
+                        throw new InvalidOperationException("D-020 full-loop verifier failed: hub, region, current scene, or exploration tool progress was not persisted.");
+                    }
+
+                    if (saved.lastCompletedRegion != FourfoldGameIds.RegionD020 || saved.hubSpawnId != FourfoldGameIds.HubSpawnReturnGate || !saved.d020BossDefeated)
+                    {
+                        throw new InvalidOperationException("D-020 full-loop verifier failed: completed region, hub spawn, or boss defeat progress was not persisted.");
+                    }
+
                     Debug.Log("FOURFOLD D-020 full-loop verifier passed: tool nodes, two rewards, return, clear count, and best time persist.");
                 }
                 finally

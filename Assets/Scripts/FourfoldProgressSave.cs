@@ -9,7 +9,14 @@ namespace FourfoldEchoes.Product
     {
         public int version = FourfoldProgressSave.CurrentVersion;
         public string currentScene = string.Empty;
+        public string lastCompletedRegion = string.Empty;
+        public string hubSpawnId = string.Empty;
+        public bool hubUnlocked;
+        public bool regionD020Unlocked;
+        public bool regionD020Cleared;
+        public bool lumenRodUnlocked;
         public bool d020Cleared;
+        public bool d020BossDefeated;
         public bool d020ShortcutOpened;
         public bool d020RewardClaimed;
         public bool d020SecondNodeOpened;
@@ -120,6 +127,8 @@ namespace FourfoldEchoes.Product
 
             data.version = CurrentVersion;
             data.currentScene = data.currentScene ?? string.Empty;
+            data.lastCompletedRegion = data.lastCompletedRegion ?? string.Empty;
+            data.hubSpawnId = data.hubSpawnId ?? string.Empty;
             data.d020ClearCount = Mathf.Max(0, data.d020ClearCount);
             if (float.IsNaN(data.d020BestClearTimeSeconds) || float.IsInfinity(data.d020BestClearTimeSeconds))
             {
