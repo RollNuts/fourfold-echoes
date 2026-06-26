@@ -167,8 +167,8 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            fixedCamera.transform.position = player.position + new Vector3(0f, 8.2f, -7.6f);
-            fixedCamera.transform.rotation = Quaternion.Euler(56f, 0f, 0f);
+            fixedCamera.transform.position = new Vector3(0f, 9.4f, -8.7f);
+            fixedCamera.transform.rotation = Quaternion.LookRotation(new Vector3(0f, 0.1f, 1.2f) - fixedCamera.transform.position, Vector3.up);
         }
 
         private static Vector3 ReadMoveInput()

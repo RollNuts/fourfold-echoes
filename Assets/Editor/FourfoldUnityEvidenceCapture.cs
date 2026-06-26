@@ -110,6 +110,20 @@ namespace FourfoldEchoes.Editor
             Debug.Log($"FOURFOLD D-020 vertical slice camera evidence captured: {outputPath}");
         }
 
+        public static void CaptureHubCrossroads()
+        {
+            FourfoldD020SliceSceneBuilder.BuildAndValidate();
+            FourfoldHubSceneBuilder.BuildAndValidate();
+
+            var camera = FindCamera();
+            var outputDirectory = GetOutputDirectory();
+            Directory.CreateDirectory(outputDirectory);
+            var outputPath = Path.Combine(outputDirectory, "hub-crossroads-camera.png");
+
+            CaptureCamera(camera, outputPath);
+            Debug.Log($"FOURFOLD Hub Crossroads camera evidence captured: {outputPath}");
+        }
+
         private static Camera FindCamera()
         {
             var camera = Camera.main;

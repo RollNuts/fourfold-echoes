@@ -209,10 +209,10 @@ namespace FourfoldEchoes.Editor
         {
             var cameraObject = new GameObject("Hub Top Down Camera");
             cameraObject.tag = "MainCamera";
-            cameraObject.transform.position = new Vector3(0f, 8.8f, -7.4f);
-            cameraObject.transform.rotation = Quaternion.Euler(56f, 0f, 0f);
+            cameraObject.transform.position = new Vector3(0f, 9.4f, -8.7f);
+            cameraObject.transform.rotation = Quaternion.LookRotation(new Vector3(0f, 0.1f, 1.2f) - cameraObject.transform.position, Vector3.up);
             var camera = cameraObject.AddComponent<Camera>();
-            camera.fieldOfView = 42f;
+            camera.fieldOfView = 48f;
             camera.nearClipPlane = 0.1f;
             camera.farClipPlane = 80f;
             return camera;
