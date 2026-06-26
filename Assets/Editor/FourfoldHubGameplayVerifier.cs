@@ -50,6 +50,38 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Hub gameplay verifier failed: entering the hub did not persist hub unlock, D-020 unlock, or starter tool unlock.");
                 }
 
+                if (controller.IsRunSummaryOpen())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: clean hub-start progress unexpectedly opened the run summary.");
+                }
+
+                var returnedProgress = FourfoldProgressSave.Load();
+                returnedProgress.currentScene = FourfoldGameIds.SceneHubCrossroads;
+                returnedProgress.hubSpawnId = FourfoldGameIds.HubSpawnReturnGate;
+                returnedProgress.regionD020Cleared = true;
+                returnedProgress.d020Cleared = true;
+                returnedProgress.d020BossDefeated = true;
+                returnedProgress.d020RewardClaimed = true;
+                returnedProgress.d020SecondNodeOpened = true;
+                returnedProgress.d020SecondRewardClaimed = true;
+                returnedProgress.d020ReturnedToHub = true;
+                returnedProgress.d020ClearCount = 1;
+                returnedProgress.d020AcknowledgedClearCount = 0;
+                returnedProgress.d020BestClearTimeSeconds = 91f;
+                FourfoldProgressSave.Save(returnedProgress);
+                controller.InitializeHubProgress();
+                if (!controller.IsRunSummaryOpen())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: returned D-020 progress did not open the banked run summary.");
+                }
+
+                controller.DismissRunSummary();
+                var acknowledgedProgress = FourfoldProgressSave.Load();
+                if (acknowledgedProgress.d020AcknowledgedClearCount != acknowledgedProgress.d020ClearCount || controller.IsRunSummaryOpen())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: dismissing the banked run summary did not acknowledge the returned clear.");
+                }
+
                 controller.player.position = controller.d020RegionGate.position;
                 controller.OpenMissionBriefing();
                 if (!controller.IsMissionBriefingOpen())
@@ -91,7 +123,7 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Hub gameplay verifier failed: returning to title did not preserve the hub continue target.");
                 }
 
-                Debug.Log("FOURFOLD Hub gameplay verifier passed: hub unlock, D-020 briefing/start, reset progress, and title return persist.");
+                Debug.Log("FOURFOLD Hub gameplay verifier passed: hub unlock, returned-run summary, D-020 briefing/start, reset progress, and title return persist.");
             }
             finally
             {

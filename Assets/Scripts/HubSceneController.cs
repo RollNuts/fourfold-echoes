@@ -37,6 +37,10 @@ namespace FourfoldEchoes.Product
         private const int MissionSettings = 1;
         private const int MissionBack = 2;
         private const int MissionMenuCount = 3;
+        private const int SummaryReplay = 0;
+        private const int SummaryContinue = 1;
+        private const int SummaryTitle = 2;
+        private const int SummaryMenuCount = 3;
         private const int SettingsCount = 5;
         private const float AxisRepeatDelay = 0.24f;
 
@@ -46,9 +50,11 @@ namespace FourfoldEchoes.Product
         private bool paused;
         private bool settingsOpen;
         private bool missionBriefingOpen;
+        private bool runSummaryOpen;
         private bool settingsOpenedFromMissionBriefing;
         private int selectedPauseIndex;
         private int selectedMissionIndex;
+        private int selectedSummaryIndex = SummaryContinue;
         private int selectedSettingIndex;
         private float axisRepeatTimer;
 
@@ -61,7 +67,7 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
-            var topPanel = new Rect(18f, 18f, Mathf.Min(760f, screenWidth - 36f), 190f);
+            var topPanel = new Rect(18f, 18f, Mathf.Min(760f, screenWidth - 36f), 210f);
             if (topPanel.xMax > screenWidth - 18f || topPanel.yMax > screenHeight - 18f)
             {
                 reason = $"hub status text exceeds safe area at {screenWidth}x{screenHeight}: {topPanel}";
@@ -79,6 +85,15 @@ namespace FourfoldEchoes.Product
             if (pauseRect.x < 24f || pauseRect.y < 24f || pauseRect.xMax > screenWidth - 24f || pauseRect.yMax > screenHeight - 24f)
             {
                 reason = $"hub pause panel exceeds safe area at {screenWidth}x{screenHeight}: {pauseRect}";
+                return false;
+            }
+
+            var summaryWidth = Mathf.Min(660f, screenWidth - 48f);
+            var summaryHeight = 402f;
+            var summaryRect = new Rect((screenWidth - summaryWidth) * 0.5f, (screenHeight - summaryHeight) * 0.5f, summaryWidth, summaryHeight);
+            if (summaryRect.x < 24f || summaryRect.y < 24f || summaryRect.xMax > screenWidth - 24f || summaryRect.yMax > screenHeight - 24f)
+            {
+                reason = $"hub result panel exceeds safe area at {screenWidth}x{screenHeight}: {summaryRect}";
                 return false;
             }
 
@@ -119,6 +134,12 @@ namespace FourfoldEchoes.Product
                     return;
                 }
 
+                if (runSummaryOpen)
+                {
+                    DismissRunSummary();
+                    return;
+                }
+
                 paused = !paused;
                 selectedPauseIndex = 0;
                 resetHoldSeconds = 0f;
@@ -128,6 +149,12 @@ namespace FourfoldEchoes.Product
             if (missionBriefingOpen)
             {
                 UpdateMissionBriefingInput();
+                return;
+            }
+
+            if (runSummaryOpen)
+            {
+                UpdateRunSummaryInput();
                 return;
             }
 
@@ -158,6 +185,8 @@ namespace FourfoldEchoes.Product
             progressData.regionD020Unlocked = true;
             progressData.lumenRodUnlocked = true;
             FourfoldProgressSave.Save(progressData);
+            runSummaryOpen = ShouldOpenRunSummary(progressData);
+            selectedSummaryIndex = SummaryContinue;
         }
 
         public bool TryEnterD020Region()
@@ -167,7 +196,13 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
+            return StartD020Region();
+        }
+
+        private bool StartD020Region()
+        {
             missionBriefingOpen = false;
+            runSummaryOpen = false;
             settingsOpenedFromMissionBriefing = false;
             settingsOpen = false;
             paused = false;
@@ -197,6 +232,7 @@ namespace FourfoldEchoes.Product
             paused = false;
             settingsOpen = false;
             missionBriefingOpen = false;
+            runSummaryOpen = false;
             settingsOpenedFromMissionBriefing = false;
             resetHoldSeconds = 0f;
 
@@ -219,6 +255,7 @@ namespace FourfoldEchoes.Product
             resetHoldSeconds = 0f;
             settingsOpen = false;
             missionBriefingOpen = false;
+            runSummaryOpen = false;
             settingsOpenedFromMissionBriefing = false;
             paused = false;
         }
@@ -227,6 +264,7 @@ namespace FourfoldEchoes.Product
         {
             progressData = FourfoldProgressSave.Load();
             paused = true;
+            runSummaryOpen = false;
             settingsOpen = true;
             settingsOpenedFromMissionBriefing = false;
             selectedSettingIndex = 0;
@@ -241,6 +279,7 @@ namespace FourfoldEchoes.Product
 
             progressData = FourfoldProgressSave.Load();
             missionBriefingOpen = true;
+            runSummaryOpen = false;
             settingsOpen = false;
             settingsOpenedFromMissionBriefing = false;
             paused = false;
@@ -259,6 +298,24 @@ namespace FourfoldEchoes.Product
         public bool IsMissionBriefingOpen()
         {
             return missionBriefingOpen;
+        }
+
+        public bool IsRunSummaryOpen()
+        {
+            return runSummaryOpen;
+        }
+
+        public void DismissRunSummary()
+        {
+            if (progressData == null)
+            {
+                progressData = FourfoldProgressSave.Load();
+            }
+
+            progressData.d020AcknowledgedClearCount = Mathf.Max(progressData.d020AcknowledgedClearCount, progressData.d020ClearCount);
+            FourfoldProgressSave.Save(progressData);
+            runSummaryOpen = false;
+            selectedSummaryIndex = SummaryContinue;
         }
 
         public void CloseSettings()
@@ -411,6 +468,29 @@ namespace FourfoldEchoes.Product
             }
         }
 
+        private void UpdateRunSummaryInput()
+        {
+            if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
+            {
+                selectedSummaryIndex = Wrap(selectedSummaryIndex - 1, SummaryMenuCount);
+            }
+            else if (Pressed(KeyCode.DownArrow, KeyCode.S) || AxisPressed(-1f))
+            {
+                selectedSummaryIndex = Wrap(selectedSummaryIndex + 1, SummaryMenuCount);
+            }
+
+            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey))
+            {
+                DismissRunSummary();
+                return;
+            }
+
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            {
+                ActivateRunSummarySelection();
+            }
+        }
+
         private void UpdateSettingsInput()
         {
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
@@ -469,6 +549,24 @@ namespace FourfoldEchoes.Product
                     break;
                 case MissionBack:
                     CloseMissionBriefing();
+                    break;
+            }
+        }
+
+        private void ActivateRunSummarySelection()
+        {
+            switch (selectedSummaryIndex)
+            {
+                case SummaryReplay:
+                    DismissRunSummary();
+                    StartD020Region();
+                    break;
+                case SummaryContinue:
+                    DismissRunSummary();
+                    break;
+                case SummaryTitle:
+                    DismissRunSummary();
+                    TryReturnToTitle();
                     break;
             }
         }
@@ -578,6 +676,14 @@ namespace FourfoldEchoes.Product
             return Vector3.Distance(a, b);
         }
 
+        private static bool ShouldOpenRunSummary(FourfoldProgressData data)
+        {
+            return data != null
+                && data.regionD020Cleared
+                && data.d020ReturnedToHub
+                && data.d020ClearCount > data.d020AcknowledgedClearCount;
+        }
+
         private void OnGUI()
         {
             FourfoldRuntimeUi.DrawScreenWash();
@@ -593,23 +699,35 @@ namespace FourfoldEchoes.Product
             var bestTime = progressData == null || progressData.d020BestClearTimeSeconds <= 0f
                 ? "--"
                 : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
-            var panel = new Rect(18f, 18f, Mathf.Min(760f, Screen.width - 36f), 190f);
+            var panel = new Rect(18f, 18f, Mathf.Min(760f, Screen.width - 36f), 210f);
             FourfoldRuntimeUi.DrawPanel(panel);
             var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, uiScale);
             var body = FourfoldRuntimeUi.BodyStyle(Screen.height, uiScale);
             var muted = FourfoldRuntimeUi.MutedStyle(Screen.height, uiScale);
             GUI.Label(new Rect(panel.x + 18f, panel.y + 12f, panel.width - 36f, 34f), "HUB: Crossroads", header);
-            GUI.Label(new Rect(panel.x + 18f, panel.y + 48f, panel.width - 36f, 42f), cleared ? "D-020 cleared. Re-enter to improve your time or test the build." : "Mission: enter D-020, defeat the boss, claim both relic rewards, and return to bank them.", body);
+            var hubStatus = cleared
+                ? "D-020 cleared. Lumen Edge and Ward are banked; replay to improve your time."
+                : "Mission: enter D-020, defeat the boss, claim both relic rewards, and return to bank them.";
+            GUI.Label(new Rect(panel.x + 18f, panel.y + 48f, panel.width - 36f, 52f), hubStatus, body);
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 96f, 230f, 34f), $"Clears {clearCount}   Best {bestTime}", new Color(1.0f, 0.72f, 0.24f), muted);
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 260f, panel.y + 96f, 220f, 34f), $"Relics banked {relics}/2", new Color(0.22f, 0.70f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 492f, panel.y + 96f, panel.width - 510f, 34f), $"Failures {(progressData == null ? 0 : progressData.d020FailureCount)}", new Color(1.0f, 0.46f, 0.22f), muted);
             var prompt = CanEnterD020Region() ? "Press E / Y: Enter D-020" : "Move to the gold gate to start the run.";
-            GUI.Label(new Rect(panel.x + 18f, panel.y + 142f, panel.width - 36f, 24f), prompt, body);
+            var next = cleared ? "Next: replay D-020, compare clear time, or return to title from Pause." : "Next: reach the gold gate and start the run.";
+            GUI.Label(new Rect(panel.x + 18f, panel.y + 138f, panel.width - 36f, 24f), prompt, body);
+            GUI.Label(new Rect(panel.x + 18f, panel.y + 164f, panel.width - 36f, 24f), next, muted);
             if (progressData == null || progressData.showControlHints)
             {
-                GUI.Label(new Rect(panel.x + 18f, panel.y + 166f, panel.width - 36f, 24f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Esc/Menu: Pause   Hold Backspace / Select: Reset save", muted);
+                GUI.Label(new Rect(panel.x + 18f, panel.y + 188f, panel.width - 36f, 20f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Esc/Menu: Pause   Hold Backspace / Select: Reset save", muted);
             }
 
             DrawObjectiveMarker(body);
+
+            if (runSummaryOpen)
+            {
+                DrawRunSummary(body, muted);
+                return;
+            }
 
             if (missionBriefingOpen)
             {
@@ -641,6 +759,36 @@ namespace FourfoldEchoes.Product
             }
 
             GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 194f, pauseWidth - 48f, 58f), "Hub is safe. Use reset only with the long-hold command shown in the HUD.", muted);
+        }
+
+        private void DrawRunSummary(GUIStyle body, GUIStyle muted)
+        {
+            var width = Mathf.Min(660f, Screen.width - 48f);
+            var height = 402f;
+            var rect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
+            FourfoldRuntimeUi.DrawPanel(rect);
+            var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData));
+            var bestTime = progressData == null || progressData.d020BestClearTimeSeconds <= 0f
+                ? "--"
+                : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
+            var clearCount = progressData == null ? 0 : progressData.d020ClearCount;
+            var failures = progressData == null ? 0 : progressData.d020FailureCount;
+            var relics = progressData == null ? 0 : (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
+
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), "RUN BANKED", header);
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 50f), "The D-020 run is complete. Returned relic skills are now saved and active for future attempts.", body);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 116f, (rect.width - 64f) * 0.50f, 36f), $"Relics active {relics}/2", new Color(0.22f, 0.70f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 38f + (rect.width - 64f) * 0.50f, rect.y + 116f, (rect.width - 64f) * 0.50f, 36f), $"Clears {clearCount}   Best {bestTime}", new Color(1.0f, 0.72f, 0.24f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 162f, rect.width - 52f, 36f), $"Failed runs {failures}. Unbanked relics are only safe after returning here.", new Color(1.0f, 0.46f, 0.22f), muted);
+            FourfoldRuntimeUi.DrawDivider(rect.x + 26f, rect.y + 214f, rect.width - 52f);
+
+            var labels = new[] { "Replay D-020", "Continue in Hub", "Return to Title" };
+            for (var i = 0; i < labels.Length; i++)
+            {
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 34f, rect.y + 230f + i * 38f, rect.width - 68f, 32f), labels[i], selectedSummaryIndex == i, body);
+            }
+
+            GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 48f, rect.width - 68f, 30f), "Move: arrows/stick   Confirm: E/Enter/Y   Close: Esc/Backspace/Menu", muted);
         }
 
         private void DrawMissionBriefing(GUIStyle body, GUIStyle muted)

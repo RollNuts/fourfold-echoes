@@ -23,6 +23,7 @@ namespace FourfoldEchoes.Product
         public bool d020SecondRewardClaimed;
         public bool d020ReturnedToHub;
         public int d020ClearCount;
+        public int d020AcknowledgedClearCount;
         public int d020FailureCount;
         public float d020BestClearTimeSeconds;
         public bool settingsInitialized;
@@ -173,6 +174,7 @@ namespace FourfoldEchoes.Product
             data.lastCompletedRegion = data.lastCompletedRegion ?? string.Empty;
             data.hubSpawnId = data.hubSpawnId ?? string.Empty;
             data.d020ClearCount = Mathf.Max(0, data.d020ClearCount);
+            data.d020AcknowledgedClearCount = Mathf.Clamp(data.d020AcknowledgedClearCount, 0, data.d020ClearCount);
             data.d020FailureCount = Mathf.Max(0, data.d020FailureCount);
             if (float.IsNaN(data.d020BestClearTimeSeconds) || float.IsInfinity(data.d020BestClearTimeSeconds))
             {
