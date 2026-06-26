@@ -1203,6 +1203,102 @@ namespace FourfoldEchoes.Product
             return bossDefeatedThisRun;
         }
 
+        private bool TryGetObjectiveTarget(out Transform target, out string label)
+        {
+            target = null;
+            label = string.Empty;
+
+            if (runFailed)
+            {
+                return false;
+            }
+
+            if (runCleared && !returnedToHubThisRun && returnGatePoint != null)
+            {
+                target = returnGatePoint;
+                label = "RETURN";
+                return true;
+            }
+
+            if (!ToolGateSolved() && requiredToolNode != null)
+            {
+                target = requiredToolNode.transform;
+                label = "TOOL NODE";
+                return true;
+            }
+
+            if (!AllEnemiesDefeated())
+            {
+                target = ObjectiveEnemy();
+                if (target != null)
+                {
+                    label = target.name.IndexOf("Boss", StringComparison.OrdinalIgnoreCase) >= 0
+                        ? "BOSS"
+                        : target.name.IndexOf("Elite", StringComparison.OrdinalIgnoreCase) >= 0
+                            ? "ELITE"
+                            : "ENEMY";
+                    return true;
+                }
+            }
+
+            if (!firstRewardClaimedThisRun && RewardReady() && rewardClaimPoint != null)
+            {
+                target = rewardClaimPoint;
+                label = "RELIC";
+                return true;
+            }
+
+            if (firstRewardClaimedThisRun && !SecondToolGateSolved() && secondToolNode != null)
+            {
+                target = secondToolNode.transform;
+                label = "SECOND NODE";
+                return true;
+            }
+
+            if (!secondRewardClaimedThisRun && SecondRewardReady() && secondRewardClaimPoint != null)
+            {
+                target = secondRewardClaimPoint;
+                label = "SECOND RELIC";
+                return true;
+            }
+
+            return false;
+        }
+
+        private Transform ObjectiveEnemy()
+        {
+            Transform nearest = null;
+            Transform elite = null;
+            var nearestDistance = float.PositiveInfinity;
+            for (var i = 0; i < enemyHealth.Length; i++)
+            {
+                var enemy = enemies != null && i < enemies.Length ? enemies[i] : null;
+                if (enemy == null || enemyHealth[i] <= 0f || !enemy.gameObject.activeSelf)
+                {
+                    continue;
+                }
+
+                if (IsBossEnemy(i))
+                {
+                    return enemy;
+                }
+
+                if (elite == null && IsEliteEnemy(i))
+                {
+                    elite = enemy;
+                }
+
+                var distance = player != null ? Vector3.Distance(player.position, enemy.position) : 0f;
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearest = enemy;
+                }
+            }
+
+            return elite != null ? elite : nearest;
+        }
+
         private static string FormatRunTime(float seconds)
         {
             var safeSeconds = Mathf.Max(0f, seconds);
@@ -1613,6 +1709,7 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(30f, 88f, width - 28f, 30f), relicState, style);
             GUI.Label(new Rect(30f, 118f, width - 28f, 52f), objective, style);
             GUI.Label(new Rect(30f, 164f, width - 28f, 52f), $"{resultState}  {timeState}  Move WASD/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Pause Esc/Menu", style);
+            DrawObjectiveMarker(style);
 
             if (paused)
             {
@@ -1650,6 +1747,38 @@ namespace FourfoldEchoes.Product
             {
                 GUI.Label(new Rect(16f, Screen.height - 42f, width, 28f), "Local progress: shortcut opened.", style);
             }
+        }
+
+        private void DrawObjectiveMarker(GUIStyle style)
+        {
+            if (!TryGetObjectiveTarget(out var target, out var label) || target == null)
+            {
+                return;
+            }
+
+            var camera = fixedCamera != null ? fixedCamera : Camera.main;
+            if (camera == null)
+            {
+                return;
+            }
+
+            var markerWorldPosition = target.position + new Vector3(0f, 0.9f, 0f);
+            var viewport = camera.WorldToViewportPoint(markerWorldPosition);
+            var behindCamera = viewport.z < 0f;
+            if (behindCamera)
+            {
+                viewport.x = 1f - viewport.x;
+                viewport.y = 1f - viewport.y;
+            }
+
+            var offscreen = behindCamera || viewport.x < 0.08f || viewport.x > 0.92f || viewport.y < 0.10f || viewport.y > 0.90f;
+            var screenX = Mathf.Clamp(viewport.x * Screen.width, 64f, Screen.width - 190f);
+            var screenY = Mathf.Clamp((1f - viewport.y) * Screen.height, 64f, Screen.height - 72f);
+            var distance = player != null ? Vector3.Distance(player.position, target.position) : 0f;
+            var rect = new Rect(screenX - 58f, screenY - 18f, 174f, 38f);
+            GUI.Box(rect, GUIContent.none);
+            var prefix = offscreen ? "NEXT >" : "NEXT";
+            GUI.Label(new Rect(rect.x + 12f, rect.y + 7f, rect.width - 24f, rect.height - 10f), $"{prefix} {label} {distance:0}m", style);
         }
 
         private static Material RuntimeMaterial(string name, Color color, Color emission)
