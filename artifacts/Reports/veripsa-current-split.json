@@ -1,5 +1,5 @@
 {
-  "generatedUtc": "2026-06-26T06:16:08.761Z",
+  "generatedUtc": "2026-06-26T06:31:15.205Z",
   "coreSource": "GitHub Veripsa checks; local veripsa CLI unavailable",
   "coreObservations": [
     {
@@ -13,18 +13,13 @@
       "implication": "New Unity editor/tool files were not in main's graph, so Core treated them as unknown. Split new C# runtime, editor scene generation, and capture/build tooling into separate PRs instead of landing them with docs."
     }
   ],
-  "dirtyFileCount": 5,
+  "dirtyFileCount": 2,
   "lanes": [
     {
       "id": "PR-A",
       "name": "product-canon",
       "order": 1,
-      "files": [
-        {
-          "status": " M",
-          "path": "AGENTS.md"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-B",
@@ -36,37 +31,28 @@
       "id": "PR-C",
       "name": "production-release-plans",
       "order": 3,
-      "files": [
-        {
-          "status": "??",
-          "path": "docs/Production/REQUIRED_CHECKS.md"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-D",
       "name": "validation-sync",
       "order": 4,
-      "files": [
-        {
-          "status": " M",
-          "path": "Scripts/Validation/validate_repo.mjs"
-        },
-        {
-          "status": " M",
-          "path": "Scripts/Validation/write_veripsa_split_report.mjs"
-        },
-        {
-          "status": "??",
-          "path": "Scripts/Validation/check_public_repo_hygiene.mjs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E1",
       "name": "d020-tool-runtime",
       "order": 5,
-      "files": []
+      "files": [
+        {
+          "status": " M",
+          "path": "Assets/Scripts/D020EnemyDummy.cs"
+        },
+        {
+          "status": " M",
+          "path": "Assets/Scripts/D020PlayerController.cs"
+        }
+      ]
     },
     {
       "id": "PR-E2",

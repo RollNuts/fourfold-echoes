@@ -21,6 +21,11 @@ namespace FourfoldEchoes.Product
         public int attackDamage = 1;
         public GameObject attackRead;
 
+        [Header("Damage")]
+        public int maxHealth = 3;
+        public float damageReadSeconds = 0.22f;
+        public GameObject damageRead;
+
         [Header("Audio")]
         public AudioClip attackClip;
         public AudioClip hitClip;
@@ -31,16 +36,22 @@ namespace FourfoldEchoes.Product
         private float attackCooldown;
         private float dodgeCooldown;
         private float attackReadTimer;
+        private float damageReadTimer;
+        private int currentHealth;
         private Vector2 lastMove = Vector2.up;
 
         public int AttackCount { get; private set; }
         public int AttackHitCount { get; private set; }
         public int DodgeCount { get; private set; }
+        public int DamageCount { get; private set; }
+        public int CurrentHealth => currentHealth;
+        public bool IsDefeated => currentHealth <= 0;
         public float AttackCooldown01 => attackCooldownSeconds <= 0f ? 0f : Mathf.Clamp01(attackCooldown / attackCooldownSeconds);
         public float DodgeCooldown01 => dodgeCooldownSeconds <= 0f ? 0f : Mathf.Clamp01(dodgeCooldown / dodgeCooldownSeconds);
 
         private void Awake()
         {
+            currentHealth = Mathf.Max(1, maxHealth);
             audioSource = GetComponent<AudioSource>();
             if (audioSource == null)
             {
@@ -53,6 +64,11 @@ namespace FourfoldEchoes.Product
             if (attackRead != null)
             {
                 attackRead.SetActive(false);
+            }
+
+            if (damageRead != null)
+            {
+                damageRead.SetActive(false);
             }
         }
 
@@ -78,6 +94,19 @@ namespace FourfoldEchoes.Product
             else if (attackRead != null && attackRead.activeSelf)
             {
                 attackRead.SetActive(false);
+            }
+
+            if (damageReadTimer > 0f)
+            {
+                damageReadTimer = Mathf.Max(0f, damageReadTimer - dt);
+                if (damageRead != null)
+                {
+                    damageRead.SetActive(true);
+                }
+            }
+            else if (damageRead != null && damageRead.activeSelf)
+            {
+                damageRead.SetActive(false);
             }
 
             if (move.sqrMagnitude > 1f)
@@ -142,6 +171,24 @@ namespace FourfoldEchoes.Product
             return hit;
         }
 
+        public bool TakeDamage(int damage)
+        {
+            if (IsDefeated)
+            {
+                return false;
+            }
+
+            currentHealth = Mathf.Max(0, currentHealth - Mathf.Max(1, damage));
+            DamageCount++;
+            damageReadTimer = Mathf.Max(0.02f, damageReadSeconds);
+            if (damageRead != null)
+            {
+                damageRead.SetActive(true);
+            }
+
+            return true;
+        }
+
         public bool TryDodge(Vector2 direction)
         {
             if (dodgeCooldown > 0f)
@@ -169,13 +216,21 @@ namespace FourfoldEchoes.Product
             attackCooldown = 0f;
             dodgeCooldown = 0f;
             attackReadTimer = 0f;
+            damageReadTimer = 0f;
+            currentHealth = Mathf.Max(1, maxHealth);
             AttackCount = 0;
             AttackHitCount = 0;
             DodgeCount = 0;
+            DamageCount = 0;
             lastMove = Vector2.up;
             if (attackRead != null)
             {
                 attackRead.SetActive(false);
+            }
+
+            if (damageRead != null)
+            {
+                damageRead.SetActive(false);
             }
         }
 

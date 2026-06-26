@@ -1,6 +1,6 @@
 # Veripsa Current Split Report
 
-Generated UTC: `2026-06-26T06:16:08.761Z`
+Generated UTC: `2026-06-26T06:31:15.205Z`
 
 Core source: GitHub Veripsa checks; local veripsa CLI unavailable
 
@@ -9,13 +9,13 @@ Core source: GitHub Veripsa checks; local veripsa CLI unavailable
 - PR #17 codex/store-readiness-pack: Veripsa `SUCCESS`. Docs-only changes with a narrow path set are a Veripsa-friendly landing unit.
 - PR #14 codex/gate-a-evidence-harness: Veripsa `NEUTRAL`. New Unity editor/tool files were not in main's graph, so Core treated them as unknown. Split new C# runtime, editor scene generation, and capture/build tooling into separate PRs instead of landing them with docs.
 
-Dirty files: 5
+Dirty files: 2
 
 ## Recommended Lanes
 
 ### PR-A - product-canon
 
-- `M` AGENTS.md
+- None
 
 ### PR-B - art-audio-direction
 
@@ -23,17 +23,16 @@ Dirty files: 5
 
 ### PR-C - production-release-plans
 
-- `??` docs/Production/REQUIRED_CHECKS.md
+- None
 
 ### PR-D - validation-sync
 
-- `M` Scripts/Validation/validate_repo.mjs
-- `M` Scripts/Validation/write_veripsa_split_report.mjs
-- `??` Scripts/Validation/check_public_repo_hygiene.mjs
+- None
 
 ### PR-E1 - d020-tool-runtime
 
-- None
+- `M` Assets/Scripts/D020EnemyDummy.cs
+- `M` Assets/Scripts/D020PlayerController.cs
 
 ### PR-E2 - d020-scene-evidence
 
