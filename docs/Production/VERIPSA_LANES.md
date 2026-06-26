@@ -29,6 +29,33 @@ file-overlap and land-order verdict as the coordination source.
   `Assets/Scripts/ExplorationNode.cs` may similarly produce `UNKNOWN` until the
   graph indexes them. Treat that as coordination uncertainty, not correctness.
 
+## Current Open PR Stack
+
+Current open PRs are intentionally stacked from guardrails to Unity evidence:
+
+| Land Order | PR | Branch | Scope | Status |
+| ---: | --- | --- | --- | --- |
+| 1 | #40 | `codex/public-required-checks` | public hygiene, required-check docs, validation runners | draft, clean |
+| 2 | #42 | `codex/d020-objective-guardrails` | D-020 objective guardrails, output section validation, hard-exclude checks | draft, clean |
+| 3 | #41 | `codex/d020-readable-room-pass` | D-020 Unity scene readability, editor command flow, capture evidence | draft, clean |
+
+Do not merge #41 before #42. Do not merge #42 before #40. If Core reports
+`Pause`, read the overlapping files and confirm whether the overlap is caused by
+the intentional stacked base or an actual semantic conflict.
+
+## Next Lane After Current Stack
+
+After #40, #42, and #41 land, the next player-visible lane should be
+`production-art-p0`.
+
+| Lane | Purpose | Primary Files | Required Evidence |
+| --- | --- | --- | --- |
+| `production-art-p0` | replace generated read-target silhouettes with production-intent hero, exploration tool, first enemy, gimmick pedestal, and reward chest/relic | `docs/Art/NEXT_ASSET_BATCH.md`, `Assets/Art/Production/P0/*`, `Assets/Editor/*Art*`, `artifacts/Previews/*` | Unity import validation, gameplay-camera screenshots, no missing materials, no local paths in PR |
+
+This lane must work on the biggest on-screen reads first. It must not spend a
+PR on decorative props, region quantity, or optional pipeline polish before the
+hero/tool/enemy/reward reads improve.
+
 ## Recommended PR Split
 
 | PR | Lane | Purpose | Primary Files | Land Order |
@@ -85,26 +112,18 @@ file-overlap and land-order verdict as the coordination source.
 
 ## Current Local Split Recommendation
 
-The current worktree is intentionally dirty because it contains the D-020 reset
-plus generated Unity evidence. If branches/PRs are created from this state,
-split by semantic ownership, not by convenience:
+Keep the local worktree clean between PRs. Rejected historical prototypes should
+stay out of the active branch unless a dedicated cleanup PR intentionally
+removes tracked files.
 
-1. Land `product-canon` first so every later PR reads the same source of truth.
-2. Land `art-audio-direction` and `production-release-plans` only after PR-A is
-   reviewed, because those docs interpret the canon.
-3. Land `validation-sync` after canonical docs so reports do not preserve old
-   Echo Phase/open-world wording.
-4. Land `d020-tool-runtime` as the smallest code PR. Expect Veripsa `UNKNOWN`
-   for new C# paths until they enter main's graph.
-5. Land `d020-scene-evidence` after E1. This reserves generated scene/material
-   paths separately from runtime code.
-6. Land `d020-capture-build` after E2. This is where screenshot/build/report
-   automation belongs.
-7. Remove or archive `ProductReviewSandbox` and its multi-state support files in
-   a dedicated cleanup lane. Do not mix that cleanup into the canonical D-020
-   runtime PR.
-8. Decide separately whether `asset-pipeline-pilot-optional` still earns its
-   keep. If not, leave those generated pilot assets out of D-020 entirely.
+1. Land #40, #42, then #41 in that order.
+2. Rebase or merge later branches after each lower-order PR lands.
+3. Keep stale ProductReview, Echo Phase, BlenderPilot, or open-world artifacts
+   out of D-020 product PRs.
+4. Start `production-art-p0` only after the current stack lands or Core confirms
+   it can reserve non-overlapping art paths safely.
+5. If local experiments are needed, keep them ignored or backed up outside the
+   public PR path until their license, purpose, and quality gate are clear.
 
 ## Core Questions To Ask
 
