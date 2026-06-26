@@ -105,6 +105,9 @@ namespace FourfoldEchoes.Product
         private const int PauseRetry = 2;
         private const int PauseTitle = 3;
         private const int PauseMenuCount = 4;
+        private const int FailureRetry = 0;
+        private const int FailureTitle = 1;
+        private const int FailureMenuCount = 2;
         private const int SettingsCount = 5;
         private const float AxisRepeatDelay = 0.24f;
 
@@ -173,6 +176,7 @@ namespace FourfoldEchoes.Product
         private bool pendingExitReturnToPaused;
         private bool settingsOpen;
         private int selectedPauseIndex;
+        private int selectedFailureIndex;
         private int selectedSettingIndex;
         private float axisRepeatTimer;
 
@@ -212,6 +216,15 @@ namespace FourfoldEchoes.Product
             if (pauseRect.x < 24f || pauseRect.y < 24f || pauseRect.xMax > screenWidth - 24f || pauseRect.yMax > screenHeight - 24f)
             {
                 reason = $"D-020 pause/confirm panel exceeds safe area at {screenWidth}x{screenHeight}: {pauseRect}";
+                return false;
+            }
+
+            var failWidth = Mathf.Min(540f, screenWidth - 48f);
+            var failHeight = 294f;
+            var failRect = new Rect((screenWidth - failWidth) * 0.5f, (screenHeight - failHeight) * 0.5f, failWidth, failHeight);
+            if (failRect.x < 24f || failRect.y < 24f || failRect.xMax > screenWidth - 24f || failRect.yMax > screenHeight - 24f)
+            {
+                reason = $"D-020 failure result panel exceeds safe area at {screenWidth}x{screenHeight}: {failRect}";
                 return false;
             }
 
@@ -333,6 +346,12 @@ namespace FourfoldEchoes.Product
             if (paused)
             {
                 UpdatePauseInput();
+                return;
+            }
+
+            if (runFailed)
+            {
+                UpdateFailureInput();
                 return;
             }
 
@@ -884,6 +903,7 @@ namespace FourfoldEchoes.Product
             returnedToHubThisRun = false;
             returnRegisteredThisRun = false;
             failureRegisteredThisRun = false;
+            selectedFailureIndex = FailureRetry;
             runTimerSeconds = 0f;
             lastReturnTimeSeconds = 0f;
             lastLostRelicsOnFailure = 0;
@@ -987,6 +1007,7 @@ namespace FourfoldEchoes.Product
 
             failureRegisteredThisRun = true;
             runFailed = true;
+            selectedFailureIndex = FailureRetry;
             rewardClaimed = false;
             failureCount += 1;
             lastLostRelicsOnFailure = ClaimedRelicCountThisRun();
@@ -1119,6 +1140,44 @@ namespace FourfoldEchoes.Product
             }
 
             if (Pressed(returnToTitleKey, gamepadReturnToTitleKey))
+            {
+                RequestReturnToTitle();
+            }
+        }
+
+        private void UpdateFailureInput()
+        {
+            if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
+            {
+                selectedFailureIndex = Wrap(selectedFailureIndex - 1, FailureMenuCount);
+            }
+            else if (Pressed(KeyCode.DownArrow, KeyCode.S) || AxisPressed(-1f))
+            {
+                selectedFailureIndex = Wrap(selectedFailureIndex + 1, FailureMenuCount);
+            }
+
+            if (Pressed(retryKey, gamepadRetryKey))
+            {
+                RequestRetryRun();
+                return;
+            }
+
+            if (Pressed(returnToTitleKey, gamepadReturnToTitleKey))
+            {
+                RequestReturnToTitle();
+                return;
+            }
+
+            if (!Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            {
+                return;
+            }
+
+            if (selectedFailureIndex == FailureRetry)
+            {
+                RequestRetryRun();
+            }
+            else
             {
                 RequestReturnToTitle();
             }
@@ -2253,6 +2312,10 @@ namespace FourfoldEchoes.Product
                     DrawPauseMenu(pauseRect, style, mutedStyle);
                 }
             }
+            else if (runFailed)
+            {
+                DrawFailureResult(style, mutedStyle);
+            }
             else if (bossDefeatTimer > 0f)
             {
                 var beatWidth = Mathf.Min(520f, Screen.width - 48f);
@@ -2297,6 +2360,30 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 20f, panelWidth - 48f, 32f), actionLabel, style);
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 58f, panelWidth - 48f, 96f), $"You are carrying {unbankedCount} unbanked relic reward(s). This action drops them because rewards only persist after returning to the Hub.", style);
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 164f, panelWidth - 48f, 42f), $"{confirmLabel}  Esc/Menu cancels.", FourfoldRuntimeUi.MutedStyle(Screen.height));
+        }
+
+        private void DrawFailureResult(GUIStyle style, GUIStyle mutedStyle)
+        {
+            var panelWidth = Mathf.Min(540f, Screen.width - 48f);
+            var panelHeight = 294f;
+            var panelRect = new Rect((Screen.width - panelWidth) * 0.5f, (Screen.height - panelHeight) * 0.5f, panelWidth, panelHeight);
+            FourfoldRuntimeUi.DrawPanel(panelRect);
+
+            GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 18f, panelWidth - 48f, 32f), "RUN FAILED", style);
+            var lossText = lastLostRelicsOnFailure > 0
+                ? $"Lost {lastLostRelicsOnFailure} unbanked relic reward(s). Returned relics remain saved."
+                : "No relic rewards were carried, so nothing was lost.";
+            GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 58f, panelWidth - 48f, 48f), lossText, style);
+            FourfoldRuntimeUi.DrawChip(new Rect(panelRect.x + 24f, panelRect.y + 112f, panelWidth - 48f, 34f), $"Failed runs {failureCount}. Bank rewards by returning to the Hub before dying.", new Color(1.0f, 0.46f, 0.22f), mutedStyle);
+            FourfoldRuntimeUi.DrawDivider(panelRect.x + 24f, panelRect.y + 162f, panelWidth - 48f);
+
+            var labels = new[] { "Retry Run", "Return to Title" };
+            for (var i = 0; i < labels.Length; i++)
+            {
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(panelRect.x + 32f, panelRect.y + 178f + i * 38f, panelWidth - 64f, 32f), labels[i], selectedFailureIndex == i, style);
+            }
+
+            GUI.Label(new Rect(panelRect.x + 32f, panelRect.y + panelHeight - 38f, panelWidth - 64f, 24f), "Move: arrows/stick   Confirm: E/Enter/Y   R/Start retries", mutedStyle);
         }
 
         private void DrawRunProgressRail(Rect rect, GUIStyle style)
@@ -2373,7 +2460,7 @@ namespace FourfoldEchoes.Product
 
         private void DrawControlHint(GUIStyle style)
         {
-            if (paused)
+            if (paused || runFailed)
             {
                 return;
             }
