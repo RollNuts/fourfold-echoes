@@ -15,6 +15,26 @@ Status: current D-020 directive.
 - マーケット検証用のスクリーンショット、動画、音声には、グレーボックスや仮音を完成物として使わない。
 - 古い Echo Phase、抽出、広域探索、複数ツール前提の資料は D-020 を上書きしない。
 
+### 新規 Unity プロジェクト方針
+
+- 新規 Unity プロジェクトは D-020 専用として作り、過去案のシステム、シーン、アセット、命名を移植しない。
+- 最初の playable は PC/Steam/Steam Deck 想定の入力、画面比率、ローカルセーブを確認できる構成にする。
+- データは ScriptableObject または同等の編集可能な定義に寄せ、シーン固有の例外コードを増やさない。
+- 実装判断はこの文書、`CORE_SYSTEMS.md`、`SCOPE_CONTROL.md` の D-020 記述を優先する。
+- Unity 内フォルダは以下の最小構成から始める。必要になった場合も D-020 の必須機能に紐づく範囲だけを追加する。
+
+| フォルダ案 | 用途 | 制約 |
+| --- | --- | --- |
+| `Assets/FourfoldEchoes/Scenes` | `Bootstrap`、タイトル、常駐、ハブ、リージョン、ボス、UI シーン | オープンワールド用ストリーミング階層を作らない |
+| `Assets/FourfoldEchoes/Scripts/Core` | 起動、入力、シーン遷移、セーブ、進行状態 | オンライン、アカウント、課金処理を置かない |
+| `Assets/FourfoldEchoes/Scripts/Gameplay` | 移動、カメラ、戦闘、敵、ボス、探索ツール、部屋制御 | Echo Phase、co-op、ハクスラ、抽出系を置かない |
+| `Assets/FourfoldEchoes/Scripts/UI` | HUD、ポーズ、設定、タイトル | クエストログ、インベントリ、ストア UI を作らない |
+| `Assets/FourfoldEchoes/Data` | リージョン、部屋、敵、ボス、探索ノード、音声 cue 定義 | 上限を超えるデータ量を作らない |
+| `Assets/FourfoldEchoes/Art` | スタイライズド 3D、VFX、UI 表示素材 | 市場検証素材に未承認/仮素材を残さない |
+| `Assets/FourfoldEchoes/Audio` | BGM、SFX、ミックス設定 | 仮音を完成扱いしない |
+| `Assets/FourfoldEchoes/Prefabs` | プレイヤー、敵、探索ノード、部屋部品、UI | 汎用化だけを目的に増やさない |
+| `Assets/FourfoldEchoes/Tests` | D-020 基礎の回帰確認 | 上限外システムの検証場所にしない |
+
 ## シーン一覧
 
 | シーン | 目的 | 境界 |
