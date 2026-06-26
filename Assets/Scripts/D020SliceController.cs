@@ -138,6 +138,7 @@ namespace FourfoldEchoes.Product
         private float runTimerSeconds;
         private float bestClearTimeSeconds;
         private float lastReturnTimeSeconds;
+        private float bossDefeatTimer;
         private bool skillAwardedThisRun;
         private bool firstRewardClaimedThisRun;
         private bool secondRewardClaimedThisRun;
@@ -146,6 +147,7 @@ namespace FourfoldEchoes.Product
         private bool returnedToHubThisRun;
         private bool returnRegisteredThisRun;
         private bool bestClearTimeImproved;
+        private bool bossDefeatedThisRun;
         private int pendingSkillRewards;
         private FourfoldProgressData progressData;
         private GameObject attackRead;
@@ -270,6 +272,7 @@ namespace FourfoldEchoes.Product
             dodgeTimer = Mathf.Max(0f, dodgeTimer - dt);
             dodgeCooldownTimer = Mathf.Max(0f, dodgeCooldownTimer - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
+            bossDefeatTimer = Mathf.Max(0f, bossDefeatTimer - dt);
             if (!runFailed && !returnedToHubThisRun)
             {
                 runTimerSeconds += dt;
@@ -378,6 +381,11 @@ namespace FourfoldEchoes.Product
                 TryTriggerBossEnrage(i, enemy);
                 if (enemyHealth[i] <= 0f)
                 {
+                    if (IsBossEnemy(i))
+                    {
+                        RegisterBossDefeat();
+                    }
+
                     enemy.gameObject.SetActive(false);
                     if (enemyAttackReads != null && i < enemyAttackReads.Length && enemyAttackReads[i] != null)
                     {
@@ -792,7 +800,9 @@ namespace FourfoldEchoes.Product
             pendingSkillRewards = 0;
             runTimerSeconds = 0f;
             lastReturnTimeSeconds = 0f;
+            bossDefeatTimer = 0f;
             bestClearTimeImproved = false;
+            bossDefeatedThisRun = false;
             attackTimer = 0f;
             attackReadTimer = 0f;
             dodgeTimer = 0f;
@@ -885,6 +895,18 @@ namespace FourfoldEchoes.Product
             {
                 bestClearTimeImproved = false;
             }
+        }
+
+        private void RegisterBossDefeat()
+        {
+            if (bossDefeatedThisRun)
+            {
+                return;
+            }
+
+            bossDefeatedThisRun = true;
+            bossDefeatTimer = 2.8f;
+            PlayCue(rewardReadyClip, 0.82f);
         }
 
         private void SetPaused(bool value)
@@ -1247,6 +1269,19 @@ namespace FourfoldEchoes.Product
             }
 
             return string.Empty;
+        }
+
+        private bool BossDefeatedThisRun()
+        {
+            for (var i = 0; i < enemyHealth.Length; i++)
+            {
+                if (IsBossEnemy(i))
+                {
+                    return enemyHealth[i] <= 0f;
+                }
+            }
+
+            return bossDefeatedThisRun;
         }
 
         private static string FormatRunTime(float seconds)
@@ -1632,6 +1667,8 @@ namespace FourfoldEchoes.Product
                         : "FAILED: press R to retry."
                     : !ToolGateSolved()
                         ? "Activate the glowing tool node with Q or gamepad X."
+                        : BossDefeatedThisRun() && !AllEnemiesDefeated()
+                        ? "BOSS DOWN: finish the remaining enemies."
                         : !AllEnemiesDefeated()
                         ? "Defeat the enemies, then claim the relic."
                         : !firstRewardClaimedThisRun
@@ -1677,6 +1714,15 @@ namespace FourfoldEchoes.Product
                 GUI.Box(pauseRect, GUIContent.none);
                 GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 22f, pauseWidth - 48f, 32f), "PAUSED", style);
                 GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 58f, pauseWidth - 48f, 58f), "Solo run is stopped. Press Esc/Menu to resume, or R/Back to reset this run.", style);
+            }
+            else if (bossDefeatTimer > 0f)
+            {
+                var beatWidth = Mathf.Min(520f, Screen.width - 48f);
+                var beatHeight = 116f;
+                var beatRect = new Rect((Screen.width - beatWidth) * 0.5f, Screen.height * 0.22f, beatWidth, beatHeight);
+                GUI.Box(beatRect, GUIContent.none);
+                GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 20f, beatWidth - 48f, 32f), "BOSS DOWN", style);
+                GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 56f, beatWidth - 48f, 44f), "Secure the relics, then return to bank the skill reward.", style);
             }
 
             if (previousReturnedToHubLoaded && !runCleared)
