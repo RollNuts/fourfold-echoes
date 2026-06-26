@@ -3,7 +3,7 @@ set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 UNITY_EDITOR="${UNITY_EDITOR:-}"
-COMMAND_FILE="${1:-commands/samples/run-room-spike.json}"
+COMMAND_FILE="${1:-commands/samples/inspect-d020-slice.json}"
 
 if [[ -z "$UNITY_EDITOR" ]]; then
   for candidate in \

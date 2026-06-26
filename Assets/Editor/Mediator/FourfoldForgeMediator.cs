@@ -8,7 +8,7 @@ namespace FourfoldEchoes.Editor.Mediator
 {
     public static class FourfoldForgeMediator
     {
-        private const string DefaultCommandPath = "commands/samples/run-room-spike.json";
+        private const string DefaultCommandPath = "commands/samples/inspect-d020-slice.json";
 
         public static void Run()
         {
@@ -46,6 +46,18 @@ namespace FourfoldEchoes.Editor.Mediator
 
                 case "run_room_spike":
                     FourfoldUnitySpikeBuilder.BuildAndValidate();
+                    break;
+
+                case "d020.build_and_validate":
+                    FourfoldD020SliceSceneBuilder.BuildAndValidate();
+                    break;
+
+                case "d020.validate":
+                    FourfoldD020SliceSceneBuilder.ValidateGeneratedScene();
+                    break;
+
+                case "d020.capture_evidence":
+                    FourfoldUnityEvidenceCapture.CaptureD020Slice();
                     break;
 
                 case "capture_scene":
@@ -106,7 +118,7 @@ namespace FourfoldEchoes.Editor.Mediator
             var json = "{"
                 + $"\"event\":\"{Escape(eventName)}\","
                 + $"\"commandId\":\"{Escape(commandId)}\","
-                + $"\"semanticId\":\"{Escape(semanticId ?? "scene.ashen_threshold")}\","
+                + $"\"semanticId\":\"{Escape(semanticId ?? "scene.d020_vertical_slice")}\","
                 + $"\"status\":\"{Escape(status)}\","
                 + $"\"message\":\"{Escape(message)}\","
                 + "\"artifacts\":["

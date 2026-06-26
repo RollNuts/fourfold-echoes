@@ -1,0 +1,11 @@
+{
+  "commandId": "cmd.d020_slice.build_and_validate",
+  "action": "d020.build_and_validate",
+  "sceneId": "scene.d020_vertical_slice",
+  "seed": 0,
+  "evidence": {
+    "screenshot": false,
+    "video": false,
+    "playmodeLog": false
+  }
+}

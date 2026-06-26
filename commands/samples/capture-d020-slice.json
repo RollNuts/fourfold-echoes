@@ -1,0 +1,11 @@
+{
+  "commandId": "cmd.d020_slice.capture_evidence",
+  "action": "d020.capture_evidence",
+  "sceneId": "scene.d020_vertical_slice",
+  "seed": 0,
+  "evidence": {
+    "screenshot": true,
+    "video": false,
+    "playmodeLog": false
+  }
+}
