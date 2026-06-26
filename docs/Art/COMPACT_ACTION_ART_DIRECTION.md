@@ -72,7 +72,7 @@ boss count as a lower final-MVP cap.
 | Region kit | 16-24 props per region | shared atlas + 3 accent mats | 1024 atlas | 3 regional | 3 moving props | reuse base geometry |
 | Gimmick room objects | 6-10 | 2 each | 512 max | 3 total | 4 clips/states | tool reaction states |
 | Chest/reward | 1 chest, 2 relics | 2 each | 512 max | 2 | 3 clips | reward glow allowed |
-| Combat VFX | 8 max in slice | n/a | 256-512 flipbooks | 8 | n/a | hit, damage, guard, boss tell |
+| Combat VFX | 8 max in slice | n/a | 256-512 flipbooks | 8 | n/a | hit, damage, enemy tell, boss tell |
 | Tool/Reward VFX | 4 max in slice | n/a | 256-512 flipbooks | 4 | n/a | pulse, target reaction, unlock, reward |
 | UI icons | 12 max in slice | n/a | 256 max | 2 UI pulses | 2 states per icon | no icon bloat |
 
@@ -109,7 +109,7 @@ Required role/type labels:
 | Props | `Gate`, `Chest`, `Pedestal`, `Switch`, `Pillar`, `Cover`, `Debris`, `Reward` | `FE_PROP_HUB_Pedestal_01` |
 | Terrain | `Floor`, `Wall`, `Cliff`, `Bridge`, `Stair`, `Trim`, `Hazard`, `Door` | `FE_ENV_R02_CliffAngled_02` |
 | Enemy | `MELEE`, `RANGED`, `HEAVY`, `SUMMON`, `BOSS` | `FE_ENEMY_HEAVY_AshBrute` |
-| UI | `Tool`, `Health`, `Boss`, `Map`, `Prompt`, `Reward` plus state | `FE_UI_Prompt_Interact` |
+| UI | `Tool`, `Health`, `Boss`, `Prompt`, `Reward` plus state | `FE_UI_Prompt_Interact` |
 | VFX | `Tool`, `Enemy`, `Boss`, `Reward`, `Env`, `UI` plus action | `FE_VFX_Boss_TellSlam` |
 
 State suffixes:

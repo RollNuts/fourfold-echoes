@@ -134,10 +134,10 @@ Disallowed:
 - No live service.
 - No mandatory online.
 - No server cost.
-- No co-op in MVP.
+- No co-op in the active product scope.
 - No inventory, crafting, quest log, social systems, fishing, farming, or base
   building.
-- No second exploration tool in MVP.
+- No second exploration tool in the active product scope.
 - No final placeholder art/audio.
 - No unclear asset rights.
 - No direct gameplay dependency on platform-specific APIs.

@@ -43,7 +43,8 @@ Previously confirmed before the product reset: README said "solo-first co-op-rea
 Confirmed: No runtime code implements multiplayer, lobby, relay, transport, online sync, or server.
 Confirmed: `ProjectSettings/MultiplayerManager.asset` exists as Unity project settings, but no multiplayer package is present in `Packages/manifest.json`.
 Assumed: Co-op was an early aspiration, not an implemented product pillar.
-Decision: v1 canonical scope removes co-op/multiplayer. If revived, it belongs to a post-v1 or v2 candidate only.
+Decision: v1 canonical scope removes co-op/multiplayer. Treat it as historical
+only; do not keep it as a post-v1 promise or roadmap candidate.
 
 ## Canonical / Prototype / Discard
 

@@ -7,4 +7,4 @@ is defined in `docs/Tech/TECHNICAL_ARCHITECTURE.md`, `docs/Product/MVP_BLUEPRINT
 and `docs/Product/SCOPE_BOUNDARIES.md`.
 
 Do not add streaming world architecture, large-map traversal, day/night
-simulation, or procedural world generation for MVP.
+simulation, or procedural world generation for the active D-020 product scope.

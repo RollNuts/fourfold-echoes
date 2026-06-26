@@ -11,8 +11,8 @@ extraction, and open-world audio language are out of scope.
 
 1. **Readable Before Beautiful**
    - Audio is a gameplay readability layer: danger, hit contact, damage,
-     guard contact, tool response, mechanism state, shortcut completion, and
-     boss transitions must be understandable in play.
+     tool response, mechanism state, shortcut completion, and boss transitions
+     must be understandable in play.
    - Music polish never outranks enemy tells, boss tells, or player damage.
 
 2. **Compact Palette, Strong Identity**
@@ -40,7 +40,6 @@ extraction, and open-world audio language are out of scope.
 | UI | select, confirm, back/cancel, error, pause/menu open, save confirm | Keep soft and short; no large UI pack. |
 | 探索成功 | tool target hit, discovery stinger, chest/reward reveal, pickup | The success chime and object reaction can share layers. |
 | 被弾 | player light damage, player heavy damage, recover/invulnerability tick | Must cut through BGM without being harsh. |
-| ガード | guard contact, guard heavy strain/fail | Only the minimum readable cues; no parry family unless already accepted elsewhere. |
 | 仕掛け起動 | tool pulse response, pedestal/mechanism wake, mechanism move, lock release | Mechanism sounds should state "changed" more than "large machine." |
 | ショートカット開通 | shortcut unlock, door/gate open, route-confirm stinger | One clear route-open identity reused across shortcut types. |
 | ボス移行 | boss intro hit, phase transition, stun/break moment, defeat resolve | Phase transition must be audible even under combat noise. |
@@ -62,8 +61,8 @@ Supporting gameplay cues also required for MVP readability:
 - Hack-and-slash loot sprays, extraction alarms, rarity explosions, or
   open-world map-reveal sweeps.
 - Echo Phase or multi-state transformation cue sets.
-- Multiple weapon families, deep parry variants, or character-class cue sets
-  before MVP validation.
+- Multiple weapon families, defense variants, or character-class cue sets before
+  MVP validation.
 - Large region-specific ambience libraries, dozens of room loops, or bespoke
   prop foley for non-critical decoration.
 - Crafting, trading, party management, complex inventory, or live-service
@@ -120,19 +119,18 @@ should be cut before it adds implementation cost.
 
 1. Exploration tool pulse, near response, success, fail, and mechanism reaction.
 2. Player swing/contact, enemy tell, enemy damage/death, player damage, dodge.
-3. Guard contact/fail if guard is present in the accepted combat design.
-4. Boss tell, boss impact, boss phase transition, boss defeat resolve, boss BGM.
-5. UI select/confirm/back/error, pause, save confirm.
-6. Shortcut opening, discovery/reward stinger, chest/reward pickup.
-7. `BGM_Hub`, `BGM_Region01`, and `BGM_Boss` for market-facing capture.
-8. `BGM_NormalCombat`, `BGM_Region02`, and `BGM_Region03` after the slice proves
+3. Boss tell, boss impact, boss phase transition, boss defeat resolve, boss BGM.
+4. UI select/confirm/back/error, pause, save confirm.
+5. Shortcut opening, discovery/reward stinger, chest/reward pickup.
+6. `BGM_Hub`, `BGM_Region01`, and `BGM_Boss` for market-facing capture.
+7. `BGM_NormalCombat`, `BGM_Region02`, and `BGM_Region03` after the slice proves
    the direction and budget remains stable.
 
 ## マイルストーン完成条件
 
 | Milestone | Audio Completion |
 | --- | --- |
-| M1 combat readability | attack, hit confirm, enemy tell, enemy death, player damage, dodge, and guard cue if present are implemented and mixed |
+| M1 combat readability | attack, hit confirm, enemy tell, enemy death, player damage, and dodge are implemented and mixed |
 | M2 tool proof | tool ready, pulse, near response, success, fail, and cooldown/ready return are synced to VFX and object response |
 | M3 exploration room proof | mechanism activation, shortcut opening, discovery, reward pickup, and save cues exist with no placeholder audio |
 | M4 boss proof | boss intro, tell, impact, phase transition, stun/break, defeat resolve, and boss BGM are present |

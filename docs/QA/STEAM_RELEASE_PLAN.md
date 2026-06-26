@@ -63,7 +63,7 @@ current evidence.
 
 | Area | Cases | Pass Condition | Evidence |
 | --- | --- | --- | --- |
-| Controller | move, attack, dodge, tool, interact, pause; no guard unless implemented | every required action is reachable from default controller mapping | `artifacts/test-results/regression-controller.md` |
+| Controller | move, attack, dodge, tool, interact, pause | every required action is reachable from default controller mapping | `artifacts/test-results/regression-controller.md` |
 | Controller | disconnect/reconnect during gameplay and menus | input recovers or shows a clear pause-safe state | `artifacts/test-results/regression-controller-reconnect.md` |
 | Resolution | 1280x800, 1920x1080, ultrawide safe check | no clipped HUD, unreadable menus, or blocked command prompts | `artifacts/test-results/regression-resolution.md` |
 | Resolution | fullscreen/windowed toggle if present | aspect ratio and input focus recover after switching | `artifacts/test-results/regression-display-mode.md` |

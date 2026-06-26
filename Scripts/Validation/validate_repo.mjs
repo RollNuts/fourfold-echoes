@@ -332,7 +332,7 @@ const requiredD020SfxIds = [
   "audio.sfx.player_landing",
   "audio.sfx.normal_swing",
   "audio.sfx.enemy_hit_confirm",
-  "audio.sfx.shield_armor_hit",
+  "audio.sfx.armor_hit",
   "audio.sfx.player_damage",
   "audio.sfx.enemy_death",
   "audio.sfx.enemy_notice",

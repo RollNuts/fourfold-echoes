@@ -32,7 +32,6 @@ Detailed cue lists and milestone gates are maintained in:
 | UI | select, confirm, back/cancel, error, pause/menu open, save confirm |
 | 探索成功 | tool target hit, discovery stinger, chest/reward reveal, pickup |
 | 被弾 | player damage, heavy damage, invulnerability/recover tick |
-| ガード | guard contact, guard fail or heavy guard strain if guard exists in the accepted combat design |
 | 仕掛け起動 | tool pulse response, pedestal/mechanism wake, mechanism move, lock release |
 | ショートカット開通 | shortcut unlock, door/gate open, route-confirm stinger |
 | ボス移行 | boss intro hit, phase transition, stun/break moment, defeat resolve |
@@ -96,7 +95,7 @@ finished. If a cue does not improve confidence or satisfaction, it is cut.
 
 | Milestone | Completion Gate |
 | --- | --- |
-| Combat proof | hit confirm, enemy tell, player damage, dodge/movement, and guard cue if present are audible and mixed |
+| Combat proof | hit confirm, enemy tell, player damage, and dodge/movement are audible and mixed |
 | Tool proof | pulse, near response, success, fail, and mechanism reaction are synced |
 | Exploration proof | discovery, reward, shortcut opening, and save cues are implemented |
 | Boss proof | boss intro, tell, impact, transition, defeat, and boss BGM are implemented |

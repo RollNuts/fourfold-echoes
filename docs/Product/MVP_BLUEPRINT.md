@@ -5,8 +5,8 @@ Status: canonical after D-020.
 ## 仕様固定メモ
 
 - FOURFOLD ECHOES is a single-player top-down classic action-adventure.
-- First platform is Steam Windows. Keep architecture portable for later console
-  work, but do not build console-specific systems yet.
+- First platform is Steam Windows. Keep input, save, performance, and UI
+  portable, but do not build console-specific systems or promises yet.
 - Business model is premium buy-to-play.
 - No always-online requirement, live service, accounts, multiplayer, or backend.
 - Scope is compact. Do not make an open world.

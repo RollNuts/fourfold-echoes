@@ -54,7 +54,8 @@ The hook is not a list of features. The hook is:
 
 1. Steam Windows.
 2. Steam Deck compatibility target.
-3. Later console feasibility, only after the Steam version is strong.
+3. Controller, save, performance, and UI portability hygiene that does not
+   promise a console release.
 
 ## Core Controls
 
@@ -62,7 +63,6 @@ The hook is not a list of features. The hook is:
 - Aim/facing
 - Normal attack
 - Dodge
-- Guard or damage-reduction action if it proves necessary
 - One exploration tool
 - Interact
 - Pause

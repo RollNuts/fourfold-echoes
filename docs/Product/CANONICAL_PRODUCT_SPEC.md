@@ -53,5 +53,6 @@ Do not expand production content until the vertical slice proves:
 
 Older documents and prototypes may mention Gate A, ProductReviewSandbox, Echo
 Phase, extraction, co-op-ready systems, hack-and-slash loot, or compact
-open-world structure. Those are historical unless a future accepted decision
-explicitly reopens them.
+open-world structure. Those are historical only. They stay rejected unless the
+entire D-020 canon is explicitly superseded across product, production, art,
+audio, QA, and validation documents.
