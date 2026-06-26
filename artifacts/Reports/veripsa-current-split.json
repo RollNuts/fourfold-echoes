@@ -1,5 +1,5 @@
 {
-  "generatedUtc": "2026-06-26T05:55:45.161Z",
+  "generatedUtc": "2026-06-26T06:02:49.778Z",
   "coreSource": "GitHub Veripsa checks; local veripsa CLI unavailable",
   "coreObservations": [
     {
@@ -13,7 +13,7 @@
       "implication": "New Unity editor/tool files were not in main's graph, so Core treated them as unknown. Split new C# runtime, editor scene generation, and capture/build tooling into separate PRs instead of landing them with docs."
     }
   ],
-  "dirtyFileCount": 3,
+  "dirtyFileCount": 2,
   "lanes": [
     {
       "id": "PR-A",
@@ -37,39 +37,35 @@
       "id": "PR-D",
       "name": "validation-sync",
       "order": 4,
-      "files": [
-        {
-          "status": " M",
-          "path": "Scripts/Validation/write_veripsa_split_report.mjs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E1",
       "name": "d020-tool-runtime",
       "order": 5,
-      "files": [
-        {
-          "status": "??",
-          "path": "Assets/Scripts/D020RelicReward.cs"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scripts/D020RelicReward.cs.meta"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E2",
       "name": "d020-scene-evidence",
       "order": 6,
-      "files": []
+      "files": [
+        {
+          "status": " M",
+          "path": "Assets/Editor/FourfoldD020SliceSceneBuilder.cs"
+        }
+      ]
     },
     {
       "id": "PR-E3",
       "name": "d020-capture-build",
       "order": 7,
-      "files": []
+      "files": [
+        {
+          "status": " M",
+          "path": "Assets/Editor/FourfoldD020PlayableSmoke.cs"
+        }
+      ]
     },
     {
       "id": "PR-F",

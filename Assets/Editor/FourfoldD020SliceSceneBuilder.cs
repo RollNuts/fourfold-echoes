@@ -42,9 +42,9 @@ namespace FourfoldEchoes.Editor
             CreateRoom(root.transform, assets);
             var player = CreatePlayer(root.transform, assets);
             CreateEnemy(root.transform, assets, player.transform);
-            CreateChest(root.transform, assets);
+            CreateChest(root.transform, assets, player.transform);
             var shortcutNode = CreateExplorationToolProof(root.transform, assets);
-            var secondNode = CreateSecondGimmickProof(root.transform, assets);
+            var secondNode = CreateSecondGimmickProof(root.transform, assets, player.transform);
             CreateRuntimeHook(player.transform, new[] { shortcutNode, secondNode }, assets);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -81,9 +81,13 @@ namespace FourfoldEchoes.Editor
             RequireComponent<ExplorationNode>("D020 Second Tool Node");
             RequireComponent<D020PlayerController>("D020 Player");
             RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
+            RequireComponent<D020RelicReward>("D020 Relic Chest");
+            RequireComponent<D020RelicReward>("D020 Second Relic Chest");
             var tool = FindSceneObject("D020 Runtime Hook").GetComponent<ExplorationTool>();
             var progressSave = FindSceneObject("D020 Runtime Hook").GetComponent<D020ProgressSave>();
             var player = FindSceneObject("D020 Player").GetComponent<D020PlayerController>();
+            var firstReward = FindSceneObject("D020 Relic Chest").GetComponent<D020RelicReward>();
+            var secondReward = FindSceneObject("D020 Second Relic Chest").GetComponent<D020RelicReward>();
             if (tool.NodeCount < 2)
             {
                 throw new InvalidOperationException("D-020 runtime hook must reference two exploration nodes for the two-gimmick-room proof.");
@@ -100,6 +104,8 @@ namespace FourfoldEchoes.Editor
             RequireAudioClip(tool.pulse, "D-020 exploration tool pulse SFX");
             RequireAudioClip(tool.targetHit, "D-020 exploration tool target-hit SFX");
             RequireAudioClip(tool.fail, "D-020 exploration tool fail SFX");
+            RequireAudioClip(firstReward.pickupClip, "D-020 first relic pickup SFX");
+            RequireAudioClip(secondReward.pickupClip, "D-020 second relic pickup SFX");
 
             if (Camera.main == null)
             {
@@ -321,7 +327,7 @@ namespace FourfoldEchoes.Editor
             dummy.slowChaseSpeed = 0.45f;
         }
 
-        private static void CreateChest(Transform root, GeneratedAssets assets)
+        private static D020RelicReward CreateChest(Transform root, GeneratedAssets assets, Transform player)
         {
             var chest = new GameObject("D020 Relic Chest");
             chest.transform.SetParent(root);
@@ -331,9 +337,19 @@ namespace FourfoldEchoes.Editor
             CreateBlock(chest.transform, "D020 Chest Base", assets.chest, Vector3.zero, new Vector3(0.78f, 0.42f, 0.58f));
             CreateBlock(chest.transform, "D020 Chest Lid", assets.route, new Vector3(0f, 0.33f, 0f), new Vector3(0.82f, 0.15f, 0.62f));
             CreateBlock(chest.transform, "D020 Chest Front Band", assets.route, new Vector3(0f, 0.20f, -0.31f), new Vector3(0.54f, 0.10f, 0.08f));
-            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Visible Relic", assets.relic, new Vector3(0f, 0.76f, 0f), new Vector3(0.30f, 0.40f, 0.30f));
+            var visibleRelic = CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Visible Relic", assets.relic, new Vector3(0f, 0.76f, 0f), new Vector3(0.30f, 0.40f, 0.30f));
             CreateBlock(chest.transform, "D020 Reward Vertical Beacon", assets.relic, new Vector3(0f, 1.10f, 0f), new Vector3(0.10f, 0.62f, 0.10f), Quaternion.Euler(0f, 0f, 45f));
             CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Reward Footprint", assets.relic, new Vector3(0f, 0.03f, 0f), new Vector3(0.92f, 0.026f, 0.92f));
+            var collectedRead = CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Relic Collected Spark", assets.route, new Vector3(0f, 0.92f, 0f), new Vector3(0.42f, 0.42f, 0.42f));
+            collectedRead.SetActive(false);
+
+            var reward = chest.AddComponent<D020RelicReward>();
+            reward.rewardId = "reward.d020.relic.first";
+            reward.player = player;
+            reward.idleRead = visibleRelic;
+            reward.collectedRead = collectedRead;
+            reward.pickupClip = LoadAudioClip("relic_pickup.wav");
+            return reward;
         }
 
         private static ExplorationNode CreateExplorationToolProof(Transform root, GeneratedAssets assets)
@@ -374,7 +390,7 @@ namespace FourfoldEchoes.Editor
             return node;
         }
 
-        private static ExplorationNode CreateSecondGimmickProof(Transform root, GeneratedAssets assets)
+        private static ExplorationNode CreateSecondGimmickProof(Transform root, GeneratedAssets assets, Transform player)
         {
             var proof = new GameObject("D020 Second Tool Proof");
             proof.transform.SetParent(root);
@@ -395,8 +411,16 @@ namespace FourfoldEchoes.Editor
             CreateBlock(chest.transform, "D020 Second Chest Base", assets.chest, Vector3.zero, new Vector3(0.70f, 0.38f, 0.52f));
             CreateBlock(chest.transform, "D020 Second Chest Lid", assets.route, new Vector3(0f, 0.31f, 0f), new Vector3(0.74f, 0.13f, 0.56f));
             CreateBlock(chest.transform, "D020 Second Chest Front Band", assets.route, new Vector3(0f, 0.18f, -0.28f), new Vector3(0.48f, 0.09f, 0.07f));
-            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Second Visible Relic", assets.relic, new Vector3(0f, 0.70f, 0f), new Vector3(0.25f, 0.36f, 0.25f));
+            var visibleRelic = CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Second Visible Relic", assets.relic, new Vector3(0f, 0.70f, 0f), new Vector3(0.25f, 0.36f, 0.25f));
             CreateBlock(chest.transform, "D020 Second Reward Beacon", assets.relic, new Vector3(0f, 1.02f, 0f), new Vector3(0.09f, 0.50f, 0.09f), Quaternion.Euler(0f, 0f, 45f));
+            var collectedRead = CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Second Relic Collected Spark", assets.route, new Vector3(0f, 0.84f, 0f), new Vector3(0.36f, 0.36f, 0.36f));
+            collectedRead.SetActive(false);
+            var reward = chest.AddComponent<D020RelicReward>();
+            reward.rewardId = "reward.d020.relic.second";
+            reward.player = player;
+            reward.idleRead = visibleRelic;
+            reward.collectedRead = collectedRead;
+            reward.pickupClip = LoadAudioClip("relic_pickup.wav");
 
             var nodeObject = new GameObject("D020 Second Tool Node");
             nodeObject.transform.SetParent(proof.transform);

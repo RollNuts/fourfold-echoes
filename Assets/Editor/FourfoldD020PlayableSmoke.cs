@@ -16,6 +16,8 @@ namespace FourfoldEchoes.Editor
             var enemy = UnityEngine.Object.FindFirstObjectByType<D020EnemyDummy>();
             var tool = UnityEngine.Object.FindFirstObjectByType<ExplorationTool>();
             var progressSave = UnityEngine.Object.FindFirstObjectByType<D020ProgressSave>();
+            var firstReward = FindReward("D020 Relic Chest");
+            var secondReward = FindReward("D020 Second Relic Chest");
             var shortcutNode = FindNode("D020 Exploration Tool Node");
             var secondNode = FindNode("D020 Second Tool Node");
 
@@ -23,6 +25,8 @@ namespace FourfoldEchoes.Editor
             Require(enemy != null, "D-020 smoke requires a D020EnemyDummy.");
             Require(tool != null, "D-020 smoke requires an ExplorationTool.");
             Require(progressSave != null, "D-020 smoke requires a D020ProgressSave.");
+            Require(firstReward != null, "D-020 smoke requires the first relic reward.");
+            Require(secondReward != null, "D-020 smoke requires the second relic reward.");
             Require(shortcutNode != null, "D-020 smoke requires the shortcut ExplorationNode.");
             Require(secondNode != null, "D-020 smoke requires the second-room ExplorationNode.");
             Require(tool.NodeCount >= 2, "D-020 smoke requires the tool to reference two exploration nodes.");
@@ -34,9 +38,13 @@ namespace FourfoldEchoes.Editor
             Require(tool.pulse != null, "D-020 tool pulse SFX is not assigned.");
             Require(tool.targetHit != null, "D-020 tool target-hit SFX is not assigned.");
             Require(tool.fail != null, "D-020 tool fail SFX is not assigned.");
+            Require(firstReward.pickupClip != null, "D-020 first relic pickup SFX is not assigned.");
+            Require(secondReward.pickupClip != null, "D-020 second relic pickup SFX is not assigned.");
 
             progressSave.overrideFilePath = Path.Combine(Path.GetTempPath(), $"fourfold-d020-progress-smoke-{Guid.NewGuid():N}.json");
             progressSave.ClearSave();
+            firstReward.ResetReward();
+            secondReward.ResetReward();
 
             var start = player.transform.position;
             player.Tick(new Vector2(1f, 1f), false, false, 0.5f);
@@ -53,6 +61,11 @@ namespace FourfoldEchoes.Editor
             Require(player.AttackCount == 1, "Player attack count did not increment.");
             Require(player.AttackHitCount == 1, "Player attack hit count did not increment.");
             Require(enemy.HitCount == 1, "Enemy did not record the attack hit.");
+
+            player.ResetForSmoke(firstReward.transform.position + new Vector3(0f, 0f, 0.45f));
+            Require(firstReward.TryCollect(player.transform), "First relic reward did not collect at pickup range.");
+            Require(firstReward.IsCollected, "First relic reward did not enter collected state.");
+            Require(firstReward.CollectCount == 1, "First relic reward collect count did not increment.");
 
             shortcutNode.ResetNode();
             player.ResetForSmoke(shortcutNode.transform.position + new Vector3(0f, 0f, 0.55f));
@@ -71,6 +84,10 @@ namespace FourfoldEchoes.Editor
             tool.ResetForSmoke();
             Require(tool.TryUse(), "Exploration tool did not activate the second room node.");
             Require(secondNode.IsSolved, "Second room exploration node was not solved by the same tool.");
+            player.ResetForSmoke(secondReward.transform.position + new Vector3(0f, 0f, 0.45f));
+            Require(secondReward.TryCollect(player.transform), "Second relic reward did not collect after its route opened.");
+            Require(secondReward.IsCollected, "Second relic reward did not enter collected state.");
+            Require(secondReward.CollectCount == 1, "Second relic reward collect count did not increment.");
             Require(progressSave.SaveNow(), "Progress save did not write after second node solve.");
             shortcutNode.ResetNode();
             secondNode.ResetNode();
@@ -80,7 +97,7 @@ namespace FourfoldEchoes.Editor
             Require(progressSave.SolvedCount == 2, "Progress save did not retain both solved node IDs.");
             progressSave.ClearSave();
 
-            Debug.Log("FOURFOLD D-020 playable smoke passed: movement, dodge, attack, enemy hit, two one-tool node activations, and progress save/load roundtrip.");
+            Debug.Log("FOURFOLD D-020 playable smoke passed: movement, dodge, attack, enemy hit, two one-tool node activations, two relic pickups, and progress save/load roundtrip.");
         }
 
         private static void Require(bool condition, string message)
@@ -99,6 +116,20 @@ namespace FourfoldEchoes.Editor
                 if (nodes[i] != null && nodes[i].name == name)
                 {
                     return nodes[i];
+                }
+            }
+
+            return null;
+        }
+
+        private static D020RelicReward FindReward(string name)
+        {
+            var rewards = Resources.FindObjectsOfTypeAll<D020RelicReward>();
+            for (var i = 0; i < rewards.Length; i++)
+            {
+                if (rewards[i] != null && rewards[i].name == name)
+                {
+                    return rewards[i];
                 }
             }
 
