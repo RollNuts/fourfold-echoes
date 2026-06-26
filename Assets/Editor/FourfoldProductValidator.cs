@@ -32,6 +32,16 @@ namespace FourfoldEchoes.Editor
 
             try
             {
+                FourfoldSaveVerifier.VerifySaveRoundtripAndRecovery();
+                findings.Add(Finding.Info("save.service", "Versioned local save validated with settings defaults, roundtrip persistence, backup recovery, and corrupt-save fallback."));
+            }
+            catch (Exception exception)
+            {
+                findings.Add(Finding.Error("save.service", "Versioned local save validation failed: " + exception.Message));
+            }
+
+            try
+            {
                 FourfoldD020SliceSceneBuilder.BuildAndValidate();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFullProgressionLoop();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFailureLoop();

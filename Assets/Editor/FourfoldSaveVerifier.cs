@@ -1,0 +1,146 @@
+using System;
+using System.IO;
+using FourfoldEchoes.Product;
+using UnityEngine;
+
+namespace FourfoldEchoes.Editor
+{
+    public static class FourfoldSaveVerifier
+    {
+        public static void VerifySaveRoundtripAndRecovery()
+        {
+            var savePath = FourfoldProgressSave.SavePath();
+            var backupPath = savePath + ".bak";
+            byte[] previousSaveBytes = null;
+            byte[] previousBackupBytes = null;
+            var backupExisted = File.Exists(backupPath);
+
+            if (File.Exists(savePath))
+            {
+                previousSaveBytes = File.ReadAllBytes(savePath);
+            }
+
+            if (backupExisted)
+            {
+                previousBackupBytes = File.ReadAllBytes(backupPath);
+            }
+
+            try
+            {
+                DeleteIfExists(savePath);
+                DeleteIfExists(backupPath);
+
+                var empty = FourfoldProgressSave.Load();
+                if (empty.version != FourfoldProgressSave.CurrentVersion || !empty.settingsInitialized)
+                {
+                    throw new InvalidOperationException("Save verifier failed: empty save did not initialize version or settings.");
+                }
+
+                if (!ApproximatelyOne(empty.masterVolume) || !ApproximatelyOne(empty.musicVolume) || !ApproximatelyOne(empty.sfxVolume))
+                {
+                    throw new InvalidOperationException("Save verifier failed: empty save did not initialize default volumes.");
+                }
+
+                var data = new FourfoldProgressData
+                {
+                    currentScene = FourfoldGameIds.SceneD020VerticalSlice,
+                    hubUnlocked = true,
+                    regionD020Unlocked = true,
+                    lumenRodUnlocked = true,
+                    d020ShortcutOpened = true,
+                    d020FailureCount = 3,
+                    settingsInitialized = true,
+                    masterVolume = 0.7f,
+                    musicVolume = 0.5f,
+                    sfxVolume = 0.9f
+                };
+                FourfoldProgressSave.Save(data);
+
+                var roundtrip = FourfoldProgressSave.Load();
+                if (roundtrip.currentScene != FourfoldGameIds.SceneD020VerticalSlice
+                    || !roundtrip.hubUnlocked
+                    || !roundtrip.regionD020Unlocked
+                    || !roundtrip.lumenRodUnlocked
+                    || !roundtrip.d020ShortcutOpened
+                    || roundtrip.d020FailureCount != 3
+                    || !Approximately(roundtrip.masterVolume, 0.7f)
+                    || !Approximately(roundtrip.musicVolume, 0.5f)
+                    || !Approximately(roundtrip.sfxVolume, 0.9f))
+                {
+                    throw new InvalidOperationException("Save verifier failed: save/load roundtrip did not preserve progress and settings.");
+                }
+
+                FourfoldProgressSave.Save(roundtrip);
+                if (!File.Exists(backupPath))
+                {
+                    throw new InvalidOperationException("Save verifier failed: second save did not create a backup file.");
+                }
+
+                File.WriteAllText(savePath, "{ not valid json");
+                var recovered = FourfoldProgressSave.Load();
+                if (recovered.currentScene != FourfoldGameIds.SceneD020VerticalSlice || recovered.d020FailureCount != 3)
+                {
+                    throw new InvalidOperationException("Save verifier failed: corrupt primary save did not recover from backup.");
+                }
+
+                DeleteIfExists(savePath);
+                DeleteIfExists(backupPath);
+                File.WriteAllText(savePath, "{ still not valid json");
+                var fallback = FourfoldProgressSave.Load();
+                if (fallback.version != FourfoldProgressSave.CurrentVersion || fallback.d020FailureCount != 0 || !fallback.settingsInitialized)
+                {
+                    throw new InvalidOperationException("Save verifier failed: corrupt save without backup did not fall back to clean progress.");
+                }
+
+                Debug.Log("FOURFOLD save verifier passed: defaults, roundtrip, backup recovery, and corrupt fallback work.");
+            }
+            finally
+            {
+                RestoreFile(savePath, previousSaveBytes);
+                if (backupExisted)
+                {
+                    RestoreFile(backupPath, previousBackupBytes);
+                }
+                else
+                {
+                    DeleteIfExists(backupPath);
+                }
+            }
+        }
+
+        private static bool ApproximatelyOne(float value)
+        {
+            return Approximately(value, 1f);
+        }
+
+        private static bool Approximately(float left, float right)
+        {
+            return Mathf.Abs(left - right) <= 0.0001f;
+        }
+
+        private static void RestoreFile(string path, byte[] bytes)
+        {
+            if (bytes == null)
+            {
+                DeleteIfExists(path);
+                return;
+            }
+
+            var directory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            File.WriteAllBytes(path, bytes);
+        }
+
+        private static void DeleteIfExists(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+    }
+}

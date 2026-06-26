@@ -1,6 +1,6 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-26T14:32:53.6985150Z`
+Generated UTC: `2026-06-26T14:42:27.3149460Z`
 
 ## Metrics
 
@@ -24,6 +24,7 @@ Generated UTC: `2026-06-26T14:32:53.6985150Z`
 ## Findings
 
 - **info** `render.pipeline`: Built-in render pipeline is active.
+- **info** `save.service`: Versioned local save validated with settings defaults, roundtrip persistence, backup recovery, and corrupt-save fallback.
 - **info** `d020.slice`: D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking.
 - **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with a D-020 region gate and progress initialization.
 - **info** `title.entry`: Title scene generated and validated with New Game, Continue, Settings volume persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice.

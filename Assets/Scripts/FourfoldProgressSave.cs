@@ -133,7 +133,11 @@ namespace FourfoldEchoes.Product
         {
             return new FourfoldProgressData
             {
-                version = CurrentVersion
+                version = CurrentVersion,
+                settingsInitialized = true,
+                masterVolume = 1f,
+                musicVolume = 1f,
+                sfxVolume = 1f
             };
         }
 
