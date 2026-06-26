@@ -1,5 +1,5 @@
 {
-  "generatedUtc": "2026-06-25T20:05:03.587Z",
+  "generatedUtc": "2026-06-26T05:40:41.299Z",
   "coreSource": "GitHub Veripsa checks; local veripsa CLI unavailable",
   "coreObservations": [
     {
@@ -13,7 +13,7 @@
       "implication": "New Unity editor/tool files were not in main's graph, so Core treated them as unknown. Split new C# runtime, editor scene generation, and capture/build tooling into separate PRs instead of landing them with docs."
     }
   ],
-  "dirtyFileCount": 14,
+  "dirtyFileCount": 5,
   "lanes": [
     {
       "id": "PR-A",
@@ -40,6 +40,10 @@
       "files": [
         {
           "status": " M",
+          "path": "Scripts/Validation/write_veripsa_split_report.mjs"
+        },
+        {
+          "status": " M",
           "path": "artifacts/Reports/veripsa-current-split.json"
         },
         {
@@ -52,69 +56,28 @@
       "id": "PR-E1",
       "name": "d020-tool-runtime",
       "order": 5,
-      "files": []
+      "files": [
+        {
+          "status": "??",
+          "path": "Assets/Scripts/D020ProgressSave.cs"
+        },
+        {
+          "status": "??",
+          "path": "Assets/Scripts/D020ProgressSave.cs.meta"
+        }
+      ]
     },
     {
       "id": "PR-E2",
       "name": "d020-scene-evidence",
       "order": 6,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Editor/FourfoldD020SliceSceneBuilder.cs"
-        },
-        {
-          "status": " M",
-          "path": "Assets/Scenes/D020VerticalSlice.unity"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E3",
       "name": "d020-capture-build",
       "order": 7,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Editor/FourfoldD020PlayableSmoke.cs"
-        },
-        {
-          "status": " M",
-          "path": "Scripts/Validation/write_market_reports.mjs"
-        },
-        {
-          "status": " M",
-          "path": "artifacts/Reports/audio-inventory.json"
-        },
-        {
-          "status": " M",
-          "path": "artifacts/Reports/audio-inventory.md"
-        },
-        {
-          "status": " M",
-          "path": "artifacts/Reports/final-status-report.json"
-        },
-        {
-          "status": " M",
-          "path": "artifacts/Reports/final-status-report.md"
-        },
-        {
-          "status": " M",
-          "path": "artifacts/Reports/performance-snapshot.json"
-        },
-        {
-          "status": " M",
-          "path": "artifacts/Reports/performance-snapshot.md"
-        },
-        {
-          "status": " M",
-          "path": "artifacts/Reports/unity-product-validation.json"
-        },
-        {
-          "status": " M",
-          "path": "artifacts/Reports/unity-product-validation.md"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-F",

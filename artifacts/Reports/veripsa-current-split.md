@@ -1,6 +1,6 @@
 # Veripsa Current Split Report
 
-Generated UTC: `2026-06-25T20:05:03.587Z`
+Generated UTC: `2026-06-26T05:40:41.299Z`
 
 Core source: GitHub Veripsa checks; local veripsa CLI unavailable
 
@@ -9,7 +9,7 @@ Core source: GitHub Veripsa checks; local veripsa CLI unavailable
 - PR #17 codex/store-readiness-pack: Veripsa `SUCCESS`. Docs-only changes with a narrow path set are a Veripsa-friendly landing unit.
 - PR #14 codex/gate-a-evidence-harness: Veripsa `NEUTRAL`. New Unity editor/tool files were not in main's graph, so Core treated them as unknown. Split new C# runtime, editor scene generation, and capture/build tooling into separate PRs instead of landing them with docs.
 
-Dirty files: 14
+Dirty files: 5
 
 ## Recommended Lanes
 
@@ -27,30 +27,22 @@ Dirty files: 14
 
 ### PR-D - validation-sync
 
+- `M` Scripts/Validation/write_veripsa_split_report.mjs
 - `M` artifacts/Reports/veripsa-current-split.json
 - `M` artifacts/Reports/veripsa-current-split.md
 
 ### PR-E1 - d020-tool-runtime
 
-- None
+- `??` Assets/Scripts/D020ProgressSave.cs
+- `??` Assets/Scripts/D020ProgressSave.cs.meta
 
 ### PR-E2 - d020-scene-evidence
 
-- `M` Assets/Editor/FourfoldD020SliceSceneBuilder.cs
-- `M` Assets/Scenes/D020VerticalSlice.unity
+- None
 
 ### PR-E3 - d020-capture-build
 
-- `M` Assets/Editor/FourfoldD020PlayableSmoke.cs
-- `M` Scripts/Validation/write_market_reports.mjs
-- `M` artifacts/Reports/audio-inventory.json
-- `M` artifacts/Reports/audio-inventory.md
-- `M` artifacts/Reports/final-status-report.json
-- `M` artifacts/Reports/final-status-report.md
-- `M` artifacts/Reports/performance-snapshot.json
-- `M` artifacts/Reports/performance-snapshot.md
-- `M` artifacts/Reports/unity-product-validation.json
-- `M` artifacts/Reports/unity-product-validation.md
+- None
 
 ### PR-F - historical-proof-cleanup
 
