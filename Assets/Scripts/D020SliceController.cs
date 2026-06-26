@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace FourfoldEchoes.Product
 {
@@ -755,6 +756,11 @@ namespace FourfoldEchoes.Product
             }
             PlayCue(rewardReadyClip, 0.58f);
             UpdateToolInputLock();
+            if (Application.isPlaying)
+            {
+                SceneManager.LoadScene(FourfoldGameIds.UnitySceneHubCrossroads);
+            }
+
             return true;
         }
 
