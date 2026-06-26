@@ -31,7 +31,13 @@ Status: canonical after D-020.
 | Vertical-slice bosses | 1 |
 | Vertical-slice relic rewards | 2 |
 | Vertical-slice gimmick rooms | 2 |
-| New systems per milestone | 0 |
+| New systems beyond the locked D-020 scope | 0 |
+
+`New systems beyond the locked D-020 scope` means no additional gameplay
+systems may be introduced outside the current canonical slice. It does not block
+implementation of already-approved D-020 fundamentals such as movement, camera,
+normal attack, dodge, one exploration tool, two gimmick rooms, shortcut,
+save/load, required UI, BGM, or SFX.
 
 ## 却下基準
 

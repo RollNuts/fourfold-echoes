@@ -28,6 +28,9 @@ ownership and gameplay purpose, not by broad future engine abstractions.
 Assets/
   Scenes/
     Bootstrap.unity
+    Title_Menu.unity
+    PersistentSystems.unity
+    UI_Game.unity
     Hub_Crossroads.unity
     Region_01_GreenRuins.unity
     Region_02_SunkenWorks.unity
@@ -99,6 +102,7 @@ Rules:
 | Scene | Purpose | Notes |
 | --- | --- | --- |
 | `Bootstrap` | startup, service creation, first load | no gameplay content |
+| `Title_Menu` | new game, continue, settings, quit | no character progression or feature marketing |
 | `PersistentSystems` | input, save, audio, scene flow | loaded once |
 | `UI_Game` | HUD, pause, settings | no quest log |
 | `Hub_Crossroads` | hub, save return, region gates | 1 hub only |
@@ -112,6 +116,7 @@ Rules:
 | Script | Responsibility | Must Not Own |
 | --- | --- | --- |
 | `GameBootstrap` | load persistent systems and starting scene | gameplay rules |
+| `TitleMenuController` | new game, continue, settings, quit | gameplay menus, quest log, store copy |
 | `SceneFlowController` | hub/region/boss transitions | streaming open-world logic |
 | `InputReader` | keyboard/controller input mapping | gameplay decisions |
 | `TopDownPlayerMotor` | movement, facing, dodge movement | combat damage |

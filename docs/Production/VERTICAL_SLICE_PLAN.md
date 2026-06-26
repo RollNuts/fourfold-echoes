@@ -17,7 +17,7 @@ Status: canonical after D-020.
 - [ ] BGM 2 tracks are integrated.
 - [ ] Minimum SFX set is integrated.
 - [ ] Save/load works for progress flags.
-- [ ] 30 minutes or less communicates the core fun.
+- [ ] 20-30 minutes communicates the core fun.
 - [ ] 30 seconds of silent footage communicates the game.
 - [ ] No gray-box art remains in market-validation captures.
 - [ ] No placeholder SFX remains in audio-validation captures.

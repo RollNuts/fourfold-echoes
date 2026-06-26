@@ -5,7 +5,7 @@ Status: canonical after D-020.
 ## オーディオピラー
 
 1. **Readable Before Beautiful**
-   - Enemy tells, hit confirm, damage, guard/dodge, and tool response must be
+   - Enemy tells, hit confirm, damage, dodge, and tool response must be
      understood before music polish.
 
 2. **Few Themes, Strong Memory**
@@ -22,8 +22,7 @@ Status: canonical after D-020.
 | --- | --- |
 | UI | select, confirm, back, error, pause |
 | Player movement | footstep common, dodge, landing |
-| Combat | normal swing, hit enemy, hit shield/armor, player damage, enemy death |
-| Defense | guard start, guard hit, parry/success if implemented |
+| Combat | normal swing, hit enemy, armor/solid hit, player damage, enemy death |
 | Enemy | enemy notice, telegraph, attack, damage, death |
 | Boss | boss intro hit, boss tell, boss impact, boss transition, boss defeat |
 | Exploration tool | equip/ready, pulse, near response, target hit, fail, cooldown/ready |
@@ -36,6 +35,7 @@ Status: canonical after D-020.
 - Voice acting.
 - Ambient dialogue.
 - Multiple weapon sound families before the first slice.
+- Guard/parry sound families unless a future accepted decision adds guard.
 - Music stems for systems outside MVP.
 - Dozens of UI variations.
 - Online/social notification sounds.
@@ -46,12 +46,15 @@ Status: canonical after D-020.
 | Track | Role | MVP Requirement |
 | --- | --- | --- |
 | `BGM_Hub` | safety and return | loopable, memorable motif |
-| `BGM_Region01` | first exploration area | can share motif with hub but more motion |
+| `BGM_Region01` | first exploration area | can share motif with hub; combines with hub as the slice exploration track |
 | `BGM_Region02` | pressure region | planned, not needed in first slice |
 | `BGM_Region03` | late mystery region | planned, not needed in first slice |
-| `BGM_NormalCombat` | optional combat layer or short loop | keep simple |
+| `BGM_NormalCombat` | optional combat layer or short loop | planned only; not counted as a required slice track |
 | `BGM_Boss` | boss identity and readable escalation | required in slice |
-| `BGM_DiscoveryReward` | short stinger | required in slice |
+| `SFX_DiscoveryReward` | short stinger | required in slice as SFX/stinger, not counted as a BGM track |
+
+The vertical slice requires two BGM tracks: one hub/exploration loop and one
+boss/combat loop. Discovery/reward feedback is a stinger in the SFX set.
 
 ## 探索ツール音設計
 
