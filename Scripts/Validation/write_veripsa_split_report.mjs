@@ -69,6 +69,7 @@ const lanes = [
       /^Assets\/Scripts\/D020EnemyDummy\.cs(\.meta)?$/,
       /^Assets\/Scripts\/D020PlayerController\.cs(\.meta)?$/,
       /^Assets\/Scripts\/D020ProgressSave\.cs(\.meta)?$/,
+      /^Assets\/Scripts\/D020RelicReward\.cs(\.meta)?$/,
       /^Assets\/Scripts\/ExplorationTool\.cs(\.meta)?$/,
       /^Assets\/Scripts\/ExplorationNode\.cs(\.meta)?$/
     ]

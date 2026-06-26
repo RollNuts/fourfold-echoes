@@ -1,5 +1,5 @@
 {
-  "generatedUtc": "2026-06-26T05:45:19.288Z",
+  "generatedUtc": "2026-06-26T05:55:45.161Z",
   "coreSource": "GitHub Veripsa checks; local veripsa CLI unavailable",
   "coreObservations": [
     {
@@ -37,7 +37,12 @@
       "id": "PR-D",
       "name": "validation-sync",
       "order": 4,
-      "files": []
+      "files": [
+        {
+          "status": " M",
+          "path": "Scripts/Validation/write_veripsa_split_report.mjs"
+        }
+      ]
     },
     {
       "id": "PR-E1",
@@ -45,8 +50,12 @@
       "order": 5,
       "files": [
         {
-          "status": " M",
-          "path": "Assets/Scripts/D020ProgressSave.cs"
+          "status": "??",
+          "path": "Assets/Scripts/D020RelicReward.cs"
+        },
+        {
+          "status": "??",
+          "path": "Assets/Scripts/D020RelicReward.cs.meta"
         }
       ]
     },
@@ -54,23 +63,13 @@
       "id": "PR-E2",
       "name": "d020-scene-evidence",
       "order": 6,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Editor/FourfoldD020SliceSceneBuilder.cs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E3",
       "name": "d020-capture-build",
       "order": 7,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Editor/FourfoldD020PlayableSmoke.cs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-F",

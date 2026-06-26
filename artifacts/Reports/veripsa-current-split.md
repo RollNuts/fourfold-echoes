@@ -1,6 +1,6 @@
 # Veripsa Current Split Report
 
-Generated UTC: `2026-06-26T05:45:19.288Z`
+Generated UTC: `2026-06-26T05:55:45.161Z`
 
 Core source: GitHub Veripsa checks; local veripsa CLI unavailable
 
@@ -27,19 +27,20 @@ Dirty files: 3
 
 ### PR-D - validation-sync
 
-- None
+- `M` Scripts/Validation/write_veripsa_split_report.mjs
 
 ### PR-E1 - d020-tool-runtime
 
-- `M` Assets/Scripts/D020ProgressSave.cs
+- `??` Assets/Scripts/D020RelicReward.cs
+- `??` Assets/Scripts/D020RelicReward.cs.meta
 
 ### PR-E2 - d020-scene-evidence
 
-- `M` Assets/Editor/FourfoldD020SliceSceneBuilder.cs
+- None
 
 ### PR-E3 - d020-capture-build
 
-- `M` Assets/Editor/FourfoldD020PlayableSmoke.cs
+- None
 
 ### PR-F - historical-proof-cleanup
 
