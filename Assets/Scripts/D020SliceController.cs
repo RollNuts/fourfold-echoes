@@ -63,6 +63,8 @@ namespace FourfoldEchoes.Product
         private const float BossSweepWindup = 1.08f;
         private const float BossSweepCooldown = 1.95f;
         private const float BossSpeed = 1.12f;
+        private const float BossEnragedSpeed = 1.34f;
+        private const float BossEnrageHealth = 110f;
         private const int AttackModeCircle = 0;
         private const int AttackModeLine = 1;
         private const float PlayerMaxHealth = 100f;
@@ -99,6 +101,7 @@ namespace FourfoldEchoes.Product
         private float[] enemyWindupTimer;
         private Vector3[] enemyAttackAimDirections;
         private int[] enemyAttackModes;
+        private bool[] bossEnraged;
         private GameObject[] enemyAttackReads;
         private Vector3 initialPlayerPosition;
         private Quaternion initialPlayerRotation;
@@ -154,6 +157,7 @@ namespace FourfoldEchoes.Product
             enemyWindupTimer = new float[enemyHealth.Length];
             enemyAttackAimDirections = new Vector3[enemyHealth.Length];
             enemyAttackModes = new int[enemyHealth.Length];
+            bossEnraged = new bool[enemyHealth.Length];
             enemyAttackReads = new GameObject[enemyHealth.Length];
             initialEnemyPositions = new Vector3[enemyHealth.Length];
             initialEnemyRotations = new Quaternion[enemyHealth.Length];
@@ -333,8 +337,9 @@ namespace FourfoldEchoes.Product
 
                 hitAny = true;
                 enemyHealth[i] -= CurrentAttackDamage(i);
-                enemy.position += toEnemy.normalized * 0.34f;
-                enemy.localScale = Vector3.one * (enemyHealth[i] <= 0f ? 0.86f : 1.08f);
+                enemy.position += toEnemy.normalized * (IsBossEnemy(i) ? 0.16f : 0.34f);
+                enemy.localScale = EnemyHitScale(i, enemyHealth[i] <= 0f);
+                TryTriggerBossEnrage(i, enemy);
                 if (enemyHealth[i] <= 0f)
                 {
                     enemy.gameObject.SetActive(false);
@@ -761,6 +766,7 @@ namespace FourfoldEchoes.Product
                 enemyWindupTimer[i] = 0f;
                 enemyAttackAimDirections[i] = Vector3.forward;
                 enemyAttackModes[i] = IsBossEnemy(i) ? AttackModeLine : AttackModeCircle;
+                bossEnraged[i] = false;
                 if (enemies != null && enemies[i] != null)
                 {
                     enemies[i].gameObject.SetActive(true);
@@ -918,7 +924,8 @@ namespace FourfoldEchoes.Product
         {
             if (IsBossEnemy(index))
             {
-                return BossUsesLineAttack(index) ? BossSweepWindup : BossAttackWindup;
+                var windup = BossUsesLineAttack(index) ? BossSweepWindup : BossAttackWindup;
+                return BossEnraged(index) ? windup * 0.82f : windup;
             }
 
             return IsRangedEnemy(index) ? RangedAttackWindup : EnemyAttackWindup;
@@ -928,7 +935,8 @@ namespace FourfoldEchoes.Product
         {
             if (IsBossEnemy(index))
             {
-                return BossUsesLineAttack(index) ? BossSweepCooldown : BossAttackCooldown;
+                var cooldown = BossUsesLineAttack(index) ? BossSweepCooldown : BossAttackCooldown;
+                return BossEnraged(index) ? cooldown * 0.72f : cooldown;
             }
 
             return IsRangedEnemy(index) ? RangedAttackCooldown : EnemyAttackCooldown + index * 0.22f;
@@ -938,7 +946,7 @@ namespace FourfoldEchoes.Product
         {
             if (IsBossEnemy(index))
             {
-                return BossSpeed;
+                return BossEnraged(index) ? BossEnragedSpeed : BossSpeed;
             }
 
             return IsRangedEnemy(index) ? RangedEnemySpeed : EnemySpeed;
@@ -948,7 +956,7 @@ namespace FourfoldEchoes.Product
         {
             if (IsBossEnemy(index))
             {
-                return BossEnemyDamage;
+                return BossEnraged(index) ? BossEnemyDamage + 6f : BossEnemyDamage;
             }
 
             return index == 0 ? MeleeEnemyDamage : RangedEnemyDamage;
@@ -969,6 +977,11 @@ namespace FourfoldEchoes.Product
         private bool BossUsesLineAttack(int index)
         {
             return enemyAttackModes != null && index >= 0 && index < enemyAttackModes.Length && enemyAttackModes[index] == AttackModeLine;
+        }
+
+        private bool BossEnraged(int index)
+        {
+            return bossEnraged != null && index >= 0 && index < bossEnraged.Length && bossEnraged[index];
         }
 
         private void AdvanceEnemyAttackMode(int index)
@@ -1012,6 +1025,42 @@ namespace FourfoldEchoes.Product
             return toPlayer.magnitude <= EnemyAttackRangeFor(index) + 0.28f;
         }
 
+        private void TryTriggerBossEnrage(int index, Transform enemy)
+        {
+            if (!IsBossEnemy(index) || BossEnraged(index) || enemyHealth[index] <= 0f || enemyHealth[index] > BossEnrageHealth)
+            {
+                return;
+            }
+
+            bossEnraged[index] = true;
+            enemyAttackModes[index] = AttackModeLine;
+            enemyAttackTimer[index] = 0.18f;
+            enemyWindupTimer[index] = 0f;
+            enemy.localScale = EnemyHitScale(index, false);
+            var away = player.position - enemy.position;
+            away.y = 0f;
+            if (away.sqrMagnitude > 0.01f)
+            {
+                var pushed = player.position + away.normalized * 0.72f;
+                player.position = ResolveBlockedMove(player.position, pushed);
+            }
+
+            PlayCue(rewardReadyClip, 0.70f);
+        }
+
+        private Vector3 EnemyHitScale(int index, bool defeated)
+        {
+            var baseScale = initialEnemyScales != null && index >= 0 && index < initialEnemyScales.Length && initialEnemyScales[index] != Vector3.zero
+                ? initialEnemyScales[index]
+                : Vector3.one;
+            if (defeated)
+            {
+                return baseScale * 0.86f;
+            }
+
+            return baseScale * (BossEnraged(index) ? 1.18f : 1.08f);
+        }
+
         private bool EquippedLumenEdge()
         {
             return equippedSkill == SkillLumenEdge && (skillStock > 0 || pendingSkillRewards > 0);
@@ -1040,7 +1089,7 @@ namespace FourfoldEchoes.Product
                 }
 
                 return enemyHealth[i] > 0f
-                    ? $"  Boss {Mathf.CeilToInt(enemyHealth[i])}"
+                    ? $"  Boss {Mathf.CeilToInt(enemyHealth[i])}{(BossEnraged(i) ? " ENRAGED" : string.Empty)}"
                     : "  Boss down";
             }
 
