@@ -90,6 +90,7 @@ namespace FourfoldEchoes.Product
         private bool skillAwardedThisRun;
         private bool failureLossApplied;
         private bool lostSkillThisRun;
+        private FourfoldProgressData progressData;
         private GameObject attackRead;
         private GameObject rewardClaimRead;
         private Material attackMaterial;
@@ -151,10 +152,7 @@ namespace FourfoldEchoes.Product
 
         private void Start()
         {
-            previousClearLoaded = PlayerPrefs.GetInt(SaveKeyCleared, 0) == 1;
-            previousShortcutLoaded = PlayerPrefs.GetInt(SaveKeyShortcutOpened, 0) == 1;
-            previousRewardLoaded = PlayerPrefs.GetInt(SaveKeyRewardClaimed, 0) == 1 && previousClearLoaded;
-            LoadSkillProgress();
+            LoadProgress();
             EnsureExplorationReferences();
             if (previousShortcutLoaded && requiredToolNode != null)
             {
@@ -454,10 +452,10 @@ namespace FourfoldEchoes.Product
             rewardClaimed = true;
             runCleared = true;
             AwardSkillReward();
-            PlayerPrefs.SetInt(SaveKeyCleared, 1);
-            PlayerPrefs.SetInt(SaveKeyShortcutOpened, ToolGateSolved() ? 1 : 0);
-            PlayerPrefs.SetInt(SaveKeyRewardClaimed, 1);
-            PlayerPrefs.Save();
+            previousClearLoaded = true;
+            previousRewardLoaded = true;
+            previousShortcutLoaded = ToolGateSolved();
+            PersistProgress();
             PlayCue(rewardClaimClip, 0.92f);
             if (rewardReadyRead != null)
             {
@@ -521,28 +519,35 @@ namespace FourfoldEchoes.Product
             }
             if (requiredToolNode != null)
             {
-                requiredToolNode.SetSolved(PlayerPrefs.GetInt(SaveKeyShortcutOpened, 0) == 1);
+                requiredToolNode.SetSolved(previousShortcutLoaded);
             }
             SetRewardReady(false);
         }
 
-        private void LoadSkillProgress()
+        private void LoadProgress()
         {
-            skillStock = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeySkillStock, 0));
-            equippedSkill = PlayerPrefs.GetInt(SaveKeyEquippedSkill, SkillNone);
-            lostSkillCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyLostSkillCount, 0));
+            progressData = FourfoldProgressSave.Load();
+            if (!FourfoldProgressSave.HasSaveFile())
+            {
+                MigrateLegacyPlayerPrefs(progressData);
+            }
+
+            previousClearLoaded = progressData.d020Cleared;
+            previousShortcutLoaded = progressData.d020ShortcutOpened;
+            previousRewardLoaded = progressData.d020RewardClaimed && previousClearLoaded;
+            skillStock = Mathf.Max(0, progressData.d020LumenEdgeStock);
+            equippedSkill = progressData.d020EquippedSkill;
+            lostSkillCount = Mathf.Max(0, progressData.d020LostSkillCount);
 
             if (equippedSkill != SkillNone && skillStock <= 0)
             {
                 equippedSkill = SkillNone;
-                PlayerPrefs.SetInt(SaveKeyEquippedSkill, SkillNone);
-                PlayerPrefs.Save();
+                PersistProgress();
             }
             else if (equippedSkill == SkillNone && skillStock > 0)
             {
                 equippedSkill = SkillLumenEdge;
-                PlayerPrefs.SetInt(SaveKeyEquippedSkill, equippedSkill);
-                PlayerPrefs.Save();
+                PersistProgress();
             }
         }
 
@@ -556,8 +561,6 @@ namespace FourfoldEchoes.Product
             skillAwardedThisRun = true;
             skillStock += 1;
             equippedSkill = SkillLumenEdge;
-            PlayerPrefs.SetInt(SaveKeySkillStock, skillStock);
-            PlayerPrefs.SetInt(SaveKeyEquippedSkill, equippedSkill);
         }
 
         private void ApplyFailureSkillLoss()
@@ -577,10 +580,7 @@ namespace FourfoldEchoes.Product
             skillStock = Mathf.Max(0, skillStock - 1);
             lostSkillCount += 1;
             lostSkillThisRun = true;
-            PlayerPrefs.SetInt(SaveKeyEquippedSkill, SkillNone);
-            PlayerPrefs.SetInt(SaveKeySkillStock, skillStock);
-            PlayerPrefs.SetInt(SaveKeyLostSkillCount, lostSkillCount);
-            PlayerPrefs.Save();
+            PersistProgress();
         }
 
         private float CurrentAttackDamage(int enemyIndex)
@@ -619,14 +619,13 @@ namespace FourfoldEchoes.Product
 
         private void UpdateProgressFlags()
         {
-            if (requiredToolNode == null || !requiredToolNode.IsSolved || PlayerPrefs.GetInt(SaveKeyShortcutOpened, 0) == 1)
+            if (requiredToolNode == null || !requiredToolNode.IsSolved || previousShortcutLoaded)
             {
                 return;
             }
 
-            PlayerPrefs.SetInt(SaveKeyShortcutOpened, 1);
-            PlayerPrefs.Save();
             previousShortcutLoaded = true;
+            PersistProgress();
         }
 
         private void SetRewardReady(bool ready)
@@ -696,6 +695,45 @@ namespace FourfoldEchoes.Product
             }
 
             return false;
+        }
+
+        private void MigrateLegacyPlayerPrefs(FourfoldProgressData data)
+        {
+            data.d020Cleared = PlayerPrefs.GetInt(SaveKeyCleared, 0) == 1;
+            data.d020ShortcutOpened = PlayerPrefs.GetInt(SaveKeyShortcutOpened, 0) == 1;
+            data.d020RewardClaimed = PlayerPrefs.GetInt(SaveKeyRewardClaimed, 0) == 1 && data.d020Cleared;
+            data.d020LumenEdgeStock = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeySkillStock, 0));
+            data.d020EquippedSkill = PlayerPrefs.GetInt(SaveKeyEquippedSkill, SkillNone);
+            data.d020LostSkillCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyLostSkillCount, 0));
+        }
+
+        private void PersistProgress()
+        {
+            if (progressData == null)
+            {
+                progressData = new FourfoldProgressData();
+            }
+
+            progressData.currentScene = "scene.d020_vertical_slice";
+            progressData.d020Cleared = previousClearLoaded || runCleared;
+            progressData.d020ShortcutOpened = previousShortcutLoaded;
+            progressData.d020RewardClaimed = previousRewardLoaded || rewardClaimed;
+            progressData.d020LumenEdgeStock = Mathf.Max(0, skillStock);
+            progressData.d020EquippedSkill = equippedSkill;
+            progressData.d020LostSkillCount = Mathf.Max(0, lostSkillCount);
+            FourfoldProgressSave.Save(progressData);
+            MirrorLegacyPlayerPrefs();
+        }
+
+        private void MirrorLegacyPlayerPrefs()
+        {
+            PlayerPrefs.SetInt(SaveKeyCleared, progressData.d020Cleared ? 1 : 0);
+            PlayerPrefs.SetInt(SaveKeyShortcutOpened, progressData.d020ShortcutOpened ? 1 : 0);
+            PlayerPrefs.SetInt(SaveKeyRewardClaimed, progressData.d020RewardClaimed ? 1 : 0);
+            PlayerPrefs.SetInt(SaveKeySkillStock, progressData.d020LumenEdgeStock);
+            PlayerPrefs.SetInt(SaveKeyEquippedSkill, progressData.d020EquippedSkill);
+            PlayerPrefs.SetInt(SaveKeyLostSkillCount, progressData.d020LostSkillCount);
+            PlayerPrefs.Save();
         }
 
         private void EnsureAudioSource()
