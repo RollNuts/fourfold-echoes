@@ -66,6 +66,16 @@ namespace FourfoldEchoes.Editor
 
             try
             {
+                FourfoldProductionP3ModelPackVerifier.VerifyP3ModelPack();
+                findings.Add(Finding.Info("art.production_p3", "Production P3 model pack imported and validated with 28 prefabs, renderer/mesh/material references, and sane bounds."));
+            }
+            catch (Exception exception)
+            {
+                findings.Add(Finding.Error("art.production_p3", "Production P3 model pack validation failed: " + exception.Message));
+            }
+
+            try
+            {
                 FourfoldHubSceneBuilder.BuildAndValidate();
                 FourfoldHubGameplayVerifier.VerifyHubEnterRegionProgress();
                 findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with an R01 region gate, mission briefing/start confirmation, returned-run summary/replay UX, objective marker, progress initialization, pause/settings/language UX, reset confirmation, and return-to-title persistence."));

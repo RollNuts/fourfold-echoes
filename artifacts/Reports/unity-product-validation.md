@@ -1,6 +1,6 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-26T19:25:28.4802790Z`
+Generated UTC: `2026-06-26T21:00:51.3599710Z`
 
 ## Metrics
 
@@ -13,11 +13,11 @@ Generated UTC: `2026-06-26T19:25:28.4802790Z`
 | Missing material slots | 0 |
 | Missing scripts | 0 |
 | Negative scale objects | 0 |
-| Material assets | 47 |
+| Material assets | 75 |
 | Texture assets | 0 |
 | AudioClip assets | 9 |
-| Mesh assets | 7 |
-| Prefab assets | 5 |
+| Mesh assets | 35 |
+| Prefab assets | 33 |
 | Prefabs with LODGroup | 0 |
 | Scene assets | 4 |
 
@@ -27,6 +27,7 @@ Generated UTC: `2026-06-26T19:25:28.4802790Z`
 - **info** `render.pipeline`: Built-in render pipeline is active.
 - **info** `save.service`: Versioned local save validated with settings defaults, language preference, UI scale/control-hint preferences, settings preservation across reset, roundtrip persistence, backup recovery, and corrupt-save fallback.
 - **info** `r01.verdant_steps`: R01 Verdant Steps evidence path generated and validated with one exploration tool, sealed-route and shortcut interactions, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX, objective marker, progression rail, dodge state HUD, reward-effect notice UX, confirmation before abandoning unsaved rewards, two distinct saved reward skills, return gate, required SFX, two BGM clips, and hub-return reward persistence.
+- **info** `art.production_p3`: Production P3 model pack imported and validated with 28 prefabs, renderer/mesh/material references, and sane bounds.
 - **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with an R01 region gate, mission briefing/start confirmation, returned-run summary/replay UX, objective marker, progress initialization, pause/settings/language UX, reset confirmation, and return-to-title persistence.
 - **info** `title.entry`: Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, Quit request, and Build Settings order Title -> HubCrossroads -> R01.
 - **info** `steam_deck.readiness`: Title, Hub, and R01 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings.
