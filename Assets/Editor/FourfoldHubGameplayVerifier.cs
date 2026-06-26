@@ -51,9 +51,20 @@ namespace FourfoldEchoes.Editor
                 }
 
                 controller.player.position = controller.d020RegionGate.position;
+                controller.OpenMissionBriefing();
+                if (!controller.IsMissionBriefingOpen())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: D-020 gate interaction did not open the mission briefing state.");
+                }
+
                 if (!controller.TryEnterD020Region())
                 {
-                    throw new InvalidOperationException("Hub gameplay verifier failed: D-020 gate interaction did not enter the region.");
+                    throw new InvalidOperationException("Hub gameplay verifier failed: D-020 mission start did not enter the region.");
+                }
+
+                if (controller.IsMissionBriefingOpen())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: mission briefing stayed open after starting the run.");
                 }
 
                 var regionProgress = FourfoldProgressSave.Load();
@@ -80,7 +91,7 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Hub gameplay verifier failed: returning to title did not preserve the hub continue target.");
                 }
 
-                Debug.Log("FOURFOLD Hub gameplay verifier passed: hub unlock, D-020 entry, reset progress, and title return persist.");
+                Debug.Log("FOURFOLD Hub gameplay verifier passed: hub unlock, D-020 briefing/start, reset progress, and title return persist.");
             }
             finally
             {

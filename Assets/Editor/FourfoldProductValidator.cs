@@ -47,7 +47,7 @@ namespace FourfoldEchoes.Editor
                 FourfoldD020GameplayVerifier.VerifyExistingSceneDeathRetryAndTitlePath();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFullProgressionLoop();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFailureLoop();
-                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, shared pause/settings UX, unbanked relic abandon confirmation, two distinct relic effects, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."));
+                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, shared pause/settings UX, objective marker, progression rail, unbanked relic abandon confirmation, two distinct relic effects, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."));
             }
             catch (Exception exception)
             {
@@ -58,7 +58,7 @@ namespace FourfoldEchoes.Editor
             {
                 FourfoldHubSceneBuilder.BuildAndValidate();
                 FourfoldHubGameplayVerifier.VerifyHubEnterRegionProgress();
-                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, progress initialization, pause/settings UX, reset, and return-to-title persistence."));
+                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, mission briefing/start confirmation, objective marker, progress initialization, pause/settings UX, reset, and return-to-title persistence."));
             }
             catch (Exception exception)
             {
@@ -338,7 +338,7 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine();
             builder.AppendLine("## Product Interpretation");
             builder.AppendLine();
-            builder.AppendLine("This report validates technical hygiene only. Title is the product entry point, HubCrossroads is the playable hub, and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: title entry, hub gate, two normal enemy types, one elite guard, one boss, two tool nodes, two distinct relic effects, unbanked relic abandon confirmation, failed-run reward loss, return banking, required SFX, two BGM clips, and full-loop reward persistence. Historical ProductReview evidence is deliberately outside this lane.");
+            builder.AppendLine("This report validates technical hygiene only. Title is the product entry point, HubCrossroads is the playable hub, and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: title entry, hub objective marker, mission briefing/start confirmation, two normal enemy types, one elite guard, one boss, two tool nodes, objective marker, progression rail, two distinct relic effects, unbanked relic abandon confirmation, failed-run reward loss, return banking, required SFX, two BGM clips, pause/settings UX, and full-loop reward persistence. Historical ProductReview evidence is deliberately outside this lane.");
             return builder.ToString();
         }
 

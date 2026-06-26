@@ -186,7 +186,7 @@ namespace FourfoldEchoes.Product
             }
 
             var hudWidth = Mathf.Min(600f, screenWidth - 32f);
-            var hudRect = new Rect(16f, 16f, hudWidth, 214f);
+            var hudRect = new Rect(16f, 16f, hudWidth, 252f);
             var bottomHintRect = BottomHintRect(screenWidth, screenHeight);
             var bottomProgressRect = BottomProgressRect(screenWidth, screenHeight);
             if (hudRect.xMax > screenWidth - 16f || hudRect.yMax >= bottomHintRect.y - 12f)
@@ -2163,7 +2163,7 @@ namespace FourfoldEchoes.Product
 
             var uiScale = FourfoldRuntimeUi.SafeUiScale(progressData);
             var width = Mathf.Min(600f, Screen.width - 32f);
-            var rect = new Rect(16f, 16f, width, 214f);
+            var rect = new Rect(16f, 16f, width, 252f);
             FourfoldRuntimeUi.DrawPanel(rect);
 
             var style = new GUIStyle(GUI.skin.label)
@@ -2224,8 +2224,9 @@ namespace FourfoldEchoes.Product
             FourfoldRuntimeUi.DrawChip(new Rect(30f, 64f, (width - 70f) * 0.42f, 30f), toolState, new Color(0.25f, 0.70f, 1.0f), mutedStyle);
             FourfoldRuntimeUi.DrawChip(new Rect(42f + (width - 70f) * 0.42f, 64f, (width - 70f) * 0.58f, 30f), relicState, new Color(1.0f, 0.72f, 0.24f), mutedStyle);
             GUI.Label(new Rect(30f, 104f, width - 56f, 50f), objective, style);
-            FourfoldRuntimeUi.DrawDivider(30f, 158f, width - 56f);
-            GUI.Label(new Rect(30f, 166f, width - 56f, 44f), $"{resultState}  {timeState}", mutedStyle);
+            DrawRunProgressRail(new Rect(30f, 156f, width - 56f, 34f), mutedStyle);
+            FourfoldRuntimeUi.DrawDivider(30f, 198f, width - 56f);
+            GUI.Label(new Rect(30f, 206f, width - 56f, 42f), $"{resultState}  {timeState}", mutedStyle);
             DrawObjectiveMarker(style);
             if (progressData == null || progressData.showControlHints)
             {
@@ -2296,6 +2297,44 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 20f, panelWidth - 48f, 32f), actionLabel, style);
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 58f, panelWidth - 48f, 96f), $"You are carrying {unbankedCount} unbanked relic reward(s). This action drops them because rewards only persist after returning to the Hub.", style);
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 164f, panelWidth - 48f, 42f), $"{confirmLabel}  Esc/Menu cancels.", FourfoldRuntimeUi.MutedStyle(Screen.height));
+        }
+
+        private void DrawRunProgressRail(Rect rect, GUIStyle style)
+        {
+            var labels = new[] { "1 Tool", "2 Boss", "3 Relic", "4 Node", "5 Relic", "6 Return" };
+            var completed = new[]
+            {
+                ToolGateSolved(),
+                BossDefeatedThisRun(),
+                firstRewardClaimedThisRun || previousRewardLoaded,
+                SecondToolGateSolved(),
+                secondRewardClaimedThisRun || previousSecondRewardLoaded,
+                returnedToHubThisRun
+            };
+
+            var activeIndex = 0;
+            while (activeIndex < completed.Length && completed[activeIndex])
+            {
+                activeIndex++;
+            }
+
+            if (runFailed)
+            {
+                activeIndex = -1;
+            }
+
+            var gap = 5f;
+            var cellWidth = (rect.width - gap * (labels.Length - 1)) / labels.Length;
+            for (var i = 0; i < labels.Length; i++)
+            {
+                var color = completed[i]
+                    ? new Color(0.34f, 0.90f, 0.52f)
+                    : i == activeIndex
+                        ? new Color(1.0f, 0.72f, 0.24f)
+                        : new Color(0.45f, 0.50f, 0.58f);
+                var label = completed[i] ? labels[i] + " OK" : i == activeIndex ? labels[i] + " NOW" : labels[i];
+                FourfoldRuntimeUi.DrawChip(new Rect(rect.x + i * (cellWidth + gap), rect.y, cellWidth, rect.height), label, color, style);
+            }
         }
 
         private void DrawPauseMenu(Rect rect, GUIStyle style, GUIStyle mutedStyle)

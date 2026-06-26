@@ -33,6 +33,10 @@ namespace FourfoldEchoes.Product
         private const int PauseSettings = 1;
         private const int PauseTitle = 2;
         private const int PauseMenuCount = 3;
+        private const int MissionStart = 0;
+        private const int MissionSettings = 1;
+        private const int MissionBack = 2;
+        private const int MissionMenuCount = 3;
         private const int SettingsCount = 5;
         private const float AxisRepeatDelay = 0.24f;
 
@@ -41,7 +45,10 @@ namespace FourfoldEchoes.Product
         private float resetHoldSeconds;
         private bool paused;
         private bool settingsOpen;
+        private bool missionBriefingOpen;
+        private bool settingsOpenedFromMissionBriefing;
         private int selectedPauseIndex;
+        private int selectedMissionIndex;
         private int selectedSettingIndex;
         private float axisRepeatTimer;
 
@@ -106,9 +113,21 @@ namespace FourfoldEchoes.Product
                     return;
                 }
 
+                if (missionBriefingOpen)
+                {
+                    CloseMissionBriefing();
+                    return;
+                }
+
                 paused = !paused;
                 selectedPauseIndex = 0;
                 resetHoldSeconds = 0f;
+                return;
+            }
+
+            if (missionBriefingOpen)
+            {
+                UpdateMissionBriefingInput();
                 return;
             }
 
@@ -124,7 +143,10 @@ namespace FourfoldEchoes.Product
 
             if (Pressed(interactKey, gamepadInteractKey))
             {
-                TryEnterD020Region();
+                if (CanEnterD020Region())
+                {
+                    OpenMissionBriefing();
+                }
             }
         }
 
@@ -145,6 +167,10 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
+            missionBriefingOpen = false;
+            settingsOpenedFromMissionBriefing = false;
+            settingsOpen = false;
+            paused = false;
             progressData = FourfoldProgressSave.Load();
             progressData.currentScene = FourfoldGameIds.SceneD020VerticalSlice;
             progressData.hubUnlocked = true;
@@ -170,6 +196,8 @@ namespace FourfoldEchoes.Product
             FourfoldProgressSave.Save(progressData);
             paused = false;
             settingsOpen = false;
+            missionBriefingOpen = false;
+            settingsOpenedFromMissionBriefing = false;
             resetHoldSeconds = 0f;
 
             if (Application.isPlaying)
@@ -190,6 +218,9 @@ namespace FourfoldEchoes.Product
             PlacePlayerAtHubSpawn();
             resetHoldSeconds = 0f;
             settingsOpen = false;
+            missionBriefingOpen = false;
+            settingsOpenedFromMissionBriefing = false;
+            paused = false;
         }
 
         public void OpenSettings()
@@ -197,12 +228,49 @@ namespace FourfoldEchoes.Product
             progressData = FourfoldProgressSave.Load();
             paused = true;
             settingsOpen = true;
+            settingsOpenedFromMissionBriefing = false;
             selectedSettingIndex = 0;
+        }
+
+        public void OpenMissionBriefing()
+        {
+            if (!CanEnterD020Region())
+            {
+                return;
+            }
+
+            progressData = FourfoldProgressSave.Load();
+            missionBriefingOpen = true;
+            settingsOpen = false;
+            settingsOpenedFromMissionBriefing = false;
+            paused = false;
+            selectedMissionIndex = 0;
+            resetHoldSeconds = 0f;
+        }
+
+        public void CloseMissionBriefing()
+        {
+            missionBriefingOpen = false;
+            settingsOpen = false;
+            settingsOpenedFromMissionBriefing = false;
+            resetHoldSeconds = 0f;
+        }
+
+        public bool IsMissionBriefingOpen()
+        {
+            return missionBriefingOpen;
         }
 
         public void CloseSettings()
         {
             settingsOpen = false;
+            if (settingsOpenedFromMissionBriefing)
+            {
+                paused = false;
+                missionBriefingOpen = true;
+                settingsOpenedFromMissionBriefing = false;
+            }
+
             SaveSettings();
         }
 
@@ -314,6 +382,35 @@ namespace FourfoldEchoes.Product
             }
         }
 
+        private void UpdateMissionBriefingInput()
+        {
+            if (settingsOpen)
+            {
+                UpdateSettingsInput();
+                return;
+            }
+
+            if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
+            {
+                selectedMissionIndex = Wrap(selectedMissionIndex - 1, MissionMenuCount);
+            }
+            else if (Pressed(KeyCode.DownArrow, KeyCode.S) || AxisPressed(-1f))
+            {
+                selectedMissionIndex = Wrap(selectedMissionIndex + 1, MissionMenuCount);
+            }
+
+            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey))
+            {
+                CloseMissionBriefing();
+                return;
+            }
+
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            {
+                ActivateMissionSelection();
+            }
+        }
+
         private void UpdateSettingsInput()
         {
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
@@ -353,6 +450,25 @@ namespace FourfoldEchoes.Product
                     break;
                 case PauseTitle:
                     TryReturnToTitle();
+                    break;
+            }
+        }
+
+        private void ActivateMissionSelection()
+        {
+            switch (selectedMissionIndex)
+            {
+                case MissionStart:
+                    TryEnterD020Region();
+                    break;
+                case MissionSettings:
+                    progressData = FourfoldProgressSave.Load();
+                    settingsOpen = true;
+                    settingsOpenedFromMissionBriefing = true;
+                    selectedSettingIndex = 0;
+                    break;
+                case MissionBack:
+                    CloseMissionBriefing();
                     break;
             }
         }
@@ -493,6 +609,14 @@ namespace FourfoldEchoes.Product
                 GUI.Label(new Rect(panel.x + 18f, panel.y + 166f, panel.width - 36f, 24f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Esc/Menu: Pause   Hold Backspace / Select: Reset save", muted);
             }
 
+            DrawObjectiveMarker(body);
+
+            if (missionBriefingOpen)
+            {
+                DrawMissionBriefing(body, muted);
+                return;
+            }
+
             if (!paused)
             {
                 return;
@@ -519,6 +643,35 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 194f, pauseWidth - 48f, 58f), "Hub is safe. Use reset only with the long-hold command shown in the HUD.", muted);
         }
 
+        private void DrawMissionBriefing(GUIStyle body, GUIStyle muted)
+        {
+            var width = Mathf.Min(640f, Screen.width - 48f);
+            var height = 390f;
+            var rect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
+            FourfoldRuntimeUi.DrawPanel(rect);
+            var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData));
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), settingsOpen ? "MISSION SETTINGS" : "D-020: FIRST ECHO RUN", header);
+
+            if (settingsOpen)
+            {
+                DrawSettings(rect, body, muted);
+                return;
+            }
+
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 52f), "Goal: enter the sealed room, break the boss, claim two relic skills, and return to the Hub to bank them.", body);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 120f, rect.width - 52f, 34f), "Risk: death, retry, or title return drops unbanked relic rewards.", new Color(1.0f, 0.46f, 0.22f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 164f, rect.width - 52f, 34f), "Reward: Lumen Edge and Lumen Ward become active only after returning.", new Color(0.22f, 0.70f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawDivider(rect.x + 26f, rect.y + 212f, rect.width - 52f);
+
+            var labels = new[] { "Start Run", "Settings", "Back to Hub" };
+            for (var i = 0; i < labels.Length; i++)
+            {
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 34f, rect.y + 228f + i * 38f, rect.width - 68f, 32f), labels[i], selectedMissionIndex == i, body);
+            }
+
+            GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 46f, rect.width - 68f, 30f), "Move: arrows/stick   Confirm: E/Enter/Y   Back: Esc/Backspace/Menu", muted);
+        }
+
         private void DrawSettings(Rect rect, GUIStyle body, GUIStyle muted)
         {
             progressData = FourfoldProgressSave.Load();
@@ -537,6 +690,37 @@ namespace FourfoldEchoes.Product
             }
 
             GUI.Label(new Rect(rect.x + 24f, rect.y + 236f, rect.width - 48f, 28f), "Left/Right changes value. E/Enter/Y or Backspace/Select returns.", muted);
+        }
+
+        private void DrawObjectiveMarker(GUIStyle style)
+        {
+            if (d020RegionGate == null || player == null || missionBriefingOpen || paused)
+            {
+                return;
+            }
+
+            var camera = fixedCamera != null ? fixedCamera : Camera.main;
+            if (camera == null)
+            {
+                return;
+            }
+
+            var targetWorldPosition = d020RegionGate.position + new Vector3(0f, 1.15f, 0f);
+            var viewport = camera.WorldToViewportPoint(targetWorldPosition);
+            var behindCamera = viewport.z < 0f;
+            if (behindCamera)
+            {
+                viewport.x = 1f - viewport.x;
+                viewport.y = 1f - viewport.y;
+            }
+
+            var offscreen = behindCamera || viewport.x < 0.10f || viewport.x > 0.90f || viewport.y < 0.12f || viewport.y > 0.88f;
+            var screenX = Mathf.Clamp(viewport.x * Screen.width, 80f, Screen.width - 180f);
+            var screenY = Mathf.Clamp((1f - viewport.y) * Screen.height, 74f, Screen.height - 82f);
+            var distance = FlatDistance(player.position, d020RegionGate.position);
+            var rect = new Rect(screenX - 58f, screenY - 18f, 168f, 38f);
+            FourfoldRuntimeUi.DrawPanel(rect);
+            GUI.Label(new Rect(rect.x + 12f, rect.y + 7f, rect.width - 24f, rect.height - 10f), $"{(offscreen ? "NEXT >" : "NEXT")} D-020 {distance:0}m", style);
         }
     }
 }
