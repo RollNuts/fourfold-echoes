@@ -53,12 +53,13 @@ namespace FourfoldEchoes.Editor
             var player = CreatePlayer(root.transform, assets);
             var meleeEnemy = CreateMeleeEnemy(root.transform, assets);
             var rangedEnemy = CreateRangedEnemy(root.transform, assets);
+            var eliteGuard = CreateEliteGuard(root.transform, assets);
             var firstBoss = CreateFirstBoss(root.transform, assets);
             var chest = CreateChest(root.transform, assets);
             var secondChest = CreateSecondChest(root.transform, assets);
             var node = CreateExplorationToolProof(root.transform, assets);
             var secondNode = CreateSecondExplorationToolProof(root.transform, assets);
-            CreateRuntimeHook(player.transform, new[] { meleeEnemy.transform, rangedEnemy.transform, firstBoss.transform }, chest.transform, secondChest.transform, node, secondNode, camera);
+            CreateRuntimeHook(player.transform, new[] { meleeEnemy.transform, rangedEnemy.transform, eliteGuard.transform, firstBoss.transform }, chest.transform, secondChest.transform, node, secondNode, camera);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[]
@@ -81,6 +82,7 @@ namespace FourfoldEchoes.Editor
             Require("D020 Player");
             Require("D020 Enemy Read Target");
             Require("D020 Enemy Ranged Read Target");
+            Require("D020 Elite Guard");
             Require("D020 First Boss");
             Require("D020 Relic Chest");
             Require("D020 Second Relic Chest");
@@ -120,7 +122,7 @@ namespace FourfoldEchoes.Editor
             }
 
             var controller = hook.GetComponent<D020SliceController>();
-            if (controller == null || controller.player == null || controller.enemies == null || controller.enemies.Length < 3 || controller.rewardClaimPoint == null || controller.secondRewardClaimPoint == null || controller.returnGatePoint == null)
+            if (controller == null || controller.player == null || controller.enemies == null || controller.enemies.Length < 4 || controller.rewardClaimPoint == null || controller.secondRewardClaimPoint == null || controller.returnGatePoint == null)
             {
                 throw new InvalidOperationException("D-020 playable controller is missing required player, enemies, reward, or return references.");
             }
@@ -354,6 +356,21 @@ namespace FourfoldEchoes.Editor
             CreateBlock(enemy.transform, "D020 Ranged Enemy Staff", assets.enemyTell, new Vector3(0.54f, 0.92f, -0.08f), new Vector3(0.12f, 1.32f, 0.10f), Quaternion.Euler(0f, 0f, -12f));
             CreateBlock(enemy.transform, "D020 Ranged Enemy Aim Line", assets.enemyTell, new Vector3(-0.70f, 0.13f, -0.78f), new Vector3(1.55f, 0.035f, 0.10f), Quaternion.Euler(0f, 28f, 0f));
             CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Ranged Enemy Tell Orb", assets.enemyTell, new Vector3(0.64f, 1.62f, -0.12f), new Vector3(0.24f, 0.24f, 0.24f));
+            return enemy;
+        }
+
+        private static GameObject CreateEliteGuard(Transform root, GeneratedAssets assets)
+        {
+            var enemy = new GameObject("D020 Elite Guard");
+            enemy.transform.SetParent(root);
+            enemy.transform.position = new Vector3(7.35f, 0.15f, -0.92f);
+            enemy.transform.rotation = Quaternion.Euler(0f, 242f, 0f);
+
+            CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Elite Guard Ground Read", assets.enemyTell, new Vector3(0f, 0.035f, -0.18f), new Vector3(1.84f, 0.025f, 1.84f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Capsule, "D020 Elite Guard Core", assets.enemy, new Vector3(0f, 0.88f, 0f), new Vector3(1.24f, 1.10f, 0.96f));
+            CreateBlock(enemy.transform, "D020 Elite Guard Shield", assets.enemyArmor, new Vector3(-0.84f, 0.82f, -0.24f), new Vector3(0.30f, 1.10f, 0.72f), Quaternion.Euler(0f, 0f, 8f));
+            CreateBlock(enemy.transform, "D020 Elite Guard Blade", assets.enemyTell, new Vector3(0.84f, 0.88f, -0.52f), new Vector3(0.18f, 1.52f, 0.14f), Quaternion.Euler(22f, 0f, -38f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Elite Guard Core Read", assets.enemyTell, new Vector3(0f, 1.48f, -0.38f), new Vector3(0.36f, 0.30f, 0.22f));
             return enemy;
         }
 

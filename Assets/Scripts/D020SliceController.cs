@@ -59,6 +59,11 @@ namespace FourfoldEchoes.Product
         private const float RangedAttackRange = 5.75f;
         private const float RangedAttackWindup = 0.82f;
         private const float RangedAttackCooldown = 1.55f;
+        private const float EliteEnemyHealth = 135f;
+        private const float EliteEnemySpeed = 1.26f;
+        private const float EliteAttackRange = 1.58f;
+        private const float EliteAttackWindup = 0.76f;
+        private const float EliteAttackCooldown = 1.32f;
         private const float BossAttackRange = 2.05f;
         private const float BossAttackWindup = 0.92f;
         private const float BossAttackCooldown = 1.65f;
@@ -73,6 +78,7 @@ namespace FourfoldEchoes.Product
         private const float PlayerMaxHealth = 100f;
         private const float MeleeEnemyDamage = 26f;
         private const float RangedEnemyDamage = 18f;
+        private const float EliteEnemyDamage = 30f;
         private const float BossEnemyDamage = 34f;
         private const float InvulnerableAfterHit = 0.65f;
         private const float RewardRange = 1.8f;
@@ -536,8 +542,8 @@ namespace FourfoldEchoes.Product
                 }
 
                 read.transform.position = enemy.position + new Vector3(0f, 0.07f, 0f);
-                var minRadius = IsBossEnemy(i) ? 1.25f : 0.72f;
-                var maxRadius = IsBossEnemy(i) ? 2.35f : 1.28f;
+                var minRadius = IsBossEnemy(i) ? 1.25f : IsEliteEnemy(i) ? 0.94f : 0.72f;
+                var maxRadius = IsBossEnemy(i) ? 2.35f : IsEliteEnemy(i) ? 1.72f : 1.28f;
                 var radius = Mathf.Lerp(minRadius, maxRadius, progress);
                 read.transform.localScale = new Vector3(radius, 0.025f, radius);
             }
@@ -891,7 +897,7 @@ namespace FourfoldEchoes.Product
 
         private float CurrentAttackDamage(int enemyIndex)
         {
-            var baseDamage = IsBossEnemy(enemyIndex) ? 30f : enemyIndex == 0 ? 34f : 42f;
+            var baseDamage = IsBossEnemy(enemyIndex) ? 30f : IsEliteEnemy(enemyIndex) ? 36f : enemyIndex == 0 ? 34f : 42f;
             return EquippedLumenEdge() ? baseDamage + 12f : baseDamage;
         }
 
@@ -900,6 +906,11 @@ namespace FourfoldEchoes.Product
             if (IsBossEnemy(index))
             {
                 return 220f;
+            }
+
+            if (IsEliteEnemy(index))
+            {
+                return EliteEnemyHealth;
             }
 
             return IsRangedEnemy(index) ? 62f : 90f;
@@ -912,6 +923,11 @@ namespace FourfoldEchoes.Product
                 return 0.9f;
             }
 
+            if (IsEliteEnemy(index))
+            {
+                return 0.75f;
+            }
+
             return IsRangedEnemy(index) ? 0.65f : 0.28f + index * 0.25f;
         }
 
@@ -920,6 +936,11 @@ namespace FourfoldEchoes.Product
             if (IsBossEnemy(index))
             {
                 return BossUsesLineAttack(index) ? BossSweepRange : BossAttackRange;
+            }
+
+            if (IsEliteEnemy(index))
+            {
+                return EliteAttackRange;
             }
 
             return IsRangedEnemy(index) ? RangedAttackRange : EnemyAttackRange;
@@ -933,6 +954,11 @@ namespace FourfoldEchoes.Product
                 return BossEnraged(index) ? windup * 0.82f : windup;
             }
 
+            if (IsEliteEnemy(index))
+            {
+                return EliteAttackWindup;
+            }
+
             return IsRangedEnemy(index) ? RangedAttackWindup : EnemyAttackWindup;
         }
 
@@ -942,6 +968,11 @@ namespace FourfoldEchoes.Product
             {
                 var cooldown = BossUsesLineAttack(index) ? BossSweepCooldown : BossAttackCooldown;
                 return BossEnraged(index) ? cooldown * 0.72f : cooldown;
+            }
+
+            if (IsEliteEnemy(index))
+            {
+                return EliteAttackCooldown;
             }
 
             return IsRangedEnemy(index) ? RangedAttackCooldown : EnemyAttackCooldown + index * 0.22f;
@@ -954,6 +985,11 @@ namespace FourfoldEchoes.Product
                 return BossEnraged(index) ? BossEnragedSpeed : BossSpeed;
             }
 
+            if (IsEliteEnemy(index))
+            {
+                return EliteEnemySpeed;
+            }
+
             return IsRangedEnemy(index) ? RangedEnemySpeed : EnemySpeed;
         }
 
@@ -964,7 +1000,12 @@ namespace FourfoldEchoes.Product
                 return BossEnraged(index) ? BossEnemyDamage + 6f : BossEnemyDamage;
             }
 
-            return index == 0 ? MeleeEnemyDamage : RangedEnemyDamage;
+            if (IsEliteEnemy(index))
+            {
+                return EliteEnemyDamage;
+            }
+
+            return IsRangedEnemy(index) ? RangedEnemyDamage : MeleeEnemyDamage;
         }
 
         private bool IsBossEnemy(int index)
@@ -977,6 +1018,12 @@ namespace FourfoldEchoes.Product
         {
             var enemy = enemies != null && index >= 0 && index < enemies.Length ? enemies[index] : null;
             return enemy != null && enemy.name.IndexOf("Ranged", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private bool IsEliteEnemy(int index)
+        {
+            var enemy = enemies != null && index >= 0 && index < enemies.Length ? enemies[index] : null;
+            return enemy != null && enemy.name.IndexOf("Elite", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private bool BossUsesLineAttack(int index)
