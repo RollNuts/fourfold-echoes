@@ -1,6 +1,6 @@
-# Product Loop Player Smoke
+# Product Loop Player Route Smoke
 
-Generated UTC: `2026-06-26T15:20:43Z`
+Generated UTC: `2026-06-26T15:31:47Z`
 
 - Result: PASS
 - Artifact: `Build/FourfoldEchoes/macos/FourfoldEchoes.app`
@@ -9,3 +9,4 @@ Generated UTC: `2026-06-26T15:20:43Z`
 - Sentinel: `FOURFOLD PLAYER SMOKE PASS`
 
 This report is intentionally sanitized for public commit. The raw player log is local evidence and is not committed.
+The runtime smoke snapshots and restores the local save around its New Game route check.

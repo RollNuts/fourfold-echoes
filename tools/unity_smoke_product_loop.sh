@@ -11,8 +11,8 @@ usage() {
   cat <<'USAGE'
 Usage: tools/unity_smoke_product_loop.sh [--artifact PATH] [--log PATH] [--report PATH] [--timeout SECONDS]
 
-Launches the built product loop directly and verifies that the packaged player reaches
-the Title scene and initializes the local save loader.
+Launches the built product loop directly and verifies that the packaged player can
+route Title -> HubCrossroads -> D020VerticalSlice while preserving the user's save.
 
 Options:
   --artifact PATH      Built .app or .exe. Defaults to Build/FourfoldEchoes/macos/FourfoldEchoes.app.
@@ -172,7 +172,7 @@ ARTIFACT_SIZE="$(du -sh "$ARTIFACT_PATH" | awk '{print $1}')"
 GENERATED_UTC="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 
 cat > "$REPORT_PATH" <<REPORT
-# Product Loop Player Smoke
+# Product Loop Player Route Smoke
 
 Generated UTC: \`$GENERATED_UTC\`
 
@@ -183,6 +183,7 @@ Generated UTC: \`$GENERATED_UTC\`
 - Sentinel: \`FOURFOLD PLAYER SMOKE PASS\`
 
 This report is intentionally sanitized for public commit. The raw player log is local evidence and is not committed.
+The runtime smoke snapshots and restores the local save around its New Game route check.
 REPORT
 
 echo "Product loop player smoke passed: $ARTIFACT_REL"
