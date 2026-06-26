@@ -28,6 +28,24 @@ namespace FourfoldEchoes.Editor.Mediator
             FourfoldUnityEvidenceCapture.CaptureD020Slice();
         }
 
+        [MenuItem("Tools/FOURFOLD/Art/P0/Build And Validate", false, 40)]
+        public static void BuildAndValidateProductionArtP0()
+        {
+            FourfoldProductionArtP0Builder.BuildAndValidate();
+        }
+
+        [MenuItem("Tools/FOURFOLD/Art/P0/Validate", false, 41)]
+        public static void ValidateProductionArtP0()
+        {
+            FourfoldProductionArtP0Builder.ValidateAssets();
+        }
+
+        [MenuItem("Tools/FOURFOLD/Art/P0/Capture Preview", false, 42)]
+        public static void CaptureProductionArtP0Preview()
+        {
+            FourfoldProductionArtP0Builder.CapturePreview();
+        }
+
         [MenuItem("Tools/FOURFOLD/Legacy Gate A/Build And Validate", false, 90)]
         public static void BuildAndValidateGateA()
         {

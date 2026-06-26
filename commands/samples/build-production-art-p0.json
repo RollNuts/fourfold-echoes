@@ -1,0 +1,11 @@
+{
+  "commandId": "cmd.production_art_p0.build_and_validate",
+  "action": "art.p0.build_and_validate",
+  "sceneId": "scene.production_art_p0_preview",
+  "seed": 0,
+  "evidence": {
+    "screenshot": true,
+    "video": false,
+    "playmodeLog": false
+  }
+}

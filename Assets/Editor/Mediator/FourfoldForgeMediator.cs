@@ -60,6 +60,18 @@ namespace FourfoldEchoes.Editor.Mediator
                     FourfoldUnityEvidenceCapture.CaptureD020Slice();
                     break;
 
+                case "art.p0.build_and_validate":
+                    FourfoldProductionArtP0Builder.BuildAndValidate();
+                    break;
+
+                case "art.p0.validate":
+                    FourfoldProductionArtP0Builder.ValidateAssets();
+                    break;
+
+                case "art.p0.capture_preview":
+                    FourfoldProductionArtP0Builder.CapturePreview();
+                    break;
+
                 case "capture_scene":
                     FourfoldUnitySpikeBuilder.BuildAndValidate();
                     Debug.Log("Forge capture requested. Screenshot capture is deferred until the capture camera runner lands.");
