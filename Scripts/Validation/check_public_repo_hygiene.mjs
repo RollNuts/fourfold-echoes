@@ -50,6 +50,8 @@ const textExtensions = new Set([
 
 const secretLikePatterns = [
   { label: "macOS absolute user path", pattern: /\/Users\/[A-Za-z0-9._-]+/ },
+  { label: "macOS private temp path", pattern: /\/private\/tmp\/[A-Za-z0-9._/-]+/ },
+  { label: "macOS var folders temp path", pattern: /\/var\/folders\/[A-Za-z0-9._/-]+/ },
   { label: "Windows absolute user path", pattern: /[A-Z]:\\Users\\[A-Za-z0-9._-]+/ },
   { label: "private key block", pattern: /-----BEGIN [A-Z ]*PRIVATE KEY-----/ },
   { label: "GitHub classic token", pattern: /gh[pousr]_[A-Za-z0-9_]{20,}/ },
