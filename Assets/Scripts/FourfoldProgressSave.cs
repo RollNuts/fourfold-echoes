@@ -39,15 +39,28 @@ namespace FourfoldEchoes.Product
                 return NewData();
             }
 
+            var backupPath = BackupPath();
             try
             {
-                var json = File.ReadAllText(path);
-                var data = JsonUtility.FromJson<FourfoldProgressData>(json);
-                return Sanitize(data);
+                return LoadFromPath(path);
             }
             catch (Exception exception)
             {
-                Debug.LogWarning($"FOURFOLD save load failed; starting with empty progress. {exception.Message}");
+                Debug.LogWarning($"FOURFOLD save load failed; trying backup. {exception.Message}");
+                if (File.Exists(backupPath))
+                {
+                    try
+                    {
+                        var restored = LoadFromPath(backupPath);
+                        File.Copy(backupPath, path, true);
+                        return restored;
+                    }
+                    catch (Exception backupException)
+                    {
+                        Debug.LogWarning($"FOURFOLD backup save load failed; starting with empty progress. {backupException.Message}");
+                    }
+                }
+
                 return NewData();
             }
         }
@@ -63,7 +76,7 @@ namespace FourfoldEchoes.Product
             }
 
             var tempPath = path + ".tmp";
-            var backupPath = path + ".bak";
+            var backupPath = BackupPath();
             File.WriteAllText(tempPath, JsonUtility.ToJson(clean, true));
 
             if (File.Exists(path))
@@ -78,6 +91,18 @@ namespace FourfoldEchoes.Product
         public static string SavePath()
         {
             return Path.Combine(Application.persistentDataPath, FileName);
+        }
+
+        private static string BackupPath()
+        {
+            return SavePath() + ".bak";
+        }
+
+        private static FourfoldProgressData LoadFromPath(string path)
+        {
+            var json = File.ReadAllText(path);
+            var data = JsonUtility.FromJson<FourfoldProgressData>(json);
+            return Sanitize(data);
         }
 
         private static FourfoldProgressData NewData()
