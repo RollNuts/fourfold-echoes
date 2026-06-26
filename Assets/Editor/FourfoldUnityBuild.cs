@@ -32,7 +32,8 @@ namespace FourfoldEchoes.Editor
 
             FourfoldD020SliceSceneBuilder.BuildAndValidate();
             FourfoldHubSceneBuilder.BuildAndValidate();
-            BuildScenes(target, artifactPath, new[] { FourfoldHubSceneBuilder.ScenePath, D020SliceScenePath }, FullProductName, "Hub+D020 product loop");
+            FourfoldTitleSceneBuilder.BuildAndValidate();
+            BuildScenes(target, artifactPath, new[] { FourfoldTitleSceneBuilder.ScenePath, FourfoldHubSceneBuilder.ScenePath, D020SliceScenePath }, FullProductName, "Title+Hub+D020 product loop");
         }
 
         public static void BuildCurrentD020Slice()

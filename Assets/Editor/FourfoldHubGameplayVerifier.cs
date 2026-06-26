@@ -10,7 +10,7 @@ namespace FourfoldEchoes.Editor
         public static void VerifyHubEnterRegionProgress()
         {
             var savePath = FourfoldProgressSave.SavePath();
-            var backupSavePath = savePath + ".hub.verifier.backup";
+            var backupSavePath = savePath + ".bak";
             byte[] previousSaveBytes = null;
             byte[] previousBackupBytes = null;
             var backupExists = File.Exists(backupSavePath);

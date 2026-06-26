@@ -1,35 +1,38 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-25T18:47:11.0316770Z`
+Generated UTC: `2026-06-26T14:32:53.6985150Z`
 
 ## Metrics
 
 | Metric | Value |
 | --- | ---: |
-| Active scene objects | 116 |
-| Renderers | 103 |
-| AudioSources | 1 |
+| Active scene objects | 19 |
+| Renderers | 12 |
+| AudioSources | 0 |
 | LODGroups | 0 |
 | Missing material slots | 0 |
 | Missing scripts | 0 |
 | Negative scale objects | 0 |
-| Material assets | 10 |
+| Material assets | 47 |
 | Texture assets | 0 |
-| AudioClip assets | 7 |
-| Mesh assets | 0 |
-| Prefab assets | 0 |
+| AudioClip assets | 9 |
+| Mesh assets | 7 |
+| Prefab assets | 5 |
 | Prefabs with LODGroup | 0 |
-| Scene assets | 1 |
+| Scene assets | 4 |
 
 ## Findings
 
 - **info** `render.pipeline`: Built-in render pipeline is active.
-- **info** `d020.slice`: D-020 vertical slice evidence scene generated and validated with player, one tool node, shortcut route, enemy, and relic chest.
+- **info** `d020.slice`: D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking.
+- **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with a D-020 region gate and progress initialization.
+- **info** `title.entry`: Title scene generated and validated with New Game, Continue, Settings volume persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice.
 - **info** `prototype.gate_a`: Legacy Gate A generation skipped. Set FOURFOLD_INCLUDE_LEGACY_GATE_A=1 to validate the old harness explicitly.
-- **warn** `prefab.assets`: No prefab assets found. Production content is not prefabbed yet.
 - **warn** `texture.assets`: No production texture assets found. Store-quality art pass has not started.
+- **warn** `lod.prefabs`: Prefab assets exist but none include LODGroup components.
+- **warn** `scene.audio_sources`: Active scene has no AudioSource components at validation time.
 - **warn** `scene.lod`: Active scene has no LODGroup components. This is acceptable for the reset baseline but not for production outdoor assets.
 
 ## Product Interpretation
 
-This report validates technical hygiene only. D020VerticalSlice is the current D-020 evidence path for the first single ExplorationTool + ExplorationNode loop. Historical ProductReview evidence is deliberately outside this lane.
+This report validates technical hygiene only. Title is the product entry point, HubCrossroads is the playable hub, and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: title entry, hub gate, two normal enemy types, one elite guard, one boss, two tool nodes, two relic rewards, failed-run reward loss, return banking, required SFX, two BGM clips, and full-loop reward persistence. Historical ProductReview evidence is deliberately outside this lane.

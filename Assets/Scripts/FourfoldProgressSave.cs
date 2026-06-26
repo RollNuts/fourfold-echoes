@@ -23,7 +23,12 @@ namespace FourfoldEchoes.Product
         public bool d020SecondRewardClaimed;
         public bool d020ReturnedToHub;
         public int d020ClearCount;
+        public int d020FailureCount;
         public float d020BestClearTimeSeconds;
+        public bool settingsInitialized;
+        public float masterVolume = 1f;
+        public float musicVolume = 1f;
+        public float sfxVolume = 1f;
     }
 
     public static class FourfoldProgressSave
@@ -144,13 +149,35 @@ namespace FourfoldEchoes.Product
             data.lastCompletedRegion = data.lastCompletedRegion ?? string.Empty;
             data.hubSpawnId = data.hubSpawnId ?? string.Empty;
             data.d020ClearCount = Mathf.Max(0, data.d020ClearCount);
+            data.d020FailureCount = Mathf.Max(0, data.d020FailureCount);
             if (float.IsNaN(data.d020BestClearTimeSeconds) || float.IsInfinity(data.d020BestClearTimeSeconds))
             {
                 data.d020BestClearTimeSeconds = 0f;
             }
 
             data.d020BestClearTimeSeconds = Mathf.Max(0f, data.d020BestClearTimeSeconds);
+            if (!data.settingsInitialized)
+            {
+                data.masterVolume = 1f;
+                data.musicVolume = 1f;
+                data.sfxVolume = 1f;
+                data.settingsInitialized = true;
+            }
+
+            data.masterVolume = SanitizeVolume(data.masterVolume, 1f);
+            data.musicVolume = SanitizeVolume(data.musicVolume, 1f);
+            data.sfxVolume = SanitizeVolume(data.sfxVolume, 1f);
             return data;
+        }
+
+        private static float SanitizeVolume(float value, float fallback)
+        {
+            if (float.IsNaN(value) || float.IsInfinity(value))
+            {
+                return fallback;
+            }
+
+            return Mathf.Clamp01(value);
         }
     }
 }

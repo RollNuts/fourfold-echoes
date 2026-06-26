@@ -80,7 +80,14 @@ namespace FourfoldEchoes.Editor
 
         public static void ApplyBuildSettings()
         {
-            var scenes = File.Exists(FourfoldD020SliceSceneBuilder.ScenePath)
+            var scenes = File.Exists(FourfoldTitleSceneBuilder.ScenePath) && File.Exists(FourfoldD020SliceSceneBuilder.ScenePath)
+                ? new[]
+                {
+                    new EditorBuildSettingsScene(FourfoldTitleSceneBuilder.ScenePath, true),
+                    new EditorBuildSettingsScene(ScenePath, true),
+                    new EditorBuildSettingsScene(FourfoldD020SliceSceneBuilder.ScenePath, true)
+                }
+                : File.Exists(FourfoldD020SliceSceneBuilder.ScenePath)
                 ? new[]
                 {
                     new EditorBuildSettingsScene(ScenePath, true),
@@ -119,12 +126,22 @@ namespace FourfoldEchoes.Editor
             var scenes = EditorBuildSettings.scenes;
             if (scenes == null || scenes.Length < 2)
             {
-                throw new InvalidOperationException("Build Settings must include HubCrossroads first and D020VerticalSlice second.");
+                throw new InvalidOperationException("Build Settings must include HubCrossroads and D020VerticalSlice.");
+            }
+
+            if (scenes.Length >= 3 && scenes[0].path == FourfoldTitleSceneBuilder.ScenePath)
+            {
+                if (scenes[1].path != ScenePath || scenes[2].path != FourfoldD020SliceSceneBuilder.ScenePath || !scenes[0].enabled || !scenes[1].enabled || !scenes[2].enabled)
+                {
+                    throw new InvalidOperationException("Build Settings order must be Title, HubCrossroads, then D020VerticalSlice.");
+                }
+
+                return;
             }
 
             if (scenes[0].path != ScenePath || scenes[1].path != FourfoldD020SliceSceneBuilder.ScenePath || !scenes[0].enabled || !scenes[1].enabled)
             {
-                throw new InvalidOperationException("Build Settings order must be HubCrossroads, then D020VerticalSlice.");
+                throw new InvalidOperationException("Build Settings order must be HubCrossroads, then D020VerticalSlice, or Title, HubCrossroads, then D020VerticalSlice.");
             }
         }
 

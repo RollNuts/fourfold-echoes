@@ -220,6 +220,81 @@ namespace FourfoldEchoes.Editor
             }
         }
 
+        public static void VerifyExistingSceneFailureLoop()
+        {
+            var savePath = FourfoldProgressSave.SavePath();
+            var saveBackupPath = savePath + ".bak";
+            byte[] previousSaveBytes = null;
+            byte[] previousSaveBackupBytes = null;
+
+            if (File.Exists(savePath))
+            {
+                previousSaveBytes = File.ReadAllBytes(savePath);
+            }
+
+            if (File.Exists(saveBackupPath))
+            {
+                previousSaveBackupBytes = File.ReadAllBytes(saveBackupPath);
+            }
+
+            try
+            {
+                DeleteIfExists(savePath);
+                DeleteIfExists(saveBackupPath);
+
+                FourfoldD020SliceSceneBuilder.ValidateGeneratedScene();
+
+                var hook = FindSceneObject("D020 Runtime Hook");
+                if (hook == null)
+                {
+                    throw new InvalidOperationException("D-020 failure verifier failed: required object is missing: D020 Runtime Hook.");
+                }
+
+                var controller = RequireComponent<D020SliceController>(hook, "D020 Runtime Hook");
+                var tool = RequireComponent<ExplorationTool>(hook, "D020 Runtime Hook");
+                ValidateRequiredReferences(controller, tool);
+                PrepareControllerForFullLoop(controller);
+
+                SetPrivate(controller, "previousShortcutLoaded", true);
+                SetPrivate(controller, "firstRewardClaimedThisRun", true);
+                SetPrivate(controller, "failureCount", 0);
+                InvokePrivate(controller, "RegisterRunFailure");
+
+                if (!GetPrivateBool(controller, "runFailed"))
+                {
+                    throw new InvalidOperationException("D-020 failure verifier failed: runFailed was not set.");
+                }
+
+                if (GetPrivateBool(controller, "firstRewardClaimedThisRun") || GetPrivateBool(controller, "secondRewardClaimedThisRun"))
+                {
+                    throw new InvalidOperationException("D-020 failure verifier failed: unreturned run rewards were not cleared.");
+                }
+
+                var saved = FourfoldProgressSave.Load();
+                if (saved.currentScene != FourfoldGameIds.SceneD020VerticalSlice)
+                {
+                    throw new InvalidOperationException("D-020 failure verifier failed: death inside the region must persist the current scene as D-020.");
+                }
+
+                if (saved.d020FailureCount != 1 || !saved.d020ShortcutOpened)
+                {
+                    throw new InvalidOperationException("D-020 failure verifier failed: failure count or opened shortcut did not persist.");
+                }
+
+                if (saved.d020RewardClaimed || saved.d020SecondRewardClaimed || saved.d020Cleared || saved.regionD020Cleared || saved.d020ReturnedToHub)
+                {
+                    throw new InvalidOperationException("D-020 failure verifier failed: unreturned rewards or clear flags were incorrectly persisted.");
+                }
+
+                Debug.Log("FOURFOLD D-020 failure verifier passed: death persists failure/shortcut progress and drops unreturned rewards.");
+            }
+            finally
+            {
+                RestoreFile(savePath, previousSaveBytes);
+                RestoreFile(saveBackupPath, previousSaveBackupBytes);
+            }
+        }
+
         private static void ValidateRequiredReferences(D020SliceController controller, ExplorationTool tool)
         {
             RequireReference(controller.player, "D020SliceController.player");

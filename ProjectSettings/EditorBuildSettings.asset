@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Title.unity
+    guid: 32851f03d85504ef49e19c94a8f4c7f6
+  - enabled: 1
     path: Assets/Scenes/HubCrossroads.unity
     guid: da5210b04413e4b039f29b4ce1a18de6
   - enabled: 1

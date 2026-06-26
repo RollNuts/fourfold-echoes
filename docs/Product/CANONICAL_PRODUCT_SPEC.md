@@ -2,7 +2,11 @@
 
 Status: compatibility shim after D-020.
 
-The canonical product specification is now:
+The current required production brief is:
+
+- `docs/Production/LOCKED_MVP_SPEC_PACK.md`
+
+The supporting product documents are:
 
 - `docs/Product/MVP_BLUEPRINT.md`
 - `docs/Product/PROJECT_SPEC.md`

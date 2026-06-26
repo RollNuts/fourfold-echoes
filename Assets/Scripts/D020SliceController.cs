@@ -92,6 +92,7 @@ namespace FourfoldEchoes.Product
         private const string SaveKeySecondRewardClaimed = "fourfold.d020.slice.second_reward_claimed";
         private const string SaveKeyReturnedToHub = "fourfold.d020.slice.returned_to_hub";
         private const string SaveKeyClearCount = "fourfold.d020.slice.clear_count";
+        private const string SaveKeyFailureCount = "fourfold.d020.slice.failure_count";
         private const string SaveKeyBestClearTime = "fourfold.d020.slice.best_clear_time";
         private const float MinX = -9.2f;
         private const float MaxX = 10.6f;
@@ -128,14 +129,17 @@ namespace FourfoldEchoes.Product
         private bool previousSecondRewardLoaded;
         private bool previousReturnedToHubLoaded;
         private int clearCount;
+        private int failureCount;
         private float runTimerSeconds;
         private float bestClearTimeSeconds;
         private float lastReturnTimeSeconds;
+        private int lastLostRelicsOnFailure;
         private float bossDefeatTimer;
         private bool firstRewardClaimedThisRun;
         private bool secondRewardClaimedThisRun;
         private bool returnedToHubThisRun;
         private bool returnRegisteredThisRun;
+        private bool failureRegisteredThisRun;
         private bool bestClearTimeImproved;
         private bool bossDefeatedThisRun;
         private FourfoldProgressData progressData;
@@ -503,9 +507,7 @@ namespace FourfoldEchoes.Product
             PlayCue(hitClip, 0.62f);
             if (playerHealth <= 0f)
             {
-                runFailed = true;
-                SetRewardReady(false);
-                UpdateToolInputLock();
+                RegisterRunFailure();
             }
         }
 
@@ -790,8 +792,10 @@ namespace FourfoldEchoes.Product
             secondRewardClaimedThisRun = false;
             returnedToHubThisRun = false;
             returnRegisteredThisRun = false;
+            failureRegisteredThisRun = false;
             runTimerSeconds = 0f;
             lastReturnTimeSeconds = 0f;
+            lastLostRelicsOnFailure = 0;
             bossDefeatTimer = 0f;
             bestClearTimeImproved = false;
             bossDefeatedThisRun = false;
@@ -883,6 +887,40 @@ namespace FourfoldEchoes.Product
             PlayCue(rewardReadyClip, 0.82f);
         }
 
+        private void RegisterRunFailure()
+        {
+            if (failureRegisteredThisRun)
+            {
+                return;
+            }
+
+            failureRegisteredThisRun = true;
+            runFailed = true;
+            rewardClaimed = false;
+            failureCount += 1;
+            lastLostRelicsOnFailure = ClaimedRelicCountThisRun();
+            firstRewardClaimedThisRun = false;
+            secondRewardClaimedThisRun = false;
+            returnedToHubThisRun = false;
+            returnRegisteredThisRun = false;
+            SetRewardReady(false);
+            if (rewardClaimRead != null)
+            {
+                rewardClaimRead.SetActive(false);
+            }
+            if (secondRewardClaimRead != null)
+            {
+                secondRewardClaimRead.SetActive(false);
+            }
+            if (returnGateClaimRead != null)
+            {
+                returnGateClaimRead.SetActive(false);
+            }
+
+            PersistProgress();
+            UpdateToolInputLock();
+        }
+
         private void SetPaused(bool value)
         {
             if (paused == value)
@@ -933,6 +971,7 @@ namespace FourfoldEchoes.Product
             previousSecondRewardLoaded = progressData.d020SecondRewardClaimed && previousClearLoaded;
             previousReturnedToHubLoaded = progressData.d020ReturnedToHub && previousClearLoaded;
             clearCount = Mathf.Max(0, progressData.d020ClearCount);
+            failureCount = Mathf.Max(0, progressData.d020FailureCount);
             bestClearTimeSeconds = Mathf.Max(0f, progressData.d020BestClearTimeSeconds);
         }
 
@@ -1483,6 +1522,7 @@ namespace FourfoldEchoes.Product
             data.d020SecondRewardClaimed = PlayerPrefs.GetInt(SaveKeySecondRewardClaimed, 0) == 1 && data.d020Cleared;
             data.d020ReturnedToHub = PlayerPrefs.GetInt(SaveKeyReturnedToHub, 0) == 1 && data.d020Cleared;
             data.d020ClearCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyClearCount, 0));
+            data.d020FailureCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyFailureCount, 0));
             data.d020BestClearTimeSeconds = Mathf.Max(0f, PlayerPrefs.GetFloat(SaveKeyBestClearTime, 0f));
         }
 
@@ -1493,12 +1533,12 @@ namespace FourfoldEchoes.Product
                 progressData = new FourfoldProgressData();
             }
 
-            progressData.currentScene = previousReturnedToHubLoaded ? FourfoldGameIds.SceneHubCrossroads : FourfoldGameIds.SceneD020VerticalSlice;
+            progressData.currentScene = returnedToHubThisRun ? FourfoldGameIds.SceneHubCrossroads : FourfoldGameIds.SceneD020VerticalSlice;
             progressData.hubUnlocked = true;
             progressData.regionD020Unlocked = true;
-            progressData.regionD020Cleared = previousReturnedToHubLoaded && previousClearLoaded;
+            progressData.regionD020Cleared = previousClearLoaded;
             progressData.lastCompletedRegion = progressData.regionD020Cleared ? FourfoldGameIds.RegionD020 : progressData.lastCompletedRegion;
-            progressData.hubSpawnId = previousReturnedToHubLoaded ? FourfoldGameIds.HubSpawnReturnGate : progressData.hubSpawnId;
+            progressData.hubSpawnId = (previousReturnedToHubLoaded || returnedToHubThisRun) ? FourfoldGameIds.HubSpawnReturnGate : progressData.hubSpawnId;
             progressData.lumenRodUnlocked = true;
             progressData.d020Cleared = previousClearLoaded;
             progressData.d020BossDefeated = previousClearLoaded;
@@ -1508,6 +1548,7 @@ namespace FourfoldEchoes.Product
             progressData.d020SecondRewardClaimed = previousSecondRewardLoaded;
             progressData.d020ReturnedToHub = previousReturnedToHubLoaded;
             progressData.d020ClearCount = Mathf.Max(0, clearCount);
+            progressData.d020FailureCount = Mathf.Max(0, failureCount);
             progressData.d020BestClearTimeSeconds = Mathf.Max(0f, bestClearTimeSeconds);
             FourfoldProgressSave.Save(progressData);
             MirrorLegacyPlayerPrefs();
@@ -1522,6 +1563,7 @@ namespace FourfoldEchoes.Product
             PlayerPrefs.SetInt(SaveKeySecondRewardClaimed, progressData.d020SecondRewardClaimed ? 1 : 0);
             PlayerPrefs.SetInt(SaveKeyReturnedToHub, progressData.d020ReturnedToHub ? 1 : 0);
             PlayerPrefs.SetInt(SaveKeyClearCount, progressData.d020ClearCount);
+            PlayerPrefs.SetInt(SaveKeyFailureCount, progressData.d020FailureCount);
             PlayerPrefs.SetFloat(SaveKeyBestClearTime, progressData.d020BestClearTimeSeconds);
             PlayerPrefs.Save();
         }
@@ -1581,7 +1623,7 @@ namespace FourfoldEchoes.Product
 
             currentMusicClip = targetClip;
             musicSource.clip = targetClip;
-            musicSource.volume = targetClip == bossMusicClip ? 0.31f : 0.24f;
+            musicSource.volume = (targetClip == bossMusicClip ? 0.31f : 0.24f) * MusicVolumeScale();
             musicSource.loop = true;
             musicSource.Play();
         }
@@ -1644,8 +1686,28 @@ namespace FourfoldEchoes.Product
 
             if (audioSource != null)
             {
-                audioSource.PlayOneShot(clip, Mathf.Clamp01(volume));
+                audioSource.PlayOneShot(clip, Mathf.Clamp01(volume * SfxVolumeScale()));
             }
+        }
+
+        private float MusicVolumeScale()
+        {
+            if (progressData == null)
+            {
+                return 1f;
+            }
+
+            return Mathf.Clamp01(progressData.masterVolume) * Mathf.Clamp01(progressData.musicVolume);
+        }
+
+        private float SfxVolumeScale()
+        {
+            if (progressData == null)
+            {
+                return 1f;
+            }
+
+            return Mathf.Clamp01(progressData.masterVolume) * Mathf.Clamp01(progressData.sfxVolume);
         }
 
         private static GameObject CreateDisc(string name, Material material, float radius)
@@ -1696,7 +1758,9 @@ namespace FourfoldEchoes.Product
                     ? "RESULT: returned to hub. Press R to replay the run."
                     : "CLEAR: rewards secured. Press E/Y to return to hub."
                 : runFailed
-                    ? "FAILED: press R to retry."
+                    ? lastLostRelicsOnFailure > 0
+                        ? $"FAILED: lost {lastLostRelicsOnFailure} unreturned relic reward(s). Press R to retry."
+                        : "FAILED: press R to retry."
                     : !ToolGateSolved()
                         ? "Activate the glowing tool node with Q or gamepad X."
                         : BossDefeatedThisRun() && !AllEnemiesDefeated()
@@ -1724,6 +1788,10 @@ namespace FourfoldEchoes.Product
                 : ClaimedRelicCountThisRun() > 0
                     ? $"Return to save {ClaimedRelicCountThisRun()} relic reward(s)"
                     : "Clear the boss, claim both relics, return to hub";
+            if (failureCount > 0)
+            {
+                resultState += $"  Failed runs {failureCount}";
+            }
             var timeState = returnedToHubThisRun && lastReturnTimeSeconds > 0f
                 ? $"Returned {FormatRunTime(lastReturnTimeSeconds)}{(bestClearTimeImproved ? "  BEST" : string.Empty)}"
                 : $"Run {FormatRunTime(runTimerSeconds)}";
