@@ -1,0 +1,49 @@
+name: required-local-checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  repo-contracts:
+    name: repo-contracts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Syntax check validation scripts
+        run: |
+          node --check Scripts/Validation/validate_repo.mjs
+          node --check Scripts/Validation/check_public_repo_hygiene.mjs
+          node --check Scripts/Validation/write_veripsa_split_report.mjs
+          node --check tools/forge/check.mjs
+
+      - name: Validate product reset contracts
+        run: node Scripts/Validation/validate_repo.mjs
+
+      - name: Public repo hygiene scan
+        run: node Scripts/Validation/check_public_repo_hygiene.mjs
+
+      - name: Forge contract check
+        run: node tools/forge/check.mjs
+
+      - name: Git whitespace check
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            base_ref="origin/${{ github.base_ref }}"
+            base_sha="$(git merge-base HEAD "$base_ref")"
+            git diff --check "$base_sha"...HEAD
+          else
+            git diff --check HEAD~1...HEAD
+          fi
