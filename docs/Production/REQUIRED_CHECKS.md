@@ -32,6 +32,31 @@ If Unity licensing or local editor startup blocks the full run, the PR must stat
 that Unity validation is not yet verified and include the exact failed command
 and log artifact name, without publishing machine-local absolute paths.
 
+## Open Editor Command Flow
+
+When Unity is already open, do not launch a second batchmode Editor against the
+same project. Use the Editor menu or the repo-local command inbox instead:
+
+```bash
+tools/queue_unity_editor_command.sh d020.build_and_validate d020-build
+tools/queue_unity_editor_command.sh d020.capture_evidence d020-capture
+```
+
+Then bring Unity forward and run `Assets > Refresh` once. After the inbox script
+has compiled, it consumes ignored command files under
+`Temp/FourfoldForgeInbox/commands/` and writes ignored result files under
+`Temp/FourfoldForgeInbox/events/`.
+
+Equivalent manual menu path:
+
+```text
+Tools > FOURFOLD > D-020 > Build And Validate
+Tools > FOURFOLD > D-020 > Capture Evidence
+```
+
+Do not commit `Temp/`, Unity `Logs/`, machine-local paths, or private screenshots
+that show personal information.
+
 ## GitHub Required Statuses
 
 When branch protection is configured, require equivalent checks for:
