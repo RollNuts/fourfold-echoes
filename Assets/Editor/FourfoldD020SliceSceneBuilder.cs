@@ -127,9 +127,28 @@ namespace FourfoldEchoes.Editor
                 throw new InvalidOperationException("D-020 playable controller is missing required player, enemies, reward, or return references.");
             }
 
-            if (hook.GetComponent<AudioSource>() == null)
+            var audioSources = hook.GetComponents<AudioSource>();
+            if (audioSources == null || audioSources.Length < 2)
             {
-                throw new InvalidOperationException("D-020 runtime hook is missing its shared AudioSource.");
+                throw new InvalidOperationException("D-020 runtime hook needs separate cue and music AudioSources.");
+            }
+
+            if (controller.attackClip == null || controller.hitClip == null || controller.dodgeClip == null || controller.rewardClaimClip == null || controller.rewardReadyClip == null)
+            {
+                throw new InvalidOperationException("D-020 controller is missing required action, hit, dodge, reward, or discovery SFX.");
+            }
+
+            if (controller.explorationMusicClip == null || controller.bossMusicClip == null)
+            {
+                throw new InvalidOperationException("D-020 controller is missing required exploration or boss BGM clips.");
+            }
+
+            if (!HasEnemyNamed(controller.enemies, "D020 Enemy Read Target")
+                || !HasEnemyNamed(controller.enemies, "D020 Enemy Ranged Read Target")
+                || !HasEnemyNamed(controller.enemies, "D020 Elite Guard")
+                || !HasEnemyNamed(controller.enemies, "D020 First Boss"))
+            {
+                throw new InvalidOperationException("D-020 enemy roster must include melee, ranged, elite, and boss entries.");
             }
 
             var tool = hook.GetComponent<ExplorationTool>();
@@ -138,10 +157,34 @@ namespace FourfoldEchoes.Editor
                 throw new InvalidOperationException("D-020 exploration tool is missing required player or two node references.");
             }
 
+            if (tool.pulse == null || tool.targetHit == null)
+            {
+                throw new InvalidOperationException("D-020 exploration tool is missing required pulse or success SFX.");
+            }
+
             if (controller.explorationTool == null || controller.requiredToolNode == null || controller.secondToolNode == null || controller.shortcutLockedRead == null || controller.secondRouteLockedRead == null)
             {
                 throw new InvalidOperationException("D-020 playable controller is missing exploration tool gate or lock-read references.");
             }
+        }
+
+        private static bool HasEnemyNamed(Transform[] enemies, string requiredName)
+        {
+            if (enemies == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < enemies.Length; i++)
+            {
+                var enemy = enemies[i];
+                if (enemy != null && string.Equals(enemy.name, requiredName, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void EnsureFolders()

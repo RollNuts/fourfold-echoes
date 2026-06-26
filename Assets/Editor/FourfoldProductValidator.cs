@@ -33,7 +33,7 @@ namespace FourfoldEchoes.Editor
             try
             {
                 FourfoldD020SliceSceneBuilder.BuildAndValidate();
-                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice evidence scene generated and validated with player, one tool node, shortcut route, enemy, and relic chest."));
+                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, two relic rewards, return gate, required SFX, and two BGM clips."));
             }
             catch (Exception exception)
             {
@@ -292,7 +292,7 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine();
             builder.AppendLine("## Product Interpretation");
             builder.AppendLine();
-            builder.AppendLine("This report validates technical hygiene only. D020VerticalSlice is the current D-020 evidence path for the first single ExplorationTool + ExplorationNode loop. Historical ProductReview evidence is deliberately outside this lane.");
+            builder.AppendLine("This report validates technical hygiene only. D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: two normal enemy types, one elite guard, one boss, two tool nodes, two relic rewards, return banking, required SFX, and two BGM clips. Historical ProductReview evidence is deliberately outside this lane.");
             return builder.ToString();
         }
 
