@@ -107,8 +107,9 @@ namespace FourfoldEchoes.Product
         private const int PauseTitle = 3;
         private const int PauseMenuCount = 4;
         private const int FailureRetry = 0;
-        private const int FailureTitle = 1;
-        private const int FailureMenuCount = 2;
+        private const int FailureHub = 1;
+        private const int FailureTitle = 2;
+        private const int FailureMenuCount = 3;
         private const int SettingsCount = 6;
         private const float AxisRepeatDelay = 0.24f;
 
@@ -840,6 +841,39 @@ namespace FourfoldEchoes.Product
             return true;
         }
 
+        public bool TryReturnToHubAfterFailure()
+        {
+            if (!runFailed)
+            {
+                return false;
+            }
+
+            pendingExitAction = PendingExitAction.None;
+            SetPaused(false);
+            firstRewardClaimedThisRun = false;
+            secondRewardClaimedThisRun = false;
+            returnedToHubThisRun = false;
+            PersistProgress();
+
+            progressData = FourfoldProgressSave.Load();
+            progressData.currentScene = FourfoldGameIds.SceneHubCrossroads;
+            progressData.hubUnlocked = true;
+            progressData.regionD020Unlocked = true;
+            progressData.lumenRodUnlocked = true;
+            progressData.d020FailureCount = Mathf.Max(0, failureCount);
+            progressData.d020RewardClaimed = previousRewardLoaded;
+            progressData.d020SecondRewardClaimed = previousSecondRewardLoaded;
+            progressData.d020ReturnedToHub = previousReturnedToHubLoaded;
+            FourfoldProgressSave.Save(progressData);
+
+            if (Application.isPlaying)
+            {
+                SceneManager.LoadScene(FourfoldGameIds.UnitySceneHubCrossroads);
+            }
+
+            return true;
+        }
+
         private bool TryReturnToHub()
         {
             if (!runCleared || returnedToHubThisRun || returnGatePoint == null)
@@ -1197,6 +1231,10 @@ namespace FourfoldEchoes.Product
             if (selectedFailureIndex == FailureRetry)
             {
                 RequestRetryRun();
+            }
+            else if (selectedFailureIndex == FailureHub)
+            {
+                TryReturnToHubAfterFailure();
             }
             else
             {
@@ -2416,7 +2454,7 @@ namespace FourfoldEchoes.Product
         private void DrawFailureResult(GUIStyle style, GUIStyle mutedStyle)
         {
             var panelWidth = Mathf.Min(540f, Screen.width - 48f);
-            var panelHeight = 294f;
+            var panelHeight = 326f;
             var panelRect = new Rect((Screen.width - panelWidth) * 0.5f, (Screen.height - panelHeight) * 0.5f, panelWidth, panelHeight);
             FourfoldRuntimeUi.DrawPanel(panelRect);
 
@@ -2431,6 +2469,7 @@ namespace FourfoldEchoes.Product
             var labels = new[]
             {
                 FourfoldLanguage.T(progressData, "Retry Run", "再挑戦"),
+                FourfoldLanguage.T(progressData, "Return to Hub", "ハブへ戻る"),
                 FourfoldLanguage.T(progressData, "Return to Title", "タイトルへ戻る")
             };
             for (var i = 0; i < labels.Length; i++)

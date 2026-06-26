@@ -400,6 +400,22 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("D-020 death/retry verifier failed: failed run persistence did not record one failure and drop unreturned rewards.");
                 }
 
+                if (!controller.TryReturnToHubAfterFailure())
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: failed-run return-to-hub action was rejected.");
+                }
+
+                var failedHubSave = FourfoldProgressSave.Load();
+                if (failedHubSave.currentScene != FourfoldGameIds.SceneHubCrossroads
+                    || failedHubSave.d020FailureCount != 1
+                    || failedHubSave.d020RewardClaimed
+                    || failedHubSave.d020SecondRewardClaimed
+                    || failedHubSave.d020Cleared
+                    || failedHubSave.regionD020Cleared)
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: failed-run hub return did not preserve loss state without banking rewards.");
+                }
+
                 InvokePrivate(controller, "ResetRun");
                 if (GetPrivateBool(controller, "runFailed") || GetPrivate<float>(controller, "playerHealth") < 99.9f)
                 {
@@ -439,7 +455,7 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("D-020 death/retry verifier failed: return-to-title banked unreturned run rewards.");
                 }
 
-                Debug.Log("FOURFOLD D-020 death/retry verifier passed: enemy hit, dodge invulnerability, failed-run persistence, retry, and title return are valid.");
+                Debug.Log("FOURFOLD D-020 death/retry verifier passed: enemy hit, dodge invulnerability, failed-run persistence, failed-run hub return, retry, and title return are valid.");
             }
             finally
             {
