@@ -38,6 +38,9 @@ namespace FourfoldEchoes.Product
         public AudioClip dodgeClip;
         public AudioClip rewardClaimClip;
         public AudioClip rewardReadyClip;
+        public AudioSource musicSource;
+        public AudioClip explorationMusicClip;
+        public AudioClip bossMusicClip;
 
         private const float MoveSpeed = 5.2f;
         private const float DodgeSpeed = 10.2f;
@@ -140,6 +143,7 @@ namespace FourfoldEchoes.Product
         private Material enemyAttackMaterial;
         private Material rewardMaterial;
         private bool rewardReadyCuePlayed;
+        private AudioClip currentMusicClip;
 
         private void Awake()
         {
@@ -234,6 +238,7 @@ namespace FourfoldEchoes.Product
             dodgeTimer = Mathf.Max(0f, dodgeTimer - dt);
             dodgeCooldownTimer = Mathf.Max(0f, dodgeCooldownTimer - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
+            UpdateMusicState();
 
             if (Pressed(retryKey, gamepadRetryKey))
             {
@@ -1295,9 +1300,10 @@ namespace FourfoldEchoes.Product
 
         private void EnsureAudioSource()
         {
+            var sources = GetComponents<AudioSource>();
             if (audioSource == null)
             {
-                audioSource = GetComponent<AudioSource>();
+                audioSource = sources.Length > 0 ? sources[0] : null;
             }
 
             if (audioSource == null)
@@ -1305,10 +1311,72 @@ namespace FourfoldEchoes.Product
                 audioSource = gameObject.AddComponent<AudioSource>();
             }
 
+            if (musicSource == null)
+            {
+                musicSource = sources.Length > 1 ? sources[1] : null;
+            }
+
+            if (musicSource == null)
+            {
+                musicSource = gameObject.AddComponent<AudioSource>();
+            }
+
             audioSource.playOnAwake = false;
             audioSource.spatialBlend = 0f;
             audioSource.dopplerLevel = 0f;
             audioSource.volume = 0.85f;
+
+            musicSource.playOnAwake = false;
+            musicSource.loop = true;
+            musicSource.spatialBlend = 0f;
+            musicSource.dopplerLevel = 0f;
+            musicSource.volume = 0.26f;
+        }
+
+        private void UpdateMusicState()
+        {
+            if (musicSource == null)
+            {
+                EnsureAudioSource();
+            }
+
+            var targetClip = BossMusicActive() && bossMusicClip != null ? bossMusicClip : explorationMusicClip;
+            if (musicSource == null || targetClip == null)
+            {
+                return;
+            }
+
+            if (currentMusicClip == targetClip && musicSource.isPlaying)
+            {
+                return;
+            }
+
+            currentMusicClip = targetClip;
+            musicSource.clip = targetClip;
+            musicSource.volume = targetClip == bossMusicClip ? 0.31f : 0.24f;
+            musicSource.loop = true;
+            musicSource.Play();
+        }
+
+        private bool BossMusicActive()
+        {
+            if (enemies == null || player == null || enemyHealth == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < enemies.Length && i < enemyHealth.Length; i++)
+            {
+                if (!IsBossEnemy(i) || enemies[i] == null || enemyHealth[i] <= 0f)
+                {
+                    continue;
+                }
+
+                var distance = Vector3.Distance(player.position, enemies[i].position);
+                return distance <= EnemySenseRange + 1.5f || BossEnraged(i);
+            }
+
+            return false;
         }
 
         private void EnsureExplorationReferences()

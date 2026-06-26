@@ -19,6 +19,8 @@ namespace FourfoldEchoes.Editor
         private const string RewardReadyClipPath = "Assets/Audio/Generated/discovery_stinger.wav";
         private const string ToolPulseClipPath = "Assets/Audio/Generated/tool_pulse.wav";
         private const string ToolTargetHitClipPath = "Assets/Audio/Generated/shortcut_open.wav";
+        private const string ExplorationMusicPath = "Assets/Audio/Generated/d020_exploration_loop.wav";
+        private const string BossMusicPath = "Assets/Audio/Generated/d020_boss_loop.wav";
 
         public static void BuildAndValidate()
         {
@@ -495,6 +497,12 @@ namespace FourfoldEchoes.Editor
             audioSource.spatialBlend = 0f;
             audioSource.dopplerLevel = 0f;
             audioSource.volume = 0.85f;
+            var musicSource = hookObject.AddComponent<AudioSource>();
+            musicSource.playOnAwake = false;
+            musicSource.loop = true;
+            musicSource.spatialBlend = 0f;
+            musicSource.dopplerLevel = 0f;
+            musicSource.volume = 0.24f;
 
             var tool = hookObject.AddComponent<ExplorationTool>();
             tool.player = player;
@@ -524,11 +532,14 @@ namespace FourfoldEchoes.Editor
             controller.returnGatePoint = secondRewardClaimPoint;
             controller.fixedCamera = camera;
             controller.audioSource = audioSource;
+            controller.musicSource = musicSource;
             controller.attackClip = LoadOptionalAudioClip(AttackClipPath);
             controller.hitClip = LoadOptionalAudioClip(HitClipPath);
             controller.dodgeClip = LoadOptionalAudioClip(DodgeClipPath);
             controller.rewardClaimClip = LoadOptionalAudioClip(RewardClaimClipPath);
             controller.rewardReadyClip = LoadOptionalAudioClip(RewardReadyClipPath);
+            controller.explorationMusicClip = LoadOptionalAudioClip(ExplorationMusicPath);
+            controller.bossMusicClip = LoadOptionalAudioClip(BossMusicPath);
         }
 
         private static AudioClip LoadOptionalAudioClip(string path)

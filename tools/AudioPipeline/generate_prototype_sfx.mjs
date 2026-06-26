@@ -14,7 +14,9 @@ const cues = [
   { file: "relic_pickup.wav", seconds: 0.42, render: renderRelicPickup },
   { file: "tool_pulse.wav", seconds: 0.48, render: renderToolPulse },
   { file: "shortcut_open.wav", seconds: 0.56, render: renderShortcutOpen },
-  { file: "discovery_stinger.wav", seconds: 0.72, render: renderDiscovery }
+  { file: "discovery_stinger.wav", seconds: 0.72, render: renderDiscovery },
+  { file: "d020_exploration_loop.wav", seconds: 12.0, render: renderD020ExplorationLoop },
+  { file: "d020_boss_loop.wav", seconds: 8.0, render: renderD020BossLoop }
 ];
 
 fs.mkdirSync(outputDir, { recursive: true });
@@ -95,6 +97,22 @@ function renderDiscovery(time, progress) {
   const octave = sine(523.25 * time) * envelope(Math.max(0, progress - 0.24), 0.025, 0.64) * 0.16;
   const air = sine(1046.5 * time) * envelope(Math.max(0, progress - 0.36), 0.03, 0.52) * 0.08;
   return (root + fifth + octave + air) * (1 - progress * 0.38);
+}
+
+function renderD020ExplorationLoop(time) {
+  const lowStone = sine(55 * time) * 0.12;
+  const warmFifth = sine(82.5 * time + sine(0.25 * time) * 0.14) * 0.055;
+  const distantBell = sine(220 * time) * (0.5 + 0.5 * sine(0.5 * time)) * 0.025;
+  const air = sine(110 * time + sine(0.25 * time) * 0.5) * 0.03;
+  return (lowStone + warmFifth + distantBell + air) * 0.72;
+}
+
+function renderD020BossLoop(time) {
+  const warDrum = sine(73.5 * time) * (0.72 + 0.28 * sine(1.0 * time)) * 0.17;
+  const pressure = sine(98 * time + sine(0.5 * time) * 0.28) * 0.08;
+  const highWarning = sine(294 * time) * (0.5 + 0.5 * sine(2.0 * time)) * 0.045;
+  const hitPulse = sine(147 * time) * Math.pow(0.5 + 0.5 * sine(1.0 * time), 2) * 0.08;
+  return (warDrum + pressure + highWarning + hitPulse) * 0.82;
 }
 
 function sine(phase) {
