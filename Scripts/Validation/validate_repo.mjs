@@ -57,11 +57,8 @@ const requiredFiles = [
   "game-spec/entities/d020-vertical-slice.yaml",
   "game-spec/scenarios/d020-tool-room-read.yaml",
   "commands/samples/inspect-d020-slice.json",
-  "commands/samples/build-d020-slice.json",
-  "commands/samples/capture-d020-slice.json",
   "Scripts/Validation/write_veripsa_split_report.mjs",
-  "Scripts/Validation/check_public_repo_hygiene.mjs",
-  "tools/queue_unity_editor_command.sh"
+  "Scripts/Validation/check_public_repo_hygiene.mjs"
 ];
 
 const secretLikePatterns = [
