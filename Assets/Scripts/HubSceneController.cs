@@ -133,6 +133,7 @@ namespace FourfoldEchoes.Product
 
         private void Update()
         {
+            FourfoldInputPrompts.ObserveFrameInput();
             axisRepeatTimer = Mathf.Max(0f, axisRepeatTimer - Time.unscaledDeltaTime);
             if (Pressed(pauseKey, gamepadPauseKey))
             {
@@ -810,7 +811,7 @@ namespace FourfoldEchoes.Product
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 260f, panel.y + 100f, 220f, 34f), FourfoldLanguage.T(progressData, $"Rewards active {rewards}/2", $"有効報酬 {rewards}/2"), new Color(0.22f, 0.70f, 1.0f), muted);
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 492f, panel.y + 100f, panel.width - 510f, 34f), FourfoldLanguage.T(progressData, $"Failures {(progressData == null ? 0 : progressData.d020FailureCount)}", $"失敗 {(progressData == null ? 0 : progressData.d020FailureCount)}"), new Color(1.0f, 0.46f, 0.22f), muted);
             var prompt = canStartRegion
-                ? FourfoldLanguage.T(progressData, "START READY: press E / Y to review Region 01 and begin.", "開始可能: E / Y で地域01を確認して開始。")
+                ? FourfoldInputPrompts.HubStartReady(progressData)
                 : FourfoldLanguage.T(progressData, "PREP: move to the gold gate when you are ready to start.", "準備: 開始できる状態になったら金色のゲートへ。");
             var next = cleared
                 ? FourfoldLanguage.T(progressData, "RESULT OPTIONS: replay Region 01, compare best time, or return to title from Pause.", "結果の選択: 地域01再挑戦、最速タイム比較、またはポーズからタイトルへ。")
@@ -819,7 +820,7 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(panel.x + 18f, panel.y + 184f, panel.width - 36f, 24f), next, muted);
             if (progressData == null || progressData.showControlHints)
             {
-                GUI.Label(new Rect(panel.x + 18f, panel.y + 212f, panel.width - 36f, 20f), resetHoldSeconds > 0f ? FourfoldLanguage.T(progressData, "Keep holding reset to open confirmation.", "押し続けるとリセット確認を開く。") : FourfoldLanguage.T(progressData, "Esc/Menu: Pause   Hold Backspace / Select: Reset confirmation", "Esc/Menu: ポーズ   Backspace/Select長押し: リセット確認"), muted);
+                GUI.Label(new Rect(panel.x + 18f, panel.y + 212f, panel.width - 36f, 20f), FourfoldInputPrompts.HubHud(progressData, resetHoldSeconds > 0f), muted);
             }
 
             DrawObjectiveMarker(body);
@@ -905,7 +906,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 34f, rect.y + 230f + i * 38f, rect.width - 68f, 32f), labels[i], selectedSummaryIndex == i, body);
             }
 
-            GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 48f, rect.width - 68f, 30f), FourfoldLanguage.T(progressData, "Move: arrows/stick   Confirm: E/Enter/Y   Close: Esc/Backspace/Menu", "移動: 矢印/スティック   決定: E/Enter/Y   閉じる: Esc/Backspace/Menu"), muted);
+            GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 48f, rect.width - 68f, 30f), FourfoldInputPrompts.HubPanel(progressData), muted);
         }
 
         private void DrawResetConfirmation(GUIStyle body, GUIStyle muted)
@@ -925,7 +926,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 34f, rect.y + 176f + i * 34f, rect.width - 68f, 30f), labels[i], selectedResetIndex == i, body);
             }
 
-            GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 32f, rect.width - 68f, 24f), FourfoldLanguage.T(progressData, "Confirm: E/Enter/Y   Cancel: Esc/Backspace/Menu", "決定: E/Enter/Y   キャンセル: Esc/Backspace/Menu"), muted);
+            GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 32f, rect.width - 68f, 24f), FourfoldInputPrompts.HubConfirm(progressData), muted);
         }
 
         private void DrawMissionBriefing(GUIStyle body, GUIStyle muted)
@@ -959,7 +960,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 34f, rect.y + 228f + i * 38f, rect.width - 68f, 32f), labels[i], selectedMissionIndex == i, body);
             }
 
-            GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 46f, rect.width - 68f, 30f), FourfoldLanguage.T(progressData, "Move: arrows/stick   Confirm: E/Enter/Y   Back: Esc/Backspace/Menu", "移動: 矢印/スティック   決定: E/Enter/Y   戻る: Esc/Backspace/Menu"), muted);
+            GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 46f, rect.width - 68f, 30f), FourfoldInputPrompts.HubPanel(progressData), muted);
         }
 
         private void DrawSettings(Rect rect, GUIStyle body, GUIStyle muted)
@@ -980,7 +981,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 24f, rect.y + 58f + i * 34f, rect.width - 48f, 30f), labels[i], selectedSettingIndex == i, body);
             }
 
-            GUI.Label(new Rect(rect.x + 24f, rect.y + rect.height - 42f, rect.width - 48f, 28f), FourfoldLanguage.T(progressData, "Left/Right changes value. E/Enter/Y or Backspace/Select returns.", "左右で変更。E/Enter/Y または Backspace/Select で戻る。"), muted);
+            GUI.Label(new Rect(rect.x + 24f, rect.y + rect.height - 42f, rect.width - 48f, 28f), FourfoldInputPrompts.SharedSettings(progressData), muted);
         }
 
         private void DrawObjectiveMarker(GUIStyle style)

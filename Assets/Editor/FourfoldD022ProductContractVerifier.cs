@@ -24,8 +24,11 @@ namespace FourfoldEchoes.Editor
         {
             "Assets/Scripts/TitleSceneController.cs",
             "Assets/Scripts/HubSceneController.cs",
-            "Assets/Scripts/D020SliceController.cs"
+            "Assets/Scripts/D020SliceController.cs",
+            "Assets/Scripts/FourfoldInputPrompts.cs"
         };
+
+        private const string InputPromptFile = "Assets/Scripts/FourfoldInputPrompts.cs";
 
         private static readonly string[] ForbiddenPlayerFacingCopy =
         {
@@ -47,6 +50,24 @@ namespace FourfoldEchoes.Editor
             "unconfirmed reward",
             "confirmed rewards",
             "confirmed progress",
+            "E/Enter/Y",
+            "E/Y",
+            "E / Y",
+            "Backspace/Select",
+            "R/Start",
+            "Enter/A",
+            "Esc/B",
+            "Esc/Menu",
+            "arrows/stick",
+            "Stick/WASD",
+            "A/Space",
+            "B/Shift",
+            "X/Q",
+            "Y/E",
+            "Menu/Esc",
+            "gamepad X",
+            "tool node",
+            "second node",
             "unbanked relic",
             "bank rewards",
             "drops unbanked"
@@ -150,11 +171,12 @@ namespace FourfoldEchoes.Editor
             RequireContains(hubCopy, "RESET SAVE?", "Hub reset confirmation");
 
             var regionCopy = Read("Assets/Scripts/D020SliceController.cs");
+            var inputPrompts = Read(InputPromptFile);
             RequireContains(regionCopy, "Step 1/6", "Region objective step 1");
             RequireContains(regionCopy, "Step 2/6", "Region objective step 2");
-            RequireContains(regionCopy, "Step 3/6", "Region objective step 3");
+            RequireContains(inputPrompts, "Step 3/6", "Region objective step 3");
             RequireContains(regionCopy, "Step 4/6", "Region objective step 4");
-            RequireContains(regionCopy, "Step 5/6", "Region objective step 5");
+            RequireContains(inputPrompts, "Step 5/6", "Region objective step 5");
             RequireContains(regionCopy, "Step 6/6", "Region objective step 6");
             RequireContains(regionCopy, "use the tool to open the sealed route", "Region tool route cause/effect");
             RequireContains(regionCopy, "use the tool to open the shortcut seal", "Region shortcut cause/effect");
@@ -162,8 +184,17 @@ namespace FourfoldEchoes.Editor
             RequireContains(regionCopy, "BOSS DOWN", "Region boss defeat beat");
             RequireContains(regionCopy, "AT RISK: hub return saves", "Region reward risk UI");
             RequireContains(regionCopy, "ATTEMPT FAILED", "Region failure result UI");
-            RequireContains(regionCopy, "Move Stick", "Region controller control hint UI");
-            RequireContains(regionCopy, "Attack A", "Region attack control hint UI");
+
+            RequireContains(inputPrompts, "PreferGamepad", "Input prompt mode split");
+            RequireContains(inputPrompts, "Move: D-pad/Left Stick", "Title controller prompt");
+            RequireContains(inputPrompts, "Move: arrows", "Title keyboard prompt");
+            RequireContains(inputPrompts, "Move Left Stick/D-pad", "Region controller movement prompt");
+            RequireContains(inputPrompts, "Move WASD or arrows", "Region keyboard movement prompt");
+            RequireContains(inputPrompts, "Attack A", "Region controller attack prompt");
+            RequireContains(inputPrompts, "Attack Space", "Region keyboard attack prompt");
+            RequireContains(inputPrompts, "Tool X", "Region controller tool prompt");
+            RequireContains(inputPrompts, "Press Start or Y", "Region controller retry prompt");
+            RequireContains(inputPrompts, "HubStartReady", "Hub start prompt helper");
         }
 
         private static void VerifyPlayerFacingCopy()

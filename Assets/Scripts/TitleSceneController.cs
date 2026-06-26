@@ -85,6 +85,7 @@ namespace FourfoldEchoes.Product
 
         private void Update()
         {
+            FourfoldInputPrompts.ObserveFrameInput();
             axisRepeatTimer = Mathf.Max(0f, axisRepeatTimer - Time.unscaledDeltaTime);
             if (settingsOpen)
             {
@@ -597,7 +598,7 @@ namespace FourfoldEchoes.Product
             }
 
             FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 54f, rect.y + 330f, rect.width - 108f, 48f), ContinueSummary(), new Color(0.25f, 0.68f, 1.0f), mutedStyle);
-            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 38f, rect.width - 128f, 28f), FourfoldLanguage.T(progressData, "Move: arrows/stick   Confirm: Enter/A   Back: Esc/B", "移動: 矢印/スティック   決定: Enter/A   戻る: Esc/B"), mutedStyle);
+            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 38f, rect.width - 128f, 28f), FourfoldInputPrompts.TitleMenu(progressData), mutedStyle);
         }
 
         private void DrawNewGameConfirmation(Rect rect, GUIStyle style, GUIStyle mutedStyle)
@@ -616,7 +617,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 54f, rect.y + 326f + i * 34f, rect.width - 108f, 30f), labels[i], selectedNewGameConfirmIndex == i, style);
             }
 
-            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 32f, rect.width - 128f, 24f), FourfoldLanguage.T(progressData, "Confirm: Enter/A   Cancel: Esc/B", "決定: Enter/A   キャンセル: Esc/B"), mutedStyle);
+            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 32f, rect.width - 128f, 24f), FourfoldInputPrompts.TitleConfirm(progressData), mutedStyle);
         }
 
         private void DrawContinueDecision(Rect rect, GUIStyle style, GUIStyle mutedStyle)
@@ -635,7 +636,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 54f, rect.y + 282f + i * 34f, rect.width - 108f, 30f), labels[i], selectedContinueDecisionIndex == i, style);
             }
 
-            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 32f, rect.width - 128f, 24f), FourfoldLanguage.T(progressData, "Confirm: Enter/A   Cancel: Esc/B", "決定: Enter/A   キャンセル: Esc/B"), mutedStyle);
+            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 32f, rect.width - 128f, 24f), FourfoldInputPrompts.TitleConfirm(progressData), mutedStyle);
         }
 
         private void DrawSettings(Rect rect, GUIStyle style)
@@ -655,7 +656,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 54f, rect.y + 150f + i * 36f, rect.width - 108f, 32f), labels[i], selectedSettingIndex == i, style);
             }
 
-            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 54f, rect.width - 128f, 40f), FourfoldLanguage.T(progressData, "Left/Right changes value. Enter/A or Esc/B returns.", "左右で変更。Enter/A または Esc/B で戻る。"), style);
+            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 54f, rect.width - 128f, 40f), FourfoldInputPrompts.TitleSettings(progressData), style);
         }
     }
 }

@@ -337,6 +337,7 @@ namespace FourfoldEchoes.Product
 
         private void Update()
         {
+            FourfoldInputPrompts.ObserveFrameInput();
             axisRepeatTimer = Mathf.Max(0f, axisRepeatTimer - Time.unscaledDeltaTime);
             UpdateToolInputLock();
             if (HandlePendingExitConfirmation())
@@ -2349,10 +2350,10 @@ namespace FourfoldEchoes.Product
 
             var objective = runCleared
                 ? returnedToHubThisRun
-                    ? FourfoldLanguage.T(progressData, "RESULT: hub return saved this clear. Press R to replay the region.", "結果: ハブ帰還で今回のクリアを保存済み。Rで地域を再挑戦。")
-                    : FourfoldLanguage.T(progressData, "CLEAR: return to hub to save rewards. Press E/Y at the return gate.", "クリア: 報酬保存のためハブへ帰還。帰還ゲートでE/Y。")
+                    ? FourfoldInputPrompts.RegionReplayObjective(progressData)
+                    : FourfoldInputPrompts.RegionReturnGateObjective(progressData)
                 : runFailed
-                    ? FourfoldLanguage.T(progressData, "FAILED: saved hub progress remains. Press R to retry the region.", "失敗: ハブ保存済みの進行は保持。Rで地域を再挑戦。")
+                    ? FourfoldInputPrompts.RegionRetryObjective(progressData)
                     : !ToolGateSolved()
                         ? FourfoldLanguage.T(progressData, "Step 1/6: use the tool to open the sealed route.", "手順1/6: ツールで封じられた道を開く。")
                         : BossDefeatedThisRun() && !AllEnemiesDefeated()
@@ -2360,11 +2361,11 @@ namespace FourfoldEchoes.Product
                         : !AllEnemiesDefeated()
                         ? FourfoldLanguage.T(progressData, "Step 2/6: defeat enemies, read tells, then claim the reward.", "手順2/6: 予兆を読みながら敵を倒し、報酬を獲得。")
                         : !firstRewardClaimedThisRun
-                        ? FourfoldLanguage.T(progressData, "Step 3/6: claim Lumen Edge with E.", "手順3/6: EでLumen Edgeを獲得。")
+                        ? FourfoldInputPrompts.RegionClaimEdgeObjective(progressData)
                         : !SecondToolGateSolved()
                         ? FourfoldLanguage.T(progressData, "Step 4/6: use the tool to open the shortcut seal.", "手順4/6: ツールで近道の封印を開く。")
                         : !secondRewardClaimedThisRun
-                        ? FourfoldLanguage.T(progressData, "Step 5/6: claim Lumen Ward with E.", "手順5/6: EでLumen Wardを獲得。")
+                        ? FourfoldInputPrompts.RegionClaimWardObjective(progressData)
                         : FourfoldLanguage.T(progressData, "Step 6/6: return to hub to save this clear.", "手順6/6: ハブへ帰還して今回のクリアを保存。");
 
             var toolState = explorationTool == null
@@ -2479,11 +2480,11 @@ namespace FourfoldEchoes.Product
                 ? FourfoldLanguage.T(progressData, "RETRY REGION", "地域再挑戦")
                 : FourfoldLanguage.T(progressData, "RETURN TO TITLE", "タイトルへ戻る");
             var confirmLabel = pendingExitAction == PendingExitAction.RetryRun
-                ? FourfoldLanguage.T(progressData, "Press R/Start or E/Y to retry from the start.", "R/Start または E/Y で最初から再挑戦。")
-                : FourfoldLanguage.T(progressData, "Press Backspace/Select or E/Y to leave for title.", "Backspace/Select または E/Y でタイトルへ。");
+                ? FourfoldInputPrompts.RegionRetryConfirm(progressData)
+                : FourfoldInputPrompts.RegionTitleConfirm(progressData);
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 20f, panelWidth - 48f, 32f), actionLabel, style);
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 58f, panelWidth - 48f, 96f), FourfoldLanguage.T(progressData, $"This attempt has {earnedRewardCount} earned reward(s) not saved by hub return. Leaving now restarts from the last saved hub state.", $"この攻略ではハブ帰還で未保存の報酬を {earnedRewardCount} 個取得済み。ここで離脱すると、最後にハブで保存した状態から再開する。"), style);
-            GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 164f, panelWidth - 48f, 42f), $"{confirmLabel}  {FourfoldLanguage.T(progressData, "Esc/Menu cancels.", "Esc/Menuでキャンセル。")}", FourfoldRuntimeUi.MutedStyle(Screen.height));
+            GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 164f, panelWidth - 48f, 42f), $"{confirmLabel}  {FourfoldInputPrompts.RegionPendingExitCancel(progressData)}", FourfoldRuntimeUi.MutedStyle(Screen.height));
         }
 
         private void DrawFailureResult(GUIStyle style, GUIStyle mutedStyle)
@@ -2512,7 +2513,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(panelRect.x + 32f, panelRect.y + 178f + i * 38f, panelWidth - 64f, 32f), labels[i], selectedFailureIndex == i, style);
             }
 
-            GUI.Label(new Rect(panelRect.x + 32f, panelRect.y + panelHeight - 38f, panelWidth - 64f, 24f), FourfoldLanguage.T(progressData, "Move: arrows/stick   Confirm: E/Enter/Y   R/Start retries", "移動: 矢印/スティック   決定: E/Enter/Y   R/Startで再挑戦"), mutedStyle);
+            GUI.Label(new Rect(panelRect.x + 32f, panelRect.y + panelHeight - 38f, panelWidth - 64f, 24f), FourfoldInputPrompts.RegionFailure(progressData), mutedStyle);
         }
 
         private void DrawRewardNotice(GUIStyle style, GUIStyle mutedStyle)
@@ -2664,7 +2665,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 24f, rect.y + 54f + i * 34f, rect.width - 48f, 30f), labels[i], selectedSettingIndex == i, style);
             }
 
-            GUI.Label(new Rect(rect.x + 24f, rect.y + rect.height - 42f, rect.width - 48f, 34f), FourfoldLanguage.T(progressData, "Left/Right changes value. E/Enter/Y or Backspace/Select returns.", "左右で変更。E/Enter/Y または Backspace/Select で戻る。"), mutedStyle);
+            GUI.Label(new Rect(rect.x + 24f, rect.y + rect.height - 42f, rect.width - 48f, 34f), FourfoldInputPrompts.SharedSettings(progressData), mutedStyle);
         }
 
         private void DrawControlHint(GUIStyle style)
@@ -2674,7 +2675,7 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            GUI.Label(BottomHintRect(Screen.width, Screen.height), FourfoldLanguage.T(progressData, "Move Stick/WASD   Attack A/Space   Dodge B/Shift   Tool X/Q   Interact Y/E   Pause Menu/Esc", "移動 Stick/WASD   攻撃 A/Space   回避 B/Shift   ツール X/Q   調べる Y/E   ポーズ Menu/Esc"), style);
+            GUI.Label(BottomHintRect(Screen.width, Screen.height), FourfoldInputPrompts.RegionControls(progressData), style);
         }
 
         private void DrawObjectiveMarker(GUIStyle style)
