@@ -69,7 +69,7 @@ namespace FourfoldEchoes.Editor
             {
                 FourfoldTitleSceneBuilder.BuildAndValidate();
                 FourfoldTitleGameplayVerifier.VerifyTitleEntryFlow();
-                findings.Add(Finding.Info("title.entry", "Title scene generated and validated with New Game overwrite confirmation, Continue, Settings volume/language persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice."));
+                findings.Add(Finding.Info("title.entry", "Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice."));
             }
             catch (Exception exception)
             {

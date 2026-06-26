@@ -26,12 +26,18 @@ namespace FourfoldEchoes.Product
         private const int NewGameConfirmStart = 0;
         private const int NewGameConfirmCancel = 1;
         private const int NewGameConfirmCount = 2;
+        private const int ContinueResumeRun = 0;
+        private const int ContinueReturnHub = 1;
+        private const int ContinueCancel = 2;
+        private const int ContinueDecisionCount = 3;
         private const int SettingsCount = 6;
         private const float AxisRepeatDelay = 0.24f;
 
         private int selectedIndex;
         private bool newGameConfirmOpen;
         private int selectedNewGameConfirmIndex = NewGameConfirmCancel;
+        private bool continueDecisionOpen;
+        private int selectedContinueDecisionIndex;
         private bool settingsOpen;
         private int selectedSettingIndex;
         private float axisRepeatTimer;
@@ -92,6 +98,12 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            if (continueDecisionOpen)
+            {
+                UpdateContinueDecisionInput();
+                return;
+            }
+
             UpdateMenuInput();
         }
 
@@ -101,6 +113,7 @@ namespace FourfoldEchoes.Product
             if (FourfoldProgressSave.HasSaveFile())
             {
                 newGameConfirmOpen = true;
+                continueDecisionOpen = false;
                 selectedNewGameConfirmIndex = NewGameConfirmCancel;
                 return string.Empty;
             }
@@ -136,6 +149,25 @@ namespace FourfoldEchoes.Product
             return newGameConfirmOpen;
         }
 
+        public string RequestContinueGame()
+        {
+            LoadProgress();
+            if (!FourfoldProgressSave.HasSaveFile())
+            {
+                return StartNewGame();
+            }
+
+            if (progressData.currentScene == FourfoldGameIds.SceneD020VerticalSlice)
+            {
+                continueDecisionOpen = true;
+                newGameConfirmOpen = false;
+                selectedContinueDecisionIndex = ContinueResumeRun;
+                return string.Empty;
+            }
+
+            return ContinueGame();
+        }
+
         public string ContinueGame()
         {
             LoadProgress();
@@ -144,13 +176,49 @@ namespace FourfoldEchoes.Product
                 return StartNewGame();
             }
 
+            continueDecisionOpen = false;
             return RequestScene(UnitySceneForProgress(progressData.currentScene));
+        }
+
+        public string ContinueRunFromTitleDecision()
+        {
+            continueDecisionOpen = false;
+            return ContinueGame();
+        }
+
+        public string ReturnSavedRunToHub()
+        {
+            LoadProgress();
+            if (!FourfoldProgressSave.HasSaveFile())
+            {
+                return StartNewGame();
+            }
+
+            progressData.currentScene = FourfoldGameIds.SceneHubCrossroads;
+            progressData.hubUnlocked = true;
+            progressData.regionD020Unlocked = true;
+            progressData.lumenRodUnlocked = true;
+            FourfoldProgressSave.Save(progressData);
+            continueDecisionOpen = false;
+            return RequestScene(FourfoldGameIds.UnitySceneHubCrossroads);
+        }
+
+        public void CancelContinueDecision()
+        {
+            continueDecisionOpen = false;
+            selectedContinueDecisionIndex = ContinueResumeRun;
+        }
+
+        public bool IsContinueDecisionOpen()
+        {
+            return continueDecisionOpen;
         }
 
         public void OpenSettings()
         {
             LoadProgress();
             newGameConfirmOpen = false;
+            continueDecisionOpen = false;
             settingsOpen = true;
             selectedSettingIndex = 0;
         }
@@ -299,6 +367,42 @@ namespace FourfoldEchoes.Product
             }
         }
 
+        private void UpdateContinueDecisionInput()
+        {
+            if (Pressed(upKey) || AxisPressed(-1f))
+            {
+                selectedContinueDecisionIndex = Wrap(selectedContinueDecisionIndex - 1, ContinueDecisionCount);
+            }
+            else if (Pressed(downKey) || AxisPressed(1f))
+            {
+                selectedContinueDecisionIndex = Wrap(selectedContinueDecisionIndex + 1, ContinueDecisionCount);
+            }
+
+            if (Pressed(cancelKey) || Pressed(gamepadCancelKey))
+            {
+                CancelContinueDecision();
+                return;
+            }
+
+            if (!Pressed(confirmKey) && !Pressed(alternateConfirmKey) && !Pressed(gamepadConfirmKey))
+            {
+                return;
+            }
+
+            switch (selectedContinueDecisionIndex)
+            {
+                case ContinueResumeRun:
+                    ContinueRunFromTitleDecision();
+                    break;
+                case ContinueReturnHub:
+                    ReturnSavedRunToHub();
+                    break;
+                default:
+                    CancelContinueDecision();
+                    break;
+            }
+        }
+
         private void ActivateSelectedMenu()
         {
             switch (selectedIndex)
@@ -307,7 +411,7 @@ namespace FourfoldEchoes.Product
                     RequestNewGame();
                     break;
                 case MenuContinue:
-                    ContinueGame();
+                    RequestContinueGame();
                     break;
                 case MenuSettings:
                     OpenSettings();
@@ -464,6 +568,10 @@ namespace FourfoldEchoes.Product
             {
                 DrawNewGameConfirmation(rect, labelStyle, mutedStyle);
             }
+            else if (continueDecisionOpen)
+            {
+                DrawContinueDecision(rect, labelStyle, mutedStyle);
+            }
             else
             {
                 DrawMenu(rect, labelStyle);
@@ -506,6 +614,25 @@ namespace FourfoldEchoes.Product
             for (var i = 0; i < labels.Length; i++)
             {
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 54f, rect.y + 326f + i * 34f, rect.width - 108f, 30f), labels[i], selectedNewGameConfirmIndex == i, style);
+            }
+
+            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 32f, rect.width - 128f, 24f), FourfoldLanguage.T(progressData, "Confirm: Enter/A   Cancel: Esc/B", "決定: Enter/A   キャンセル: Esc/B"), mutedStyle);
+        }
+
+        private void DrawContinueDecision(Rect rect, GUIStyle style, GUIStyle mutedStyle)
+        {
+            GUI.Label(new Rect(rect.x + 54f, rect.y + 176f, rect.width - 108f, 34f), FourfoldLanguage.T(progressData, "D-020 RUN IN PROGRESS", "D-020攻略中"), FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData)));
+            GUI.Label(new Rect(rect.x + 54f, rect.y + 214f, rect.width - 108f, 54f), FourfoldLanguage.T(progressData, "You can resume the risky run, or return to the hub to regroup before trying again. Unreturned relic rewards are not banked until the hub return gate is used.", "危険なランを再開するか、ハブへ戻って準備し直せる。未帰還レリックはハブ帰還ゲートを使うまで保存されない。"), style);
+
+            var labels = new[]
+            {
+                FourfoldLanguage.T(progressData, "Resume D-020 Run", "D-020を再開"),
+                FourfoldLanguage.T(progressData, "Return to Hub", "ハブへ戻る"),
+                FourfoldLanguage.T(progressData, "Cancel", "キャンセル")
+            };
+            for (var i = 0; i < labels.Length; i++)
+            {
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 54f, rect.y + 282f + i * 34f, rect.width - 108f, 30f), labels[i], selectedContinueDecisionIndex == i, style);
             }
 
             GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 32f, rect.width - 128f, 24f), FourfoldLanguage.T(progressData, "Confirm: Enter/A   Cancel: Esc/B", "決定: Enter/A   キャンセル: Esc/B"), mutedStyle);

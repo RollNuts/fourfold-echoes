@@ -98,7 +98,42 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Title gameplay verifier failed: D-020 continue summary does not expose in-run risk.");
                 }
 
-                var continueScene = controller.ContinueGame();
+                if (controller.RequestContinueGame() != string.Empty || !controller.IsContinueDecisionOpen())
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: Continue menu action did not ask how to handle an in-progress D-020 run.");
+                }
+
+                controller.CancelContinueDecision();
+                if (controller.IsContinueDecisionOpen())
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: Continue decision cancel did not close the choice.");
+                }
+
+                if (controller.RequestContinueGame() != string.Empty || !controller.IsContinueDecisionOpen())
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: Continue decision did not reopen for an in-progress D-020 run.");
+                }
+
+                var hubReturnScene = controller.ReturnSavedRunToHub();
+                if (hubReturnScene != FourfoldGameIds.UnitySceneHubCrossroads || controller.LastRequestedUnityScene != FourfoldGameIds.UnitySceneHubCrossroads)
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: Continue decision return-to-hub did not request HubCrossroads.");
+                }
+
+                var hubReturnSave = FourfoldProgressSave.Load();
+                if (hubReturnSave.currentScene != FourfoldGameIds.SceneHubCrossroads || hubReturnSave.d020FailureCount != 2 || hubReturnSave.d020RewardClaimed || hubReturnSave.d020SecondRewardClaimed)
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: Continue decision return-to-hub did not preserve progress safely.");
+                }
+
+                hubReturnSave.currentScene = FourfoldGameIds.SceneD020VerticalSlice;
+                FourfoldProgressSave.Save(hubReturnSave);
+                if (controller.RequestContinueGame() != string.Empty || !controller.IsContinueDecisionOpen())
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: Continue resume decision did not open.");
+                }
+
+                var continueScene = controller.ContinueRunFromTitleDecision();
                 if (continueScene != FourfoldGameIds.UnitySceneD020VerticalSlice || controller.LastRequestedUnityScene != FourfoldGameIds.UnitySceneD020VerticalSlice)
                 {
                     throw new InvalidOperationException("Title gameplay verifier failed: Continue did not request the saved D-020 scene.");
