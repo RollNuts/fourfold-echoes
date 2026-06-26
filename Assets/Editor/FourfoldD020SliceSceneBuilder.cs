@@ -282,6 +282,8 @@ namespace FourfoldEchoes.Editor
             CreatePrimitive(player.transform, PrimitiveType.Sphere, "D020 Player Tool Core", assets.relic, new Vector3(0.68f, 1.26f, 0.10f), new Vector3(0.22f, 0.22f, 0.22f));
             var attackRead = CreatePrimitive(player.transform, PrimitiveType.Cylinder, "D020 Player Attack Read", assets.tool, new Vector3(0f, 0.045f, 0.92f), new Vector3(0.98f, 0.022f, 0.52f));
             attackRead.SetActive(false);
+            var damageRead = CreatePrimitive(player.transform, PrimitiveType.Cylinder, "D020 Player Damage Read", assets.enemyTell, new Vector3(0f, 0.07f, 0f), new Vector3(0.78f, 0.026f, 0.78f));
+            damageRead.SetActive(false);
 
             var audioSource = player.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
@@ -297,6 +299,7 @@ namespace FourfoldEchoes.Editor
             controller.hitClip = LoadAudioClip("hit_enemy.wav");
             controller.enemyDefeatClip = LoadAudioClip("enemy_death.wav");
             controller.dodgeClip = LoadAudioClip("dodge.wav");
+            controller.damageRead = damageRead;
             return player;
         }
 

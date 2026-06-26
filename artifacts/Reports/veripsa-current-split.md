@@ -1,6 +1,6 @@
 # Veripsa Current Split Report
 
-Generated UTC: `2026-06-26T06:31:15.205Z`
+Generated UTC: `2026-06-26T06:35:14.958Z`
 
 Core source: GitHub Veripsa checks; local veripsa CLI unavailable
 
@@ -31,16 +31,15 @@ Dirty files: 2
 
 ### PR-E1 - d020-tool-runtime
 
-- `M` Assets/Scripts/D020EnemyDummy.cs
-- `M` Assets/Scripts/D020PlayerController.cs
+- None
 
 ### PR-E2 - d020-scene-evidence
 
-- None
+- `M` Assets/Editor/FourfoldD020SliceSceneBuilder.cs
 
 ### PR-E3 - d020-capture-build
 
-- None
+- `M` Assets/Editor/FourfoldD020PlayableSmoke.cs
 
 ### PR-F - historical-proof-cleanup
 

@@ -1,5 +1,5 @@
 {
-  "generatedUtc": "2026-06-26T06:31:15.205Z",
+  "generatedUtc": "2026-06-26T06:35:14.958Z",
   "coreSource": "GitHub Veripsa checks; local veripsa CLI unavailable",
   "coreObservations": [
     {
@@ -43,28 +43,29 @@
       "id": "PR-E1",
       "name": "d020-tool-runtime",
       "order": 5,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Scripts/D020EnemyDummy.cs"
-        },
-        {
-          "status": " M",
-          "path": "Assets/Scripts/D020PlayerController.cs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E2",
       "name": "d020-scene-evidence",
       "order": 6,
-      "files": []
+      "files": [
+        {
+          "status": " M",
+          "path": "Assets/Editor/FourfoldD020SliceSceneBuilder.cs"
+        }
+      ]
     },
     {
       "id": "PR-E3",
       "name": "d020-capture-build",
       "order": 7,
-      "files": []
+      "files": [
+        {
+          "status": " M",
+          "path": "Assets/Editor/FourfoldD020PlayableSmoke.cs"
+        }
+      ]
     },
     {
       "id": "PR-F",

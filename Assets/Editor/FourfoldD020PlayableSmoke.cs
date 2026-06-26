@@ -35,6 +35,7 @@ namespace FourfoldEchoes.Editor
             Require(player.hitClip != null, "D-020 player hit SFX is not assigned.");
             Require(player.enemyDefeatClip != null, "D-020 enemy defeat SFX is not assigned.");
             Require(player.dodgeClip != null, "D-020 player dodge SFX is not assigned.");
+            Require(player.damageRead != null, "D-020 player damage read is not assigned.");
             Require(tool.pulse != null, "D-020 tool pulse SFX is not assigned.");
             Require(tool.targetHit != null, "D-020 tool target-hit SFX is not assigned.");
             Require(tool.fail != null, "D-020 tool fail SFX is not assigned.");
@@ -61,6 +62,15 @@ namespace FourfoldEchoes.Editor
             Require(player.AttackCount == 1, "Player attack count did not increment.");
             Require(player.AttackHitCount == 1, "Player attack hit count did not increment.");
             Require(enemy.HitCount == 1, "Enemy did not record the attack hit.");
+
+            enemy.ResetEnemy();
+            player.ResetForSmoke(enemy.transform.position + new Vector3(0f, 0f, -0.95f));
+            enemy.Tick(0.05f);
+            Require(enemy.IsTelegraphing, "Enemy did not enter attack telegraph near the player.");
+            Require(player.DamageCount == 0, "Player took damage before the enemy telegraph resolved.");
+            enemy.Tick(enemy.attackWindupSeconds + 0.05f);
+            Require(enemy.AttackCount == 1, "Enemy attack count did not increment after telegraph resolution.");
+            Require(player.DamageCount == 1, "Player did not take damage after enemy telegraph resolution.");
 
             player.ResetForSmoke(firstReward.transform.position + new Vector3(0f, 0f, 0.45f));
             Require(firstReward.TryCollect(player.transform), "First relic reward did not collect at pickup range.");
