@@ -32,6 +32,7 @@ namespace FourfoldEchoes.Product
         public float sfxVolume = 1f;
         public float uiScale = 1f;
         public bool showControlHints = true;
+        public string language = FourfoldLanguage.English;
     }
 
     public static class FourfoldProgressSave
@@ -121,6 +122,7 @@ namespace FourfoldEchoes.Product
             target.sfxVolume = clean.sfxVolume;
             target.uiScale = clean.uiScale;
             target.showControlHints = clean.showControlHints;
+            target.language = clean.language;
         }
 
         public static string SavePath()
@@ -158,7 +160,8 @@ namespace FourfoldEchoes.Product
                 musicVolume = 1f,
                 sfxVolume = 1f,
                 uiScale = 1f,
-                showControlHints = true
+                showControlHints = true,
+                language = FourfoldLanguage.English
             };
         }
 
@@ -189,6 +192,7 @@ namespace FourfoldEchoes.Product
                 data.sfxVolume = 1f;
                 data.uiScale = 1f;
                 data.showControlHints = true;
+                data.language = FourfoldLanguage.English;
                 data.settingsInitialized = true;
             }
 
@@ -196,6 +200,7 @@ namespace FourfoldEchoes.Product
             data.musicVolume = SanitizeVolume(data.musicVolume, 1f);
             data.sfxVolume = SanitizeVolume(data.sfxVolume, 1f);
             data.uiScale = SanitizeScale(data.uiScale, 1f);
+            data.language = FourfoldLanguage.Sanitize(data.language);
             return data;
         }
 

@@ -61,6 +61,28 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Title gameplay verifier failed: New Game did not initialize hub, region, or tool progress.");
                 }
 
+                if (controller.RequestNewGame() != string.Empty || !controller.IsNewGameConfirmationOpen())
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: New Game menu action did not ask before overwriting existing progress.");
+                }
+
+                controller.CancelNewGameOverwrite();
+                if (controller.IsNewGameConfirmationOpen())
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: New Game overwrite cancel did not close confirmation.");
+                }
+
+                if (controller.RequestNewGame() != string.Empty || !controller.IsNewGameConfirmationOpen())
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: New Game overwrite confirmation did not reopen.");
+                }
+
+                var overwrittenScene = controller.ConfirmNewGameOverwrite();
+                if (overwrittenScene != FourfoldGameIds.UnitySceneHubCrossroads || controller.LastRequestedUnityScene != FourfoldGameIds.UnitySceneHubCrossroads)
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: confirmed New Game overwrite did not request HubCrossroads.");
+                }
+
                 var hubSummary = controller.ContinueSummary();
                 if (hubSummary.IndexOf("Continue: Hub", StringComparison.Ordinal) < 0 || hubSummary.IndexOf("Relics returned", StringComparison.Ordinal) < 0)
                 {
@@ -90,13 +112,21 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Title gameplay verifier failed: settings volume adjustment was not persisted.");
                 }
 
+                SetPrivate(controller, "selectedSettingIndex", 4);
+                controller.AdjustSelectedSetting(1f);
+                settingsSave = FourfoldProgressSave.Load();
+                if (settingsSave.language != FourfoldLanguage.Japanese)
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: language setting toggle was not persisted.");
+                }
+
                 controller.QuitGame();
                 if (controller.LastRequestedUnityScene != "quit")
                 {
                     throw new InvalidOperationException("Title gameplay verifier failed: Quit did not mark the quit request.");
                 }
 
-                Debug.Log("FOURFOLD Title gameplay verifier passed: New Game, Continue, Settings, and Quit entry flow work.");
+                Debug.Log("FOURFOLD Title gameplay verifier passed: New Game confirmation, Continue, Settings, and Quit entry flow work.");
             }
             finally
             {
@@ -135,6 +165,17 @@ namespace FourfoldEchoes.Editor
             {
                 File.Delete(path);
             }
+        }
+
+        private static void SetPrivate<T>(object target, string name, T value)
+        {
+            var field = target.GetType().GetField(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (field == null)
+            {
+                throw new InvalidOperationException($"Title gameplay verifier failed: private field missing: {name}.");
+            }
+
+            field.SetValue(target, value);
         }
     }
 }

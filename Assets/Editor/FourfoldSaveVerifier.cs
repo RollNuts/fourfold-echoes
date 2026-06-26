@@ -36,7 +36,12 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Save verifier failed: empty save did not initialize version or settings.");
                 }
 
-                if (!ApproximatelyOne(empty.masterVolume) || !ApproximatelyOne(empty.musicVolume) || !ApproximatelyOne(empty.sfxVolume) || !ApproximatelyOne(empty.uiScale) || !empty.showControlHints)
+                if (!ApproximatelyOne(empty.masterVolume)
+                    || !ApproximatelyOne(empty.musicVolume)
+                    || !ApproximatelyOne(empty.sfxVolume)
+                    || !ApproximatelyOne(empty.uiScale)
+                    || !empty.showControlHints
+                    || empty.language != FourfoldLanguage.English)
                 {
                     throw new InvalidOperationException("Save verifier failed: empty save did not initialize default settings.");
                 }
@@ -54,7 +59,8 @@ namespace FourfoldEchoes.Editor
                     musicVolume = 0.5f,
                     sfxVolume = 0.9f,
                     uiScale = 1.15f,
-                    showControlHints = false
+                    showControlHints = false,
+                    language = FourfoldLanguage.Japanese
                 };
                 FourfoldProgressSave.Save(data);
 
@@ -69,6 +75,7 @@ namespace FourfoldEchoes.Editor
                     || !Approximately(roundtrip.musicVolume, 0.5f)
                     || !Approximately(roundtrip.sfxVolume, 0.9f)
                     || !Approximately(roundtrip.uiScale, 1.15f)
+                    || roundtrip.language != FourfoldLanguage.Japanese
                     || roundtrip.showControlHints)
                 {
                     throw new InvalidOperationException("Save verifier failed: save/load roundtrip did not preserve progress and settings.");
@@ -80,6 +87,7 @@ namespace FourfoldEchoes.Editor
                     || !Approximately(resetProgress.musicVolume, 0.5f)
                     || !Approximately(resetProgress.sfxVolume, 0.9f)
                     || !Approximately(resetProgress.uiScale, 1.15f)
+                    || resetProgress.language != FourfoldLanguage.Japanese
                     || resetProgress.showControlHints)
                 {
                     throw new InvalidOperationException("Save verifier failed: settings copy did not preserve user UX preferences.");
@@ -102,12 +110,15 @@ namespace FourfoldEchoes.Editor
                 DeleteIfExists(backupPath);
                 File.WriteAllText(savePath, "{ still not valid json");
                 var fallback = FourfoldProgressSave.Load();
-                if (fallback.version != FourfoldProgressSave.CurrentVersion || fallback.d020FailureCount != 0 || !fallback.settingsInitialized)
+                if (fallback.version != FourfoldProgressSave.CurrentVersion
+                    || fallback.d020FailureCount != 0
+                    || !fallback.settingsInitialized
+                    || fallback.language != FourfoldLanguage.English)
                 {
                     throw new InvalidOperationException("Save verifier failed: corrupt save without backup did not fall back to clean progress.");
                 }
 
-                Debug.Log("FOURFOLD save verifier passed: defaults, roundtrip, backup recovery, and corrupt fallback work.");
+                Debug.Log("FOURFOLD save verifier passed: defaults, language setting, roundtrip, backup recovery, and corrupt fallback work.");
             }
             finally
             {
