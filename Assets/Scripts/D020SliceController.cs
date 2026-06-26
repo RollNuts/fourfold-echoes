@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace FourfoldEchoes.Product
@@ -9,6 +10,8 @@ namespace FourfoldEchoes.Product
         public Transform[] enemies;
         public GameObject rewardReadyRead;
         public Transform rewardClaimPoint;
+        public ExplorationTool explorationTool;
+        public ExplorationNode requiredToolNode;
         public Camera fixedCamera;
 
         [Header("Input")]
@@ -16,6 +19,10 @@ namespace FourfoldEchoes.Product
         public KeyCode dodgeKey = KeyCode.LeftShift;
         public KeyCode interactKey = KeyCode.E;
         public KeyCode retryKey = KeyCode.R;
+        public KeyCode gamepadAttackKey = KeyCode.JoystickButton0;
+        public KeyCode gamepadDodgeKey = KeyCode.JoystickButton1;
+        public KeyCode gamepadInteractKey = KeyCode.JoystickButton3;
+        public KeyCode gamepadRetryKey = KeyCode.JoystickButton7;
 
         [Header("Audio")]
         public AudioSource audioSource;
@@ -42,6 +49,8 @@ namespace FourfoldEchoes.Product
         private const float InvulnerableAfterHit = 0.65f;
         private const float RewardRange = 1.8f;
         private const string SaveKeyCleared = "fourfold.d020.slice.cleared";
+        private const string SaveKeyShortcutOpened = "fourfold.d020.slice.shortcut_opened";
+        private const string SaveKeyRewardClaimed = "fourfold.d020.slice.reward_claimed";
         private const float MinX = -9.2f;
         private const float MaxX = 10.6f;
         private const float MinZ = -6.2f;
@@ -68,6 +77,8 @@ namespace FourfoldEchoes.Product
         private bool runFailed;
         private bool runCleared;
         private bool previousClearLoaded;
+        private bool previousShortcutLoaded;
+        private bool previousRewardLoaded;
         private GameObject attackRead;
         private GameObject rewardClaimRead;
         private Material attackMaterial;
@@ -83,6 +94,7 @@ namespace FourfoldEchoes.Product
             }
 
             EnsureAudioSource();
+            EnsureExplorationReferences();
             initialPlayerPosition = player.position;
             initialPlayerRotation = player.rotation;
             enemyHealth = new float[enemies == null ? 0 : enemies.Length];
@@ -124,7 +136,18 @@ namespace FourfoldEchoes.Product
             }
             rewardClaimRead.SetActive(false);
             SetRewardReady(false);
+        }
+
+        private void Start()
+        {
             previousClearLoaded = PlayerPrefs.GetInt(SaveKeyCleared, 0) == 1;
+            previousShortcutLoaded = PlayerPrefs.GetInt(SaveKeyShortcutOpened, 0) == 1;
+            previousRewardLoaded = PlayerPrefs.GetInt(SaveKeyRewardClaimed, 0) == 1 && previousClearLoaded;
+            EnsureExplorationReferences();
+            if (previousShortcutLoaded && requiredToolNode != null)
+            {
+                requiredToolNode.SetSolved(true);
+            }
         }
 
         private void Update()
@@ -136,7 +159,7 @@ namespace FourfoldEchoes.Product
             dodgeCooldownTimer = Mathf.Max(0f, dodgeCooldownTimer - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
 
-            if (Input.GetKeyDown(retryKey))
+            if (Pressed(retryKey, gamepadRetryKey))
             {
                 ResetRun();
                 return;
@@ -152,21 +175,22 @@ namespace FourfoldEchoes.Product
 
             MovePlayer(dt);
             UpdateEnemies(dt);
+            UpdateProgressFlags();
             UpdateAttackRead();
             UpdateEnemyAttackReads();
             UpdateRewardState();
 
-            if (Input.GetKeyDown(attackKey) || Input.GetMouseButtonDown(0))
+            if (Pressed(attackKey, gamepadAttackKey) || Input.GetMouseButtonDown(0))
             {
                 TryAttack();
             }
 
-            if ((Input.GetKeyDown(dodgeKey) || Input.GetKeyDown(KeyCode.RightShift)) && dodgeCooldownTimer <= 0f)
+            if (Pressed(dodgeKey, KeyCode.RightShift, gamepadDodgeKey) && dodgeCooldownTimer <= 0f)
             {
                 BeginDodge();
             }
 
-            if (Input.GetKeyDown(interactKey))
+            if (Pressed(interactKey, gamepadInteractKey))
             {
                 TryClaimReward();
             }
@@ -381,7 +405,7 @@ namespace FourfoldEchoes.Product
 
         private void UpdateRewardState()
         {
-            var ready = AllEnemiesDefeated();
+            var ready = RewardReady();
             if (ready && !rewardClaimed && !rewardReadyCuePlayed)
             {
                 rewardReadyCuePlayed = true;
@@ -403,7 +427,7 @@ namespace FourfoldEchoes.Product
 
         private void TryClaimReward()
         {
-            if (rewardClaimed || !AllEnemiesDefeated() || rewardClaimPoint == null)
+            if (rewardClaimed || !RewardReady() || rewardClaimPoint == null)
             {
                 return;
             }
@@ -416,6 +440,8 @@ namespace FourfoldEchoes.Product
             rewardClaimed = true;
             runCleared = true;
             PlayerPrefs.SetInt(SaveKeyCleared, 1);
+            PlayerPrefs.SetInt(SaveKeyShortcutOpened, ToolGateSolved() ? 1 : 0);
+            PlayerPrefs.SetInt(SaveKeyRewardClaimed, 1);
             PlayerPrefs.Save();
             PlayCue(rewardClaimClip, 0.92f);
             if (rewardReadyRead != null)
@@ -475,6 +501,10 @@ namespace FourfoldEchoes.Product
             {
                 rewardClaimRead.SetActive(false);
             }
+            if (requiredToolNode != null)
+            {
+                requiredToolNode.SetSolved(PlayerPrefs.GetInt(SaveKeyShortcutOpened, 0) == 1);
+            }
             SetRewardReady(false);
         }
 
@@ -489,6 +519,28 @@ namespace FourfoldEchoes.Product
             }
 
             return enemyHealth.Length > 0;
+        }
+
+        private bool RewardReady()
+        {
+            return AllEnemiesDefeated() && ToolGateSolved() && !rewardClaimed;
+        }
+
+        private bool ToolGateSolved()
+        {
+            return requiredToolNode == null || requiredToolNode.IsSolved;
+        }
+
+        private void UpdateProgressFlags()
+        {
+            if (requiredToolNode == null || !requiredToolNode.IsSolved || PlayerPrefs.GetInt(SaveKeyShortcutOpened, 0) == 1)
+            {
+                return;
+            }
+
+            PlayerPrefs.SetInt(SaveKeyShortcutOpened, 1);
+            PlayerPrefs.Save();
+            previousShortcutLoaded = true;
         }
 
         private void SetRewardReady(bool ready)
@@ -520,8 +572,44 @@ namespace FourfoldEchoes.Product
                 z -= 1f;
             }
 
+            var axisX = SafeAxis("Horizontal");
+            var axisZ = SafeAxis("Vertical");
+            if (Mathf.Abs(axisX) > Mathf.Abs(x))
+            {
+                x = axisX;
+            }
+            if (Mathf.Abs(axisZ) > Mathf.Abs(z))
+            {
+                z = axisZ;
+            }
+
             var input = new Vector3(x, 0f, z);
             return input.sqrMagnitude > 1f ? input.normalized : input;
+        }
+
+        private static float SafeAxis(string axisName)
+        {
+            try
+            {
+                return Input.GetAxisRaw(axisName);
+            }
+            catch (ArgumentException)
+            {
+                return 0f;
+            }
+        }
+
+        private static bool Pressed(params KeyCode[] keys)
+        {
+            for (var i = 0; i < keys.Length; i++)
+            {
+                if (keys[i] != KeyCode.None && Input.GetKeyDown(keys[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void EnsureAudioSource()
@@ -540,6 +628,19 @@ namespace FourfoldEchoes.Product
             audioSource.spatialBlend = 0f;
             audioSource.dopplerLevel = 0f;
             audioSource.volume = 0.85f;
+        }
+
+        private void EnsureExplorationReferences()
+        {
+            if (explorationTool == null)
+            {
+                explorationTool = GetComponent<ExplorationTool>();
+            }
+
+            if (requiredToolNode == null && explorationTool != null && explorationTool.nodes != null && explorationTool.nodes.Length > 0)
+            {
+                requiredToolNode = explorationTool.nodes[0];
+            }
         }
 
         private void PlayCue(AudioClip clip, float volume)
@@ -578,7 +679,7 @@ namespace FourfoldEchoes.Product
         private void OnGUI()
         {
             var width = Mathf.Min(520f, Screen.width - 32f);
-            var rect = new Rect(16f, 16f, width, 146f);
+            var rect = new Rect(16f, 16f, width, 182f);
             GUI.Box(rect, GUIContent.none);
 
             var style = new GUIStyle(GUI.skin.label)
@@ -592,17 +693,31 @@ namespace FourfoldEchoes.Product
                 ? "CLEAR: reward secured. Press R to replay."
                 : runFailed
                     ? "FAILED: press R to retry."
-                    : AllEnemiesDefeated()
+                    : !ToolGateSolved()
+                        ? "Activate the glowing tool node with Q or gamepad X."
+                        : AllEnemiesDefeated()
                         ? "Claim the relic chest with E."
-                        : "Defeat the enemies, use the tool node, then claim the relic.";
+                        : "Defeat the enemies, then claim the relic.";
+
+            var toolState = explorationTool == null
+                ? "Tool --"
+                : explorationTool.IsReady
+                    ? "Tool READY"
+                    : $"Tool cooldown {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%";
 
             GUI.Label(new Rect(30f, 26f, width - 28f, 34f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}", style);
-            GUI.Label(new Rect(30f, 58f, width - 28f, 58f), objective, style);
-            GUI.Label(new Rect(30f, 112f, width - 28f, 34f), "Move WASD/Arrows  Attack Space/Click  Dodge Shift  Interact E  Retry R", style);
+            GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
+            GUI.Label(new Rect(30f, 88f, width - 28f, 58f), objective, style);
+            GUI.Label(new Rect(30f, 144f, width - 28f, 34f), "Move WASD/Arrows/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Retry R/Start", style);
 
             if (previousClearLoaded && !runCleared)
             {
-                GUI.Label(new Rect(16f, Screen.height - 42f, width, 28f), "Local progress: this slice was cleared before.", style);
+                var progress = previousRewardLoaded ? "Local progress: reward secured before." : "Local progress: this slice was cleared before.";
+                GUI.Label(new Rect(16f, Screen.height - 42f, width, 28f), progress, style);
+            }
+            else if (previousShortcutLoaded)
+            {
+                GUI.Label(new Rect(16f, Screen.height - 42f, width, 28f), "Local progress: shortcut opened.", style);
             }
         }
 

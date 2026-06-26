@@ -6,6 +6,7 @@ namespace FourfoldEchoes.Product
     {
         [Header("Input")]
         public KeyCode useKey = KeyCode.E;
+        public KeyCode alternateUseKey = KeyCode.JoystickButton2;
         public float range = 2.7f;
         public float cooldownSeconds = 0.45f;
 
@@ -70,7 +71,7 @@ namespace FourfoldEchoes.Product
                 pulseRead.SetActive(false);
             }
 
-            if (Input.GetKeyDown(useKey))
+            if (Input.GetKeyDown(useKey) || Input.GetKeyDown(alternateUseKey))
             {
                 TryUse();
             }

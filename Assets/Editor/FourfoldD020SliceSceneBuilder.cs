@@ -123,6 +123,11 @@ namespace FourfoldEchoes.Editor
             {
                 throw new InvalidOperationException("D-020 exploration tool is missing required player or node references.");
             }
+
+            if (controller.explorationTool == null || controller.requiredToolNode == null)
+            {
+                throw new InvalidOperationException("D-020 playable controller is missing exploration tool gate references.");
+            }
         }
 
         private static void EnsureFolders()
@@ -410,6 +415,8 @@ namespace FourfoldEchoes.Editor
             tool.nodes = new[] { node };
             tool.range = 2.8f;
             tool.cooldownSeconds = 0.42f;
+            tool.useKey = KeyCode.Q;
+            tool.alternateUseKey = KeyCode.JoystickButton2;
             tool.pulseRead = node.idleRead;
             tool.pulse = LoadOptionalAudioClip(ToolPulseClipPath);
             tool.targetHit = LoadOptionalAudioClip(ToolTargetHitClipPath);
@@ -417,6 +424,8 @@ namespace FourfoldEchoes.Editor
             var controller = hookObject.AddComponent<D020SliceController>();
             controller.player = player;
             controller.enemies = enemies;
+            controller.explorationTool = tool;
+            controller.requiredToolNode = node;
             controller.rewardReadyRead = FindInChildren(rewardClaimPoint, "D020 Reward Beacon")?.gameObject
                 ?? FindInChildren(rewardClaimPoint, "FE_RELIC_SPARK_P0")?.gameObject;
             controller.rewardClaimPoint = rewardClaimPoint;
