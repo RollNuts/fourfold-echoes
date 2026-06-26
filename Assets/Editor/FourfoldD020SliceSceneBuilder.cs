@@ -12,6 +12,13 @@ namespace FourfoldEchoes.Editor
     {
         public const string ScenePath = "Assets/Scenes/D020VerticalSlice.unity";
         private const string MaterialFolder = "Assets/Art/Generated/D020/Materials";
+        private const string AttackClipPath = "Assets/Audio/Generated/attack_basic.wav";
+        private const string HitClipPath = "Assets/Audio/Generated/hit_enemy.wav";
+        private const string DodgeClipPath = "Assets/Audio/Generated/dodge.wav";
+        private const string RewardClaimClipPath = "Assets/Audio/Generated/relic_pickup.wav";
+        private const string RewardReadyClipPath = "Assets/Audio/Generated/discovery_stinger.wav";
+        private const string ToolPulseClipPath = "Assets/Audio/Generated/tool_pulse.wav";
+        private const string ToolTargetHitClipPath = "Assets/Audio/Generated/shortcut_open.wav";
 
         public static void BuildAndValidate()
         {
@@ -104,6 +111,11 @@ namespace FourfoldEchoes.Editor
             if (controller == null || controller.player == null || controller.enemies == null || controller.enemies.Length < 2 || controller.rewardClaimPoint == null)
             {
                 throw new InvalidOperationException("D-020 playable controller is missing required player, enemies, or reward references.");
+            }
+
+            if (hook.GetComponent<AudioSource>() == null)
+            {
+                throw new InvalidOperationException("D-020 runtime hook is missing its shared AudioSource.");
             }
 
             var tool = hook.GetComponent<ExplorationTool>();
@@ -390,6 +402,8 @@ namespace FourfoldEchoes.Editor
             var audioSource = hookObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
             audioSource.spatialBlend = 0f;
+            audioSource.dopplerLevel = 0f;
+            audioSource.volume = 0.85f;
 
             var tool = hookObject.AddComponent<ExplorationTool>();
             tool.player = player;
@@ -397,6 +411,8 @@ namespace FourfoldEchoes.Editor
             tool.range = 2.8f;
             tool.cooldownSeconds = 0.42f;
             tool.pulseRead = node.idleRead;
+            tool.pulse = LoadOptionalAudioClip(ToolPulseClipPath);
+            tool.targetHit = LoadOptionalAudioClip(ToolTargetHitClipPath);
 
             var controller = hookObject.AddComponent<D020SliceController>();
             controller.player = player;
@@ -405,6 +421,23 @@ namespace FourfoldEchoes.Editor
                 ?? FindInChildren(rewardClaimPoint, "FE_RELIC_SPARK_P0")?.gameObject;
             controller.rewardClaimPoint = rewardClaimPoint;
             controller.fixedCamera = camera;
+            controller.audioSource = audioSource;
+            controller.attackClip = LoadOptionalAudioClip(AttackClipPath);
+            controller.hitClip = LoadOptionalAudioClip(HitClipPath);
+            controller.dodgeClip = LoadOptionalAudioClip(DodgeClipPath);
+            controller.rewardClaimClip = LoadOptionalAudioClip(RewardClaimClipPath);
+            controller.rewardReadyClip = LoadOptionalAudioClip(RewardReadyClipPath);
+        }
+
+        private static AudioClip LoadOptionalAudioClip(string path)
+        {
+            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            if (clip == null)
+            {
+                Debug.LogWarning($"D-020 optional audio clip is missing and will be skipped: {path}");
+            }
+
+            return clip;
         }
 
         private static GameObject CreateBlock(Transform parent, string name, Material material, Vector3 localPosition, Vector3 localScale)
