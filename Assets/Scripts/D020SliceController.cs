@@ -59,7 +59,12 @@ namespace FourfoldEchoes.Product
         private const float BossAttackRange = 2.05f;
         private const float BossAttackWindup = 0.92f;
         private const float BossAttackCooldown = 1.65f;
+        private const float BossSweepRange = 4.65f;
+        private const float BossSweepWindup = 1.08f;
+        private const float BossSweepCooldown = 1.95f;
         private const float BossSpeed = 1.12f;
+        private const int AttackModeCircle = 0;
+        private const int AttackModeLine = 1;
         private const float PlayerMaxHealth = 100f;
         private const float MeleeEnemyDamage = 26f;
         private const float RangedEnemyDamage = 18f;
@@ -92,6 +97,8 @@ namespace FourfoldEchoes.Product
         private float[] enemyHealth;
         private float[] enemyAttackTimer;
         private float[] enemyWindupTimer;
+        private Vector3[] enemyAttackAimDirections;
+        private int[] enemyAttackModes;
         private GameObject[] enemyAttackReads;
         private Vector3 initialPlayerPosition;
         private Quaternion initialPlayerRotation;
@@ -142,6 +149,8 @@ namespace FourfoldEchoes.Product
             enemyHealth = new float[enemies == null ? 0 : enemies.Length];
             enemyAttackTimer = new float[enemyHealth.Length];
             enemyWindupTimer = new float[enemyHealth.Length];
+            enemyAttackAimDirections = new Vector3[enemyHealth.Length];
+            enemyAttackModes = new int[enemyHealth.Length];
             enemyAttackReads = new GameObject[enemyHealth.Length];
             initialEnemyPositions = new Vector3[enemyHealth.Length];
             initialEnemyRotations = new Quaternion[enemyHealth.Length];
@@ -150,6 +159,8 @@ namespace FourfoldEchoes.Product
             {
                 enemyHealth[i] = InitialEnemyHealth(i);
                 enemyAttackTimer[i] = InitialEnemyAttackDelay(i);
+                enemyAttackAimDirections[i] = Vector3.forward;
+                enemyAttackModes[i] = IsBossEnemy(i) ? AttackModeLine : AttackModeCircle;
                 if (enemies != null && enemies[i] != null)
                 {
                     initialEnemyPositions[i] = enemies[i].position;
@@ -379,10 +390,15 @@ namespace FourfoldEchoes.Product
 
                 if (distance <= attackRange && enemyAttackTimer[i] <= 0f)
                 {
+                    if (enemyWindupTimer[i] <= 0f)
+                    {
+                        enemyAttackAimDirections[i] = desired;
+                    }
                     enemyWindupTimer[i] += dt;
                     if (enemyWindupTimer[i] >= attackWindup)
                     {
                         ResolveEnemyAttack(i, enemy, toPlayer);
+                        AdvanceEnemyAttackMode(i);
                         enemyWindupTimer[i] = 0f;
                         enemyAttackTimer[i] = attackCooldown;
                     }
@@ -417,8 +433,7 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            var distance = toPlayer.magnitude;
-            if (distance > EnemyAttackRangeFor(index) + 0.28f)
+            if (!EnemyAttackHitsPlayer(index, toPlayer))
             {
                 return;
             }
@@ -487,19 +502,23 @@ namespace FourfoldEchoes.Product
                 var progress = Mathf.Clamp01(enemyWindupTimer[i] / EnemyAttackWindupFor(i));
                 if (IsRangedEnemy(i))
                 {
-                    var toPlayer = player.position - enemy.position;
-                    toPlayer.y = 0f;
-                    if (toPlayer.sqrMagnitude <= 0.01f)
-                    {
-                        continue;
-                    }
-
-                    var distance = Mathf.Min(toPlayer.magnitude, EnemyAttackRangeFor(i));
-                    var aim = toPlayer.normalized;
+                    var aim = EnemyAimDirection(i, enemy);
+                    var distance = EnemyAttackRangeFor(i);
                     read.transform.position = enemy.position + aim * (distance * 0.5f) + new Vector3(0f, 0.10f, 0f);
                     read.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
                     var width = Mathf.Lerp(0.12f, 0.26f, progress);
                     read.transform.localScale = new Vector3(width, 0.035f, Mathf.Max(0.72f, distance));
+                    continue;
+                }
+
+                if (IsBossEnemy(i) && BossUsesLineAttack(i))
+                {
+                    var aim = EnemyAimDirection(i, enemy);
+                    var distance = EnemyAttackRangeFor(i);
+                    read.transform.position = enemy.position + aim * (distance * 0.48f) + new Vector3(0f, 0.09f, 0f);
+                    read.transform.rotation = Quaternion.LookRotation(aim, Vector3.up);
+                    var width = Mathf.Lerp(0.78f, 1.14f, progress);
+                    read.transform.localScale = new Vector3(width, 0.028f, distance);
                     continue;
                 }
 
@@ -729,6 +748,8 @@ namespace FourfoldEchoes.Product
                 enemyHealth[i] = InitialEnemyHealth(i);
                 enemyAttackTimer[i] = InitialEnemyAttackDelay(i);
                 enemyWindupTimer[i] = 0f;
+                enemyAttackAimDirections[i] = Vector3.forward;
+                enemyAttackModes[i] = IsBossEnemy(i) ? AttackModeLine : AttackModeCircle;
                 if (enemies != null && enemies[i] != null)
                 {
                     enemies[i].gameObject.SetActive(true);
@@ -863,7 +884,7 @@ namespace FourfoldEchoes.Product
         {
             if (IsBossEnemy(index))
             {
-                return BossAttackRange;
+                return BossUsesLineAttack(index) ? BossSweepRange : BossAttackRange;
             }
 
             return IsRangedEnemy(index) ? RangedAttackRange : EnemyAttackRange;
@@ -873,7 +894,7 @@ namespace FourfoldEchoes.Product
         {
             if (IsBossEnemy(index))
             {
-                return BossAttackWindup;
+                return BossUsesLineAttack(index) ? BossSweepWindup : BossAttackWindup;
             }
 
             return IsRangedEnemy(index) ? RangedAttackWindup : EnemyAttackWindup;
@@ -883,7 +904,7 @@ namespace FourfoldEchoes.Product
         {
             if (IsBossEnemy(index))
             {
-                return BossAttackCooldown;
+                return BossUsesLineAttack(index) ? BossSweepCooldown : BossAttackCooldown;
             }
 
             return IsRangedEnemy(index) ? RangedAttackCooldown : EnemyAttackCooldown + index * 0.22f;
@@ -919,6 +940,52 @@ namespace FourfoldEchoes.Product
         {
             var enemy = enemies != null && index >= 0 && index < enemies.Length ? enemies[index] : null;
             return enemy != null && enemy.name.IndexOf("Ranged", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private bool BossUsesLineAttack(int index)
+        {
+            return enemyAttackModes != null && index >= 0 && index < enemyAttackModes.Length && enemyAttackModes[index] == AttackModeLine;
+        }
+
+        private void AdvanceEnemyAttackMode(int index)
+        {
+            if (!IsBossEnemy(index) || enemyAttackModes == null || index < 0 || index >= enemyAttackModes.Length)
+            {
+                return;
+            }
+
+            enemyAttackModes[index] = BossUsesLineAttack(index) ? AttackModeCircle : AttackModeLine;
+        }
+
+        private Vector3 EnemyAimDirection(int index, Transform enemy)
+        {
+            if (enemyAttackAimDirections != null && index >= 0 && index < enemyAttackAimDirections.Length && enemyAttackAimDirections[index].sqrMagnitude > 0.01f)
+            {
+                return enemyAttackAimDirections[index].normalized;
+            }
+
+            var fallback = player != null && enemy != null ? player.position - enemy.position : Vector3.forward;
+            fallback.y = 0f;
+            return fallback.sqrMagnitude > 0.01f ? fallback.normalized : Vector3.forward;
+        }
+
+        private bool EnemyAttackHitsPlayer(int index, Vector3 toPlayer)
+        {
+            if (IsRangedEnemy(index) || (IsBossEnemy(index) && BossUsesLineAttack(index)))
+            {
+                var aim = EnemyAimDirection(index, enemies[index]);
+                var forwardDistance = Vector3.Dot(toPlayer, aim);
+                if (forwardDistance < -0.2f || forwardDistance > EnemyAttackRangeFor(index) + 0.35f)
+                {
+                    return false;
+                }
+
+                var lateral = toPlayer - aim * forwardDistance;
+                var width = IsBossEnemy(index) ? 0.88f : 0.42f;
+                return lateral.magnitude <= width;
+            }
+
+            return toPlayer.magnitude <= EnemyAttackRangeFor(index) + 0.28f;
         }
 
         private bool EquippedLumenEdge()
