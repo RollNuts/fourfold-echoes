@@ -33,11 +33,12 @@ namespace FourfoldEchoes.Editor
             try
             {
                 FourfoldD020SliceSceneBuilder.BuildAndValidate();
-                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, two relic rewards, return gate, required SFX, and two BGM clips."));
+                FourfoldD020GameplayVerifier.VerifyExistingSceneFullProgressionLoop();
+                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, two relic rewards, return gate, required SFX, two BGM clips, and full-loop reward banking."));
             }
             catch (Exception exception)
             {
-                findings.Add(Finding.Error("d020.slice", "D-020 vertical slice scene generation or validation failed: " + exception.Message));
+                findings.Add(Finding.Error("d020.slice", "D-020 vertical slice scene generation, validation, or full-loop verification failed: " + exception.Message));
             }
 
             try
@@ -303,7 +304,7 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine();
             builder.AppendLine("## Product Interpretation");
             builder.AppendLine();
-            builder.AppendLine("This report validates technical hygiene only. HubCrossroads is the playable entry point and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: hub entry, two normal enemy types, one elite guard, one boss, two tool nodes, two relic rewards, return banking, required SFX, and two BGM clips. Historical ProductReview evidence is deliberately outside this lane.");
+            builder.AppendLine("This report validates technical hygiene only. HubCrossroads is the playable entry point and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: hub entry, two normal enemy types, one elite guard, one boss, two tool nodes, two relic rewards, return banking, required SFX, two BGM clips, and full-loop reward persistence. Historical ProductReview evidence is deliberately outside this lane.");
             return builder.ToString();
         }
 
