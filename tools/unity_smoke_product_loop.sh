@@ -12,7 +12,8 @@ usage() {
 Usage: tools/unity_smoke_product_loop.sh [--artifact PATH] [--log PATH] [--report PATH] [--timeout SECONDS]
 
 Launches the built product loop directly and verifies that the packaged player can
-route Title -> HubCrossroads -> D020VerticalSlice while preserving the user's save.
+route Title -> HubCrossroads -> D020VerticalSlice, clear D-020, bank both relics,
+return through Title Continue, and preserve the user's save.
 
 Options:
   --artifact PATH      Built .app or .exe. Defaults to Build/FourfoldEchoes/macos/FourfoldEchoes.app.
@@ -153,6 +154,8 @@ if [[ "$PLAYER_EXIT" -ne 0 ]]; then
   exit 1
 fi
 
+SMOKE_SENTINEL="$(grep "FOURFOLD PLAYER SMOKE PASS" "$LOG_PATH" | tail -n 1)"
+
 relpath() {
   local value="$1"
   case "$value" in
@@ -172,7 +175,7 @@ ARTIFACT_SIZE="$(du -sh "$ARTIFACT_PATH" | awk '{print $1}')"
 GENERATED_UTC="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 
 cat > "$REPORT_PATH" <<REPORT
-# Product Loop Player Route Smoke
+# Product Loop Player Completion Smoke
 
 Generated UTC: \`$GENERATED_UTC\`
 
@@ -180,10 +183,12 @@ Generated UTC: \`$GENERATED_UTC\`
 - Artifact: \`$ARTIFACT_REL\`
 - Artifact size: \`$ARTIFACT_SIZE\`
 - Log: \`$LOG_REL\`
-- Sentinel: \`FOURFOLD PLAYER SMOKE PASS\`
+- Sentinel: \`$SMOKE_SENTINEL\`
 
 This report is intentionally sanitized for public commit. The raw player log is local evidence and is not committed.
 The runtime smoke snapshots and restores the local save around its New Game route check.
+Verified route: Title -> HubCrossroads -> D020VerticalSlice -> HubCrossroads -> Title -> HubCrossroads.
+Verified outcome: D-020 clear persisted, both relic rewards banked, best time saved, and Continue returns to Hub.
 REPORT
 
 echo "Product loop player smoke passed: $ARTIFACT_REL"

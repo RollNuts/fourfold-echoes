@@ -43,7 +43,7 @@ namespace FourfoldEchoes.Product
             }
 
             var width = Mathf.Min(760f, screenWidth - 48f);
-            var height = settingsOpen ? 360f : 330f;
+            var height = settingsOpen ? 360f : 380f;
             var rect = new Rect((screenWidth - width) * 0.5f, (screenHeight - height) * 0.5f, width, height);
             if (rect.x < 24f || rect.y < 24f || rect.xMax > screenWidth - 24f || rect.yMax > screenHeight - 24f)
             {
@@ -142,6 +142,27 @@ namespace FourfoldEchoes.Product
             {
                 Application.Quit();
             }
+        }
+
+        public string ContinueSummary()
+        {
+            LoadProgress();
+            if (!FourfoldProgressSave.HasSaveFile())
+            {
+                return "Goal: enter D-020, defeat the boss, secure relics, and return to bank rewards.";
+            }
+
+            var location = progressData.currentScene == FourfoldGameIds.SceneD020VerticalSlice
+                ? "D-020 run in progress"
+                : "Hub";
+            var relics = (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
+            var best = progressData.d020BestClearTimeSeconds > 0f
+                ? $" Best {Mathf.CeilToInt(progressData.d020BestClearTimeSeconds)}s."
+                : string.Empty;
+            var risk = progressData.currentScene == FourfoldGameIds.SceneD020VerticalSlice
+                ? " Unreturned run rewards are still at risk."
+                : string.Empty;
+            return $"Continue: {location}. Clears {progressData.d020ClearCount}. Relics returned {relics}/2.{best}{risk}";
         }
 
         private void UpdateMenuInput()
@@ -325,7 +346,7 @@ namespace FourfoldEchoes.Product
         private void OnGUI()
         {
             var width = Mathf.Min(760f, Screen.width - 48f);
-            var height = settingsOpen ? 360f : 330f;
+            var height = settingsOpen ? 360f : 380f;
             var rect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
             GUI.Box(rect, GUIContent.none);
 
@@ -363,7 +384,8 @@ namespace FourfoldEchoes.Product
                 GUI.Label(new Rect(rect.x + 64f, rect.y + 148f + i * 34f, rect.width - 128f, 30f), prefix + labels[i], style);
             }
 
-            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 52f, rect.width - 128f, 28f), "Move: arrows/stick   Confirm: Enter/A   Back: Esc/B", style);
+            GUI.Label(new Rect(rect.x + 64f, rect.y + 292f, rect.width - 128f, 46f), ContinueSummary(), style);
+            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 42f, rect.width - 128f, 28f), "Move: arrows/stick   Confirm: Enter/A   Back: Esc/B", style);
         }
 
         private void DrawSettings(Rect rect, GUIStyle style)

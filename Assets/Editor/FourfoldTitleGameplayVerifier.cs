@@ -43,6 +43,12 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Title gameplay verifier failed: TitleSceneController is missing.");
                 }
 
+                var noSaveSummary = controller.ContinueSummary();
+                if (noSaveSummary.IndexOf("defeat the boss", StringComparison.OrdinalIgnoreCase) < 0 || noSaveSummary.IndexOf("return", StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: no-save title summary does not explain the core loop.");
+                }
+
                 var newGameScene = controller.StartNewGame();
                 if (newGameScene != FourfoldGameIds.UnitySceneHubCrossroads || controller.LastRequestedUnityScene != FourfoldGameIds.UnitySceneHubCrossroads)
                 {
@@ -55,9 +61,21 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Title gameplay verifier failed: New Game did not initialize hub, region, or tool progress.");
                 }
 
+                var hubSummary = controller.ContinueSummary();
+                if (hubSummary.IndexOf("Continue: Hub", StringComparison.Ordinal) < 0 || hubSummary.IndexOf("Relics returned", StringComparison.Ordinal) < 0)
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: hub continue summary does not expose location and returned relic progress.");
+                }
+
                 newGameSave.currentScene = FourfoldGameIds.SceneD020VerticalSlice;
                 newGameSave.d020FailureCount = 2;
                 FourfoldProgressSave.Save(newGameSave);
+                var d020Summary = controller.ContinueSummary();
+                if (d020Summary.IndexOf("D-020 run in progress", StringComparison.Ordinal) < 0 || d020Summary.IndexOf("at risk", StringComparison.Ordinal) < 0)
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: D-020 continue summary does not expose in-run risk.");
+                }
+
                 var continueScene = controller.ContinueGame();
                 if (continueScene != FourfoldGameIds.UnitySceneD020VerticalSlice || controller.LastRequestedUnityScene != FourfoldGameIds.UnitySceneD020VerticalSlice)
                 {
