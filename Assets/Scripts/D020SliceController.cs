@@ -268,17 +268,29 @@ namespace FourfoldEchoes.Product
 
             UpdateMusicState();
 
-            if (runFailed || runCleared)
+            if (runFailed)
             {
                 UpdateAttackRead();
                 UpdateEnemyAttackReads();
                 UpdateRewardState();
                 UpdateReturnState();
                 UpdateTraversalReads();
-                if (runCleared && Pressed(interactKey, gamepadInteractKey))
+                return;
+            }
+
+            if (runCleared)
+            {
+                MovePlayer(dt);
+                UpdateAttackRead();
+                UpdateEnemyAttackReads();
+                UpdateRewardState();
+                UpdateReturnState();
+                UpdateTraversalReads();
+                if (Pressed(interactKey, gamepadInteractKey))
                 {
                     TryReturnToHub();
                 }
+
                 return;
             }
 

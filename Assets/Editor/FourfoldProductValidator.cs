@@ -40,6 +40,17 @@ namespace FourfoldEchoes.Editor
                 findings.Add(Finding.Error("d020.slice", "D-020 vertical slice scene generation or validation failed: " + exception.Message));
             }
 
+            try
+            {
+                FourfoldHubSceneBuilder.BuildAndValidate();
+                FourfoldHubGameplayVerifier.VerifyHubEnterRegionProgress();
+                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable entry point with a D-020 region gate, progress initialization, and Build Settings order HubCrossroads -> D020VerticalSlice."));
+            }
+            catch (Exception exception)
+            {
+                findings.Add(Finding.Error("hub.crossroads", "Hub Crossroads generation, validation, or entry verification failed: " + exception.Message));
+            }
+
             if (ShouldIncludeLegacyGateA())
             {
                 try
@@ -292,7 +303,7 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine();
             builder.AppendLine("## Product Interpretation");
             builder.AppendLine();
-            builder.AppendLine("This report validates technical hygiene only. D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: two normal enemy types, one elite guard, one boss, two tool nodes, two relic rewards, return banking, required SFX, and two BGM clips. Historical ProductReview evidence is deliberately outside this lane.");
+            builder.AppendLine("This report validates technical hygiene only. HubCrossroads is the playable entry point and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: hub entry, two normal enemy types, one elite guard, one boss, two tool nodes, two relic rewards, return banking, required SFX, and two BGM clips. Historical ProductReview evidence is deliberately outside this lane.");
             return builder.ToString();
         }
 
