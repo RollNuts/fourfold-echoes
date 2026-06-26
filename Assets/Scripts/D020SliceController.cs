@@ -121,10 +121,13 @@ namespace FourfoldEchoes.Product
         private int lostSkillCount;
         private int clearCount;
         private bool skillAwardedThisRun;
+        private bool firstRewardClaimedThisRun;
+        private bool secondRewardClaimedThisRun;
         private bool failureLossApplied;
         private bool lostSkillThisRun;
         private bool returnedToHubThisRun;
         private bool returnRegisteredThisRun;
+        private int pendingSkillRewards;
         private FourfoldProgressData progressData;
         private GameObject attackRead;
         private GameObject rewardClaimRead;
@@ -542,7 +545,7 @@ namespace FourfoldEchoes.Product
             SetRewardReady(ready);
             if (rewardClaimRead != null)
             {
-                rewardClaimRead.SetActive(ready && !previousRewardLoaded);
+                rewardClaimRead.SetActive(ready);
                 if (rewardClaimPoint != null)
                 {
                     rewardClaimRead.transform.position = rewardClaimPoint.position + new Vector3(0f, 0.08f, 0f);
@@ -554,7 +557,7 @@ namespace FourfoldEchoes.Product
             var secondReady = SecondRewardReady();
             if (secondRewardClaimRead != null)
             {
-                secondRewardClaimRead.SetActive(secondReady && !previousSecondRewardLoaded);
+                secondRewardClaimRead.SetActive(secondReady);
                 if (secondRewardClaimPoint != null)
                 {
                     secondRewardClaimRead.transform.position = secondRewardClaimPoint.position + new Vector3(0f, 0.08f, 0f);
@@ -565,7 +568,7 @@ namespace FourfoldEchoes.Product
 
             if (secondRewardReadyRead != null)
             {
-                secondRewardReadyRead.SetActive(secondReady && !previousSecondRewardLoaded);
+                secondRewardReadyRead.SetActive(secondReady);
             }
         }
 
@@ -581,7 +584,7 @@ namespace FourfoldEchoes.Product
 
         private bool TryClaimFirstReward()
         {
-            if (previousRewardLoaded || !RewardReady() || rewardClaimPoint == null)
+            if (!RewardReady() || rewardClaimPoint == null)
             {
                 return false;
             }
@@ -592,12 +595,10 @@ namespace FourfoldEchoes.Product
             }
 
             rewardClaimed = true;
+            firstRewardClaimedThisRun = true;
             AwardSkillReward();
-            previousClearLoaded = true;
-            previousRewardLoaded = true;
             previousShortcutLoaded = ToolGateSolved();
-            runCleared = secondToolNode == null || secondRewardClaimPoint == null || previousSecondRewardLoaded;
-            PersistProgress();
+            runCleared = secondToolNode == null || secondRewardClaimPoint == null;
             PlayCue(rewardClaimClip, 0.92f);
             if (rewardReadyRead != null)
             {
@@ -612,7 +613,7 @@ namespace FourfoldEchoes.Product
 
         private bool TryClaimSecondReward()
         {
-            if (previousSecondRewardLoaded || !SecondRewardReady() || secondRewardClaimPoint == null)
+            if (!SecondRewardReady() || secondRewardClaimPoint == null)
             {
                 return false;
             }
@@ -622,14 +623,12 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
-            skillStock += 1;
+            pendingSkillRewards += 1;
             equippedSkill = SkillLumenEdge;
-            previousSecondRewardLoaded = true;
-            previousClearLoaded = true;
+            secondRewardClaimedThisRun = true;
             rewardClaimed = true;
             runCleared = true;
             previousReturnedToHubLoaded = false;
-            PersistProgress();
             PlayCue(rewardClaimClip, 0.86f);
             if (secondRewardReadyRead != null)
             {
@@ -680,6 +679,15 @@ namespace FourfoldEchoes.Product
 
             returnedToHubThisRun = true;
             previousReturnedToHubLoaded = true;
+            previousClearLoaded = true;
+            previousRewardLoaded = previousRewardLoaded || firstRewardClaimedThisRun;
+            previousSecondRewardLoaded = previousSecondRewardLoaded || secondRewardClaimedThisRun;
+            if (pendingSkillRewards > 0)
+            {
+                skillStock += pendingSkillRewards;
+                pendingSkillRewards = 0;
+            }
+
             if (!returnRegisteredThisRun)
             {
                 clearCount += 1;
@@ -714,7 +722,7 @@ namespace FourfoldEchoes.Product
 
             if (secondRouteLockedRead != null)
             {
-                secondRouteLockedRead.SetActive(previousRewardLoaded && !SecondToolGateSolved());
+                secondRouteLockedRead.SetActive((previousRewardLoaded || firstRewardClaimedThisRun) && !SecondToolGateSolved());
             }
         }
 
@@ -727,10 +735,13 @@ namespace FourfoldEchoes.Product
             rewardClaimed = false;
             rewardReadyCuePlayed = false;
             skillAwardedThisRun = false;
+            firstRewardClaimedThisRun = false;
+            secondRewardClaimedThisRun = false;
             failureLossApplied = false;
             lostSkillThisRun = false;
             returnedToHubThisRun = false;
             returnRegisteredThisRun = false;
+            pendingSkillRewards = 0;
             attackTimer = 0f;
             attackReadTimer = 0f;
             dodgeTimer = 0f;
@@ -830,7 +841,7 @@ namespace FourfoldEchoes.Product
             }
 
             skillAwardedThisRun = true;
-            skillStock += 1;
+            pendingSkillRewards += 1;
             equippedSkill = SkillLumenEdge;
         }
 
@@ -842,6 +853,19 @@ namespace FourfoldEchoes.Product
             }
 
             failureLossApplied = true;
+            if (pendingSkillRewards > 0)
+            {
+                lostSkillCount += pendingSkillRewards;
+                pendingSkillRewards = 0;
+                lostSkillThisRun = true;
+                if (skillStock <= 0)
+                {
+                    equippedSkill = SkillNone;
+                }
+                PersistProgress();
+                return;
+            }
+
             if (equippedSkill == SkillNone)
             {
                 return;
@@ -990,7 +1014,7 @@ namespace FourfoldEchoes.Product
 
         private bool EquippedLumenEdge()
         {
-            return equippedSkill == SkillLumenEdge && skillStock > 0;
+            return equippedSkill == SkillLumenEdge && (skillStock > 0 || pendingSkillRewards > 0);
         }
 
         private bool AllEnemiesDefeated()
@@ -1025,12 +1049,12 @@ namespace FourfoldEchoes.Product
 
         private bool RewardReady()
         {
-            return AllEnemiesDefeated() && ToolGateSolved() && !previousRewardLoaded && !rewardClaimed;
+            return AllEnemiesDefeated() && ToolGateSolved() && !firstRewardClaimedThisRun;
         }
 
         private bool SecondRewardReady()
         {
-            return AllEnemiesDefeated() && previousRewardLoaded && SecondToolGateSolved() && !previousSecondRewardLoaded;
+            return AllEnemiesDefeated() && firstRewardClaimedThisRun && SecondToolGateSolved() && !secondRewardClaimedThisRun;
         }
 
         private bool ToolGateSolved()
@@ -1334,11 +1358,11 @@ namespace FourfoldEchoes.Product
                         ? "Activate the glowing tool node with Q or gamepad X."
                         : !AllEnemiesDefeated()
                         ? "Defeat the enemies, then claim the relic."
-                        : !previousRewardLoaded
+                        : !firstRewardClaimedThisRun
                         ? "Claim the first relic chest with E."
                         : !SecondToolGateSolved()
                         ? "Use the same tool on the second node."
-                        : !previousSecondRewardLoaded
+                        : !secondRewardClaimedThisRun
                         ? "Claim the second relic with E."
                         : "Rewards secured. Press R to replay.";
 
@@ -1348,11 +1372,13 @@ namespace FourfoldEchoes.Product
                     ? "Tool READY"
                     : $"Tool cooldown {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%";
             var skillState = EquippedLumenEdge()
-                ? $"Skill Lumen Edge equipped  Stock {skillStock}"
-                : $"Skill empty  Stock {skillStock}";
+                ? $"Skill Lumen Edge equipped  Stock {skillStock}  Pending {pendingSkillRewards}"
+                : $"Skill empty  Stock {skillStock}  Pending {pendingSkillRewards}";
             var resultState = clearCount > 0
                 ? $"Clears returned {clearCount}"
-                : "Clear the boss, claim both relics, return to hub";
+                : pendingSkillRewards > 0
+                    ? $"Return to bank {pendingSkillRewards} skill reward(s)"
+                    : "Clear the boss, claim both relics, return to hub";
 
             GUI.Label(new Rect(30f, 26f, width - 28f, 34f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}{BossHealthSuffix()}", style);
             GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
