@@ -52,8 +52,10 @@ namespace FourfoldEchoes.Editor
             var meleeEnemy = CreateMeleeEnemy(root.transform, assets);
             var rangedEnemy = CreateRangedEnemy(root.transform, assets);
             var chest = CreateChest(root.transform, assets);
+            var secondChest = CreateSecondChest(root.transform, assets);
             var node = CreateExplorationToolProof(root.transform, assets);
-            CreateRuntimeHook(player.transform, new[] { meleeEnemy.transform, rangedEnemy.transform }, chest.transform, node, camera);
+            var secondNode = CreateSecondExplorationToolProof(root.transform, assets);
+            CreateRuntimeHook(player.transform, new[] { meleeEnemy.transform, rangedEnemy.transform }, chest.transform, secondChest.transform, node, secondNode, camera);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[]
@@ -77,8 +79,11 @@ namespace FourfoldEchoes.Editor
             Require("D020 Enemy Read Target");
             Require("D020 Enemy Ranged Read Target");
             Require("D020 Relic Chest");
+            Require("D020 Second Relic Chest");
             Require("D020 Exploration Tool Node");
+            Require("D020 Second Exploration Tool Node");
             Require("D020 Shortcut Route");
+            Require("D020 Second Gimmick Route");
             Require("D020 Top Down Camera");
             RequireComponent<ExplorationTool>("D020 Runtime Hook");
             RequireComponent<D020SliceController>("D020 Runtime Hook");
@@ -108,7 +113,7 @@ namespace FourfoldEchoes.Editor
             }
 
             var controller = hook.GetComponent<D020SliceController>();
-            if (controller == null || controller.player == null || controller.enemies == null || controller.enemies.Length < 2 || controller.rewardClaimPoint == null)
+            if (controller == null || controller.player == null || controller.enemies == null || controller.enemies.Length < 2 || controller.rewardClaimPoint == null || controller.secondRewardClaimPoint == null)
             {
                 throw new InvalidOperationException("D-020 playable controller is missing required player, enemies, or reward references.");
             }
@@ -119,12 +124,12 @@ namespace FourfoldEchoes.Editor
             }
 
             var tool = hook.GetComponent<ExplorationTool>();
-            if (tool == null || tool.player == null || tool.nodes == null || tool.nodes.Length == 0 || tool.nodes[0] == null)
+            if (tool == null || tool.player == null || tool.nodes == null || tool.nodes.Length < 2 || tool.nodes[0] == null || tool.nodes[1] == null)
             {
-                throw new InvalidOperationException("D-020 exploration tool is missing required player or node references.");
+                throw new InvalidOperationException("D-020 exploration tool is missing required player or two node references.");
             }
 
-            if (controller.explorationTool == null || controller.requiredToolNode == null)
+            if (controller.explorationTool == null || controller.requiredToolNode == null || controller.secondToolNode == null)
             {
                 throw new InvalidOperationException("D-020 playable controller is missing exploration tool gate references.");
             }
@@ -266,10 +271,13 @@ namespace FourfoldEchoes.Editor
             CreateBlock(field.transform, "D020 Tool Route Line B", assets.route, new Vector3(-5.25f, 0.035f, -3.10f), new Vector3(2.0f, 0.06f, 0.18f), Quaternion.Euler(0f, 38f, 0f));
             CreateBlock(field.transform, "D020 Combat Route Line", assets.route, new Vector3(-1.15f, 0.035f, -0.20f), new Vector3(3.4f, 0.06f, 0.18f), Quaternion.Euler(0f, 25f, 0f));
             CreateBlock(field.transform, "D020 Reward Route Line", assets.route, new Vector3(5.95f, 0.035f, 3.45f), new Vector3(4.2f, 0.06f, 0.18f), Quaternion.Euler(0f, 18f, 0f));
+            CreateBlock(field.transform, "D020 Second Room Route Line", assets.route, new Vector3(7.4f, 0.035f, -2.55f), new Vector3(3.4f, 0.06f, 0.18f), Quaternion.Euler(0f, -30f, 0f));
             CreateBlock(field.transform, "D020 Reward Low Rail A", assets.floorDark, new Vector3(7.2f, 0.28f, 6.85f), new Vector3(2.2f, 0.52f, 0.22f));
             CreateBlock(field.transform, "D020 Reward Low Rail B", assets.floorDark, new Vector3(10.4f, 0.28f, 6.85f), new Vector3(2.2f, 0.52f, 0.22f));
             CreateBlock(field.transform, "D020 Enemy Arena Marker", assets.enemyTell, new Vector3(1.8f, 0.018f, 0.95f), new Vector3(2.8f, 0.04f, 1.55f), Quaternion.Euler(0f, 24f, 0f));
+            CreateBlock(field.transform, "D020 Second Gimmick Room Marker", assets.tool, new Vector3(8.0f, 0.018f, -4.0f), new Vector3(2.6f, 0.04f, 1.5f), Quaternion.Euler(0f, -18f, 0f));
             CreateBlock(field.transform, "D020 Tool Target Backplate", assets.floorDark, new Vector3(-5.05f, 0.44f, -2.65f), new Vector3(1.2f, 0.86f, 0.20f));
+            CreateBlock(field.transform, "D020 Second Tool Backplate", assets.floorDark, new Vector3(8.30f, 0.44f, -4.25f), new Vector3(1.2f, 0.86f, 0.20f));
             CreateBlock(field.transform, "D020 Midfield Landmark A", assets.floorDark, new Vector3(-1.0f, 0.54f, 2.7f), new Vector3(0.42f, 1.08f, 1.1f));
             CreateBlock(field.transform, "D020 Midfield Landmark B", assets.floorDark, new Vector3(4.4f, 0.54f, -1.3f), new Vector3(1.2f, 1.08f, 0.36f));
         }
@@ -361,6 +369,22 @@ namespace FourfoldEchoes.Editor
             return chest;
         }
 
+        private static GameObject CreateSecondChest(Transform root, GeneratedAssets assets)
+        {
+            var chest = new GameObject("D020 Second Relic Chest");
+            chest.transform.SetParent(root);
+            chest.transform.position = new Vector3(10.7f, 0.1f, -5.35f);
+            chest.transform.rotation = Quaternion.Euler(0f, 28f, 0f);
+
+            CreateBlock(chest.transform, "D020 Second Chest Base", assets.chest, Vector3.zero, new Vector3(0.92f, 0.42f, 0.66f));
+            CreateBlock(chest.transform, "D020 Second Chest Lid", assets.route, new Vector3(0f, 0.35f, 0f), new Vector3(0.98f, 0.15f, 0.72f));
+            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Second Visible Relic", assets.relic, new Vector3(0f, 0.78f, 0f), new Vector3(0.28f, 0.38f, 0.28f));
+            CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Second Reward Footprint", assets.relic, new Vector3(0f, 0.03f, 0f), new Vector3(1.02f, 0.026f, 1.02f));
+            CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Second Reward Beam", assets.relic, new Vector3(0f, 1.48f, 0f), new Vector3(0.10f, 1.0f, 0.10f));
+            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Second Reward Beacon", assets.relic, new Vector3(0f, 2.48f, 0f), new Vector3(0.18f, 0.28f, 0.18f));
+            return chest;
+        }
+
         private static ExplorationNode CreateExplorationToolProof(Transform root, GeneratedAssets assets)
         {
             var proof = new GameObject("D020 One Tool Proof");
@@ -401,7 +425,40 @@ namespace FourfoldEchoes.Editor
             return node;
         }
 
-        private static void CreateRuntimeHook(Transform player, Transform[] enemies, Transform rewardClaimPoint, ExplorationNode node, Camera camera)
+        private static ExplorationNode CreateSecondExplorationToolProof(Transform root, GeneratedAssets assets)
+        {
+            var proof = new GameObject("D020 Second Tool Proof");
+            proof.transform.SetParent(root);
+
+            var response = new GameObject("D020 Second Gimmick Route");
+            response.transform.SetParent(proof.transform);
+            response.transform.position = Vector3.zero;
+            CreateBlock(response.transform, "D020 Second Bridge Slab A", assets.route, new Vector3(8.85f, 0.08f, -4.75f), new Vector3(0.96f, 0.07f, 0.34f), Quaternion.Euler(0f, -24f, 0f));
+            CreateBlock(response.transform, "D020 Second Bridge Slab B", assets.route, new Vector3(9.72f, 0.09f, -5.05f), new Vector3(0.96f, 0.07f, 0.34f), Quaternion.Euler(0f, 12f, 0f));
+            CreateBlock(response.transform, "D020 Second Bridge Beam", assets.tool, new Vector3(9.28f, 0.18f, -4.90f), new Vector3(1.55f, 0.045f, 0.09f), Quaternion.Euler(0f, -15f, 0f));
+            CreatePrimitive(response.transform, PrimitiveType.Sphere, "D020 Second Open Spark", assets.tool, new Vector3(9.72f, 0.55f, -5.05f), new Vector3(0.22f, 0.22f, 0.22f));
+
+            var nodeObject = new GameObject("D020 Second Exploration Tool Node");
+            nodeObject.transform.SetParent(proof.transform);
+            nodeObject.transform.position = new Vector3(8.30f, 0.1f, -4.35f);
+            var footprint = CreatePrimitive(nodeObject.transform, PrimitiveType.Cylinder, "D020 Second Tool Node Footprint", assets.tool, Vector3.zero, new Vector3(0.82f, 0.026f, 0.82f));
+            CreateBlock(nodeObject.transform, "D020 Second Tool Node Pedestal", assets.floorDark, new Vector3(0f, 0.22f, 0f), new Vector3(0.58f, 0.38f, 0.58f));
+            CreateBlock(nodeObject.transform, "D020 Second Tool Node Signal", assets.tool, new Vector3(0f, 0.64f, -0.04f), new Vector3(0.14f, 0.56f, 0.09f), Quaternion.Euler(0f, 0f, 32f));
+            var activeRead = CreatePrimitive(nodeObject.transform, PrimitiveType.Sphere, "D020 Second Tool Node Active Read", assets.relic, new Vector3(0f, 0.92f, -0.03f), new Vector3(0.22f, 0.22f, 0.22f));
+            activeRead.SetActive(false);
+            response.SetActive(false);
+
+            var node = nodeObject.AddComponent<ExplorationNode>();
+            node.activationRadius = 2.5f;
+            node.responseTarget = response;
+            node.idleRead = footprint;
+            node.activeRead = activeRead;
+            node.highlightRenderers = response.GetComponentsInChildren<Renderer>(true);
+            node.ResetNode();
+            return node;
+        }
+
+        private static void CreateRuntimeHook(Transform player, Transform[] enemies, Transform rewardClaimPoint, Transform secondRewardClaimPoint, ExplorationNode node, ExplorationNode secondNode, Camera camera)
         {
             var hookObject = new GameObject("D020 Runtime Hook");
             var audioSource = hookObject.AddComponent<AudioSource>();
@@ -412,7 +469,7 @@ namespace FourfoldEchoes.Editor
 
             var tool = hookObject.AddComponent<ExplorationTool>();
             tool.player = player;
-            tool.nodes = new[] { node };
+            tool.nodes = new[] { node, secondNode };
             tool.range = 2.8f;
             tool.cooldownSeconds = 0.42f;
             tool.useKey = KeyCode.Q;
@@ -426,9 +483,12 @@ namespace FourfoldEchoes.Editor
             controller.enemies = enemies;
             controller.explorationTool = tool;
             controller.requiredToolNode = node;
+            controller.secondToolNode = secondNode;
             controller.rewardReadyRead = FindInChildren(rewardClaimPoint, "D020 Reward Beacon")?.gameObject
                 ?? FindInChildren(rewardClaimPoint, "FE_RELIC_SPARK_P0")?.gameObject;
             controller.rewardClaimPoint = rewardClaimPoint;
+            controller.secondRewardReadyRead = FindInChildren(secondRewardClaimPoint, "D020 Second Reward Beacon")?.gameObject;
+            controller.secondRewardClaimPoint = secondRewardClaimPoint;
             controller.fixedCamera = camera;
             controller.audioSource = audioSource;
             controller.attackClip = LoadOptionalAudioClip(AttackClipPath);

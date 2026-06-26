@@ -34,6 +34,8 @@ namespace FourfoldEchoes.Editor
             Directory.CreateDirectory(outputDirectory);
             var shortcutNode = FindSceneObject("D020 Exploration Tool Node")?.GetComponent<ExplorationNode>();
             var shortcutRoute = FindSceneObject("D020 Shortcut Route");
+            var secondNode = FindSceneObject("D020 Second Exploration Tool Node")?.GetComponent<ExplorationNode>();
+            var secondRoute = FindSceneObject("D020 Second Gimmick Route");
 
             var outputPath = Path.Combine(outputDirectory, "d020-slice-camera.png");
             if (shortcutNode != null)
@@ -53,6 +55,16 @@ namespace FourfoldEchoes.Editor
             {
                 shortcutRoute.SetActive(true);
             }
+
+            if (secondNode != null)
+            {
+                secondNode.SetSolved(false);
+            }
+            else if (secondRoute != null)
+            {
+                secondRoute.SetActive(false);
+            }
+
             CaptureCameraFromPose(
                 camera,
                 Path.Combine(outputDirectory, "d020-tool-node-read.png"),
@@ -71,6 +83,29 @@ namespace FourfoldEchoes.Editor
                 new Vector3(9.0f, 10.2f, -7.3f),
                 new Vector3(2.9f, 0.5f, 1.2f),
                 6.2f);
+
+            CaptureCameraFromPose(
+                camera,
+                Path.Combine(outputDirectory, "d020-second-tool-node-read.png"),
+                new Vector3(14.4f, 9.4f, -9.7f),
+                new Vector3(8.4f, 0.5f, -4.4f),
+                5.2f);
+
+            if (secondNode != null)
+            {
+                secondNode.SetSolved(true);
+            }
+            else if (secondRoute != null)
+            {
+                secondRoute.SetActive(true);
+            }
+
+            CaptureCameraFromPose(
+                camera,
+                Path.Combine(outputDirectory, "d020-second-reward-read.png"),
+                new Vector3(15.9f, 9.6f, -10.1f),
+                new Vector3(10.4f, 0.6f, -5.1f),
+                4.8f);
 
             Debug.Log($"FOURFOLD D-020 vertical slice camera evidence captured: {outputPath}");
         }

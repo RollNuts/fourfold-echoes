@@ -12,6 +12,8 @@ namespace FourfoldEchoes.Product
         public bool d020Cleared;
         public bool d020ShortcutOpened;
         public bool d020RewardClaimed;
+        public bool d020SecondNodeOpened;
+        public bool d020SecondRewardClaimed;
         public int d020LumenEdgeStock;
         public int d020EquippedSkill;
         public int d020LostSkillCount;
