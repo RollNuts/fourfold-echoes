@@ -56,15 +56,21 @@ namespace FourfoldEchoes.Editor
             CaptureCameraFromPose(
                 camera,
                 Path.Combine(outputDirectory, "d020-tool-node-read.png"),
-                new Vector3(2.9f, 7.1f, -5.2f),
-                new Vector3(-2.35f, 0.35f, -0.1f),
-                3.9f);
+                new Vector3(2.0f, 8.4f, -7.7f),
+                new Vector3(-3.2f, 0.45f, -1.4f),
+                4.8f);
             CaptureCameraFromPose(
                 camera,
                 Path.Combine(outputDirectory, "d020-reward-read.png"),
-                new Vector3(5.6f, 6.4f, -4.8f),
-                new Vector3(2.1f, 0.45f, -1.0f),
-                3.8f);
+                new Vector3(8.0f, 8.0f, -3.7f),
+                new Vector3(4.4f, 0.55f, 2.8f),
+                4.9f);
+            CaptureCameraFromPose(
+                camera,
+                Path.Combine(outputDirectory, "d020-combat-read.png"),
+                new Vector3(6.0f, 8.2f, -6.2f),
+                new Vector3(1.6f, 0.5f, 1.4f),
+                5.2f);
 
             Debug.Log($"FOURFOLD D-020 vertical slice camera evidence captured: {outputPath}");
         }
