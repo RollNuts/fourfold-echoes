@@ -26,10 +26,12 @@ namespace FourfoldEchoes.Product
         public KeyCode dodgeKey = KeyCode.LeftShift;
         public KeyCode interactKey = KeyCode.E;
         public KeyCode retryKey = KeyCode.R;
+        public KeyCode pauseKey = KeyCode.Escape;
         public KeyCode gamepadAttackKey = KeyCode.JoystickButton0;
         public KeyCode gamepadDodgeKey = KeyCode.JoystickButton1;
         public KeyCode gamepadInteractKey = KeyCode.JoystickButton3;
         public KeyCode gamepadRetryKey = KeyCode.JoystickButton7;
+        public KeyCode gamepadPauseKey = KeyCode.JoystickButton9;
 
         [Header("Audio")]
         public AudioSource audioSource;
@@ -150,6 +152,7 @@ namespace FourfoldEchoes.Product
         private Material rewardMaterial;
         private bool rewardReadyCuePlayed;
         private AudioClip currentMusicClip;
+        private bool paused;
 
         private void Awake()
         {
@@ -238,6 +241,23 @@ namespace FourfoldEchoes.Product
 
         private void Update()
         {
+            if (Pressed(retryKey, gamepadRetryKey))
+            {
+                ResetRun();
+                return;
+            }
+
+            if (Pressed(pauseKey, gamepadPauseKey))
+            {
+                SetPaused(!paused);
+                return;
+            }
+
+            if (paused)
+            {
+                return;
+            }
+
             var dt = Time.deltaTime;
             attackTimer = Mathf.Max(0f, attackTimer - dt);
             attackReadTimer = Mathf.Max(0f, attackReadTimer - dt);
@@ -245,12 +265,6 @@ namespace FourfoldEchoes.Product
             dodgeCooldownTimer = Mathf.Max(0f, dodgeCooldownTimer - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
             UpdateMusicState();
-
-            if (Pressed(retryKey, gamepadRetryKey))
-            {
-                ResetRun();
-                return;
-            }
 
             if (runFailed || runCleared)
             {
@@ -744,6 +758,7 @@ namespace FourfoldEchoes.Product
 
         private void ResetRun()
         {
+            SetPaused(false);
             playerHealth = PlayerMaxHealth;
             playerInvulnerableTimer = 0f;
             runFailed = false;
@@ -817,6 +832,29 @@ namespace FourfoldEchoes.Product
                 secondToolNode.SetSolved(previousSecondNodeLoaded);
             }
             SetRewardReady(false);
+        }
+
+        private void SetPaused(bool value)
+        {
+            if (paused == value)
+            {
+                return;
+            }
+
+            paused = value;
+            if (musicSource == null)
+            {
+                return;
+            }
+
+            if (paused)
+            {
+                musicSource.Pause();
+            }
+            else if (currentMusicClip != null && musicSource.clip == currentMusicClip)
+            {
+                musicSource.UnPause();
+            }
         }
 
         private void LoadProgress()
@@ -1499,8 +1537,8 @@ namespace FourfoldEchoes.Product
 
         private void OnGUI()
         {
-            var width = Mathf.Min(520f, Screen.width - 32f);
-            var rect = new Rect(16f, 16f, width, 182f);
+            var width = Mathf.Min(600f, Screen.width - 32f);
+            var rect = new Rect(16f, 16f, width, 214f);
             GUI.Box(rect, GUIContent.none);
 
             var style = new GUIStyle(GUI.skin.label)
@@ -1548,7 +1586,17 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
             GUI.Label(new Rect(30f, 88f, width - 28f, 30f), skillState, style);
             GUI.Label(new Rect(30f, 118f, width - 28f, 52f), objective, style);
-            GUI.Label(new Rect(30f, 164f, width - 28f, 34f), $"{resultState}  Move WASD/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y", style);
+            GUI.Label(new Rect(30f, 164f, width - 28f, 52f), $"{resultState}  Move WASD/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Pause Esc/Menu", style);
+
+            if (paused)
+            {
+                var pauseWidth = Mathf.Min(480f, Screen.width - 48f);
+                var pauseHeight = 136f;
+                var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
+                GUI.Box(pauseRect, GUIContent.none);
+                GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 22f, pauseWidth - 48f, 32f), "PAUSED", style);
+                GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 58f, pauseWidth - 48f, 58f), "Solo run is stopped. Press Esc/Menu to resume, or R/Back to reset this run.", style);
+            }
 
             if (previousReturnedToHubLoaded && !runCleared)
             {
