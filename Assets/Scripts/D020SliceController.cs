@@ -46,9 +46,14 @@ namespace FourfoldEchoes.Product
         private const float EnemyAttackRange = 1.18f;
         private const float EnemyAttackWindup = 0.62f;
         private const float EnemyAttackCooldown = 1.15f;
+        private const float BossAttackRange = 2.05f;
+        private const float BossAttackWindup = 0.92f;
+        private const float BossAttackCooldown = 1.65f;
+        private const float BossSpeed = 1.12f;
         private const float PlayerMaxHealth = 100f;
         private const float MeleeEnemyDamage = 26f;
         private const float RangedEnemyDamage = 18f;
+        private const float BossEnemyDamage = 34f;
         private const float InvulnerableAfterHit = 0.65f;
         private const float RewardRange = 1.8f;
         private const string SaveKeyCleared = "fourfold.d020.slice.cleared";
@@ -126,8 +131,8 @@ namespace FourfoldEchoes.Product
             initialEnemyScales = new Vector3[enemyHealth.Length];
             for (var i = 0; i < enemyHealth.Length; i++)
             {
-                enemyHealth[i] = i == 0 ? 90f : 55f;
-                enemyAttackTimer[i] = 0.28f + i * 0.25f;
+                enemyHealth[i] = InitialEnemyHealth(i);
+                enemyAttackTimer[i] = InitialEnemyAttackDelay(i);
                 if (enemies != null && enemies[i] != null)
                 {
                     initialEnemyPositions[i] = enemies[i].position;
@@ -333,22 +338,25 @@ namespace FourfoldEchoes.Product
                 var desired = toPlayer.normalized;
                 enemy.rotation = Quaternion.LookRotation(-desired, Vector3.up);
                 enemyAttackTimer[i] = Mathf.Max(0f, enemyAttackTimer[i] - dt);
+                var attackRange = EnemyAttackRangeFor(i);
+                var attackWindup = EnemyAttackWindupFor(i);
+                var attackCooldown = EnemyAttackCooldownFor(i);
 
-                if (toPlayer.magnitude <= EnemyAttackRange && enemyAttackTimer[i] <= 0f)
+                if (toPlayer.magnitude <= attackRange && enemyAttackTimer[i] <= 0f)
                 {
                     enemyWindupTimer[i] += dt;
-                    if (enemyWindupTimer[i] >= EnemyAttackWindup)
+                    if (enemyWindupTimer[i] >= attackWindup)
                     {
                         ResolveEnemyAttack(i, enemy, toPlayer);
                         enemyWindupTimer[i] = 0f;
-                        enemyAttackTimer[i] = EnemyAttackCooldown + i * 0.22f;
+                        enemyAttackTimer[i] = attackCooldown;
                     }
                     continue;
                 }
 
                 enemyWindupTimer[i] = 0f;
                 var flank = new Vector3(-desired.z, 0f, desired.x) * Mathf.Sin(Time.time * (0.8f + i * 0.35f)) * 0.28f;
-                enemy.position += (desired + flank).normalized * EnemySpeed * dt;
+                enemy.position += (desired + flank).normalized * EnemySpeedFor(i) * dt;
             }
         }
 
@@ -360,12 +368,12 @@ namespace FourfoldEchoes.Product
             }
 
             var distance = toPlayer.magnitude;
-            if (distance > EnemyAttackRange + 0.28f)
+            if (distance > EnemyAttackRangeFor(index) + 0.28f)
             {
                 return;
             }
 
-            playerHealth = Mathf.Max(0f, playerHealth - (index == 0 ? MeleeEnemyDamage : RangedEnemyDamage));
+            playerHealth = Mathf.Max(0f, playerHealth - EnemyDamageFor(index));
             playerInvulnerableTimer = InvulnerableAfterHit;
             var knockback = (player.position - enemy.position);
             knockback.y = 0f;
@@ -426,9 +434,11 @@ namespace FourfoldEchoes.Product
                     continue;
                 }
 
-                var progress = Mathf.Clamp01(enemyWindupTimer[i] / EnemyAttackWindup);
+                var progress = Mathf.Clamp01(enemyWindupTimer[i] / EnemyAttackWindupFor(i));
                 read.transform.position = enemy.position + new Vector3(0f, 0.07f, 0f);
-                var radius = Mathf.Lerp(0.72f, 1.28f, progress);
+                var minRadius = IsBossEnemy(i) ? 1.25f : 0.72f;
+                var maxRadius = IsBossEnemy(i) ? 2.35f : 1.28f;
+                var radius = Mathf.Lerp(minRadius, maxRadius, progress);
                 read.transform.localScale = new Vector3(radius, 0.025f, radius);
             }
         }
@@ -569,8 +579,8 @@ namespace FourfoldEchoes.Product
 
             for (var i = 0; i < enemyHealth.Length; i++)
             {
-                enemyHealth[i] = i == 0 ? 90f : 55f;
-                enemyAttackTimer[i] = 0.28f + i * 0.25f;
+                enemyHealth[i] = InitialEnemyHealth(i);
+                enemyAttackTimer[i] = InitialEnemyAttackDelay(i);
                 enemyWindupTimer[i] = 0f;
                 if (enemies != null && enemies[i] != null)
                 {
@@ -672,8 +682,59 @@ namespace FourfoldEchoes.Product
 
         private float CurrentAttackDamage(int enemyIndex)
         {
-            var baseDamage = enemyIndex == 0 ? 34f : 42f;
+            var baseDamage = IsBossEnemy(enemyIndex) ? 30f : enemyIndex == 0 ? 34f : 42f;
             return EquippedLumenEdge() ? baseDamage + 12f : baseDamage;
+        }
+
+        private float InitialEnemyHealth(int index)
+        {
+            if (IsBossEnemy(index))
+            {
+                return 220f;
+            }
+
+            return index == 0 ? 90f : 55f;
+        }
+
+        private float InitialEnemyAttackDelay(int index)
+        {
+            return IsBossEnemy(index) ? 0.9f : 0.28f + index * 0.25f;
+        }
+
+        private float EnemyAttackRangeFor(int index)
+        {
+            return IsBossEnemy(index) ? BossAttackRange : EnemyAttackRange;
+        }
+
+        private float EnemyAttackWindupFor(int index)
+        {
+            return IsBossEnemy(index) ? BossAttackWindup : EnemyAttackWindup;
+        }
+
+        private float EnemyAttackCooldownFor(int index)
+        {
+            return IsBossEnemy(index) ? BossAttackCooldown : EnemyAttackCooldown + index * 0.22f;
+        }
+
+        private float EnemySpeedFor(int index)
+        {
+            return IsBossEnemy(index) ? BossSpeed : EnemySpeed;
+        }
+
+        private float EnemyDamageFor(int index)
+        {
+            if (IsBossEnemy(index))
+            {
+                return BossEnemyDamage;
+            }
+
+            return index == 0 ? MeleeEnemyDamage : RangedEnemyDamage;
+        }
+
+        private bool IsBossEnemy(int index)
+        {
+            var enemy = enemies != null && index >= 0 && index < enemies.Length ? enemies[index] : null;
+            return enemy != null && enemy.name.IndexOf("Boss", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private bool EquippedLumenEdge()
@@ -692,6 +753,23 @@ namespace FourfoldEchoes.Product
             }
 
             return enemyHealth.Length > 0;
+        }
+
+        private string BossHealthSuffix()
+        {
+            for (var i = 0; i < enemyHealth.Length; i++)
+            {
+                if (!IsBossEnemy(i))
+                {
+                    continue;
+                }
+
+                return enemyHealth[i] > 0f
+                    ? $"  Boss {Mathf.CeilToInt(enemyHealth[i])}"
+                    : "  Boss down";
+            }
+
+            return string.Empty;
         }
 
         private bool RewardReady()
@@ -959,7 +1037,7 @@ namespace FourfoldEchoes.Product
                 ? $"Skill Lumen Edge equipped  Stock {skillStock}"
                 : $"Skill empty  Stock {skillStock}";
 
-            GUI.Label(new Rect(30f, 26f, width - 28f, 34f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}", style);
+            GUI.Label(new Rect(30f, 26f, width - 28f, 34f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}{BossHealthSuffix()}", style);
             GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
             GUI.Label(new Rect(30f, 88f, width - 28f, 30f), skillState, style);
             GUI.Label(new Rect(30f, 118f, width - 28f, 52f), objective, style);

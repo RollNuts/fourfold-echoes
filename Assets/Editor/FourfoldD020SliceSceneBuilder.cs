@@ -51,11 +51,12 @@ namespace FourfoldEchoes.Editor
             var player = CreatePlayer(root.transform, assets);
             var meleeEnemy = CreateMeleeEnemy(root.transform, assets);
             var rangedEnemy = CreateRangedEnemy(root.transform, assets);
+            var firstBoss = CreateFirstBoss(root.transform, assets);
             var chest = CreateChest(root.transform, assets);
             var secondChest = CreateSecondChest(root.transform, assets);
             var node = CreateExplorationToolProof(root.transform, assets);
             var secondNode = CreateSecondExplorationToolProof(root.transform, assets);
-            CreateRuntimeHook(player.transform, new[] { meleeEnemy.transform, rangedEnemy.transform }, chest.transform, secondChest.transform, node, secondNode, camera);
+            CreateRuntimeHook(player.transform, new[] { meleeEnemy.transform, rangedEnemy.transform, firstBoss.transform }, chest.transform, secondChest.transform, node, secondNode, camera);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[]
@@ -78,6 +79,7 @@ namespace FourfoldEchoes.Editor
             Require("D020 Player");
             Require("D020 Enemy Read Target");
             Require("D020 Enemy Ranged Read Target");
+            Require("D020 First Boss");
             Require("D020 Relic Chest");
             Require("D020 Second Relic Chest");
             Require("D020 Exploration Tool Node");
@@ -346,6 +348,25 @@ namespace FourfoldEchoes.Editor
             CreateBlock(enemy.transform, "D020 Ranged Enemy Aim Line", assets.enemyTell, new Vector3(-0.70f, 0.13f, -0.78f), new Vector3(1.55f, 0.035f, 0.10f), Quaternion.Euler(0f, 28f, 0f));
             CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Ranged Enemy Tell Orb", assets.enemyTell, new Vector3(0.64f, 1.62f, -0.12f), new Vector3(0.24f, 0.24f, 0.24f));
             return enemy;
+        }
+
+        private static GameObject CreateFirstBoss(Transform root, GeneratedAssets assets)
+        {
+            var boss = new GameObject("D020 First Boss");
+            boss.transform.SetParent(root);
+            boss.transform.position = new Vector3(3.8f, 0.18f, -1.85f);
+            boss.transform.rotation = Quaternion.Euler(0f, 206f, 0f);
+
+            CreatePrimitive(boss.transform, PrimitiveType.Cylinder, "D020 Boss Ground Read", assets.enemyTell, new Vector3(0f, 0.035f, 0f), new Vector3(2.35f, 0.026f, 2.35f));
+            CreatePrimitive(boss.transform, PrimitiveType.Capsule, "D020 Boss Heavy Core", assets.enemy, new Vector3(0f, 1.02f, 0f), new Vector3(1.55f, 1.34f, 1.18f));
+            CreateBlock(boss.transform, "D020 Boss Crown Left", assets.enemyArmor, new Vector3(-0.56f, 1.88f, -0.08f), new Vector3(0.26f, 0.62f, 0.20f), Quaternion.Euler(0f, 0f, -18f));
+            CreateBlock(boss.transform, "D020 Boss Crown Right", assets.enemyArmor, new Vector3(0.56f, 1.88f, -0.08f), new Vector3(0.26f, 0.62f, 0.20f), Quaternion.Euler(0f, 0f, 18f));
+            CreatePrimitive(boss.transform, PrimitiveType.Sphere, "D020 Boss Exposed Core", assets.enemyTell, new Vector3(0f, 1.30f, -0.56f), new Vector3(0.56f, 0.46f, 0.24f));
+            CreateBlock(boss.transform, "D020 Boss Left Arm", assets.enemyArmor, new Vector3(-1.05f, 0.92f, -0.10f), new Vector3(0.36f, 1.08f, 0.28f), Quaternion.Euler(0f, 0f, 22f));
+            CreateBlock(boss.transform, "D020 Boss Right Arm", assets.enemyArmor, new Vector3(1.05f, 0.92f, -0.10f), new Vector3(0.36f, 1.08f, 0.28f), Quaternion.Euler(0f, 0f, -22f));
+            CreateBlock(boss.transform, "D020 Boss Sweeping Blade", assets.enemyTell, new Vector3(1.30f, 0.58f, -0.76f), new Vector3(0.20f, 1.92f, 0.16f), Quaternion.Euler(18f, 0f, -48f));
+            CreateBlock(boss.transform, "D020 Boss Back Banner", assets.floorDark, new Vector3(0f, 1.16f, 0.62f), new Vector3(1.02f, 1.18f, 0.14f));
+            return boss;
         }
 
         private static GameObject CreateChest(Transform root, GeneratedAssets assets)
