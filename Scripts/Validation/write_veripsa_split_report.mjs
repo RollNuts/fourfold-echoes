@@ -53,6 +53,8 @@ const lanes = [
     order: 4,
     patterns: [
       /^artifacts\/\.gitignore$/,
+      /^docs\/Production\/REQUIRED_CHECKS\.md$/,
+      /^Scripts\/Validation\/check_public_repo_hygiene\.mjs$/,
       /^Scripts\/Validation\/validate_repo\.mjs$/,
       /^Scripts\/Validation\/write_veripsa_split_report\.mjs$/,
       /^tools\/forge\/check\.mjs$/,

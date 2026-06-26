@@ -1,14 +1,15 @@
 # FOURFOLD ECHOES Agent Rules
 
-This private repository is the commercial runtime path for FOURFOLD ECHOES.
+This repository is the commercial runtime path for FOURFOLD ECHOES.
 
 ## Protected Repositories
 
-- Do not delete, rewrite, or repurpose `/Users/murakaminaoya/veripsa-games`.
-- `veripsa-games` is the public Veripsa dogfood repository and is not the
-  shipping game source.
-- Work for the commercial game belongs in this private `fourfold-echoes`
-  repository.
+- Do not delete, rewrite, or repurpose sibling Veripsa dogfood repositories.
+- `veripsa-games` is a Veripsa dogfood repository and is not the shipping game
+  source.
+- Work for the commercial game belongs in this `fourfold-echoes` repository.
+- Never commit machine-local absolute paths, credentials, tokens, private relay
+  URLs, or unreviewed local tool configuration.
 
 ## Current Product Direction
 

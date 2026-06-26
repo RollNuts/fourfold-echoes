@@ -1,5 +1,5 @@
 {
-  "generatedUtc": "2026-06-26T06:02:49.778Z",
+  "generatedUtc": "2026-06-26T06:16:08.761Z",
   "coreSource": "GitHub Veripsa checks; local veripsa CLI unavailable",
   "coreObservations": [
     {
@@ -13,13 +13,18 @@
       "implication": "New Unity editor/tool files were not in main's graph, so Core treated them as unknown. Split new C# runtime, editor scene generation, and capture/build tooling into separate PRs instead of landing them with docs."
     }
   ],
-  "dirtyFileCount": 2,
+  "dirtyFileCount": 5,
   "lanes": [
     {
       "id": "PR-A",
       "name": "product-canon",
       "order": 1,
-      "files": []
+      "files": [
+        {
+          "status": " M",
+          "path": "AGENTS.md"
+        }
+      ]
     },
     {
       "id": "PR-B",
@@ -31,13 +36,31 @@
       "id": "PR-C",
       "name": "production-release-plans",
       "order": 3,
-      "files": []
+      "files": [
+        {
+          "status": "??",
+          "path": "docs/Production/REQUIRED_CHECKS.md"
+        }
+      ]
     },
     {
       "id": "PR-D",
       "name": "validation-sync",
       "order": 4,
-      "files": []
+      "files": [
+        {
+          "status": " M",
+          "path": "Scripts/Validation/validate_repo.mjs"
+        },
+        {
+          "status": " M",
+          "path": "Scripts/Validation/write_veripsa_split_report.mjs"
+        },
+        {
+          "status": "??",
+          "path": "Scripts/Validation/check_public_repo_hygiene.mjs"
+        }
+      ]
     },
     {
       "id": "PR-E1",
@@ -49,23 +72,13 @@
       "id": "PR-E2",
       "name": "d020-scene-evidence",
       "order": 6,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Editor/FourfoldD020SliceSceneBuilder.cs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E3",
       "name": "d020-capture-build",
       "order": 7,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Editor/FourfoldD020PlayableSmoke.cs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-F",
