@@ -21,7 +21,16 @@ Current command entry:
 FourfoldEchoes.Editor.Mediator.FourfoldForgeMediator.Run
 ```
 
-Current playable build entry:
+Current product build entry:
+
+```text
+tools/unity_build_product_loop.sh
+  -> FourfoldEchoes.Editor.FourfoldUnityBuild.BuildCurrentProductLoop
+  -> Title -> HubCrossroads -> D020VerticalSlice
+  -> Build/FourfoldEchoes/
+```
+
+Legacy Gate A build entry:
 
 ```text
 tools/unity_build_gate_a.sh
@@ -30,9 +39,9 @@ tools/unity_build_gate_a.sh
   -> Build/GateA/
 ```
 
-The default Gate A build target is the macOS standalone app. Windows can be
-requested from the same wrapper when the Unity Windows standalone module is
-available, but macOS is the verified path for Gate A.
+The default product-loop build target is the macOS standalone app. Windows can
+be requested from the same wrapper when the Unity Windows standalone module is
+available. Gate A remains only as a historical technical harness.
 
 ## Acceleration Layer
 
