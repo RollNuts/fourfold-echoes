@@ -17,8 +17,10 @@ namespace FourfoldEchoes.Product
         [Header("Input")]
         public KeyCode interactKey = KeyCode.E;
         public KeyCode resetKey = KeyCode.Backspace;
+        public KeyCode pauseKey = KeyCode.Escape;
         public KeyCode gamepadInteractKey = KeyCode.JoystickButton3;
         public KeyCode gamepadResetKey = KeyCode.JoystickButton6;
+        public KeyCode gamepadPauseKey = KeyCode.JoystickButton9;
 
         private const float MoveSpeed = 4.8f;
         private const float InteractionRange = 2.1f;
@@ -31,6 +33,7 @@ namespace FourfoldEchoes.Product
         private Vector3 facing = Vector3.forward;
         private FourfoldProgressData progressData;
         private float resetHoldSeconds;
+        private bool paused;
 
         private void Awake()
         {
@@ -51,6 +54,23 @@ namespace FourfoldEchoes.Product
 
         private void Update()
         {
+            if (Pressed(pauseKey, gamepadPauseKey))
+            {
+                paused = !paused;
+                resetHoldSeconds = 0f;
+                return;
+            }
+
+            if (paused)
+            {
+                if (Pressed(resetKey, gamepadResetKey))
+                {
+                    TryReturnToTitle();
+                }
+
+                return;
+            }
+
             MovePlayer(Time.deltaTime);
             UpdateCamera();
             UpdateResetInput(Time.deltaTime);
@@ -88,6 +108,25 @@ namespace FourfoldEchoes.Product
             if (Application.isPlaying)
             {
                 SceneManager.LoadScene(regionSceneName);
+            }
+
+            return true;
+        }
+
+        public bool TryReturnToTitle()
+        {
+            progressData = FourfoldProgressSave.Load();
+            progressData.currentScene = FourfoldGameIds.SceneHubCrossroads;
+            progressData.hubUnlocked = true;
+            progressData.regionD020Unlocked = true;
+            progressData.lumenRodUnlocked = true;
+            FourfoldProgressSave.Save(progressData);
+            paused = false;
+            resetHoldSeconds = 0f;
+
+            if (Application.isPlaying)
+            {
+                SceneManager.LoadScene(FourfoldGameIds.UnitySceneTitle);
             }
 
             return true;
@@ -202,7 +241,19 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(18f, 42f, 520f, 24f), cleared ? "D-020 cleared. Re-enter to improve the run." : "Objective: enter D-020 and defeat the boss.");
             GUI.Label(new Rect(18f, 66f, 520f, 24f), CanEnterD020Region() ? "Press E / Y: Enter D-020" : "Move to the gold gate to start the run.");
             GUI.Label(new Rect(18f, 90f, 520f, 24f), $"D-020 clears: {clearCount}   Best: {bestTime}");
-            GUI.Label(new Rect(18f, 114f, 520f, 24f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Hold Backspace / Select: Reset save");
+            GUI.Label(new Rect(18f, 114f, 680f, 24f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Esc/Menu: Pause   Hold Backspace / Select: Reset save");
+
+            if (!paused)
+            {
+                return;
+            }
+
+            var pauseWidth = Mathf.Min(520f, Screen.width - 48f);
+            var pauseHeight = 132f;
+            var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
+            GUI.Box(pauseRect, GUIContent.none);
+            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 20f, pauseWidth - 48f, 30f), "PAUSED");
+            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 56f, pauseWidth - 48f, 58f), "Esc/Menu resumes. Backspace/Select returns to title.");
         }
     }
 }

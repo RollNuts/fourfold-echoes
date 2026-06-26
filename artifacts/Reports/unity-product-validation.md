@@ -1,6 +1,6 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-26T14:42:27.3149460Z`
+Generated UTC: `2026-06-26T15:00:14.2019310Z`
 
 ## Metrics
 
@@ -25,8 +25,8 @@ Generated UTC: `2026-06-26T14:42:27.3149460Z`
 
 - **info** `render.pipeline`: Built-in render pipeline is active.
 - **info** `save.service`: Versioned local save validated with settings defaults, roundtrip persistence, backup recovery, and corrupt-save fallback.
-- **info** `d020.slice`: D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking.
-- **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with a D-020 region gate and progress initialization.
+- **info** `d020.slice`: D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking.
+- **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with a D-020 region gate, progress initialization, reset, and return-to-title persistence.
 - **info** `title.entry`: Title scene generated and validated with New Game, Continue, Settings volume persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice.
 - **info** `prototype.gate_a`: Legacy Gate A generation skipped. Set FOURFOLD_INCLUDE_LEGACY_GATE_A=1 to validate the old harness explicitly.
 - **warn** `texture.assets`: No production texture assets found. Store-quality art pass has not started.

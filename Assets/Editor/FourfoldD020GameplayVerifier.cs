@@ -295,6 +295,143 @@ namespace FourfoldEchoes.Editor
             }
         }
 
+        public static void VerifyExistingSceneCombatDefeatPath()
+        {
+            FourfoldD020SliceSceneBuilder.ValidateGeneratedScene();
+
+            var hook = FindSceneObject("D020 Runtime Hook");
+            if (hook == null)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: required object is missing: D020 Runtime Hook.");
+            }
+
+            var controller = RequireComponent<D020SliceController>(hook, "D020 Runtime Hook");
+            var tool = RequireComponent<ExplorationTool>(hook, "D020 Runtime Hook");
+            ValidateRequiredReferences(controller, tool);
+            PrepareControllerForCombat(controller);
+
+            for (var i = 0; i < controller.enemies.Length; i++)
+            {
+                DefeatEnemyWithBasicAttacks(controller, i);
+            }
+
+            if (!InvokePrivateBool(controller, "AllEnemiesDefeated"))
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: basic attacks did not defeat the full enemy roster.");
+            }
+
+            if (!GetPrivateBool(controller, "bossDefeatedThisRun"))
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: defeating the boss through combat did not set the boss defeat beat.");
+            }
+
+            if (!InvokePrivateBool(controller, "RewardReady"))
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: rewards were not ready after combat defeat and first tool-node solve.");
+            }
+
+            Debug.Log("FOURFOLD D-020 combat verifier passed: basic attacks defeat melee, ranged, elite, and boss enemies and unlock reward readiness.");
+        }
+
+        public static void VerifyExistingSceneDeathRetryAndTitlePath()
+        {
+            var savePath = FourfoldProgressSave.SavePath();
+            var saveBackupPath = savePath + ".bak";
+            byte[] previousSaveBytes = null;
+            byte[] previousSaveBackupBytes = null;
+
+            if (File.Exists(savePath))
+            {
+                previousSaveBytes = File.ReadAllBytes(savePath);
+            }
+
+            if (File.Exists(saveBackupPath))
+            {
+                previousSaveBackupBytes = File.ReadAllBytes(saveBackupPath);
+            }
+
+            try
+            {
+                DeleteIfExists(savePath);
+                DeleteIfExists(saveBackupPath);
+
+                FourfoldD020SliceSceneBuilder.ValidateGeneratedScene();
+
+                var hook = FindSceneObject("D020 Runtime Hook");
+                if (hook == null)
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: required object is missing: D020 Runtime Hook.");
+                }
+
+                var controller = RequireComponent<D020SliceController>(hook, "D020 Runtime Hook");
+                var tool = RequireComponent<ExplorationTool>(hook, "D020 Runtime Hook");
+                ValidateRequiredReferences(controller, tool);
+                PrepareControllerForCombat(controller);
+
+                var enemy = controller.enemies[0];
+                controller.player.position = Vector3.zero;
+                enemy.position = new Vector3(0f, 0f, 0.72f);
+                var toPlayer = controller.player.position - enemy.position;
+                toPlayer.y = 0f;
+
+                SetPrivate(controller, "playerHealth", 100f);
+                SetPrivate(controller, "playerInvulnerableTimer", 0f);
+                SetPrivate(controller, "dodgeTimer", 0.12f);
+                SetPrivate(controller, "runFailed", false);
+                InvokePrivate(controller, "ResolveEnemyAttack", 0, enemy, toPlayer);
+                if (GetPrivate<float>(controller, "playerHealth") < 99.9f || GetPrivateBool(controller, "runFailed"))
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: dodge invulnerability did not prevent enemy damage.");
+                }
+
+                SetPrivate(controller, "playerHealth", 10f);
+                SetPrivate(controller, "playerInvulnerableTimer", 0f);
+                SetPrivate(controller, "dodgeTimer", 0f);
+                InvokePrivate(controller, "ResolveEnemyAttack", 0, enemy, toPlayer);
+                if (!GetPrivateBool(controller, "runFailed"))
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: lethal enemy hit did not fail the run.");
+                }
+
+                var failedSave = FourfoldProgressSave.Load();
+                if (failedSave.d020FailureCount != 1 || failedSave.d020RewardClaimed || failedSave.d020SecondRewardClaimed)
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: failed run persistence did not record one failure and drop unreturned rewards.");
+                }
+
+                InvokePrivate(controller, "ResetRun");
+                if (GetPrivateBool(controller, "runFailed") || GetPrivate<float>(controller, "playerHealth") < 99.9f)
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: retry did not restore player health and clear failure state.");
+                }
+
+                if (!enemy.gameObject.activeSelf)
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: retry did not reactivate enemies.");
+                }
+
+                SetPrivate(controller, "firstRewardClaimedThisRun", true);
+                controller.TryReturnToTitle();
+                var titleReturnSave = FourfoldProgressSave.Load();
+                if (titleReturnSave.currentScene != FourfoldGameIds.SceneD020VerticalSlice)
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: return-to-title should preserve Continue target as D-020 while loading the title scene.");
+                }
+
+                if (titleReturnSave.d020RewardClaimed || titleReturnSave.d020SecondRewardClaimed)
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: return-to-title banked unreturned run rewards.");
+                }
+
+                Debug.Log("FOURFOLD D-020 death/retry verifier passed: enemy hit, dodge invulnerability, failed-run persistence, retry, and title return are valid.");
+            }
+            finally
+            {
+                RestoreFile(savePath, previousSaveBytes);
+                RestoreFile(saveBackupPath, previousSaveBackupBytes);
+            }
+        }
+
         private static void ValidateRequiredReferences(D020SliceController controller, ExplorationTool tool)
         {
             RequireReference(controller.player, "D020SliceController.player");
@@ -366,6 +503,58 @@ namespace FourfoldEchoes.Editor
             ClearControllerProgressState(controller);
         }
 
+        private static void PrepareControllerForCombat(D020SliceController controller)
+        {
+            RequireReference(controller.player, "D020SliceController.player");
+            RequireReference(controller.enemies, "D020SliceController.enemies");
+            SetPrivate(controller, "progressData", new FourfoldProgressData());
+            SetPrivate(controller, "initialPlayerPosition", controller.player.position);
+            SetPrivate(controller, "initialPlayerRotation", controller.player.rotation);
+            ClearControllerProgressState(controller);
+
+            var enemyCount = controller.enemies.Length;
+            var enemyHealth = new float[enemyCount];
+            var enemyAttackTimer = new float[enemyCount];
+            var enemyWindupTimer = new float[enemyCount];
+            var enemyAimDirections = new Vector3[enemyCount];
+            var enemyAttackModes = new int[enemyCount];
+            var bossEnraged = new bool[enemyCount];
+            var initialEnemyPositions = new Vector3[enemyCount];
+            var initialEnemyRotations = new Quaternion[enemyCount];
+            var initialEnemyScales = new Vector3[enemyCount];
+
+            for (var i = 0; i < enemyCount; i++)
+            {
+                enemyHealth[i] = InvokePrivateFloat(controller, "InitialEnemyHealth", i);
+                enemyAimDirections[i] = Vector3.forward;
+                enemyAttackModes[i] = EnemyNameContains(controller, i, "Boss") ? 1 : 0;
+                if (controller.enemies[i] != null)
+                {
+                    controller.enemies[i].gameObject.SetActive(true);
+                    initialEnemyPositions[i] = controller.enemies[i].position;
+                    initialEnemyRotations[i] = controller.enemies[i].rotation;
+                    initialEnemyScales[i] = controller.enemies[i].localScale;
+                }
+            }
+
+            SetPrivate(controller, "enemyHealth", enemyHealth);
+            SetPrivate(controller, "enemyAttackTimer", enemyAttackTimer);
+            SetPrivate(controller, "enemyWindupTimer", enemyWindupTimer);
+            SetPrivate(controller, "enemyAttackAimDirections", enemyAimDirections);
+            SetPrivate(controller, "enemyAttackModes", enemyAttackModes);
+            SetPrivate(controller, "bossEnraged", bossEnraged);
+            SetPrivate(controller, "initialEnemyPositions", initialEnemyPositions);
+            SetPrivate(controller, "initialEnemyRotations", initialEnemyRotations);
+            SetPrivate(controller, "initialEnemyScales", initialEnemyScales);
+            SetPrivate(controller, "bossDefeatedThisRun", false);
+            SetPrivate(controller, "bossDefeatTimer", 0f);
+
+            if (controller.requiredToolNode != null)
+            {
+                controller.requiredToolNode.SetSolved(true);
+            }
+        }
+
         private static void ClearControllerProgressState(D020SliceController controller)
         {
             SetPrivate(controller, "previousClearLoaded", false);
@@ -412,6 +601,36 @@ namespace FourfoldEchoes.Editor
             }
         }
 
+        private static void DefeatEnemyWithBasicAttacks(D020SliceController controller, int enemyIndex)
+        {
+            var enemy = controller.enemies != null && enemyIndex < controller.enemies.Length ? controller.enemies[enemyIndex] : null;
+            if (enemy == null)
+            {
+                throw new InvalidOperationException($"D-020 combat verifier failed: missing enemy at index {enemyIndex}.");
+            }
+
+            var guard = 0;
+            while (GetPrivate<float[]>(controller, "enemyHealth")[enemyIndex] > 0f && guard++ < 24)
+            {
+                var attackDirection = Vector3.right;
+                controller.player.position = enemy.position - attackDirection * 1.0f;
+                SetPrivate(controller, "facing", attackDirection);
+                SetPrivate(controller, "attackTimer", 0f);
+                InvokePrivate(controller, "TryAttack");
+            }
+
+            if (GetPrivate<float[]>(controller, "enemyHealth")[enemyIndex] > 0f || enemy.gameObject.activeSelf)
+            {
+                throw new InvalidOperationException($"D-020 combat verifier failed: basic attacks did not defeat {enemy.name}.");
+            }
+        }
+
+        private static bool EnemyNameContains(D020SliceController controller, int enemyIndex, string text)
+        {
+            var enemy = controller.enemies != null && enemyIndex < controller.enemies.Length ? controller.enemies[enemyIndex] : null;
+            return enemy != null && enemy.name.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
         private static void MovePlayerTo(ExplorationTool tool, Transform target)
         {
             if (tool == null || tool.player == null || target == null)
@@ -422,7 +641,7 @@ namespace FourfoldEchoes.Editor
             tool.player.position = target.position;
         }
 
-        private static void InvokePrivate(object target, string methodName)
+        private static void InvokePrivate(object target, string methodName, params object[] arguments)
         {
             var method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
             if (method == null)
@@ -430,7 +649,14 @@ namespace FourfoldEchoes.Editor
                 throw new InvalidOperationException($"D-020 verifier failed: missing private method {methodName} on {target.GetType().Name}.");
             }
 
-            method.Invoke(target, Array.Empty<object>());
+            try
+            {
+                method.Invoke(target, arguments ?? Array.Empty<object>());
+            }
+            catch (TargetInvocationException exception) when (exception.InnerException != null)
+            {
+                throw new InvalidOperationException($"D-020 verifier failed inside {methodName}: {exception.InnerException.Message}", exception.InnerException);
+            }
         }
 
         private static bool InvokePrivateBool(object target, string methodName)
@@ -441,7 +667,32 @@ namespace FourfoldEchoes.Editor
                 throw new InvalidOperationException($"D-020 verifier failed: missing private bool method {methodName} on {target.GetType().Name}.");
             }
 
-            return (bool)method.Invoke(target, Array.Empty<object>());
+            try
+            {
+                return (bool)method.Invoke(target, Array.Empty<object>());
+            }
+            catch (TargetInvocationException exception) when (exception.InnerException != null)
+            {
+                throw new InvalidOperationException($"D-020 verifier failed inside {methodName}: {exception.InnerException.Message}", exception.InnerException);
+            }
+        }
+
+        private static float InvokePrivateFloat(object target, string methodName, int argument)
+        {
+            var method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+            if (method == null || method.ReturnType != typeof(float))
+            {
+                throw new InvalidOperationException($"D-020 verifier failed: missing private float method {methodName} on {target.GetType().Name}.");
+            }
+
+            try
+            {
+                return (float)method.Invoke(target, new object[] { argument });
+            }
+            catch (TargetInvocationException exception) when (exception.InnerException != null)
+            {
+                throw new InvalidOperationException($"D-020 verifier failed inside {methodName}: {exception.InnerException.Message}", exception.InnerException);
+            }
         }
 
         private static bool GetPrivateBool(object target, string fieldName)

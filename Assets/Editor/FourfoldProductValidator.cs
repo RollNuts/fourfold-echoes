@@ -43,20 +43,22 @@ namespace FourfoldEchoes.Editor
             try
             {
                 FourfoldD020SliceSceneBuilder.BuildAndValidate();
+                FourfoldD020GameplayVerifier.VerifyExistingSceneCombatDefeatPath();
+                FourfoldD020GameplayVerifier.VerifyExistingSceneDeathRetryAndTitlePath();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFullProgressionLoop();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFailureLoop();
-                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."));
+                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."));
             }
             catch (Exception exception)
             {
-                findings.Add(Finding.Error("d020.slice", "D-020 vertical slice scene generation, validation, or full-loop verification failed: " + exception.Message));
+                findings.Add(Finding.Error("d020.slice", "D-020 vertical slice scene generation, validation, combat, death/retry, title-return, or full-loop verification failed: " + exception.Message));
             }
 
             try
             {
                 FourfoldHubSceneBuilder.BuildAndValidate();
                 FourfoldHubGameplayVerifier.VerifyHubEnterRegionProgress();
-                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with a D-020 region gate and progress initialization."));
+                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, progress initialization, reset, and return-to-title persistence."));
             }
             catch (Exception exception)
             {

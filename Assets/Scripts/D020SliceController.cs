@@ -28,11 +28,13 @@ namespace FourfoldEchoes.Product
         public KeyCode interactKey = KeyCode.E;
         public KeyCode retryKey = KeyCode.R;
         public KeyCode pauseKey = KeyCode.Escape;
+        public KeyCode returnToTitleKey = KeyCode.Backspace;
         public KeyCode gamepadAttackKey = KeyCode.JoystickButton0;
         public KeyCode gamepadDodgeKey = KeyCode.JoystickButton1;
         public KeyCode gamepadInteractKey = KeyCode.JoystickButton3;
         public KeyCode gamepadRetryKey = KeyCode.JoystickButton7;
         public KeyCode gamepadPauseKey = KeyCode.JoystickButton9;
+        public KeyCode gamepadReturnToTitleKey = KeyCode.JoystickButton6;
 
         [Header("Audio")]
         public AudioSource audioSource;
@@ -256,6 +258,11 @@ namespace FourfoldEchoes.Product
 
             if (paused)
             {
+                if (Pressed(returnToTitleKey, gamepadReturnToTitleKey))
+                {
+                    TryReturnToTitle();
+                }
+
                 return;
             }
 
@@ -381,7 +388,7 @@ namespace FourfoldEchoes.Product
 
                 hitAny = true;
                 enemyHealth[i] -= CurrentAttackDamage(i);
-                enemy.position += toEnemy.normalized * (IsBossEnemy(i) ? 0.16f : 0.34f);
+                enemy.position = ResolveBlockedMove(enemy.position, enemy.position + toEnemy.normalized * (IsBossEnemy(i) ? 0.16f : 0.34f));
                 enemy.localScale = EnemyHitScale(i, enemyHealth[i] <= 0f);
                 TryTriggerBossEnrage(i, enemy);
                 if (enemyHealth[i] <= 0f)
@@ -473,13 +480,13 @@ namespace FourfoldEchoes.Product
                             : strafe;
                     if (moveDirection.sqrMagnitude > 0.001f)
                     {
-                        enemy.position += moveDirection.normalized * EnemySpeedFor(i) * dt;
+                        MoveEnemy(enemy, moveDirection, EnemySpeedFor(i), dt);
                     }
                     continue;
                 }
 
                 var flank = new Vector3(-desired.z, 0f, desired.x) * Mathf.Sin(Time.time * (0.8f + i * 0.35f)) * 0.28f;
-                enemy.position += (desired + flank).normalized * EnemySpeedFor(i) * dt;
+                MoveEnemy(enemy, desired + flank, EnemySpeedFor(i), dt);
             }
         }
 
@@ -714,6 +721,18 @@ namespace FourfoldEchoes.Product
             returnGateClaimRead.transform.position = returnGatePoint.position + new Vector3(0f, 0.08f, 0f);
             var pulse = 1.08f + Mathf.Sin(Time.time * 4.0f) * 0.09f;
             returnGateClaimRead.transform.localScale = new Vector3(pulse, 0.025f, pulse);
+        }
+
+        public bool TryReturnToTitle()
+        {
+            SetPaused(false);
+            PersistProgress();
+            if (Application.isPlaying)
+            {
+                SceneManager.LoadScene(FourfoldGameIds.UnitySceneTitle);
+            }
+
+            return true;
         }
 
         private bool TryReturnToHub()
@@ -1389,6 +1408,7 @@ namespace FourfoldEchoes.Product
 
         private Vector3 ResolveBlockedMove(Vector3 current, Vector3 proposed)
         {
+            proposed = ClampToPlayableBounds(proposed);
             if (!IsPositionBlocked(proposed))
             {
                 return proposed;
@@ -1407,6 +1427,25 @@ namespace FourfoldEchoes.Product
             }
 
             return current;
+        }
+
+        private void MoveEnemy(Transform enemy, Vector3 direction, float speed, float deltaTime)
+        {
+            if (enemy == null || direction.sqrMagnitude <= 0.001f)
+            {
+                return;
+            }
+
+            var proposed = enemy.position + direction.normalized * speed * deltaTime;
+            enemy.position = ResolveBlockedMove(enemy.position, proposed);
+        }
+
+        private static Vector3 ClampToPlayableBounds(Vector3 position)
+        {
+            return new Vector3(
+                Mathf.Clamp(position.x, MinX, MaxX),
+                position.y,
+                Mathf.Clamp(position.z, MinZ, MaxZ));
         }
 
         private bool IsPositionBlocked(Vector3 position)
@@ -1810,11 +1849,11 @@ namespace FourfoldEchoes.Product
             if (paused)
             {
                 var pauseWidth = Mathf.Min(480f, Screen.width - 48f);
-                var pauseHeight = 136f;
+                var pauseHeight = 168f;
                 var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
                 GUI.Box(pauseRect, GUIContent.none);
                 GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 22f, pauseWidth - 48f, 32f), "PAUSED", style);
-                GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 58f, pauseWidth - 48f, 58f), "Solo run is stopped. Press Esc/Menu to resume, or R/Back to reset this run.", style);
+                GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 58f, pauseWidth - 48f, 92f), "Solo run is stopped. Esc/Menu resumes. R/Start retries. Backspace/Select returns to title without banking unreturned relics.", style);
             }
             else if (bossDefeatTimer > 0f)
             {

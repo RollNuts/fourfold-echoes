@@ -69,7 +69,18 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Hub gameplay verifier failed: reset did not return to a clean hub-start progress state.");
                 }
 
-                Debug.Log("FOURFOLD Hub gameplay verifier passed: hub unlock, D-020 entry, and reset progress persist.");
+                if (!controller.TryReturnToTitle())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: title return action failed.");
+                }
+
+                var titleReturnProgress = FourfoldProgressSave.Load();
+                if (titleReturnProgress.currentScene != FourfoldGameIds.SceneHubCrossroads || !titleReturnProgress.hubUnlocked || !titleReturnProgress.regionD020Unlocked)
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: returning to title did not preserve the hub continue target.");
+                }
+
+                Debug.Log("FOURFOLD Hub gameplay verifier passed: hub unlock, D-020 entry, reset progress, and title return persist.");
             }
             finally
             {
