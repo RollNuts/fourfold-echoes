@@ -81,6 +81,7 @@ namespace FourfoldEchoes.Product
         private const int AttackModeCircle = 0;
         private const int AttackModeLine = 1;
         private const float PlayerMaxHealth = 100f;
+        private const float RewardNoticeDuration = 3.4f;
         private const float MeleeEnemyDamage = 26f;
         private const float RangedEnemyDamage = 18f;
         private const float EliteEnemyDamage = 30f;
@@ -153,6 +154,9 @@ namespace FourfoldEchoes.Product
         private float bestClearTimeSeconds;
         private float lastReturnTimeSeconds;
         private int lastLostRelicsOnFailure;
+        private float rewardNoticeTimer;
+        private string rewardNoticeTitle = string.Empty;
+        private string rewardNoticeBody = string.Empty;
         private float bossDefeatTimer;
         private bool firstRewardClaimedThisRun;
         private bool secondRewardClaimedThisRun;
@@ -225,6 +229,14 @@ namespace FourfoldEchoes.Product
             if (failRect.x < 24f || failRect.y < 24f || failRect.xMax > screenWidth - 24f || failRect.yMax > screenHeight - 24f)
             {
                 reason = $"D-020 failure result panel exceeds safe area at {screenWidth}x{screenHeight}: {failRect}";
+                return false;
+            }
+
+            var rewardNoticeWidth = Mathf.Min(440f, screenWidth - 48f);
+            var rewardNoticeRect = new Rect(screenWidth - rewardNoticeWidth - 24f, 286f, rewardNoticeWidth, 104f);
+            if (rewardNoticeRect.x < 24f || rewardNoticeRect.y < 24f || rewardNoticeRect.xMax > screenWidth - 24f || rewardNoticeRect.yMax > screenHeight - 24f)
+            {
+                reason = $"D-020 reward notice panel exceeds safe area at {screenWidth}x{screenHeight}: {rewardNoticeRect}";
                 return false;
             }
 
@@ -361,6 +373,7 @@ namespace FourfoldEchoes.Product
             dodgeTimer = Mathf.Max(0f, dodgeTimer - dt);
             dodgeCooldownTimer = Mathf.Max(0f, dodgeCooldownTimer - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
+            rewardNoticeTimer = Mathf.Max(0f, rewardNoticeTimer - dt);
             bossDefeatTimer = Mathf.Max(0f, bossDefeatTimer - dt);
             if (!runFailed && !returnedToHubThisRun)
             {
@@ -746,6 +759,7 @@ namespace FourfoldEchoes.Product
             firstRewardClaimedThisRun = true;
             previousShortcutLoaded = ToolGateSolved();
             runCleared = secondToolNode == null || secondRewardClaimPoint == null;
+            ShowRewardNotice("LUMEN EDGE ACQUIRED", "Basic attacks hit harder this run. Return to Hub to bank it.");
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.92f);
             if (rewardReadyRead != null)
@@ -775,6 +789,7 @@ namespace FourfoldEchoes.Product
             rewardClaimed = true;
             runCleared = true;
             previousReturnedToHubLoaded = false;
+            ShowRewardNotice("LUMEN WARD ACQUIRED", "Incoming damage is reduced this run. Return to Hub to bank both relics.");
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.86f);
             if (secondRewardReadyRead != null)
@@ -908,6 +923,9 @@ namespace FourfoldEchoes.Product
             lastReturnTimeSeconds = 0f;
             lastLostRelicsOnFailure = 0;
             bossDefeatTimer = 0f;
+            rewardNoticeTimer = 0f;
+            rewardNoticeTitle = string.Empty;
+            rewardNoticeBody = string.Empty;
             bestClearTimeImproved = false;
             bossDefeatedThisRun = false;
             attackTimer = 0f;
@@ -1581,6 +1599,13 @@ namespace FourfoldEchoes.Product
             return previousSecondRewardLoaded || secondRewardClaimedThisRun;
         }
 
+        private void ShowRewardNotice(string title, string body)
+        {
+            rewardNoticeTitle = title;
+            rewardNoticeBody = body;
+            rewardNoticeTimer = RewardNoticeDuration;
+        }
+
         private bool AnyRelicActive()
         {
             return LumenEdgeActive() || LumenWardActive();
@@ -1614,20 +1639,35 @@ namespace FourfoldEchoes.Product
             var run = ClaimedRelicCountThisRun();
             if (LumenEdgeActive() && LumenWardActive())
             {
-                return $"Relics Edge + Ward active  +DMG / -DMG  Returned {returned}/2  Run {run}/2";
+                return $"Edge+Ward +DMG/-DMG  R{returned}/2 Run{run}/2";
             }
 
             if (LumenEdgeActive())
             {
-                return $"Relic Lumen Edge active  +DMG  Returned {returned}/2  Run {run}/2";
+                return $"Edge +DMG  R{returned}/2 Run{run}/2";
             }
 
             if (LumenWardActive())
             {
-                return $"Relic Lumen Ward active  -DMG  Returned {returned}/2  Run {run}/2";
+                return $"Ward -DMG  R{returned}/2 Run{run}/2";
             }
 
-            return $"Relic locked  Returned {returned}/2  Run {run}/2";
+            return $"Relics locked  R{returned}/2 Run{run}/2";
+        }
+
+        private string DodgeStateText()
+        {
+            if (dodgeTimer > 0f)
+            {
+                return "Dodge ACTIVE";
+            }
+
+            if (dodgeCooldownTimer <= 0f)
+            {
+                return "Dodge READY";
+            }
+
+            return $"Dodge CD {Mathf.CeilToInt((dodgeCooldownTimer / DodgeCooldown) * 100f)}%";
         }
 
         private bool AllEnemiesDefeated()
@@ -2260,7 +2300,7 @@ namespace FourfoldEchoes.Product
                 ? "Tool --"
                 : explorationTool.IsReady
                     ? "Tool READY"
-                    : $"Tool cooldown {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%";
+                    : $"Tool CD {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%";
             var relicState = RelicStateText();
             var resultState = clearCount > 0
                 ? $"Clears returned {clearCount}"
@@ -2280,13 +2320,19 @@ namespace FourfoldEchoes.Product
             }
 
             FourfoldRuntimeUi.DrawBar(new Rect(30f, 30f, width - 56f, 26f), playerHealth / PlayerMaxHealth, new Color(0.35f, 0.92f, 0.52f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}{BossHealthSuffix()}", hpStyle);
-            FourfoldRuntimeUi.DrawChip(new Rect(30f, 64f, (width - 70f) * 0.42f, 30f), toolState, new Color(0.25f, 0.70f, 1.0f), mutedStyle);
-            FourfoldRuntimeUi.DrawChip(new Rect(42f + (width - 70f) * 0.42f, 64f, (width - 70f) * 0.58f, 30f), relicState, new Color(1.0f, 0.72f, 0.24f), mutedStyle);
+            var chipArea = width - 70f;
+            var toolChipWidth = chipArea * 0.27f;
+            var dodgeChipWidth = chipArea * 0.25f;
+            var relicChipWidth = chipArea - toolChipWidth - dodgeChipWidth - 12f;
+            FourfoldRuntimeUi.DrawChip(new Rect(30f, 64f, toolChipWidth, 30f), toolState, new Color(0.25f, 0.70f, 1.0f), mutedStyle);
+            FourfoldRuntimeUi.DrawChip(new Rect(36f + toolChipWidth, 64f, dodgeChipWidth, 30f), DodgeStateText(), new Color(0.34f, 0.90f, 0.52f), mutedStyle);
+            FourfoldRuntimeUi.DrawChip(new Rect(42f + toolChipWidth + dodgeChipWidth, 64f, relicChipWidth, 30f), relicState, new Color(1.0f, 0.72f, 0.24f), mutedStyle);
             GUI.Label(new Rect(30f, 104f, width - 56f, 50f), objective, style);
             DrawRunProgressRail(new Rect(30f, 156f, width - 56f, 34f), mutedStyle);
             FourfoldRuntimeUi.DrawDivider(30f, 198f, width - 56f);
             GUI.Label(new Rect(30f, 206f, width - 56f, 42f), $"{resultState}  {timeState}", mutedStyle);
             DrawObjectiveMarker(style);
+            DrawRewardNotice(style, mutedStyle);
             if (progressData == null || progressData.showControlHints)
             {
                 DrawControlHint(style);
@@ -2384,6 +2430,21 @@ namespace FourfoldEchoes.Product
             }
 
             GUI.Label(new Rect(panelRect.x + 32f, panelRect.y + panelHeight - 38f, panelWidth - 64f, 24f), "Move: arrows/stick   Confirm: E/Enter/Y   R/Start retries", mutedStyle);
+        }
+
+        private void DrawRewardNotice(GUIStyle style, GUIStyle mutedStyle)
+        {
+            if (rewardNoticeTimer <= 0f || string.IsNullOrEmpty(rewardNoticeTitle) || runFailed || paused)
+            {
+                return;
+            }
+
+            var panelWidth = Mathf.Min(440f, Screen.width - 48f);
+            var panelHeight = 104f;
+            var panelRect = new Rect(Screen.width - panelWidth - 24f, 286f, panelWidth, panelHeight);
+            FourfoldRuntimeUi.DrawPanel(panelRect);
+            GUI.Label(new Rect(panelRect.x + 22f, panelRect.y + 16f, panelWidth - 44f, 28f), rewardNoticeTitle, style);
+            GUI.Label(new Rect(panelRect.x + 22f, panelRect.y + 50f, panelWidth - 44f, 42f), rewardNoticeBody, mutedStyle);
         }
 
         private void DrawRunProgressRail(Rect rect, GUIStyle style)
