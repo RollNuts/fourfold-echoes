@@ -19,6 +19,8 @@ namespace FourfoldEchoes.Product
         public KeyCode resetKey = KeyCode.Backspace;
         public KeyCode pauseKey = KeyCode.Escape;
         public KeyCode gamepadInteractKey = KeyCode.JoystickButton3;
+        public KeyCode gamepadConfirmKey = KeyCode.JoystickButton0;
+        public KeyCode gamepadCancelKey = KeyCode.JoystickButton1;
         public KeyCode gamepadResetKey = KeyCode.JoystickButton6;
         public KeyCode gamepadPauseKey = KeyCode.JoystickButton9;
 
@@ -30,13 +32,15 @@ namespace FourfoldEchoes.Product
         private const float MinZ = -5.0f;
         private const float MaxZ = 5.8f;
         private const int PauseResume = 0;
-        private const int PauseSettings = 1;
-        private const int PauseTitle = 2;
-        private const int PauseMenuCount = 3;
+        private const int PauseLoadout = 1;
+        private const int PauseSettings = 2;
+        private const int PauseTitle = 3;
+        private const int PauseMenuCount = 4;
         private const int MissionStart = 0;
-        private const int MissionSettings = 1;
-        private const int MissionBack = 2;
-        private const int MissionMenuCount = 3;
+        private const int MissionLoadout = 1;
+        private const int MissionSettings = 2;
+        private const int MissionBack = 3;
+        private const int MissionMenuCount = 4;
         private const int SummaryReplay = 0;
         private const int SummaryContinue = 1;
         private const int SummaryTitle = 2;
@@ -44,6 +48,10 @@ namespace FourfoldEchoes.Product
         private const int ResetConfirmReset = 0;
         private const int ResetConfirmCancel = 1;
         private const int ResetConfirmMenuCount = 2;
+        private const int LoadoutEdge = 0;
+        private const int LoadoutWard = 1;
+        private const int LoadoutBack = 2;
+        private const int LoadoutMenuCount = 3;
         private const int SettingsCount = 6;
         private const float AxisRepeatDelay = 0.24f;
 
@@ -52,14 +60,17 @@ namespace FourfoldEchoes.Product
         private float resetHoldSeconds;
         private bool paused;
         private bool settingsOpen;
+        private bool loadoutOpen;
         private bool missionBriefingOpen;
         private bool runSummaryOpen;
         private bool resetConfirmOpen;
         private bool settingsOpenedFromMissionBriefing;
+        private bool loadoutOpenedFromMissionBriefing;
         private int selectedPauseIndex;
         private int selectedMissionIndex;
         private int selectedSummaryIndex = SummaryContinue;
         private int selectedResetIndex = ResetConfirmCancel;
+        private int selectedLoadoutIndex;
         private int selectedSettingIndex;
         private float axisRepeatTimer;
 
@@ -72,7 +83,7 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
-            var topPanel = new Rect(18f, 18f, Mathf.Min(760f, screenWidth - 36f), 236f);
+            var topPanel = new Rect(18f, 18f, Mathf.Min(760f, screenWidth - 36f), 270f);
             if (topPanel.xMax > screenWidth - 18f || topPanel.yMax > screenHeight - 18f)
             {
                 reason = $"hub status text exceeds safe area at {screenWidth}x{screenHeight}: {topPanel}";
@@ -85,7 +96,7 @@ namespace FourfoldEchoes.Product
             }
 
             var pauseWidth = Mathf.Min(520f, screenWidth - 48f);
-            var pauseHeight = 326f;
+            var pauseHeight = 360f;
             var pauseRect = new Rect((screenWidth - pauseWidth) * 0.5f, (screenHeight - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
             if (pauseRect.x < 24f || pauseRect.y < 24f || pauseRect.xMax > screenWidth - 24f || pauseRect.yMax > screenHeight - 24f)
             {
@@ -140,6 +151,12 @@ namespace FourfoldEchoes.Product
                 if (settingsOpen)
                 {
                     CloseSettings();
+                    return;
+                }
+
+                if (loadoutOpen)
+                {
+                    CloseLoadout();
                     return;
                 }
 
@@ -232,6 +249,8 @@ namespace FourfoldEchoes.Product
             runSummaryOpen = false;
             resetConfirmOpen = false;
             settingsOpenedFromMissionBriefing = false;
+            loadoutOpenedFromMissionBriefing = false;
+            loadoutOpen = false;
             settingsOpen = false;
             paused = false;
             progressData = FourfoldProgressSave.Load();
@@ -259,10 +278,12 @@ namespace FourfoldEchoes.Product
             FourfoldProgressSave.Save(progressData);
             paused = false;
             settingsOpen = false;
+            loadoutOpen = false;
             missionBriefingOpen = false;
             runSummaryOpen = false;
             resetConfirmOpen = false;
             settingsOpenedFromMissionBriefing = false;
+            loadoutOpenedFromMissionBriefing = false;
             resetHoldSeconds = 0f;
 
             if (Application.isPlaying)
@@ -283,10 +304,12 @@ namespace FourfoldEchoes.Product
             PlacePlayerAtHubSpawn();
             resetHoldSeconds = 0f;
             settingsOpen = false;
+            loadoutOpen = false;
             missionBriefingOpen = false;
             runSummaryOpen = false;
             resetConfirmOpen = false;
             settingsOpenedFromMissionBriefing = false;
+            loadoutOpenedFromMissionBriefing = false;
             paused = false;
         }
 
@@ -296,9 +319,24 @@ namespace FourfoldEchoes.Product
             paused = true;
             runSummaryOpen = false;
             resetConfirmOpen = false;
+            loadoutOpen = false;
             settingsOpen = true;
             settingsOpenedFromMissionBriefing = false;
+            loadoutOpenedFromMissionBriefing = false;
             selectedSettingIndex = 0;
+        }
+
+        public void OpenLoadout()
+        {
+            progressData = FourfoldProgressSave.Load();
+            paused = true;
+            runSummaryOpen = false;
+            resetConfirmOpen = false;
+            settingsOpen = false;
+            loadoutOpen = true;
+            settingsOpenedFromMissionBriefing = false;
+            loadoutOpenedFromMissionBriefing = false;
+            selectedLoadoutIndex = 0;
         }
 
         public void OpenMissionBriefing()
@@ -313,7 +351,9 @@ namespace FourfoldEchoes.Product
             runSummaryOpen = false;
             resetConfirmOpen = false;
             settingsOpen = false;
+            loadoutOpen = false;
             settingsOpenedFromMissionBriefing = false;
+            loadoutOpenedFromMissionBriefing = false;
             paused = false;
             selectedMissionIndex = 0;
             resetHoldSeconds = 0f;
@@ -323,7 +363,9 @@ namespace FourfoldEchoes.Product
         {
             missionBriefingOpen = false;
             settingsOpen = false;
+            loadoutOpen = false;
             settingsOpenedFromMissionBriefing = false;
+            loadoutOpenedFromMissionBriefing = false;
             resetHoldSeconds = 0f;
         }
 
@@ -362,6 +404,7 @@ namespace FourfoldEchoes.Product
             missionBriefingOpen = false;
             runSummaryOpen = false;
             settingsOpen = false;
+            loadoutOpen = false;
             selectedResetIndex = ResetConfirmCancel;
             resetHoldSeconds = 0f;
         }
@@ -384,6 +427,50 @@ namespace FourfoldEchoes.Product
             }
 
             SaveSettings();
+        }
+
+        public void CloseLoadout()
+        {
+            loadoutOpen = false;
+            if (loadoutOpenedFromMissionBriefing)
+            {
+                paused = false;
+                missionBriefingOpen = true;
+                loadoutOpenedFromMissionBriefing = false;
+            }
+        }
+
+        public bool IsLoadoutOpen()
+        {
+            return loadoutOpen;
+        }
+
+        public bool ToggleLumenEdgeLoadout()
+        {
+            progressData = FourfoldProgressSave.Load();
+            if (!progressData.d020RewardClaimed)
+            {
+                return false;
+            }
+
+            progressData.d020EdgeEquipped = !progressData.d020EdgeEquipped;
+            progressData.d020LoadoutInitialized = true;
+            FourfoldProgressSave.Save(progressData);
+            return true;
+        }
+
+        public bool ToggleLumenWardLoadout()
+        {
+            progressData = FourfoldProgressSave.Load();
+            if (!progressData.d020SecondRewardClaimed)
+            {
+                return false;
+            }
+
+            progressData.d020WardEquipped = !progressData.d020WardEquipped;
+            progressData.d020LoadoutInitialized = true;
+            FourfoldProgressSave.Save(progressData);
+            return true;
         }
 
         public void AdjustSelectedSetting(float delta)
@@ -482,6 +569,12 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            if (loadoutOpen)
+            {
+                UpdateLoadoutInput();
+                return;
+            }
+
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedPauseIndex = Wrap(selectedPauseIndex - 1, PauseMenuCount);
@@ -491,7 +584,7 @@ namespace FourfoldEchoes.Product
                 selectedPauseIndex = Wrap(selectedPauseIndex + 1, PauseMenuCount);
             }
 
-            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadConfirmKey))
             {
                 ActivatePauseSelection();
             }
@@ -505,6 +598,12 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            if (loadoutOpen)
+            {
+                UpdateLoadoutInput();
+                return;
+            }
+
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedMissionIndex = Wrap(selectedMissionIndex - 1, MissionMenuCount);
@@ -514,13 +613,13 @@ namespace FourfoldEchoes.Product
                 selectedMissionIndex = Wrap(selectedMissionIndex + 1, MissionMenuCount);
             }
 
-            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey))
+            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey, gamepadCancelKey))
             {
                 CloseMissionBriefing();
                 return;
             }
 
-            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadConfirmKey))
             {
                 ActivateMissionSelection();
             }
@@ -537,13 +636,13 @@ namespace FourfoldEchoes.Product
                 selectedSummaryIndex = Wrap(selectedSummaryIndex + 1, SummaryMenuCount);
             }
 
-            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey))
+            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey, gamepadCancelKey))
             {
                 DismissRunSummary();
                 return;
             }
 
-            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadConfirmKey))
             {
                 ActivateRunSummarySelection();
             }
@@ -560,13 +659,13 @@ namespace FourfoldEchoes.Product
                 selectedResetIndex = Wrap(selectedResetIndex + 1, ResetConfirmMenuCount);
             }
 
-            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey))
+            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey, gamepadCancelKey))
             {
                 CloseResetConfirmation();
                 return;
             }
 
-            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadConfirmKey))
             {
                 ActivateResetConfirmationSelection();
             }
@@ -592,9 +691,32 @@ namespace FourfoldEchoes.Product
                 AdjustSelectedSetting(1f);
             }
 
-            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey) || Pressed(resetKey, gamepadResetKey))
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadConfirmKey) || Pressed(resetKey, gamepadResetKey, gamepadCancelKey))
             {
                 CloseSettings();
+            }
+        }
+
+        private void UpdateLoadoutInput()
+        {
+            if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
+            {
+                selectedLoadoutIndex = Wrap(selectedLoadoutIndex - 1, LoadoutMenuCount);
+            }
+            else if (Pressed(KeyCode.DownArrow, KeyCode.S) || AxisPressed(-1f))
+            {
+                selectedLoadoutIndex = Wrap(selectedLoadoutIndex + 1, LoadoutMenuCount);
+            }
+
+            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey, gamepadCancelKey))
+            {
+                CloseLoadout();
+                return;
+            }
+
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadConfirmKey))
+            {
+                ActivateLoadoutSelection();
             }
         }
 
@@ -605,6 +727,10 @@ namespace FourfoldEchoes.Product
                 case PauseResume:
                     paused = false;
                     settingsOpen = false;
+                    loadoutOpen = false;
+                    break;
+                case PauseLoadout:
+                    OpenLoadout();
                     break;
                 case PauseSettings:
                     OpenSettings();
@@ -622,10 +748,18 @@ namespace FourfoldEchoes.Product
                 case MissionStart:
                     TryEnterD020Region();
                     break;
+                case MissionLoadout:
+                    progressData = FourfoldProgressSave.Load();
+                    loadoutOpen = true;
+                    loadoutOpenedFromMissionBriefing = true;
+                    settingsOpen = false;
+                    selectedLoadoutIndex = 0;
+                    break;
                 case MissionSettings:
                     progressData = FourfoldProgressSave.Load();
                     settingsOpen = true;
                     settingsOpenedFromMissionBriefing = true;
+                    loadoutOpen = false;
                     selectedSettingIndex = 0;
                     break;
                 case MissionBack:
@@ -661,6 +795,23 @@ namespace FourfoldEchoes.Product
             }
 
             CloseResetConfirmation();
+        }
+
+        private void ActivateLoadoutSelection()
+        {
+            progressData = FourfoldProgressSave.Load();
+            switch (selectedLoadoutIndex)
+            {
+                case LoadoutEdge:
+                    ToggleLumenEdgeLoadout();
+                    break;
+                case LoadoutWard:
+                    ToggleLumenWardLoadout();
+                    break;
+                default:
+                    CloseLoadout();
+                    break;
+            }
         }
 
         private void SaveSettings()
@@ -776,6 +927,88 @@ namespace FourfoldEchoes.Product
                 && data.d020ClearCount > data.d020AcknowledgedClearCount;
         }
 
+        private static int SavedRewardCount(FourfoldProgressData data)
+        {
+            if (data == null)
+            {
+                return 0;
+            }
+
+            var count = data.d020RewardClaimed ? 1 : 0;
+            if (data.d020SecondRewardClaimed)
+            {
+                count += 1;
+            }
+
+            return count;
+        }
+
+        private static int EquippedRewardCount(FourfoldProgressData data)
+        {
+            if (data == null)
+            {
+                return 0;
+            }
+
+            var count = data.d020RewardClaimed && data.d020EdgeEquipped ? 1 : 0;
+            if (data.d020SecondRewardClaimed && data.d020WardEquipped)
+            {
+                count += 1;
+            }
+
+            return count;
+        }
+
+        private static string LoadoutSummary(FourfoldProgressData data)
+        {
+            var saved = SavedRewardCount(data);
+            var equipped = EquippedRewardCount(data);
+            return FourfoldLanguage.T(data, $"Loadout {equipped}/{saved} equipped", $"ロードアウト 装備 {equipped}/{saved}");
+        }
+
+        private static string LoadoutEffectText(FourfoldProgressData data)
+        {
+            if (data == null || EquippedRewardCount(data) == 0)
+            {
+                return FourfoldLanguage.T(data, "base build", "基礎ビルド");
+            }
+
+            if (data.d020EdgeEquipped && data.d020WardEquipped)
+            {
+                return FourfoldLanguage.T(data, "stronger attacks, reduced damage taken", "攻撃強化、被ダメージ軽減");
+            }
+
+            if (data.d020EdgeEquipped)
+            {
+                return FourfoldLanguage.T(data, "stronger attacks", "攻撃強化");
+            }
+
+            return FourfoldLanguage.T(data, "reduced damage taken", "被ダメージ軽減");
+        }
+
+        private static string LoadoutRowLabel(FourfoldProgressData data, int index)
+        {
+            switch (index)
+            {
+                case LoadoutEdge:
+                    if (data != null && data.d020RewardClaimed)
+                    {
+                        return FourfoldLanguage.T(data, $"[{(data.d020EdgeEquipped ? "ON" : "OFF")}] Lumen Edge - attacks hit harder", $"[{(data.d020EdgeEquipped ? "ON" : "OFF")}] Lumen Edge - 攻撃が強くなる");
+                    }
+
+                    return FourfoldLanguage.T(data, "[LOCKED] Lumen Edge - clear reward 1", "[未取得] Lumen Edge - クリア報酬1");
+                case LoadoutWard:
+                    if (data != null && data.d020SecondRewardClaimed)
+                    {
+                        return FourfoldLanguage.T(data, $"[{(data.d020WardEquipped ? "ON" : "OFF")}] Lumen Ward - damage taken drops", $"[{(data.d020WardEquipped ? "ON" : "OFF")}] Lumen Ward - 被ダメージを軽減");
+                    }
+
+                    return FourfoldLanguage.T(data, "[LOCKED] Lumen Ward - clear reward 2", "[未取得] Lumen Ward - クリア報酬2");
+                default:
+                    return FourfoldLanguage.T(data, "Back", "戻る");
+            }
+        }
+
         private void OnGUI()
         {
             FourfoldRuntimeUi.DrawScreenWash();
@@ -787,12 +1020,13 @@ namespace FourfoldEchoes.Product
             var uiScale = FourfoldRuntimeUi.SafeUiScale(progressData);
             var cleared = progressData != null && progressData.regionD020Cleared;
             var clearCount = progressData == null ? 0 : progressData.d020ClearCount;
-            var rewards = progressData == null ? 0 : (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
+            var rewards = SavedRewardCount(progressData);
+            var equippedRewards = EquippedRewardCount(progressData);
             var bestTime = progressData == null || progressData.d020BestClearTimeSeconds <= 0f
                 ? "--"
                 : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
             var canStartRegion = CanEnterD020Region();
-            var panel = new Rect(18f, 18f, Mathf.Min(760f, Screen.width - 36f), 236f);
+            var panel = new Rect(18f, 18f, Mathf.Min(760f, Screen.width - 36f), 270f);
             FourfoldRuntimeUi.DrawPanel(panel);
             var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, uiScale);
             var body = FourfoldRuntimeUi.BodyStyle(Screen.height, uiScale);
@@ -808,19 +1042,20 @@ namespace FourfoldEchoes.Product
                 : FourfoldLanguage.T(progressData, "Prepare here, start Region 01 at the gold gate, then return after a clear to save rewards.", "ここで準備し、金色のゲートから地域01を始める。クリア後に帰還すると報酬が保存される。");
             GUI.Label(new Rect(panel.x + 18f, panel.y + 48f, panel.width - 36f, 48f), hubStatus, body);
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 100f, 230f, 34f), FourfoldLanguage.T(progressData, $"Clears {clearCount}   Best {bestTime}", $"クリア {clearCount}   最速 {bestTime}"), new Color(1.0f, 0.72f, 0.24f), muted);
-            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 260f, panel.y + 100f, 220f, 34f), FourfoldLanguage.T(progressData, $"Rewards active {rewards}/2", $"有効報酬 {rewards}/2"), new Color(0.22f, 0.70f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 260f, panel.y + 100f, 220f, 34f), FourfoldLanguage.T(progressData, $"Rewards saved {rewards}/2", $"保存報酬 {rewards}/2"), new Color(0.22f, 0.70f, 1.0f), muted);
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 492f, panel.y + 100f, panel.width - 510f, 34f), FourfoldLanguage.T(progressData, $"Failures {(progressData == null ? 0 : progressData.d020FailureCount)}", $"失敗 {(progressData == null ? 0 : progressData.d020FailureCount)}"), new Color(1.0f, 0.46f, 0.22f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 142f, panel.width - 36f, 34f), FourfoldLanguage.T(progressData, $"Equipped reward skills {equippedRewards}/{rewards}: {LoadoutEffectText(progressData)}", $"装備中報酬スキル {equippedRewards}/{rewards}: {LoadoutEffectText(progressData)}"), new Color(0.62f, 0.44f, 1.0f), muted);
             var prompt = canStartRegion
                 ? FourfoldInputPrompts.HubStartReady(progressData)
                 : FourfoldLanguage.T(progressData, "PREP: move to the gold gate when you are ready to start.", "準備: 開始できる状態になったら金色のゲートへ。");
             var next = cleared
                 ? FourfoldLanguage.T(progressData, "RESULT OPTIONS: replay Region 01, compare best time, or return to title from Pause.", "結果の選択: 地域01再挑戦、最速タイム比較、またはポーズからタイトルへ。")
-                : FourfoldLanguage.T(progressData, "RUN PLAN: open route, beat boss, claim Edge, open shortcut, claim Ward, return.", "攻略手順: 道を開く、ボス撃破、Edge獲得、近道開通、Ward獲得、帰還。");
-            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 142f, panel.width - 36f, 34f), prompt, canStartRegion ? new Color(0.34f, 0.90f, 0.52f) : new Color(0.25f, 0.68f, 1.0f), muted);
-            GUI.Label(new Rect(panel.x + 18f, panel.y + 184f, panel.width - 36f, 24f), next, muted);
+                : FourfoldLanguage.T(progressData, "RUN PLAN: tune loadout, open route, beat boss, claim skills, return.", "攻略手順: 装備調整、道を開く、ボス撃破、スキル獲得、帰還。");
+            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 184f, panel.width - 36f, 34f), prompt, canStartRegion ? new Color(0.34f, 0.90f, 0.52f) : new Color(0.25f, 0.68f, 1.0f), muted);
+            GUI.Label(new Rect(panel.x + 18f, panel.y + 226f, panel.width - 36f, 24f), next, muted);
             if (progressData == null || progressData.showControlHints)
             {
-                GUI.Label(new Rect(panel.x + 18f, panel.y + 212f, panel.width - 36f, 20f), FourfoldInputPrompts.HubHud(progressData, resetHoldSeconds > 0f), muted);
+                GUI.Label(new Rect(panel.x + 18f, panel.y + 250f, panel.width - 36f, 20f), FourfoldInputPrompts.HubHud(progressData, resetHoldSeconds > 0f), muted);
             }
 
             DrawObjectiveMarker(body);
@@ -849,10 +1084,15 @@ namespace FourfoldEchoes.Product
             }
 
             var pauseWidth = Mathf.Min(520f, Screen.width - 48f);
-            var pauseHeight = settingsOpen ? 326f : 300f;
+            var pauseHeight = settingsOpen || loadoutOpen ? 360f : 340f;
             var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
             FourfoldRuntimeUi.DrawPanel(pauseRect);
-            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 18f, pauseWidth - 48f, 30f), settingsOpen ? FourfoldLanguage.T(progressData, "SETTINGS", "設定") : FourfoldLanguage.T(progressData, "PAUSED", "ポーズ"), header);
+            var pauseTitle = settingsOpen
+                ? FourfoldLanguage.T(progressData, "SETTINGS", "設定")
+                : loadoutOpen
+                    ? FourfoldLanguage.T(progressData, "LOADOUT", "ロードアウト")
+                    : FourfoldLanguage.T(progressData, "PAUSED", "ポーズ");
+            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 18f, pauseWidth - 48f, 30f), pauseTitle, header);
 
             if (settingsOpen)
             {
@@ -860,9 +1100,16 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            if (loadoutOpen)
+            {
+                DrawLoadout(pauseRect, body, muted);
+                return;
+            }
+
             var labels = new[]
             {
                 FourfoldLanguage.T(progressData, "Resume", "再開"),
+                FourfoldLanguage.T(progressData, "Loadout", "ロードアウト"),
                 FourfoldLanguage.T(progressData, "Settings", "設定"),
                 FourfoldLanguage.T(progressData, "Return to Title", "タイトルへ戻る")
             };
@@ -871,7 +1118,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(pauseRect.x + 24f, pauseRect.y + 62f + i * 40f, pauseWidth - 48f, 34f), labels[i], selectedPauseIndex == i, body);
             }
 
-            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 196f, pauseWidth - 48f, 74f), FourfoldLanguage.T(progressData, "Hub is the preparation and result screen. Progress reset is only available through the long-hold command shown in the HUD.", "ハブは準備と結果確認の画面。進行リセットはHUDに表示された長押し操作でのみ行う。"), muted);
+            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 232f, pauseWidth - 48f, 78f), FourfoldLanguage.T(progressData, "Hub is the preparation screen: choose reward skills before starting the next region attempt.", "ハブは準備画面。次の地域攻略前に報酬スキルを選ぶ。"), muted);
         }
 
         private void DrawRunSummary(GUIStyle body, GUIStyle muted)
@@ -932,11 +1179,16 @@ namespace FourfoldEchoes.Product
         private void DrawMissionBriefing(GUIStyle body, GUIStyle muted)
         {
             var width = Mathf.Min(640f, Screen.width - 48f);
-            var height = 390f;
+            var height = loadoutOpen ? 430f : 456f;
             var rect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
             FourfoldRuntimeUi.DrawPanel(rect);
             var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData));
-            GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), settingsOpen ? FourfoldLanguage.T(progressData, "REGION SETTINGS", "地域設定") : FourfoldLanguage.T(progressData, "REGION 01: VERDANT STEPS", "地域01: 緑陰の段丘"), header);
+            var title = settingsOpen
+                ? FourfoldLanguage.T(progressData, "REGION SETTINGS", "地域設定")
+                : loadoutOpen
+                    ? FourfoldLanguage.T(progressData, "REGION LOADOUT", "地域ロードアウト")
+                    : FourfoldLanguage.T(progressData, "REGION 01: VERDANT STEPS", "地域01: 緑陰の段丘");
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), title, header);
 
             if (settingsOpen)
             {
@@ -944,23 +1196,46 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            if (loadoutOpen)
+            {
+                DrawLoadout(rect, body, muted);
+                return;
+            }
+
             GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 52f), FourfoldLanguage.T(progressData, "Goal: use the exploration tool, defeat the boss, claim two reward skills, and return to the hub to save the result.", "目標: 探索ツールを使い、ボスを倒し、2つの報酬スキルを得て、ハブへ戻って結果を保存する。"), body);
             FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 120f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "Risk: failure restarts this attempt; saved hub progress remains active.", "リスク: 失敗するとこの攻略をやり直す。ハブで保存済みの進行は有効なまま。"), new Color(1.0f, 0.46f, 0.22f), muted);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 164f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "Reward: Lumen Edge and Lumen Ward improve later attempts after hub return.", "報酬: Lumen Edge / Ward はハブ帰還後、以降の攻略を助ける。"), new Color(0.22f, 0.70f, 1.0f), muted);
-            FourfoldRuntimeUi.DrawDivider(rect.x + 26f, rect.y + 212f, rect.width - 52f);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 164f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, $"Loadout: {LoadoutEffectText(progressData)}", $"ロードアウト: {LoadoutEffectText(progressData)}"), new Color(0.62f, 0.44f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 208f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "Reward: Lumen Edge and Lumen Ward can be equipped after hub return.", "報酬: Lumen Edge / Ward はハブ帰還後に装備できる。"), new Color(0.22f, 0.70f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawDivider(rect.x + 26f, rect.y + 256f, rect.width - 52f);
 
             var labels = new[]
             {
                 FourfoldLanguage.T(progressData, "Start Region", "地域へ入る"),
+                FourfoldLanguage.T(progressData, "Loadout", "ロードアウト"),
                 FourfoldLanguage.T(progressData, "Settings", "設定"),
                 FourfoldLanguage.T(progressData, "Back to Hub", "ハブへ戻る")
             };
             for (var i = 0; i < labels.Length; i++)
             {
-                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 34f, rect.y + 228f + i * 38f, rect.width - 68f, 32f), labels[i], selectedMissionIndex == i, body);
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 34f, rect.y + 272f + i * 34f, rect.width - 68f, 30f), labels[i], selectedMissionIndex == i, body);
             }
 
             GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 46f, rect.width - 68f, 30f), FourfoldInputPrompts.HubPanel(progressData), muted);
+        }
+
+        private void DrawLoadout(Rect rect, GUIStyle body, GUIStyle muted)
+        {
+            progressData = FourfoldProgressSave.Load();
+            GUI.Label(new Rect(rect.x + 24f, rect.y + 58f, rect.width - 48f, 48f), FourfoldLanguage.T(progressData, "Equip saved reward skills before starting a region. Locked skills must be earned and saved by returning to the hub.", "地域へ入る前に、保存済み報酬スキルを装備する。未取得のスキルは、獲得してハブへ帰還すると保存される。"), body);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 24f, rect.y + 112f, rect.width - 48f, 34f), LoadoutSummary(progressData) + " - " + LoadoutEffectText(progressData), new Color(0.62f, 0.44f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawDivider(rect.x + 24f, rect.y + 162f, rect.width - 48f);
+
+            for (var i = 0; i < LoadoutMenuCount; i++)
+            {
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 32f, rect.y + 178f + i * 40f, rect.width - 64f, 34f), LoadoutRowLabel(progressData, i), selectedLoadoutIndex == i, body);
+            }
+
+            GUI.Label(new Rect(rect.x + 32f, rect.y + rect.height - 54f, rect.width - 64f, 42f), FourfoldLanguage.T(progressData, "Confirm toggles equipped saved skills. Locked rows are read-only.", "決定で保存済みスキルの装備を切り替える。未取得行は確認のみ。") + "\n" + FourfoldInputPrompts.HubConfirm(progressData), muted);
         }
 
         private void DrawSettings(Rect rect, GUIStyle body, GUIStyle muted)

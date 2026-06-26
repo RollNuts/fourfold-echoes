@@ -53,6 +53,11 @@ namespace FourfoldEchoes.Editor
                     regionD020Unlocked = true,
                     lumenRodUnlocked = true,
                     d020ShortcutOpened = true,
+                    d020RewardClaimed = true,
+                    d020SecondRewardClaimed = true,
+                    d020LoadoutInitialized = true,
+                    d020EdgeEquipped = true,
+                    d020WardEquipped = false,
                     d020FailureCount = 3,
                     settingsInitialized = true,
                     masterVolume = 0.7f,
@@ -70,6 +75,11 @@ namespace FourfoldEchoes.Editor
                     || !roundtrip.regionD020Unlocked
                     || !roundtrip.lumenRodUnlocked
                     || !roundtrip.d020ShortcutOpened
+                    || !roundtrip.d020RewardClaimed
+                    || !roundtrip.d020SecondRewardClaimed
+                    || !roundtrip.d020LoadoutInitialized
+                    || !roundtrip.d020EdgeEquipped
+                    || roundtrip.d020WardEquipped
                     || roundtrip.d020FailureCount != 3
                     || !Approximately(roundtrip.masterVolume, 0.7f)
                     || !Approximately(roundtrip.musicVolume, 0.5f)

@@ -161,12 +161,15 @@ namespace FourfoldEchoes.Editor
             RequireContains(titleCopy, "Hub prep -> Region 01 run -> rewards -> hub result", "Title loop summary");
             RequireContains(titleCopy, "New run: prepare in the hub, clear Region 01", "Title new-save summary");
             RequireContains(titleCopy, "REGION ATTEMPT IN PROGRESS", "Title in-progress run choice");
+            RequireContains(titleCopy, "equipped", "Title equipped reward summary");
 
             var hubCopy = Read("Assets/Scripts/HubSceneController.cs");
             RequireContains(hubCopy, "HUB: Crossroads", "Hub identity");
-            RequireContains(hubCopy, "RUN PLAN: open route, beat boss, claim Edge, open shortcut, claim Ward, return.", "Hub run plan");
+            RequireContains(hubCopy, "RUN PLAN: tune loadout, open route, beat boss, claim skills, return.", "Hub run plan");
             RequireContains(hubCopy, "REGION 01: VERDANT STEPS", "R01 product region name");
             RequireContains(hubCopy, "Goal: use the exploration tool, defeat the boss, claim two reward skills, and return to the hub to save the result.", "Hub mission briefing");
+            RequireContains(hubCopy, "LOADOUT", "Hub loadout panel");
+            RequireContains(hubCopy, "Equipped reward skills", "Hub equipped reward HUD");
             RequireContains(hubCopy, "REGION CLEARED", "Hub result summary");
             RequireContains(hubCopy, "RESET SAVE?", "Hub reset confirmation");
 
@@ -193,7 +196,7 @@ namespace FourfoldEchoes.Editor
             RequireContains(inputPrompts, "Attack A", "Region controller attack prompt");
             RequireContains(inputPrompts, "Attack Space", "Region keyboard attack prompt");
             RequireContains(inputPrompts, "Tool X", "Region controller tool prompt");
-            RequireContains(inputPrompts, "Press Start or Y", "Region controller retry prompt");
+            RequireContains(inputPrompts, "Press Start, A, or Y", "Region controller retry prompt");
             RequireContains(inputPrompts, "HubStartReady", "Hub start prompt helper");
         }
 

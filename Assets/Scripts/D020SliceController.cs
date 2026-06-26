@@ -1193,7 +1193,7 @@ namespace FourfoldEchoes.Product
                 selectedPauseIndex = Wrap(selectedPauseIndex + 1, PauseMenuCount);
             }
 
-            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadAttackKey))
             {
                 ActivatePauseSelection();
                 return;
@@ -1234,7 +1234,7 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            if (!Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            if (!Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadAttackKey))
             {
                 return;
             }
@@ -1273,7 +1273,7 @@ namespace FourfoldEchoes.Product
                 AdjustSelectedSetting(1f);
             }
 
-            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey) || Pressed(returnToTitleKey, gamepadReturnToTitleKey))
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadAttackKey) || Pressed(returnToTitleKey, gamepadReturnToTitleKey, gamepadDodgeKey))
             {
                 CloseSettings();
             }
@@ -1350,7 +1350,7 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
-            if (Pressed(pauseKey, gamepadPauseKey))
+            if (Pressed(pauseKey, gamepadPauseKey, gamepadDodgeKey))
             {
                 var returnToPaused = pendingExitReturnToPaused;
                 pendingExitAction = PendingExitAction.None;
@@ -1358,7 +1358,7 @@ namespace FourfoldEchoes.Product
                 return true;
             }
 
-            var confirmPressed = Pressed(interactKey, gamepadInteractKey);
+            var confirmPressed = Pressed(interactKey, gamepadInteractKey, gamepadAttackKey);
             if (pendingExitAction == PendingExitAction.RetryRun)
             {
                 confirmPressed = confirmPressed || Pressed(retryKey, gamepadRetryKey);
@@ -1643,12 +1643,12 @@ namespace FourfoldEchoes.Product
 
         private bool LumenEdgeActive()
         {
-            return previousRewardLoaded || firstRewardClaimedThisRun;
+            return firstRewardClaimedThisRun || (previousRewardLoaded && progressData != null && progressData.d020EdgeEquipped);
         }
 
         private bool LumenWardActive()
         {
-            return previousSecondRewardLoaded || secondRewardClaimedThisRun;
+            return secondRewardClaimedThisRun || (previousSecondRewardLoaded && progressData != null && progressData.d020WardEquipped);
         }
 
         private void ShowRewardNotice(string title, string body)
@@ -1674,6 +1674,17 @@ namespace FourfoldEchoes.Product
             return count;
         }
 
+        private int EquippedRelicCount()
+        {
+            var count = previousRewardLoaded && progressData != null && progressData.d020EdgeEquipped ? 1 : 0;
+            if (previousSecondRewardLoaded && progressData != null && progressData.d020WardEquipped)
+            {
+                count += 1;
+            }
+
+            return count;
+        }
+
         private int ClaimedRelicCountThisRun()
         {
             var count = firstRewardClaimedThisRun ? 1 : 0;
@@ -1688,35 +1699,36 @@ namespace FourfoldEchoes.Product
         private string RelicStateText()
         {
             var returned = ReturnedRelicCount();
+            var equipped = EquippedRelicCount();
             var run = ClaimedRelicCountThisRun();
             if (LumenEdgeActive() && LumenWardActive())
             {
                 return FourfoldLanguage.T(
                     progressData,
-                    $"Lumen Edge +DMG / Ward -DMG  Saved{returned}/2  Run{run}/2",
-                    $"Lumen Edge +攻撃 / Ward -被弾  保存{returned}/2  今回{run}/2");
+                    $"Lumen Edge +DMG / Ward -DMG  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
+                    $"Lumen Edge +攻撃 / Ward -被弾  保存{returned}/2 装備{equipped}/2 今回{run}/2");
             }
 
             if (LumenEdgeActive())
             {
                 return FourfoldLanguage.T(
                     progressData,
-                    $"Lumen Edge +DMG  Saved{returned}/2  Run{run}/2",
-                    $"Lumen Edge +攻撃  保存{returned}/2  今回{run}/2");
+                    $"Lumen Edge +DMG  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
+                    $"Lumen Edge +攻撃  保存{returned}/2 装備{equipped}/2 今回{run}/2");
             }
 
             if (LumenWardActive())
             {
                 return FourfoldLanguage.T(
                     progressData,
-                    $"Lumen Ward -DMG  Saved{returned}/2  Run{run}/2",
-                    $"Lumen Ward -被弾  保存{returned}/2  今回{run}/2");
+                    $"Ward -DMG  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
+                    $"Ward -被弾  保存{returned}/2 装備{equipped}/2 今回{run}/2");
             }
 
             return FourfoldLanguage.T(
                 progressData,
-                $"Rewards  Saved{returned}/2  Run{run}/2",
-                $"報酬  保存{returned}/2  今回{run}/2");
+                $"Rewards  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
+                $"報酬  保存{returned}/2 装備{equipped}/2 今回{run}/2");
         }
 
         private string DodgeStateText()
@@ -2134,6 +2146,15 @@ namespace FourfoldEchoes.Product
             progressData.d020SecondNodeOpened = previousSecondNodeLoaded;
             progressData.d020SecondRewardClaimed = previousSecondRewardLoaded;
             progressData.d020ReturnedToHub = previousReturnedToHubLoaded;
+            progressData.d020LoadoutInitialized = true;
+            if (firstRewardClaimedThisRun && previousRewardLoaded)
+            {
+                progressData.d020EdgeEquipped = true;
+            }
+            if (secondRewardClaimedThisRun && previousSecondRewardLoaded)
+            {
+                progressData.d020WardEquipped = true;
+            }
             progressData.d020ClearCount = Mathf.Max(0, clearCount);
             progressData.d020FailureCount = Mathf.Max(0, failureCount);
             progressData.d020BestClearTimeSeconds = Mathf.Max(0f, bestClearTimeSeconds);
@@ -2455,11 +2476,17 @@ namespace FourfoldEchoes.Product
             }
             else if (previousClearLoaded && !runCleared)
             {
-                var progress = previousSecondRewardLoaded
-                    ? FourfoldLanguage.T(progressData, "Saved progress: both rewards active from an earlier clear.", "保存済み進行: 以前のクリアで両方の報酬が有効。")
-                    : previousRewardLoaded
-                        ? FourfoldLanguage.T(progressData, "Saved progress: Lumen Edge active from an earlier clear.", "保存済み進行: 以前のクリアでLumen Edgeが有効。")
-                        : FourfoldLanguage.T(progressData, "Saved progress: this region was cleared before.", "保存済み進行: この地域はクリア済み。");
+                var edgeEquipped = previousRewardLoaded && progressData != null && progressData.d020EdgeEquipped;
+                var wardEquipped = previousSecondRewardLoaded && progressData != null && progressData.d020WardEquipped;
+                var progress = edgeEquipped && wardEquipped
+                    ? FourfoldLanguage.T(progressData, "Saved progress: Lumen Edge and Ward equipped from hub loadout.", "保存済み進行: ハブロードアウトのLumen EdgeとWardを装備中。")
+                    : edgeEquipped
+                        ? FourfoldLanguage.T(progressData, "Saved progress: Lumen Edge equipped from hub loadout.", "保存済み進行: ハブロードアウトのLumen Edgeを装備中。")
+                        : wardEquipped
+                            ? FourfoldLanguage.T(progressData, "Saved progress: Lumen Ward equipped from hub loadout.", "保存済み進行: ハブロードアウトのLumen Wardを装備中。")
+                            : previousRewardLoaded || previousSecondRewardLoaded
+                                ? FourfoldLanguage.T(progressData, "Saved progress: reward skills are stored; equip them in the hub loadout.", "保存済み進行: 報酬スキルは保存済み。ハブロードアウトで装備できる。")
+                                : FourfoldLanguage.T(progressData, "Saved progress: this region was cleared before.", "保存済み進行: この地域はクリア済み。");
                 GUI.Label(BottomProgressRect(Screen.width, Screen.height), progress, style);
             }
             else if (previousShortcutLoaded)

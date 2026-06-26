@@ -127,9 +127,11 @@ namespace FourfoldEchoes.Product
                 {
                     var titleController = VerifyTitleScene();
                     var summary = titleController.ContinueSummary();
-                    if (summary.IndexOf("Hub", StringComparison.Ordinal) < 0 || summary.IndexOf("Relics returned 2/2", StringComparison.Ordinal) < 0)
+                    if (summary.IndexOf("Hub", StringComparison.Ordinal) < 0
+                        || summary.IndexOf("Saved reward skills 2/2", StringComparison.Ordinal) < 0
+                        || summary.IndexOf("equipped 2/2", StringComparison.Ordinal) < 0)
                     {
-                        throw new InvalidOperationException("title continue summary does not expose banked Hub progress");
+                        throw new InvalidOperationException("title continue summary does not expose banked Hub progress and equipped reward skills");
                     }
 
                     titleController.ContinueGame();

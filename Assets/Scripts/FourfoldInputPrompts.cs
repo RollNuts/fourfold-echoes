@@ -59,14 +59,14 @@ namespace FourfoldEchoes.Product
         public static string HubPanel(FourfoldProgressData data)
         {
             return PreferGamepad()
-                ? FourfoldLanguage.T(data, "Move: D-pad/Left Stick   Confirm: Y   Close: B or Menu", "移動: 十字キー/左スティック   決定: Y   閉じる: B または Menu")
+                ? FourfoldLanguage.T(data, "Move: D-pad/Left Stick   Confirm: A or Y   Close: B or Menu", "移動: 十字キー/左スティック   決定: A または Y   閉じる: B または Menu")
                 : FourfoldLanguage.T(data, "Move: arrows or WASD   Confirm: E or Enter   Close: Esc or Backspace", "移動: 矢印 または WASD   決定: E または Enter   閉じる: Esc または Backspace");
         }
 
         public static string HubConfirm(FourfoldProgressData data)
         {
             return PreferGamepad()
-                ? FourfoldLanguage.T(data, "Confirm: Y   Cancel: B or Menu", "決定: Y   キャンセル: B または Menu")
+                ? FourfoldLanguage.T(data, "Confirm: A or Y   Cancel: B or Menu", "決定: A または Y   キャンセル: B または Menu")
                 : FourfoldLanguage.T(data, "Confirm: E or Enter   Cancel: Esc or Backspace", "決定: E または Enter   キャンセル: Esc または Backspace");
         }
 
@@ -80,7 +80,7 @@ namespace FourfoldEchoes.Product
         public static string SharedSettings(FourfoldProgressData data)
         {
             return PreferGamepad()
-                ? FourfoldLanguage.T(data, "Left/Right changes value. Y or Select returns.", "左右で変更。Y または Select で戻る。")
+                ? FourfoldLanguage.T(data, "Left/Right changes value. A, Y, B, or Select returns.", "左右で変更。A、Y、B、Selectで戻る。")
                 : FourfoldLanguage.T(data, "Left/Right changes value. E or Enter or Backspace returns.", "左右で変更。E または Enter または Backspace で戻る。");
         }
 
@@ -94,21 +94,21 @@ namespace FourfoldEchoes.Product
         public static string RegionFailure(FourfoldProgressData data)
         {
             return PreferGamepad()
-                ? FourfoldLanguage.T(data, "Move: D-pad/Left Stick   Confirm: Y   Start retries", "移動: 十字キー/左スティック   決定: Y   Startで再挑戦")
+                ? FourfoldLanguage.T(data, "Move: D-pad/Left Stick   Confirm: A or Y   Start retries", "移動: 十字キー/左スティック   決定: A または Y   Startで再挑戦")
                 : FourfoldLanguage.T(data, "Move: arrows or WASD   Confirm: E or Enter   R retries", "移動: 矢印 または WASD   決定: E または Enter   Rで再挑戦");
         }
 
         public static string RegionRetryConfirm(FourfoldProgressData data)
         {
             return PreferGamepad()
-                ? FourfoldLanguage.T(data, "Press Start or Y to retry from the start.", "Start または Y で最初から再挑戦。")
+                ? FourfoldLanguage.T(data, "Press Start, A, or Y to retry from the start.", "Start、A、Yで最初から再挑戦。")
                 : FourfoldLanguage.T(data, "Press R or E to retry from the start.", "R または E で最初から再挑戦。");
         }
 
         public static string RegionTitleConfirm(FourfoldProgressData data)
         {
             return PreferGamepad()
-                ? FourfoldLanguage.T(data, "Press Select or Y to leave for title.", "Select または Y でタイトルへ。")
+                ? FourfoldLanguage.T(data, "Press Select, A, or Y to leave for title.", "Select、A、Yでタイトルへ。")
                 : FourfoldLanguage.T(data, "Press Backspace or E to leave for title.", "Backspace または E でタイトルへ。");
         }
 

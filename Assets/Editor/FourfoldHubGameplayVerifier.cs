@@ -65,6 +65,7 @@ namespace FourfoldEchoes.Editor
                 returnedProgress.d020SecondNodeOpened = true;
                 returnedProgress.d020SecondRewardClaimed = true;
                 returnedProgress.d020ReturnedToHub = true;
+                returnedProgress.d020LoadoutInitialized = false;
                 returnedProgress.d020ClearCount = 1;
                 returnedProgress.d020AcknowledgedClearCount = 0;
                 returnedProgress.d020BestClearTimeSeconds = 91f;
@@ -80,6 +81,27 @@ namespace FourfoldEchoes.Editor
                 if (acknowledgedProgress.d020AcknowledgedClearCount != acknowledgedProgress.d020ClearCount || controller.IsRunSummaryOpen())
                 {
                     throw new InvalidOperationException("Hub gameplay verifier failed: dismissing the banked run summary did not acknowledge the returned clear.");
+                }
+
+                if (!acknowledgedProgress.d020EdgeEquipped || !acknowledgedProgress.d020WardEquipped)
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: newly banked reward skills were not auto-equipped.");
+                }
+
+                if (!controller.ToggleLumenEdgeLoadout())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: saved Lumen Edge could not be toggled from loadout.");
+                }
+
+                var edgeOffProgress = FourfoldProgressSave.Load();
+                if (edgeOffProgress.d020EdgeEquipped || !edgeOffProgress.d020WardEquipped)
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: loadout toggle did not persist Lumen Edge off while keeping Lumen Ward on.");
+                }
+
+                if (!controller.ToggleLumenEdgeLoadout())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: saved Lumen Edge could not be re-equipped from loadout.");
                 }
 
                 controller.player.position = controller.d020RegionGate.position;

@@ -283,6 +283,8 @@ namespace FourfoldEchoes.Product
                 ? FourfoldLanguage.T(progressData, "Region attempt in progress", "地域攻略中")
                 : FourfoldLanguage.T(progressData, "Hub", "ハブ");
             var relics = (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
+            var equippedRelics = (progressData.d020RewardClaimed && progressData.d020EdgeEquipped ? 1 : 0)
+                + (progressData.d020SecondRewardClaimed && progressData.d020WardEquipped ? 1 : 0);
             var best = progressData.d020BestClearTimeSeconds > 0f
                 ? FourfoldLanguage.T(progressData, $" Best {Mathf.CeilToInt(progressData.d020BestClearTimeSeconds)}s.", $" 最速 {Mathf.CeilToInt(progressData.d020BestClearTimeSeconds)}秒。")
                 : string.Empty;
@@ -291,8 +293,8 @@ namespace FourfoldEchoes.Product
                 : string.Empty;
             return FourfoldLanguage.T(
                 progressData,
-                $"Save: {location}. Clears {progressData.d020ClearCount}. Saved reward skills {relics}/2.{best}{risk}",
-                $"セーブ: {location}。クリア {progressData.d020ClearCount}。保存済み報酬スキル {relics}/2。{best}{risk}");
+                $"Save: {location}. Clears {progressData.d020ClearCount}. Saved reward skills {relics}/2, equipped {equippedRelics}/{relics}.{best}{risk}",
+                $"セーブ: {location}。クリア {progressData.d020ClearCount}。保存済み報酬スキル {relics}/2、装備 {equippedRelics}/{relics}。{best}{risk}");
         }
 
         private void UpdateMenuInput()

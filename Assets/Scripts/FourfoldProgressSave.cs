@@ -22,6 +22,9 @@ namespace FourfoldEchoes.Product
         public bool d020SecondNodeOpened;
         public bool d020SecondRewardClaimed;
         public bool d020ReturnedToHub;
+        public bool d020LoadoutInitialized;
+        public bool d020EdgeEquipped;
+        public bool d020WardEquipped;
         public int d020ClearCount;
         public int d020AcknowledgedClearCount;
         public int d020FailureCount;
@@ -185,6 +188,23 @@ namespace FourfoldEchoes.Product
             }
 
             data.d020BestClearTimeSeconds = Mathf.Max(0f, data.d020BestClearTimeSeconds);
+            if (!data.d020LoadoutInitialized)
+            {
+                data.d020EdgeEquipped = data.d020RewardClaimed;
+                data.d020WardEquipped = data.d020SecondRewardClaimed;
+                data.d020LoadoutInitialized = true;
+            }
+
+            if (!data.d020RewardClaimed)
+            {
+                data.d020EdgeEquipped = false;
+            }
+
+            if (!data.d020SecondRewardClaimed)
+            {
+                data.d020WardEquipped = false;
+            }
+
             if (!data.settingsInitialized)
             {
                 data.masterVolume = 1f;
