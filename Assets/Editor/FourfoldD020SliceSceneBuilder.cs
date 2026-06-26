@@ -41,7 +41,8 @@ namespace FourfoldEchoes.Editor
             var root = new GameObject("D020 Slice World");
             CreateRoom(root.transform, assets);
             var player = CreatePlayer(root.transform, assets);
-            CreateEnemy(root.transform, assets);
+            CreateMeleeEnemy(root.transform, assets);
+            CreateRangedEnemy(root.transform, assets);
             CreateChest(root.transform, assets);
             var node = CreateExplorationToolProof(root.transform, assets);
             CreateRuntimeHook(player.transform, node, assets);
@@ -66,6 +67,7 @@ namespace FourfoldEchoes.Editor
 
             Require("D020 Player");
             Require("D020 Enemy Read Target");
+            Require("D020 Enemy Ranged Read Target");
             Require("D020 Relic Chest");
             Require("D020 Exploration Tool Node");
             Require("D020 Shortcut Route");
@@ -143,11 +145,11 @@ namespace FourfoldEchoes.Editor
         private static Camera CreateCamera()
         {
             var cameraObject = new GameObject("D020 Top Down Camera") { tag = "MainCamera" };
-            cameraObject.transform.position = new Vector3(6.2f, 9.4f, -7.2f);
-            cameraObject.transform.rotation = Quaternion.LookRotation(new Vector3(0.2f, 0.4f, -0.15f) - cameraObject.transform.position, Vector3.up);
+            cameraObject.transform.position = new Vector3(8.6f, 12.4f, -10.4f);
+            cameraObject.transform.rotation = Quaternion.LookRotation(new Vector3(0.15f, 0.1f, 0.15f) - cameraObject.transform.position, Vector3.up);
             var camera = cameraObject.AddComponent<Camera>();
             camera.orthographic = true;
-            camera.orthographicSize = 5.6f;
+            camera.orthographicSize = 8.2f;
             camera.nearClipPlane = 0.1f;
             camera.farClipPlane = 90f;
             camera.clearFlags = CameraClearFlags.SolidColor;
@@ -165,8 +167,9 @@ namespace FourfoldEchoes.Editor
             key.color = new Color(1f, 0.78f, 0.55f);
             key.shadows = LightShadows.Soft;
 
-            CreatePointLight("D020 Tool Fill", new Vector3(-1.6f, 2.1f, -1.0f), new Color(0.95f, 0.78f, 0.22f), 2.2f, 5.5f);
-            CreatePointLight("D020 Reward Fill", new Vector3(3.2f, 1.8f, -1.9f), new Color(0.22f, 0.58f, 1.0f), 2.0f, 4.8f);
+            CreatePointLight("D020 Tool Fill", new Vector3(-3.2f, 2.2f, -1.8f), new Color(0.95f, 0.78f, 0.22f), 2.6f, 6.2f);
+            CreatePointLight("D020 Enemy Fill", new Vector3(0.8f, 2.1f, 1.4f), new Color(1.0f, 0.34f, 0.18f), 1.4f, 5.4f);
+            CreatePointLight("D020 Reward Fill", new Vector3(4.8f, 2.0f, 3.4f), new Color(0.22f, 0.58f, 1.0f), 2.4f, 5.6f);
         }
 
         private static void CreatePointLight(string name, Vector3 position, Color color, float intensity, float range)
@@ -185,68 +188,97 @@ namespace FourfoldEchoes.Editor
             var room = new GameObject("D020 Readable Room");
             room.transform.SetParent(root);
 
-            for (var x = -4; x <= 4; x++)
+            for (var x = -6; x <= 6; x++)
             {
-                for (var z = -3; z <= 3; z++)
+                for (var z = -5; z <= 5; z++)
                 {
-                    var material = Mathf.Abs(x) == 4 || Mathf.Abs(z) == 3 ? assets.floorDark : assets.floor;
+                    var material = Mathf.Abs(x) == 6 || Mathf.Abs(z) == 5 ? assets.floorDark : assets.floor;
                     CreateBlock(room.transform, $"D020 Floor {x},{z}", material, new Vector3(x, -0.08f, z), new Vector3(0.96f, 0.16f, 0.96f));
                 }
             }
 
-            for (var x = -4; x <= 4; x += 2)
+            for (var x = -6; x <= 6; x += 2)
             {
-                CreateBlock(room.transform, $"D020 Low North Wall {x}", assets.floorDark, new Vector3(x, 0.38f, 3.45f), new Vector3(1.15f, 0.72f, 0.30f));
-                CreateBlock(room.transform, $"D020 Low South Wall {x}", assets.floorDark, new Vector3(x, 0.38f, -3.45f), new Vector3(1.15f, 0.72f, 0.30f));
+                CreateBlock(room.transform, $"D020 Low North Wall {x}", assets.floorDark, new Vector3(x, 0.34f, 5.55f), new Vector3(1.25f, 0.64f, 0.30f));
+                CreateBlock(room.transform, $"D020 Low South Wall {x}", assets.floorDark, new Vector3(x, 0.34f, -5.55f), new Vector3(1.25f, 0.64f, 0.30f));
             }
 
-            CreateBlock(room.transform, "D020 Shortcut Gap Left", assets.floorDark, new Vector3(-4.55f, 0.28f, 1.15f), new Vector3(0.28f, 0.56f, 1.1f));
-            CreateBlock(room.transform, "D020 Shortcut Gap Right", assets.floorDark, new Vector3(-4.55f, 0.28f, -1.15f), new Vector3(0.28f, 0.56f, 1.1f));
-            CreateBlock(room.transform, "D020 Main Path Line A", assets.route, new Vector3(-1.2f, 0.025f, -1.6f), new Vector3(1.2f, 0.05f, 0.14f), Quaternion.Euler(0f, 16f, 0f));
-            CreateBlock(room.transform, "D020 Main Path Line B", assets.route, new Vector3(0.2f, 0.025f, -1.25f), new Vector3(1.2f, 0.05f, 0.14f), Quaternion.Euler(0f, -8f, 0f));
+            for (var z = -3; z <= 5; z += 2)
+            {
+                CreateBlock(room.transform, $"D020 Low East Wall {z}", assets.floorDark, new Vector3(6.55f, 0.34f, z), new Vector3(0.30f, 0.64f, 1.25f));
+            }
+
+            CreateBlock(room.transform, "D020 Shortcut Gate Left Stone", assets.floorDark, new Vector3(-6.55f, 0.34f, 1.7f), new Vector3(0.30f, 0.64f, 1.2f));
+            CreateBlock(room.transform, "D020 Shortcut Gate Right Stone", assets.floorDark, new Vector3(-6.55f, 0.34f, -1.25f), new Vector3(0.30f, 0.64f, 1.2f));
+            CreateBlock(room.transform, "D020 Start Threshold", assets.route, new Vector3(-4.2f, 0.02f, -4.2f), new Vector3(2.0f, 0.05f, 0.18f), Quaternion.Euler(0f, 12f, 0f));
+            CreateBlock(room.transform, "D020 Tool Route Line A", assets.route, new Vector3(-3.45f, 0.025f, -2.75f), new Vector3(1.65f, 0.05f, 0.16f), Quaternion.Euler(0f, 32f, 0f));
+            CreateBlock(room.transform, "D020 Tool Route Line B", assets.route, new Vector3(-1.95f, 0.025f, -1.55f), new Vector3(1.6f, 0.05f, 0.16f), Quaternion.Euler(0f, 36f, 0f));
+            CreateBlock(room.transform, "D020 Combat Route Line", assets.route, new Vector3(0.05f, 0.025f, 0.35f), new Vector3(2.4f, 0.05f, 0.16f), Quaternion.Euler(0f, 24f, 0f));
+            CreateBlock(room.transform, "D020 Reward Route Line", assets.route, new Vector3(3.05f, 0.025f, 2.45f), new Vector3(2.7f, 0.05f, 0.16f), Quaternion.Euler(0f, 18f, 0f));
+            CreateBlock(room.transform, "D020 Reward Low Rail A", assets.floorDark, new Vector3(2.2f, 0.26f, 3.85f), new Vector3(1.8f, 0.52f, 0.22f));
+            CreateBlock(room.transform, "D020 Reward Low Rail B", assets.floorDark, new Vector3(4.8f, 0.26f, 3.85f), new Vector3(1.8f, 0.52f, 0.22f));
+            CreateBlock(room.transform, "D020 Enemy Arena Marker", assets.enemyTell, new Vector3(0.85f, 0.015f, 1.1f), new Vector3(2.2f, 0.035f, 1.35f), Quaternion.Euler(0f, 24f, 0f));
+            CreateBlock(room.transform, "D020 Tool Target Backplate", assets.floorDark, new Vector3(-3.35f, 0.44f, -1.35f), new Vector3(1.2f, 0.86f, 0.20f));
         }
 
         private static GameObject CreatePlayer(Transform root, GeneratedAssets assets)
         {
             var player = new GameObject("D020 Player");
             player.transform.SetParent(root);
-            player.transform.position = new Vector3(0f, 0.12f, -2.25f);
-            player.transform.rotation = Quaternion.Euler(0f, 32f, 0f);
+            player.transform.position = new Vector3(-4.15f, 0.12f, -3.85f);
+            player.transform.rotation = Quaternion.Euler(0f, 42f, 0f);
 
-            CreatePrimitive(player.transform, PrimitiveType.Cylinder, "D020 Player Read Circle", assets.route, new Vector3(0f, 0.025f, 0f), new Vector3(0.86f, 0.035f, 0.86f));
-            CreateBlock(player.transform, "D020 Player Feet", assets.player, new Vector3(0f, 0.17f, 0f), new Vector3(0.34f, 0.26f, 0.32f));
-            CreatePrimitive(player.transform, PrimitiveType.Capsule, "D020 Player Body", assets.player, new Vector3(0f, 0.78f, 0f), new Vector3(0.44f, 0.70f, 0.38f));
-            CreatePrimitive(player.transform, PrimitiveType.Sphere, "D020 Player Head", assets.player, new Vector3(0f, 1.39f, 0f), new Vector3(0.36f, 0.34f, 0.36f));
-            CreateBlock(player.transform, "D020 Player Cape", assets.playerCape, new Vector3(-0.12f, 0.74f, -0.18f), new Vector3(0.55f, 0.88f, 0.11f));
-            CreateBlock(player.transform, "D020 One Tool Held Read", assets.tool, new Vector3(0.47f, 0.86f, -0.05f), new Vector3(0.15f, 0.92f, 0.12f), Quaternion.Euler(0f, 0f, -25f));
+            CreatePrimitive(player.transform, PrimitiveType.Cylinder, "D020 Player Read Circle", assets.route, new Vector3(0f, 0.025f, 0f), new Vector3(1.18f, 0.035f, 1.18f));
+            CreateBlock(player.transform, "D020 Player Feet", assets.player, new Vector3(0f, 0.18f, 0f), new Vector3(0.44f, 0.28f, 0.40f));
+            CreatePrimitive(player.transform, PrimitiveType.Capsule, "D020 Player Body", assets.player, new Vector3(0f, 0.86f, 0f), new Vector3(0.56f, 0.86f, 0.46f));
+            CreatePrimitive(player.transform, PrimitiveType.Sphere, "D020 Player Head", assets.player, new Vector3(0f, 1.56f, 0f), new Vector3(0.42f, 0.40f, 0.42f));
+            CreateBlock(player.transform, "D020 Player Cape", assets.playerCape, new Vector3(-0.14f, 0.82f, -0.24f), new Vector3(0.72f, 1.05f, 0.13f));
+            CreateBlock(player.transform, "D020 Player Sword Read", assets.floorDark, new Vector3(0.28f, 0.88f, 0.42f), new Vector3(0.12f, 0.82f, 0.09f), Quaternion.Euler(34f, 0f, -28f));
+            CreateBlock(player.transform, "D020 One Tool Held Read", assets.tool, new Vector3(0.58f, 0.98f, -0.08f), new Vector3(0.18f, 1.18f, 0.13f), Quaternion.Euler(0f, 0f, -25f));
+            CreatePrimitive(player.transform, PrimitiveType.Sphere, "D020 Tool Hand Glow", assets.tool, new Vector3(0.66f, 1.52f, -0.12f), new Vector3(0.22f, 0.22f, 0.22f));
             return player;
         }
 
-        private static void CreateEnemy(Transform root, GeneratedAssets assets)
+        private static void CreateMeleeEnemy(Transform root, GeneratedAssets assets)
         {
             var enemy = new GameObject("D020 Enemy Read Target");
             enemy.transform.SetParent(root);
-            enemy.transform.position = new Vector3(1.65f, 0.12f, 0.35f);
+            enemy.transform.position = new Vector3(0.72f, 0.12f, 1.05f);
             enemy.transform.rotation = Quaternion.Euler(0f, 200f, 0f);
 
-            CreatePrimitive(enemy.transform, PrimitiveType.Capsule, "D020 Enemy Body", assets.enemy, new Vector3(0f, 0.72f, 0f), new Vector3(0.74f, 0.82f, 0.64f));
-            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Enemy Tell Core", assets.enemyTell, new Vector3(0f, 1.06f, -0.22f), new Vector3(0.26f, 0.26f, 0.14f));
-            CreateBlock(enemy.transform, "D020 Enemy Left Arm", assets.enemy, new Vector3(-0.55f, 0.72f, 0f), new Vector3(0.22f, 0.58f, 0.20f), Quaternion.Euler(0f, 0f, 18f));
-            CreateBlock(enemy.transform, "D020 Enemy Right Arm", assets.enemy, new Vector3(0.55f, 0.72f, 0f), new Vector3(0.22f, 0.58f, 0.20f), Quaternion.Euler(0f, 0f, -18f));
-            CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Enemy Attack Read", assets.enemyTell, new Vector3(0f, 0.035f, -0.9f), new Vector3(0.95f, 0.025f, 0.95f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Capsule, "D020 Enemy Body", assets.enemy, new Vector3(0f, 0.76f, 0f), new Vector3(0.92f, 0.92f, 0.74f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Enemy Tell Core", assets.enemyTell, new Vector3(0f, 1.18f, -0.28f), new Vector3(0.32f, 0.32f, 0.18f));
+            CreateBlock(enemy.transform, "D020 Enemy Left Arm", assets.enemy, new Vector3(-0.68f, 0.74f, 0f), new Vector3(0.26f, 0.66f, 0.22f), Quaternion.Euler(0f, 0f, 18f));
+            CreateBlock(enemy.transform, "D020 Enemy Right Arm", assets.enemy, new Vector3(0.68f, 0.74f, 0f), new Vector3(0.26f, 0.66f, 0.22f), Quaternion.Euler(0f, 0f, -18f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Enemy Melee Danger Read", assets.enemyTell, new Vector3(0f, 0.035f, -1.05f), new Vector3(1.25f, 0.025f, 1.25f));
+        }
+
+        private static void CreateRangedEnemy(Transform root, GeneratedAssets assets)
+        {
+            var enemy = new GameObject("D020 Enemy Ranged Read Target");
+            enemy.transform.SetParent(root);
+            enemy.transform.position = new Vector3(3.25f, 0.12f, 1.95f);
+            enemy.transform.rotation = Quaternion.Euler(0f, 226f, 0f);
+
+            CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Ranged Enemy Base", assets.enemy, new Vector3(0f, 0.40f, 0f), new Vector3(0.54f, 0.70f, 0.54f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Ranged Enemy Head", assets.enemy, new Vector3(0f, 1.06f, 0f), new Vector3(0.38f, 0.34f, 0.38f));
+            CreateBlock(enemy.transform, "D020 Ranged Enemy Staff", assets.enemyTell, new Vector3(0.46f, 0.86f, -0.08f), new Vector3(0.12f, 1.18f, 0.10f), Quaternion.Euler(0f, 0f, -12f));
+            CreateBlock(enemy.transform, "D020 Ranged Enemy Aim Line", assets.enemyTell, new Vector3(-0.58f, 0.13f, -0.72f), new Vector3(1.25f, 0.035f, 0.10f), Quaternion.Euler(0f, 28f, 0f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Ranged Enemy Tell Orb", assets.enemyTell, new Vector3(0.56f, 1.48f, -0.12f), new Vector3(0.20f, 0.20f, 0.20f));
         }
 
         private static void CreateChest(Transform root, GeneratedAssets assets)
         {
             var chest = new GameObject("D020 Relic Chest");
             chest.transform.SetParent(root);
-            chest.transform.position = new Vector3(3.05f, 0.1f, -1.55f);
+            chest.transform.position = new Vector3(5.0f, 0.1f, 3.65f);
             chest.transform.rotation = Quaternion.Euler(0f, -18f, 0f);
 
-            CreateBlock(chest.transform, "D020 Chest Base", assets.chest, Vector3.zero, new Vector3(0.78f, 0.42f, 0.58f));
-            CreateBlock(chest.transform, "D020 Chest Lid", assets.route, new Vector3(0f, 0.33f, 0f), new Vector3(0.82f, 0.15f, 0.62f));
-            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Visible Relic", assets.relic, new Vector3(0f, 0.72f, 0f), new Vector3(0.26f, 0.36f, 0.26f));
-            CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Reward Footprint", assets.relic, new Vector3(0f, 0.03f, 0f), new Vector3(0.92f, 0.026f, 0.92f));
+            CreateBlock(chest.transform, "D020 Chest Base", assets.chest, Vector3.zero, new Vector3(1.02f, 0.48f, 0.72f));
+            CreateBlock(chest.transform, "D020 Chest Lid", assets.route, new Vector3(0f, 0.39f, 0f), new Vector3(1.08f, 0.17f, 0.78f));
+            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Visible Relic", assets.relic, new Vector3(0f, 0.88f, 0f), new Vector3(0.34f, 0.46f, 0.34f));
+            CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Reward Footprint", assets.relic, new Vector3(0f, 0.03f, 0f), new Vector3(1.24f, 0.026f, 1.24f));
+            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Reward Beacon", assets.relic, new Vector3(0f, 1.42f, 0f), new Vector3(0.16f, 0.28f, 0.16f));
         }
 
         private static ExplorationNode CreateExplorationToolProof(Transform root, GeneratedAssets assets)
@@ -257,21 +289,22 @@ namespace FourfoldEchoes.Editor
             var response = new GameObject("D020 Shortcut Route");
             response.transform.SetParent(proof.transform);
             response.transform.position = Vector3.zero;
-            CreateBlock(response.transform, "D020 Shortcut Slab A", assets.route, new Vector3(-3.95f, 0.05f, -0.65f), new Vector3(0.82f, 0.07f, 0.34f), Quaternion.Euler(0f, 17f, 0f));
-            CreateBlock(response.transform, "D020 Shortcut Slab B", assets.route, new Vector3(-3.42f, 0.06f, -0.18f), new Vector3(0.82f, 0.07f, 0.34f), Quaternion.Euler(0f, -14f, 0f));
-            CreateBlock(response.transform, "D020 Shortcut Slab C", assets.route, new Vector3(-2.86f, 0.07f, 0.24f), new Vector3(0.82f, 0.07f, 0.34f), Quaternion.Euler(0f, 16f, 0f));
-            CreateBlock(response.transform, "D020 Shortcut Slab D", assets.route, new Vector3(-2.3f, 0.08f, 0.62f), new Vector3(0.78f, 0.07f, 0.30f), Quaternion.Euler(0f, -8f, 0f));
-            CreatePrimitive(response.transform, PrimitiveType.Sphere, "D020 Shortcut Open Spark A", assets.tool, new Vector3(-3.55f, 0.42f, -0.2f), new Vector3(0.20f, 0.20f, 0.20f));
-            CreatePrimitive(response.transform, PrimitiveType.Sphere, "D020 Shortcut Open Spark B", assets.tool, new Vector3(-2.45f, 0.48f, 0.58f), new Vector3(0.18f, 0.18f, 0.18f));
-            CreateBlock(response.transform, "D020 Shortcut Direction Beam", assets.tool, new Vector3(-2.62f, 0.12f, 0.38f), new Vector3(1.35f, 0.045f, 0.08f), Quaternion.Euler(0f, 32f, 0f));
+            CreateBlock(response.transform, "D020 Shortcut Slab A", assets.route, new Vector3(-5.95f, 0.05f, 0.02f), new Vector3(0.96f, 0.07f, 0.38f), Quaternion.Euler(0f, 17f, 0f));
+            CreateBlock(response.transform, "D020 Shortcut Slab B", assets.route, new Vector3(-5.28f, 0.06f, 0.52f), new Vector3(0.96f, 0.07f, 0.38f), Quaternion.Euler(0f, -14f, 0f));
+            CreateBlock(response.transform, "D020 Shortcut Slab C", assets.route, new Vector3(-4.58f, 0.07f, 0.98f), new Vector3(0.96f, 0.07f, 0.38f), Quaternion.Euler(0f, 16f, 0f));
+            CreateBlock(response.transform, "D020 Shortcut Slab D", assets.route, new Vector3(-3.9f, 0.08f, 1.45f), new Vector3(0.90f, 0.07f, 0.34f), Quaternion.Euler(0f, -8f, 0f));
+            CreatePrimitive(response.transform, PrimitiveType.Sphere, "D020 Shortcut Open Spark A", assets.tool, new Vector3(-5.20f, 0.48f, 0.52f), new Vector3(0.24f, 0.24f, 0.24f));
+            CreatePrimitive(response.transform, PrimitiveType.Sphere, "D020 Shortcut Open Spark B", assets.tool, new Vector3(-3.95f, 0.54f, 1.43f), new Vector3(0.22f, 0.22f, 0.22f));
+            CreateBlock(response.transform, "D020 Shortcut Direction Beam", assets.tool, new Vector3(-4.42f, 0.14f, 1.12f), new Vector3(1.70f, 0.045f, 0.09f), Quaternion.Euler(0f, 32f, 0f));
 
             var nodeObject = new GameObject("D020 Exploration Tool Node");
             nodeObject.transform.SetParent(proof.transform);
-            nodeObject.transform.position = new Vector3(-1.2f, 0.1f, -1.85f);
-            var footprint = CreatePrimitive(nodeObject.transform, PrimitiveType.Cylinder, "D020 Tool Node Footprint", assets.tool, Vector3.zero, new Vector3(0.64f, 0.026f, 0.64f));
-            CreateBlock(nodeObject.transform, "D020 Tool Node Pedestal", assets.floorDark, new Vector3(0f, 0.2f, 0f), new Vector3(0.48f, 0.36f, 0.48f));
-            CreateBlock(nodeObject.transform, "D020 Tool Node Signal", assets.tool, new Vector3(0f, 0.58f, -0.03f), new Vector3(0.14f, 0.44f, 0.08f), Quaternion.Euler(0f, 0f, 45f));
-            var activeRead = CreatePrimitive(nodeObject.transform, PrimitiveType.Sphere, "D020 Tool Node Active Read", assets.relic, new Vector3(0f, 0.86f, -0.03f), new Vector3(0.18f, 0.18f, 0.18f));
+            nodeObject.transform.position = new Vector3(-3.25f, 0.1f, -1.85f);
+            var footprint = CreatePrimitive(nodeObject.transform, PrimitiveType.Cylinder, "D020 Tool Node Footprint", assets.tool, Vector3.zero, new Vector3(0.92f, 0.026f, 0.92f));
+            CreateBlock(nodeObject.transform, "D020 Tool Node Pedestal", assets.floorDark, new Vector3(0f, 0.24f, 0f), new Vector3(0.66f, 0.44f, 0.66f));
+            CreateBlock(nodeObject.transform, "D020 Tool Node Signal A", assets.tool, new Vector3(-0.10f, 0.68f, -0.04f), new Vector3(0.16f, 0.62f, 0.09f), Quaternion.Euler(0f, 0f, 45f));
+            CreateBlock(nodeObject.transform, "D020 Tool Node Signal B", assets.tool, new Vector3(0.16f, 0.68f, -0.04f), new Vector3(0.16f, 0.62f, 0.09f), Quaternion.Euler(0f, 0f, -45f));
+            var activeRead = CreatePrimitive(nodeObject.transform, PrimitiveType.Sphere, "D020 Tool Node Active Read", assets.relic, new Vector3(0f, 1.02f, -0.03f), new Vector3(0.24f, 0.24f, 0.24f));
             activeRead.SetActive(false);
             response.SetActive(false);
 
