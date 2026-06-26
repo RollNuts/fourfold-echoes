@@ -104,8 +104,11 @@ namespace FourfoldEchoes.Editor
                 floorDark = CreateMaterial("D020_FloorDark", new Color(0.18f, 0.17f, 0.18f), 0.02f, 0.34f, null),
                 route = CreateMaterial("D020_RouteGold", new Color(0.93f, 0.68f, 0.26f), 0.02f, 0.45f, new Color(0.42f, 0.21f, 0.04f)),
                 player = CreateMaterial("D020_PlayerIvory", new Color(0.92f, 0.78f, 0.52f), 0.06f, 0.43f, null),
-                playerCape = CreateMaterial("D020_PlayerCape", new Color(0.40f, 0.14f, 0.28f), 0f, 0.38f, null),
+                playerCape = CreateMaterial("D020_PlayerCape", new Color(0.18f, 0.22f, 0.62f), 0f, 0.38f, new Color(0.02f, 0.04f, 0.16f)),
+                playerAura = CreateMaterial("D020_PlayerAura", new Color(0.22f, 0.66f, 1.0f), 0f, 0.48f, new Color(0.05f, 0.22f, 0.52f)),
+                playerBlade = CreateMaterial("D020_PlayerBlade", new Color(0.82f, 0.86f, 0.88f), 0.28f, 0.62f, null),
                 enemy = CreateMaterial("D020_EnemyInk", new Color(0.07f, 0.055f, 0.08f), 0.08f, 0.36f, null),
+                enemyArmor = CreateMaterial("D020_EnemyArmor", new Color(0.16f, 0.13f, 0.12f), 0.12f, 0.42f, null),
                 enemyTell = CreateMaterial("D020_EnemyTell", new Color(0.94f, 0.16f, 0.08f), 0f, 0.5f, new Color(0.65f, 0.06f, 0.02f)),
                 chest = CreateMaterial("D020_ChestWood", new Color(0.42f, 0.24f, 0.12f), 0f, 0.42f, null),
                 relic = CreateMaterial("D020_RelicBlue", new Color(0.20f, 0.68f, 0.94f), 0f, 0.5f, new Color(0.05f, 0.26f, 0.52f)),
@@ -229,13 +232,17 @@ namespace FourfoldEchoes.Editor
             player.transform.rotation = Quaternion.Euler(0f, 42f, 0f);
 
             CreatePrimitive(player.transform, PrimitiveType.Cylinder, "D020 Player Read Circle", assets.route, new Vector3(0f, 0.025f, 0f), new Vector3(1.18f, 0.035f, 1.18f));
-            CreateBlock(player.transform, "D020 Player Feet", assets.player, new Vector3(0f, 0.18f, 0f), new Vector3(0.44f, 0.28f, 0.40f));
-            CreatePrimitive(player.transform, PrimitiveType.Capsule, "D020 Player Body", assets.player, new Vector3(0f, 0.86f, 0f), new Vector3(0.56f, 0.86f, 0.46f));
-            CreatePrimitive(player.transform, PrimitiveType.Sphere, "D020 Player Head", assets.player, new Vector3(0f, 1.56f, 0f), new Vector3(0.42f, 0.40f, 0.42f));
-            CreateBlock(player.transform, "D020 Player Cape", assets.playerCape, new Vector3(-0.14f, 0.82f, -0.24f), new Vector3(0.72f, 1.05f, 0.13f));
-            CreateBlock(player.transform, "D020 Player Sword Read", assets.floorDark, new Vector3(0.28f, 0.88f, 0.42f), new Vector3(0.12f, 0.82f, 0.09f), Quaternion.Euler(34f, 0f, -28f));
-            CreateBlock(player.transform, "D020 One Tool Held Read", assets.tool, new Vector3(0.58f, 0.98f, -0.08f), new Vector3(0.18f, 1.18f, 0.13f), Quaternion.Euler(0f, 0f, -25f));
-            CreatePrimitive(player.transform, PrimitiveType.Sphere, "D020 Tool Hand Glow", assets.tool, new Vector3(0.66f, 1.52f, -0.12f), new Vector3(0.22f, 0.22f, 0.22f));
+            CreatePrimitive(player.transform, PrimitiveType.Cylinder, "D020 Player Blue Control Ring", assets.playerAura, new Vector3(0f, 0.04f, 0f), new Vector3(1.42f, 0.026f, 1.42f));
+            CreateBlock(player.transform, "D020 Player Left Boot", assets.floorDark, new Vector3(-0.18f, 0.18f, 0.12f), new Vector3(0.26f, 0.30f, 0.44f));
+            CreateBlock(player.transform, "D020 Player Right Boot", assets.floorDark, new Vector3(0.18f, 0.18f, -0.12f), new Vector3(0.26f, 0.30f, 0.44f));
+            CreatePrimitive(player.transform, PrimitiveType.Capsule, "D020 Player Hero Tunic", assets.player, new Vector3(0f, 0.88f, 0f), new Vector3(0.62f, 0.86f, 0.50f));
+            CreateBlock(player.transform, "D020 Player Hero Cloak Read", assets.playerCape, new Vector3(-0.18f, 0.86f, -0.34f), new Vector3(0.82f, 1.12f, 0.16f));
+            CreatePrimitive(player.transform, PrimitiveType.Sphere, "D020 Player Head Read", assets.player, new Vector3(0f, 1.56f, 0f), new Vector3(0.46f, 0.42f, 0.46f));
+            CreateBlock(player.transform, "D020 Player Crest Read", assets.route, new Vector3(0f, 1.94f, -0.02f), new Vector3(0.42f, 0.18f, 0.16f), Quaternion.Euler(0f, 0f, 8f));
+            CreateBlock(player.transform, "D020 Player Sword Read", assets.playerBlade, new Vector3(0.46f, 0.98f, 0.40f), new Vector3(0.13f, 1.25f, 0.08f), Quaternion.Euler(34f, 0f, -28f));
+            CreateBlock(player.transform, "D020 Player Sword Grip Read", assets.floorDark, new Vector3(0.30f, 0.58f, 0.30f), new Vector3(0.18f, 0.32f, 0.12f), Quaternion.Euler(34f, 0f, -28f));
+            CreateBlock(player.transform, "D020 One Tool Held Read", assets.tool, new Vector3(0.68f, 1.04f, -0.16f), new Vector3(0.16f, 1.06f, 0.13f), Quaternion.Euler(0f, 0f, -25f));
+            CreatePrimitive(player.transform, PrimitiveType.Sphere, "D020 Tool Hand Glow", assets.tool, new Vector3(0.74f, 1.58f, -0.18f), new Vector3(0.26f, 0.26f, 0.26f));
             return player;
         }
 
@@ -246,11 +253,14 @@ namespace FourfoldEchoes.Editor
             enemy.transform.position = new Vector3(0.72f, 0.12f, 1.05f);
             enemy.transform.rotation = Quaternion.Euler(0f, 200f, 0f);
 
-            CreatePrimitive(enemy.transform, PrimitiveType.Capsule, "D020 Enemy Body", assets.enemy, new Vector3(0f, 0.76f, 0f), new Vector3(0.92f, 0.92f, 0.74f));
-            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Enemy Tell Core", assets.enemyTell, new Vector3(0f, 1.18f, -0.28f), new Vector3(0.32f, 0.32f, 0.18f));
-            CreateBlock(enemy.transform, "D020 Enemy Left Arm", assets.enemy, new Vector3(-0.68f, 0.74f, 0f), new Vector3(0.26f, 0.66f, 0.22f), Quaternion.Euler(0f, 0f, 18f));
-            CreateBlock(enemy.transform, "D020 Enemy Right Arm", assets.enemy, new Vector3(0.68f, 0.74f, 0f), new Vector3(0.26f, 0.66f, 0.22f), Quaternion.Euler(0f, 0f, -18f));
-            CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Enemy Melee Danger Read", assets.enemyTell, new Vector3(0f, 0.035f, -1.05f), new Vector3(1.25f, 0.025f, 1.25f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Capsule, "D020 Enemy Heavy Body", assets.enemy, new Vector3(0f, 0.74f, 0f), new Vector3(1.06f, 0.92f, 0.82f));
+            CreateBlock(enemy.transform, "D020 Enemy Shoulder Left", assets.enemyArmor, new Vector3(-0.62f, 1.10f, -0.02f), new Vector3(0.42f, 0.28f, 0.52f), Quaternion.Euler(0f, 0f, 18f));
+            CreateBlock(enemy.transform, "D020 Enemy Shoulder Right", assets.enemyArmor, new Vector3(0.62f, 1.10f, -0.02f), new Vector3(0.42f, 0.28f, 0.52f), Quaternion.Euler(0f, 0f, -18f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Enemy Tell Core", assets.enemyTell, new Vector3(0f, 1.24f, -0.36f), new Vector3(0.38f, 0.34f, 0.20f));
+            CreateBlock(enemy.transform, "D020 Enemy Left Arm", assets.enemyArmor, new Vector3(-0.78f, 0.64f, 0.10f), new Vector3(0.28f, 0.72f, 0.24f), Quaternion.Euler(0f, 0f, 22f));
+            CreateBlock(enemy.transform, "D020 Enemy Heavy Club Read", assets.enemyArmor, new Vector3(0.74f, 0.78f, -0.38f), new Vector3(0.24f, 1.25f, 0.18f), Quaternion.Euler(20f, 0f, -34f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Enemy Club Tip Read", assets.enemyTell, new Vector3(1.05f, 1.35f, -0.52f), new Vector3(0.26f, 0.26f, 0.26f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Enemy Melee Danger Read", assets.enemyTell, new Vector3(0f, 0.035f, -1.05f), new Vector3(1.55f, 0.025f, 1.55f));
         }
 
         private static void CreateRangedEnemy(Transform root, GeneratedAssets assets)
@@ -260,11 +270,12 @@ namespace FourfoldEchoes.Editor
             enemy.transform.position = new Vector3(3.25f, 0.12f, 1.95f);
             enemy.transform.rotation = Quaternion.Euler(0f, 226f, 0f);
 
-            CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Ranged Enemy Base", assets.enemy, new Vector3(0f, 0.40f, 0f), new Vector3(0.54f, 0.70f, 0.54f));
-            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Ranged Enemy Head", assets.enemy, new Vector3(0f, 1.06f, 0f), new Vector3(0.38f, 0.34f, 0.38f));
-            CreateBlock(enemy.transform, "D020 Ranged Enemy Staff", assets.enemyTell, new Vector3(0.46f, 0.86f, -0.08f), new Vector3(0.12f, 1.18f, 0.10f), Quaternion.Euler(0f, 0f, -12f));
-            CreateBlock(enemy.transform, "D020 Ranged Enemy Aim Line", assets.enemyTell, new Vector3(-0.58f, 0.13f, -0.72f), new Vector3(1.25f, 0.035f, 0.10f), Quaternion.Euler(0f, 28f, 0f));
-            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Ranged Enemy Tell Orb", assets.enemyTell, new Vector3(0.56f, 1.48f, -0.12f), new Vector3(0.20f, 0.20f, 0.20f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Cylinder, "D020 Ranged Enemy Base", assets.enemy, new Vector3(0f, 0.40f, 0f), new Vector3(0.62f, 0.74f, 0.62f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Ranged Enemy Head", assets.enemyArmor, new Vector3(0f, 1.10f, 0f), new Vector3(0.42f, 0.36f, 0.42f));
+            CreateBlock(enemy.transform, "D020 Ranged Enemy Back Mantle", assets.enemyArmor, new Vector3(-0.10f, 0.78f, 0.24f), new Vector3(0.72f, 0.82f, 0.14f));
+            CreateBlock(enemy.transform, "D020 Ranged Enemy Staff", assets.enemyTell, new Vector3(0.54f, 0.92f, -0.08f), new Vector3(0.12f, 1.32f, 0.10f), Quaternion.Euler(0f, 0f, -12f));
+            CreateBlock(enemy.transform, "D020 Ranged Enemy Aim Line", assets.enemyTell, new Vector3(-0.70f, 0.13f, -0.78f), new Vector3(1.55f, 0.035f, 0.10f), Quaternion.Euler(0f, 28f, 0f));
+            CreatePrimitive(enemy.transform, PrimitiveType.Sphere, "D020 Ranged Enemy Tell Orb", assets.enemyTell, new Vector3(0.64f, 1.62f, -0.12f), new Vector3(0.24f, 0.24f, 0.24f));
         }
 
         private static void CreateChest(Transform root, GeneratedAssets assets)
@@ -278,7 +289,8 @@ namespace FourfoldEchoes.Editor
             CreateBlock(chest.transform, "D020 Chest Lid", assets.route, new Vector3(0f, 0.39f, 0f), new Vector3(1.08f, 0.17f, 0.78f));
             CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Visible Relic", assets.relic, new Vector3(0f, 0.88f, 0f), new Vector3(0.34f, 0.46f, 0.34f));
             CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Reward Footprint", assets.relic, new Vector3(0f, 0.03f, 0f), new Vector3(1.24f, 0.026f, 1.24f));
-            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Reward Beacon", assets.relic, new Vector3(0f, 1.42f, 0f), new Vector3(0.16f, 0.28f, 0.16f));
+            CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Reward Vertical Beam", assets.relic, new Vector3(0f, 1.86f, 0f), new Vector3(0.12f, 1.35f, 0.12f));
+            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Reward Beacon", assets.relic, new Vector3(0f, 3.18f, 0f), new Vector3(0.22f, 0.34f, 0.22f));
         }
 
         private static ExplorationNode CreateExplorationToolProof(Transform root, GeneratedAssets assets)
@@ -419,7 +431,10 @@ namespace FourfoldEchoes.Editor
             public Material route;
             public Material player;
             public Material playerCape;
+            public Material playerAura;
+            public Material playerBlade;
             public Material enemy;
+            public Material enemyArmor;
             public Material enemyTell;
             public Material chest;
             public Material relic;
