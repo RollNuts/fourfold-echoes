@@ -56,6 +56,13 @@ are historical unless a newer explicit decision reclassifies them.
 
 Use these files first:
 
+- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/00_CANON.md`
+- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/01_ARCHITECTURE.md`
+- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/02_OUT_OF_SCOPE.md`
+- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/03_ART_AUDIO_UI.md`
+- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/04_VERTICAL_SLICE_PLAN.md`
+- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/05_SCOPE_AND_RELEASE.md`
+- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/06_STEAM_STORE_PLAN.md`
 - `docs/Product/MVP_BLUEPRINT.md`
 - `docs/Product/PROJECT_SPEC.md`
 - `docs/Product/CORE_SYSTEMS.md`

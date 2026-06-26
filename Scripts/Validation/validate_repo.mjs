@@ -6,6 +6,13 @@ const repo = process.cwd();
 
 const requiredFiles = [
   "AGENTS.md",
+  "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/00_CANON.md",
+  "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/01_ARCHITECTURE.md",
+  "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/02_OUT_OF_SCOPE.md",
+  "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/03_ART_AUDIO_UI.md",
+  "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/04_VERTICAL_SLICE_PLAN.md",
+  "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/05_SCOPE_AND_RELEASE.md",
+  "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/06_STEAM_STORE_PLAN.md",
   "docs/Product/MVP_BLUEPRINT.md",
   "docs/Product/PROJECT_SPEC.md",
   "docs/Product/DEVELOPMENT_CHARTER.md",
@@ -98,7 +105,11 @@ for (const file of rejectedLegacyFiles) {
 const canonicalTextChecks = [
   {
     file: "AGENTS.md",
-    required: ["single-player top-down classic", "1 exploration tool", "not an open world"]
+    required: ["single-player top-down classic", "1 exploration tool", "not an open world", "D021_COMPACT_ACTION_SPEC_PACK"]
+  },
+  {
+    file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/00_CANON.md",
+    required: ["current D021 source of truth", "1 hub", "3 handcrafted regions", "4 bosses", "1 exploration tool", "UI/UX is product scope"]
   },
   {
     file: "docs/Product/MVP_BLUEPRINT.md",
@@ -126,6 +137,82 @@ for (const check of canonicalTextChecks) {
 }
 
 const requiredSectionChecks = [
+  {
+    file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/00_CANON.md",
+    headings: [
+      "## Fixed Product Memo",
+      "## Product Feel",
+      "## Required Player-Facing Loop",
+      "## Scene List",
+      "## Non-Negotiable Caps",
+      "## Historical Terms"
+    ]
+  },
+  {
+    file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/01_ARCHITECTURE.md",
+    headings: [
+      "## Script Responsibilities",
+      "## Data Design",
+      "## Implementation Order",
+      "## Implementation Boundary"
+    ]
+  },
+  {
+    file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/02_OUT_OF_SCOPE.md",
+    headings: ["## Scope-Out List", "## Allowed Improvements", "## Rejection Rule"]
+  },
+  {
+    file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/03_ART_AUDIO_UI.md",
+    headings: [
+      "## Art Pillars",
+      "## Forbidden Visuals",
+      "## Art Budgets",
+      "## Naming Rules",
+      "## Regional Color Script",
+      "## Minimum Quality Bar",
+      "## Audio Pillars",
+      "## Required SFX",
+      "## BGM List",
+      "## Tool Audio Design",
+      "## UI/UX Completion Bar"
+    ]
+  },
+  {
+    file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/04_VERTICAL_SLICE_PLAN.md",
+    headings: [
+      "## Completion Checklist",
+      "## Weekly Plan",
+      "## Task Ownership",
+      "## Risks",
+      "## Market-Validation Memo"
+    ]
+  },
+  {
+    file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/05_SCOPE_AND_RELEASE.md",
+    headings: [
+      "## Change-Control Template",
+      "## Weekly Review",
+      "## Completion, Improvement, Delete",
+      "## Steam Release Checklist",
+      "## Steam Deck Tests",
+      "## Regression Tests",
+      "## 30-Day Hotfix Plan",
+      "## Bug Priorities",
+      "## Announcement Templates"
+    ]
+  },
+  {
+    file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/06_STEAM_STORE_PLAN.md",
+    headings: [
+      "## Short Copy Ideas",
+      "## Long Copy",
+      "## Tag Priority",
+      "## Screenshot Plan",
+      "## Trailer Storyboards",
+      "## Announcement Copy",
+      "## Translation Priority List"
+    ]
+  },
   {
     file: "docs/Product/MVP_BLUEPRINT.md",
     headings: [

@@ -10,6 +10,18 @@ namespace FourfoldEchoes.Editor.Mediator
             FourfoldForgeMediator.Run();
         }
 
+        [MenuItem("Tools/FOURFOLD/Product/Validate All", false, 15)]
+        public static void ValidateProduct()
+        {
+            FourfoldProductValidator.RunAll();
+        }
+
+        [MenuItem("Tools/FOURFOLD/Product/Validate D021 Contract", false, 16)]
+        public static void ValidateD021Contract()
+        {
+            FourfoldD021ProductContractVerifier.VerifyD021Contract();
+        }
+
         [MenuItem("Tools/FOURFOLD/D-020/Build And Validate", false, 20)]
         public static void BuildAndValidateD020()
         {

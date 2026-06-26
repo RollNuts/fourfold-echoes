@@ -1,10 +1,21 @@
 # Required Checks
 
-Status: public guardrail after D-020.
+Status: public guardrail after D-021.
 
 This project can publish planning reports and dogfood evidence, but public
 branches must not expose local paths, personal information, credentials, private
 keys, private package URLs, or unlicensed assets.
+
+The current product direction is the D021 compact action-adventure pack:
+
+```text
+docs/Production/D021_COMPACT_ACTION_SPEC_PACK/
+```
+
+`repo-validation` treats this pack as required public product evidence. Old D020
+documents may remain as historical proof, but new product work must not use them
+to reintroduce extraction, hack-and-slash loot, co-op, Echo Phase world-state,
+or open-world scope.
 
 ## Local Required Checks
 
@@ -38,6 +49,8 @@ When Unity is already open, do not launch a second batchmode Editor against the
 same project. Use the Editor menu or the repo-local command inbox instead:
 
 ```bash
+tools/queue_unity_editor_command.sh d021.contract_validate d021-contract
+tools/queue_unity_editor_command.sh product.validate product-validate
 tools/queue_unity_editor_command.sh d020.build_and_validate d020-build
 tools/queue_unity_editor_command.sh d020.capture_evidence d020-capture
 ```
@@ -50,6 +63,7 @@ has compiled, it consumes ignored command files under
 Equivalent manual menu path:
 
 ```text
+Tools > FOURFOLD > Product > Validate All
 Tools > FOURFOLD > D-020 > Build And Validate
 Tools > FOURFOLD > D-020 > Capture Evidence
 ```
@@ -64,7 +78,7 @@ When branch protection is configured, require equivalent checks for:
 | Check | Required For | Purpose |
 | --- | --- | --- |
 | `public-hygiene` | all PRs | blocks local paths, credentials, private keys, and Unity local generated folders |
-| `repo-validation` | all PRs | confirms canonical D-020 docs, Game IR, audio registers, and scope guards |
+| `repo-validation` | all PRs | confirms D021 canon, historical D020 docs, Game IR, audio registers, and scope guards |
 | `forge-check` | specs/tooling PRs | validates Game IR and Forge-facing contracts |
 | `unity-validation` | Unity scene/runtime/editor PRs | validates scene generation, Unity product validator, and capture path |
 | `diff-whitespace` | all PRs | blocks trailing whitespace and broken patch formatting |

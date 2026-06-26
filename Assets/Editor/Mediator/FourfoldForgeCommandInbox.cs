@@ -119,6 +119,14 @@ namespace FourfoldEchoes.Editor.Mediator
                     FourfoldUnityEvidenceCapture.CaptureD020Slice();
                     break;
 
+                case "d021.contract_validate":
+                    FourfoldD021ProductContractVerifier.VerifyD021Contract();
+                    break;
+
+                case "product.validate":
+                    FourfoldProductValidator.RunAll();
+                    break;
+
                 default:
                     throw new InvalidOperationException($"Unsupported command action: {command.action}");
             }

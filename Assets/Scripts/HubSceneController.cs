@@ -786,7 +786,7 @@ namespace FourfoldEchoes.Product
             var uiScale = FourfoldRuntimeUi.SafeUiScale(progressData);
             var cleared = progressData != null && progressData.regionD020Cleared;
             var clearCount = progressData == null ? 0 : progressData.d020ClearCount;
-            var relics = progressData == null ? 0 : (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
+            var rewards = progressData == null ? 0 : (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
             var bestTime = progressData == null || progressData.d020BestClearTimeSeconds <= 0f
                 ? "--"
                 : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
@@ -797,18 +797,18 @@ namespace FourfoldEchoes.Product
             var muted = FourfoldRuntimeUi.MutedStyle(Screen.height, uiScale);
             GUI.Label(new Rect(panel.x + 18f, panel.y + 12f, panel.width - 36f, 34f), FourfoldLanguage.T(progressData, "HUB: Crossroads", "ハブ: 交差路"), header);
             var hubStatus = cleared
-                ? FourfoldLanguage.T(progressData, "D-020 cleared. Lumen Edge and Ward are banked; replay to improve your time.", "D-020クリア済み。Lumen Edge / Ward は保存済み。再挑戦でタイム更新を狙える。")
-                : FourfoldLanguage.T(progressData, "Mission: enter D-020, defeat the boss, claim both relic rewards, and return to bank them.", "任務: D-020へ入り、ボスを倒し、2つのレリック報酬を持ち帰って保存する。");
+                ? FourfoldLanguage.T(progressData, "Region 01 cleared. Reward skills are active; replay to improve your time.", "地域01クリア済み。報酬スキルは有効。再挑戦でタイム更新を狙える。")
+                : FourfoldLanguage.T(progressData, "Mission: enter Region 01, use the exploration tool, defeat the boss, and confirm rewards.", "任務: 地域01へ入り、探索ツールを使い、ボスを倒して報酬を確定する。");
             GUI.Label(new Rect(panel.x + 18f, panel.y + 48f, panel.width - 36f, 52f), hubStatus, body);
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 96f, 230f, 34f), FourfoldLanguage.T(progressData, $"Clears {clearCount}   Best {bestTime}", $"クリア {clearCount}   最速 {bestTime}"), new Color(1.0f, 0.72f, 0.24f), muted);
-            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 260f, panel.y + 96f, 220f, 34f), FourfoldLanguage.T(progressData, $"Relics banked {relics}/2", $"保存レリック {relics}/2"), new Color(0.22f, 0.70f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 260f, panel.y + 96f, 220f, 34f), FourfoldLanguage.T(progressData, $"Rewards active {rewards}/2", $"有効報酬 {rewards}/2"), new Color(0.22f, 0.70f, 1.0f), muted);
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 492f, panel.y + 96f, panel.width - 510f, 34f), FourfoldLanguage.T(progressData, $"Failures {(progressData == null ? 0 : progressData.d020FailureCount)}", $"失敗 {(progressData == null ? 0 : progressData.d020FailureCount)}"), new Color(1.0f, 0.46f, 0.22f), muted);
             var prompt = CanEnterD020Region()
-                ? FourfoldLanguage.T(progressData, "Press E / Y: Enter D-020", "E / Y: D-020へ入る")
-                : FourfoldLanguage.T(progressData, "Move to the gold gate to start the run.", "金色のゲートへ移動してランを開始。");
+                ? FourfoldLanguage.T(progressData, "Press E / Y: Enter Region 01", "E / Y: 地域01へ入る")
+                : FourfoldLanguage.T(progressData, "Move to the gold gate to start the region.", "金色のゲートへ移動して地域へ入る。");
             var next = cleared
-                ? FourfoldLanguage.T(progressData, "Next: replay D-020, compare clear time, or return to title from Pause.", "次: D-020再挑戦、タイム比較、またはポーズからタイトルへ。")
-                : FourfoldLanguage.T(progressData, "Next: reach the gold gate and start the run.", "次: 金色のゲートへ向かい、ランを開始する。");
+                ? FourfoldLanguage.T(progressData, "Next: replay Region 01, compare clear time, or return to title from Pause.", "次: 地域01再挑戦、タイム比較、またはポーズからタイトルへ。")
+                : FourfoldLanguage.T(progressData, "Next: reach the gold gate and start the region.", "次: 金色のゲートへ向かい、地域へ入る。");
             GUI.Label(new Rect(panel.x + 18f, panel.y + 138f, panel.width - 36f, 24f), prompt, body);
             GUI.Label(new Rect(panel.x + 18f, panel.y + 164f, panel.width - 36f, 24f), next, muted);
             if (progressData == null || progressData.showControlHints)
@@ -879,18 +879,18 @@ namespace FourfoldEchoes.Product
                 : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
             var clearCount = progressData == null ? 0 : progressData.d020ClearCount;
             var failures = progressData == null ? 0 : progressData.d020FailureCount;
-            var relics = progressData == null ? 0 : (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
+            var rewards = progressData == null ? 0 : (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
 
-            GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "RUN BANKED", "ラン報酬を保存"), header);
-            GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 50f), FourfoldLanguage.T(progressData, "The D-020 run is complete. Returned relic skills are now saved and active for future attempts.", "D-020ラン完了。持ち帰ったレリックスキルは保存され、次回以降も有効。"), body);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 116f, (rect.width - 64f) * 0.50f, 36f), FourfoldLanguage.T(progressData, $"Relics active {relics}/2", $"有効レリック {relics}/2"), new Color(0.22f, 0.70f, 1.0f), muted);
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "REGION CLEARED", "地域クリア"), header);
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 50f), FourfoldLanguage.T(progressData, "Region 01 is complete. Reward skills are now saved and active for future attempts.", "地域01完了。報酬スキルは保存され、次回以降も有効。"), body);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 116f, (rect.width - 64f) * 0.50f, 36f), FourfoldLanguage.T(progressData, $"Rewards active {rewards}/2", $"有効報酬 {rewards}/2"), new Color(0.22f, 0.70f, 1.0f), muted);
             FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 38f + (rect.width - 64f) * 0.50f, rect.y + 116f, (rect.width - 64f) * 0.50f, 36f), FourfoldLanguage.T(progressData, $"Clears {clearCount}   Best {bestTime}", $"クリア {clearCount}   最速 {bestTime}"), new Color(1.0f, 0.72f, 0.24f), muted);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 162f, rect.width - 52f, 36f), FourfoldLanguage.T(progressData, $"Failed runs {failures}. Unbanked relics are only safe after returning here.", $"失敗 {failures}。未帰還レリックはここへ戻るまで安全ではない。"), new Color(1.0f, 0.46f, 0.22f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 162f, rect.width - 52f, 36f), FourfoldLanguage.T(progressData, $"Failed attempts {failures}. Confirmed progress remains safe.", $"失敗 {failures}。確定済みの進行は保持される。"), new Color(1.0f, 0.46f, 0.22f), muted);
             FourfoldRuntimeUi.DrawDivider(rect.x + 26f, rect.y + 214f, rect.width - 52f);
 
             var labels = new[]
             {
-                FourfoldLanguage.T(progressData, "Replay D-020", "D-020を再挑戦"),
+                FourfoldLanguage.T(progressData, "Replay Region 01", "地域01を再挑戦"),
                 FourfoldLanguage.T(progressData, "Continue in Hub", "ハブで続ける"),
                 FourfoldLanguage.T(progressData, "Return to Title", "タイトルへ戻る")
             };
@@ -910,7 +910,7 @@ namespace FourfoldEchoes.Product
             FourfoldRuntimeUi.DrawPanel(rect);
             var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData));
             GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "RESET SAVE?", "セーブをリセット？"), header);
-            GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 58f), FourfoldLanguage.T(progressData, "This erases D-020 clears, banked relic rewards, best time, and failure count. Audio/UI settings are kept.", "D-020クリア、保存済みレリック報酬、最速タイム、失敗回数を消去する。音量/UI設定は保持される。"), body);
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 58f), FourfoldLanguage.T(progressData, "This erases clears, confirmed rewards, best time, and failure count. Audio/UI settings are kept.", "クリア、確定報酬、最速タイム、失敗回数を消去する。音量/UI設定は保持される。"), body);
             FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 126f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "This cannot be undone from inside the game.", "ゲーム内では取り消せない。"), new Color(1.0f, 0.46f, 0.22f), muted);
 
             var labels = new[] { FourfoldLanguage.T(progressData, "Reset Save", "リセットする"), FourfoldLanguage.T(progressData, "Cancel", "キャンセル") };
@@ -929,7 +929,7 @@ namespace FourfoldEchoes.Product
             var rect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
             FourfoldRuntimeUi.DrawPanel(rect);
             var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData));
-            GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), settingsOpen ? FourfoldLanguage.T(progressData, "MISSION SETTINGS", "任務設定") : FourfoldLanguage.T(progressData, "D-020: FIRST ECHO RUN", "D-020: 最初のエコーラン"), header);
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), settingsOpen ? FourfoldLanguage.T(progressData, "REGION SETTINGS", "地域設定") : FourfoldLanguage.T(progressData, "REGION 01: GREEN RUINS", "地域01: 緑の遺跡"), header);
 
             if (settingsOpen)
             {
@@ -937,14 +937,14 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 52f), FourfoldLanguage.T(progressData, "Goal: enter the sealed room, break the boss, claim two relic skills, and return to the Hub to bank them.", "目標: 封印部屋へ入り、ボスを倒し、2つのレリックスキルを取得してハブへ持ち帰る。"), body);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 120f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "Risk: death, retry, or title return drops unbanked relic rewards.", "危険: 死亡・再挑戦・タイトル帰還で未帰還レリックは失われる。"), new Color(1.0f, 0.46f, 0.22f), muted);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 164f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "Reward: Lumen Edge and Lumen Ward become active only after returning.", "報酬: Lumen Edge / Ward は帰還後に有効化される。"), new Color(0.22f, 0.70f, 1.0f), muted);
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 52f), FourfoldLanguage.T(progressData, "Goal: use the exploration tool, defeat the boss, claim two reward skills, and return to the hub.", "目標: 探索ツールを使い、ボスを倒し、2つの報酬スキルを得てハブへ戻る。"), body);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 120f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "Failure restarts the attempt. Confirmed progress remains safe.", "失敗すると攻略をやり直す。確定済みの進行は保持される。"), new Color(1.0f, 0.46f, 0.22f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 164f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "Reward: Lumen Edge and Lumen Ward improve the next attempt.", "報酬: Lumen Edge / Ward は次回以降の攻略を助ける。"), new Color(0.22f, 0.70f, 1.0f), muted);
             FourfoldRuntimeUi.DrawDivider(rect.x + 26f, rect.y + 212f, rect.width - 52f);
 
             var labels = new[]
             {
-                FourfoldLanguage.T(progressData, "Start Run", "ラン開始"),
+                FourfoldLanguage.T(progressData, "Start Region", "地域へ入る"),
                 FourfoldLanguage.T(progressData, "Settings", "設定"),
                 FourfoldLanguage.T(progressData, "Back to Hub", "ハブへ戻る")
             };
@@ -1005,7 +1005,7 @@ namespace FourfoldEchoes.Product
             var distance = FlatDistance(player.position, d020RegionGate.position);
             var rect = new Rect(screenX - 58f, screenY - 18f, 168f, 38f);
             FourfoldRuntimeUi.DrawPanel(rect);
-            GUI.Label(new Rect(rect.x + 12f, rect.y + 7f, rect.width - 24f, rect.height - 10f), $"{(offscreen ? "NEXT >" : "NEXT")} D-020 {distance:0}m", style);
+            GUI.Label(new Rect(rect.x + 12f, rect.y + 7f, rect.width - 24f, rect.height - 10f), $"{(offscreen ? "NEXT >" : "NEXT")} R01 {distance:0}m", style);
         }
     }
 }

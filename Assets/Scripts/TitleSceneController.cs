@@ -274,24 +274,24 @@ namespace FourfoldEchoes.Product
             {
                 return FourfoldLanguage.T(
                     progressData,
-                    "Goal: enter D-020, defeat the boss, secure relics, and return to bank rewards.",
-                    "目標: D-020へ入り、ボスを倒し、レリックスキルを確保してハブへ帰還する。");
+                    "Goal: leave the hub, master one exploration tool, defeat the boss, and confirm progress.",
+                    "目標: ハブから出発し、ひとつの探索ツールを使いこなし、ボスを倒して進行を確定する。");
             }
 
             var location = progressData.currentScene == FourfoldGameIds.SceneD020VerticalSlice
-                ? FourfoldLanguage.T(progressData, "D-020 run in progress", "D-020攻略中")
+                ? FourfoldLanguage.T(progressData, "Region attempt in progress", "地域攻略中")
                 : FourfoldLanguage.T(progressData, "Hub", "ハブ");
             var relics = (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
             var best = progressData.d020BestClearTimeSeconds > 0f
                 ? FourfoldLanguage.T(progressData, $" Best {Mathf.CeilToInt(progressData.d020BestClearTimeSeconds)}s.", $" 最速 {Mathf.CeilToInt(progressData.d020BestClearTimeSeconds)}秒。")
                 : string.Empty;
             var risk = progressData.currentScene == FourfoldGameIds.SceneD020VerticalSlice
-                ? FourfoldLanguage.T(progressData, " Unreturned run rewards are still at risk.", " 持ち帰っていない報酬はまだ危険。")
+                ? FourfoldLanguage.T(progressData, " You can resume it or return to hub safely.", " 再開するか、安全にハブへ戻れる。")
                 : string.Empty;
             return FourfoldLanguage.T(
                 progressData,
-                $"Continue: {location}. Clears {progressData.d020ClearCount}. Relics returned {relics}/2.{best}{risk}",
-                $"続き: {location}。クリア {progressData.d020ClearCount}。持ち帰りレリック {relics}/2。{best}{risk}");
+                $"Continue: {location}. Clears {progressData.d020ClearCount}. Rewards confirmed {relics}/2.{best}{risk}",
+                $"続き: {location}。クリア {progressData.d020ClearCount}。確定報酬 {relics}/2。{best}{risk}");
         }
 
         private void UpdateMenuInput()
@@ -556,8 +556,8 @@ namespace FourfoldEchoes.Product
             var mutedStyle = FourfoldRuntimeUi.MutedStyle(Screen.height, uiScale);
 
             GUI.Label(new Rect(rect.x + 40f, rect.y + 22f, width - 80f, 62f), "FOURFOLD ECHOES", titleStyle);
-            GUI.Label(new Rect(rect.x + 42f, rect.y + 82f, width - 84f, 34f), FourfoldLanguage.T(progressData, "Boss-run fantasy action RPG", "ボス討伐型ファンタジーARPG"), subheadStyle);
-            GUI.Label(new Rect(rect.x + 42f, rect.y + 112f, width - 84f, 42f), FourfoldLanguage.T(progressData, "Prepare in the hub, enter D-020, defeat the boss, secure relic skills, then return before a failed run drops unbanked rewards.", "ハブで準備し、D-020へ入り、ボスを倒してスキルを持ち帰る。倒れると未帰還報酬は失われる。"), mutedStyle);
+            GUI.Label(new Rect(rect.x + 42f, rect.y + 82f, width - 84f, 34f), FourfoldLanguage.T(progressData, "Top-down fantasy action-adventure", "見下ろしファンタジーアクションADV"), subheadStyle);
+            GUI.Label(new Rect(rect.x + 42f, rect.y + 112f, width - 84f, 42f), FourfoldLanguage.T(progressData, "Leave the hub, master one exploration tool, open shortcuts, defeat bosses, and return with confirmed progress.", "ハブから出発し、ひとつの探索ツールで道を開き、ボスを倒して進行を確定する。"), mutedStyle);
             FourfoldRuntimeUi.DrawDivider(rect.x + 40f, rect.y + 158f, width - 80f);
 
             if (settingsOpen)
@@ -603,7 +603,7 @@ namespace FourfoldEchoes.Product
         private void DrawNewGameConfirmation(Rect rect, GUIStyle style, GUIStyle mutedStyle)
         {
             GUI.Label(new Rect(rect.x + 54f, rect.y + 178f, rect.width - 108f, 34f), FourfoldLanguage.T(progressData, "START NEW GAME?", "新しく始めますか？"), FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData)));
-            GUI.Label(new Rect(rect.x + 54f, rect.y + 216f, rect.width - 108f, 54f), FourfoldLanguage.T(progressData, "This erases D-020 clears, banked relic rewards, best time, and failed-run count. Audio, UI, and language settings are kept.", "D-020クリア、保存済みレリック、最速タイム、失敗回数を消去する。音量、UI、言語設定は保持される。"), style);
+            GUI.Label(new Rect(rect.x + 54f, rect.y + 216f, rect.width - 108f, 54f), FourfoldLanguage.T(progressData, "This erases clears, confirmed rewards, best time, and failed-attempt count. Audio, UI, and language settings are kept.", "クリア、確定報酬、最速タイム、失敗回数を消去する。音量、UI、言語設定は保持される。"), style);
             FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 54f, rect.y + 276f, rect.width - 108f, 34f), FourfoldLanguage.T(progressData, "Existing progress will be replaced.", "既存の進行は置き換えられる。"), new Color(1.0f, 0.46f, 0.22f), mutedStyle);
 
             var labels = new[]
@@ -621,12 +621,12 @@ namespace FourfoldEchoes.Product
 
         private void DrawContinueDecision(Rect rect, GUIStyle style, GUIStyle mutedStyle)
         {
-            GUI.Label(new Rect(rect.x + 54f, rect.y + 176f, rect.width - 108f, 34f), FourfoldLanguage.T(progressData, "D-020 RUN IN PROGRESS", "D-020攻略中"), FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData)));
-            GUI.Label(new Rect(rect.x + 54f, rect.y + 214f, rect.width - 108f, 54f), FourfoldLanguage.T(progressData, "You can resume the risky run, or return to the hub to regroup before trying again. Unreturned relic rewards are not banked until the hub return gate is used.", "危険なランを再開するか、ハブへ戻って準備し直せる。未帰還レリックはハブ帰還ゲートを使うまで保存されない。"), style);
+            GUI.Label(new Rect(rect.x + 54f, rect.y + 176f, rect.width - 108f, 34f), FourfoldLanguage.T(progressData, "REGION ATTEMPT IN PROGRESS", "地域攻略中"), FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData)));
+            GUI.Label(new Rect(rect.x + 54f, rect.y + 214f, rect.width - 108f, 54f), FourfoldLanguage.T(progressData, "Resume the current attempt, or return to the hub before trying again. Confirmed progress stays safe.", "現在の攻略を再開するか、ハブへ戻って準備し直す。確定済みの進行は保持される。"), style);
 
             var labels = new[]
             {
-                FourfoldLanguage.T(progressData, "Resume D-020 Run", "D-020を再開"),
+                FourfoldLanguage.T(progressData, "Resume Region", "地域を再開"),
                 FourfoldLanguage.T(progressData, "Return to Hub", "ハブへ戻る"),
                 FourfoldLanguage.T(progressData, "Cancel", "キャンセル")
             };

@@ -21,6 +21,16 @@ namespace FourfoldEchoes.Editor
             var findings = new List<Finding>();
             var metrics = new Metrics();
 
+            try
+            {
+                FourfoldD021ProductContractVerifier.VerifyD021Contract();
+                findings.Add(Finding.Info("d021.contract", "D021 product contract validated: canon pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, and stale player-facing copy is blocked."));
+            }
+            catch (Exception exception)
+            {
+                findings.Add(Finding.Error("d021.contract", "D021 product contract validation failed: " + exception.Message));
+            }
+
             if (GraphicsSettings.defaultRenderPipeline == null)
             {
                 findings.Add(Finding.Info("render.pipeline", "Built-in render pipeline is active."));
@@ -47,7 +57,7 @@ namespace FourfoldEchoes.Editor
                 FourfoldD020GameplayVerifier.VerifyExistingSceneDeathRetryAndTitlePath();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFullProgressionLoop();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFailureLoop();
-                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX, objective marker, progression rail, dodge state HUD, reward-effect notice UX, unbanked relic abandon confirmation, two distinct relic effects, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."));
+                findings.Add(Finding.Info("d020.slice", "Current region evidence path generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX, objective marker, progression rail, dodge state HUD, reward-effect notice UX, confirmation before abandoning pending rewards, two distinct reward effects, return gate, required SFX, two BGM clips, and reward-confirmation persistence."));
             }
             catch (Exception exception)
             {
@@ -338,7 +348,7 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine();
             builder.AppendLine("## Product Interpretation");
             builder.AppendLine();
-            builder.AppendLine("This report validates technical hygiene only. Title is the product entry point, HubCrossroads is the playable hub, and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: title entry, hub objective marker, mission briefing/start confirmation, two normal enemy types, one elite guard, one boss, two tool nodes, objective marker, progression rail, two distinct relic effects, unbanked relic abandon confirmation, failed-run reward loss, failed-run hub return, return banking, required SFX, two BGM clips, pause/settings/language UX, and full-loop reward persistence. Historical ProductReview evidence is deliberately outside this lane.");
+            builder.AppendLine("This report validates technical hygiene only. D021 is the current product contract: Steam-first, buy-to-play, single-player, compact top-down action-adventure, one hub, three regions, four bosses, and one exploration tool. Title is the product entry point, HubCrossroads is the playable hub, and the current region evidence path is historical D020 runtime content being migrated toward D021 player-facing language and UI/UX. Required product evidence includes title flow, hub objective marker, mission briefing, readable combat, exploration tool target response, boss clear, reward confirmation, local save, required SFX/BGM, pause/settings/language UX, and 1280x800 readability. Historical ProductReview evidence is deliberately outside this lane.");
             return builder.ToString();
         }
 
