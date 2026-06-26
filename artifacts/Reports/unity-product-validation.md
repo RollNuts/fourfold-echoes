@@ -1,6 +1,6 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-26T16:53:06.6675710Z`
+Generated UTC: `2026-06-26T19:25:28.4802790Z`
 
 ## Metrics
 
@@ -23,12 +23,13 @@ Generated UTC: `2026-06-26T16:53:06.6675710Z`
 
 ## Findings
 
+- **info** `d022.contract`: D022 product contract validated: current top-down adventure MVP pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, and stale player-facing copy is blocked.
 - **info** `render.pipeline`: Built-in render pipeline is active.
-- **info** `save.service`: Versioned local save validated with settings defaults, UI scale/control-hint preferences, settings preservation across reset, roundtrip persistence, backup recovery, and corrupt-save fallback.
-- **info** `d020.slice`: D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, shared pause/settings UX, objective marker, progression rail, unbanked relic abandon confirmation, two distinct relic effects, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking.
-- **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with a D-020 region gate, mission briefing/start confirmation, objective marker, progress initialization, pause/settings UX, reset, and return-to-title persistence.
-- **info** `title.entry`: Title scene generated and validated with New Game, Continue, Settings volume persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice.
-- **info** `steam_deck.readiness`: Title, Hub, and D-020 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings.
+- **info** `save.service`: Versioned local save validated with settings defaults, language preference, UI scale/control-hint preferences, settings preservation across reset, roundtrip persistence, backup recovery, and corrupt-save fallback.
+- **info** `r01.verdant_steps`: R01 Verdant Steps evidence path generated and validated with one exploration tool, sealed-route and shortcut interactions, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX, objective marker, progression rail, dodge state HUD, reward-effect notice UX, confirmation before abandoning unsaved rewards, two distinct saved reward skills, return gate, required SFX, two BGM clips, and hub-return reward persistence.
+- **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with an R01 region gate, mission briefing/start confirmation, returned-run summary/replay UX, objective marker, progress initialization, pause/settings/language UX, reset confirmation, and return-to-title persistence.
+- **info** `title.entry`: Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, Quit request, and Build Settings order Title -> HubCrossroads -> R01.
+- **info** `steam_deck.readiness`: Title, Hub, and R01 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings.
 - **info** `prototype.gate_a`: Legacy Gate A generation skipped. Set FOURFOLD_INCLUDE_LEGACY_GATE_A=1 to validate the old harness explicitly.
 - **warn** `texture.assets`: No production texture assets found. Store-quality art pass has not started.
 - **warn** `lod.prefabs`: Prefab assets exist but none include LODGroup components.
@@ -36,4 +37,4 @@ Generated UTC: `2026-06-26T16:53:06.6675710Z`
 
 ## Product Interpretation
 
-This report validates technical hygiene only. Title is the product entry point, HubCrossroads is the playable hub, and D020VerticalSlice is the current D-020 evidence path for the one-tool compact action-adventure slice: title entry, hub objective marker, mission briefing/start confirmation, two normal enemy types, one elite guard, one boss, two tool nodes, objective marker, progression rail, two distinct relic effects, unbanked relic abandon confirmation, failed-run reward loss, return banking, required SFX, two BGM clips, pause/settings UX, and full-loop reward persistence. Historical ProductReview evidence is deliberately outside this lane.
+This report validates technical hygiene only. D022 is the current product contract: Steam-first, buy-to-play, single-player, compact top-down classic action-adventure, one hub, three regions, four bosses, and one exploration tool. Title is the product entry point, HubCrossroads is the playable hub, and R01 Verdant Steps is the first playable evidence path for D022 player-facing language and UI/UX. Required product evidence includes title flow, hub objective marker, mission briefing, readable combat, exploration tool target response, boss clear, reward save-on-hub-return, local save, required SFX/BGM, pause/settings/language UX, and 1280x800 readability. Historical ProductReview, Gate A, D020, and D021 evidence are deliberately outside the active implementation lane unless explicitly migrated into D022.

@@ -84,18 +84,18 @@ namespace FourfoldEchoes.Editor
                 }
 
                 var hubSummary = controller.ContinueSummary();
-                if (hubSummary.IndexOf("Continue: Hub", StringComparison.Ordinal) < 0 || hubSummary.IndexOf("Relics returned", StringComparison.Ordinal) < 0)
+                if (hubSummary.IndexOf("Save: Hub", StringComparison.Ordinal) < 0 || hubSummary.IndexOf("Saved reward skills", StringComparison.Ordinal) < 0)
                 {
-                    throw new InvalidOperationException("Title gameplay verifier failed: hub continue summary does not expose location and returned relic progress.");
+                    throw new InvalidOperationException("Title gameplay verifier failed: hub continue summary does not expose location and saved reward progress.");
                 }
 
                 newGameSave.currentScene = FourfoldGameIds.SceneD020VerticalSlice;
                 newGameSave.d020FailureCount = 2;
                 FourfoldProgressSave.Save(newGameSave);
                 var d020Summary = controller.ContinueSummary();
-                if (d020Summary.IndexOf("D-020 run in progress", StringComparison.Ordinal) < 0 || d020Summary.IndexOf("at risk", StringComparison.Ordinal) < 0)
+                if (d020Summary.IndexOf("Region attempt in progress", StringComparison.Ordinal) < 0 || d020Summary.IndexOf("Resume the attempt", StringComparison.Ordinal) < 0)
                 {
-                    throw new InvalidOperationException("Title gameplay verifier failed: D-020 continue summary does not expose in-run risk.");
+                    throw new InvalidOperationException("Title gameplay verifier failed: in-progress continue summary does not expose resume-or-hub choice.");
                 }
 
                 if (controller.RequestContinueGame() != string.Empty || !controller.IsContinueDecisionOpen())

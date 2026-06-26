@@ -22,6 +22,12 @@ namespace FourfoldEchoes.Editor.Mediator
             FourfoldD021ProductContractVerifier.VerifyD021Contract();
         }
 
+        [MenuItem("Tools/FOURFOLD/Product/Validate D022 Contract", false, 17)]
+        public static void ValidateD022Contract()
+        {
+            FourfoldD022ProductContractVerifier.VerifyD022Contract();
+        }
+
         [MenuItem("Tools/FOURFOLD/D-020/Build And Validate", false, 20)]
         public static void BuildAndValidateD020()
         {

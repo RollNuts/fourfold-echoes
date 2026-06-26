@@ -23,12 +23,12 @@ namespace FourfoldEchoes.Editor
 
             try
             {
-                FourfoldD021ProductContractVerifier.VerifyD021Contract();
-                findings.Add(Finding.Info("d021.contract", "D021 product contract validated: canon pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, and stale player-facing copy is blocked."));
+                FourfoldD022ProductContractVerifier.VerifyD022Contract();
+                findings.Add(Finding.Info("d022.contract", "D022 product contract validated: current top-down adventure MVP pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, and stale player-facing copy is blocked."));
             }
             catch (Exception exception)
             {
-                findings.Add(Finding.Error("d021.contract", "D021 product contract validation failed: " + exception.Message));
+                findings.Add(Finding.Error("d022.contract", "D022 product contract validation failed: " + exception.Message));
             }
 
             if (GraphicsSettings.defaultRenderPipeline == null)
@@ -57,18 +57,18 @@ namespace FourfoldEchoes.Editor
                 FourfoldD020GameplayVerifier.VerifyExistingSceneDeathRetryAndTitlePath();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFullProgressionLoop();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFailureLoop();
-                findings.Add(Finding.Info("d020.slice", "Current region evidence path generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX, objective marker, progression rail, dodge state HUD, reward-effect notice UX, confirmation before abandoning pending rewards, two distinct reward effects, return gate, required SFX, two BGM clips, and reward-confirmation persistence."));
+                findings.Add(Finding.Info("r01.verdant_steps", "R01 Verdant Steps evidence path generated and validated with one exploration tool, sealed-route and shortcut interactions, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX, objective marker, progression rail, dodge state HUD, reward-effect notice UX, confirmation before abandoning unsaved rewards, two distinct saved reward skills, return gate, required SFX, two BGM clips, and hub-return reward persistence."));
             }
             catch (Exception exception)
             {
-                findings.Add(Finding.Error("d020.slice", "D-020 vertical slice scene generation, validation, combat, death/retry, title-return, or full-loop verification failed: " + exception.Message));
+                findings.Add(Finding.Error("r01.verdant_steps", "R01 Verdant Steps scene generation, validation, combat, death/retry, title-return, or full-loop verification failed: " + exception.Message));
             }
 
             try
             {
                 FourfoldHubSceneBuilder.BuildAndValidate();
                 FourfoldHubGameplayVerifier.VerifyHubEnterRegionProgress();
-                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, mission briefing/start confirmation, returned-run summary/replay UX, objective marker, progress initialization, pause/settings/language UX, reset confirmation, and return-to-title persistence."));
+                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with an R01 region gate, mission briefing/start confirmation, returned-run summary/replay UX, objective marker, progress initialization, pause/settings/language UX, reset confirmation, and return-to-title persistence."));
             }
             catch (Exception exception)
             {
@@ -79,7 +79,7 @@ namespace FourfoldEchoes.Editor
             {
                 FourfoldTitleSceneBuilder.BuildAndValidate();
                 FourfoldTitleGameplayVerifier.VerifyTitleEntryFlow();
-                findings.Add(Finding.Info("title.entry", "Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice."));
+                findings.Add(Finding.Info("title.entry", "Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, Quit request, and Build Settings order Title -> HubCrossroads -> R01."));
             }
             catch (Exception exception)
             {
@@ -89,7 +89,7 @@ namespace FourfoldEchoes.Editor
             try
             {
                 FourfoldSteamDeckReadinessVerifier.VerifyProductLoopReadiness();
-                findings.Add(Finding.Info("steam_deck.readiness", "Title, Hub, and D-020 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings."));
+                findings.Add(Finding.Info("steam_deck.readiness", "Title, Hub, and R01 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings."));
             }
             catch (Exception exception)
             {
@@ -348,7 +348,7 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine();
             builder.AppendLine("## Product Interpretation");
             builder.AppendLine();
-            builder.AppendLine("This report validates technical hygiene only. D021 is the current product contract: Steam-first, buy-to-play, single-player, compact top-down action-adventure, one hub, three regions, four bosses, and one exploration tool. Title is the product entry point, HubCrossroads is the playable hub, and the current region evidence path is historical D020 runtime content being migrated toward D021 player-facing language and UI/UX. Required product evidence includes title flow, hub objective marker, mission briefing, readable combat, exploration tool target response, boss clear, reward confirmation, local save, required SFX/BGM, pause/settings/language UX, and 1280x800 readability. Historical ProductReview evidence is deliberately outside this lane.");
+            builder.AppendLine("This report validates technical hygiene only. D022 is the current product contract: Steam-first, buy-to-play, single-player, compact top-down classic action-adventure, one hub, three regions, four bosses, and one exploration tool. Title is the product entry point, HubCrossroads is the playable hub, and R01 Verdant Steps is the first playable evidence path for D022 player-facing language and UI/UX. Required product evidence includes title flow, hub objective marker, mission briefing, readable combat, exploration tool target response, boss clear, reward save-on-hub-return, local save, required SFX/BGM, pause/settings/language UX, and 1280x800 readability. Historical ProductReview, Gate A, D020, and D021 evidence are deliberately outside the active implementation lane unless explicitly migrated into D022.");
             return builder.ToString();
         }
 

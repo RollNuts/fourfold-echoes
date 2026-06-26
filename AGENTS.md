@@ -37,8 +37,9 @@ The MVP ceiling is strict:
 - no fishing, farming, base building, MMO, co-op, PvP, live service, or gacha
 
 Old references to Gate A, ProductReviewSandbox, Echo Phase world-state,
-extraction, co-op-ready, hack-and-slash loot, or compact open-world structure
-are historical unless a newer explicit decision reclassifies them.
+extraction, co-op-ready, hack-and-slash loot, compact open-world structure, or
+older D020/D021 planning packs are historical. New work must use the D022 pack
+only.
 
 ## Core Design Rules
 
@@ -56,24 +57,14 @@ are historical unless a newer explicit decision reclassifies them.
 
 Use these files first:
 
-- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/00_CANON.md`
-- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/01_ARCHITECTURE.md`
-- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/02_OUT_OF_SCOPE.md`
-- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/03_ART_AUDIO_UI.md`
-- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/04_VERTICAL_SLICE_PLAN.md`
-- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/05_SCOPE_AND_RELEASE.md`
-- `docs/Production/D021_COMPACT_ACTION_SPEC_PACK/06_STEAM_STORE_PLAN.md`
-- `docs/Product/MVP_BLUEPRINT.md`
-- `docs/Product/PROJECT_SPEC.md`
-- `docs/Product/CORE_SYSTEMS.md`
-- `docs/Product/VERTICAL_SLICE_CONTENT.md`
-- `docs/Product/SCOPE_BOUNDARIES.md`
-- `docs/Art/COMPACT_ACTION_ART_DIRECTION.md`
-- `docs/Audio/COMPACT_ACTION_AUDIO_DIRECTION.md`
-- `docs/Production/VERTICAL_SLICE_PLAN.md`
-- `docs/Production/SCOPE_CONTROL.md`
-- `docs/QA/STEAM_RELEASE_PLAN.md`
-- `docs/Marketing/STEAM_STORE_PLAN.md`
+- `docs/Production/D022_TOPDOWN_ADVENTURE_MVP/00_IMPLEMENTATION_SPEC.md`
+- `docs/Production/D022_TOPDOWN_ADVENTURE_MVP/01_CORE_SYSTEMS.md`
+- `docs/Production/D022_TOPDOWN_ADVENTURE_MVP/02_ART_AUDIO_DIRECTION.md`
+- `docs/Production/D022_TOPDOWN_ADVENTURE_MVP/03_VERTICAL_SLICE_AND_SCOPE.md`
+- `docs/Production/D022_TOPDOWN_ADVENTURE_MVP/04_QA_RELEASE_STORE.md`
+
+Older product, art, audio, production, QA, and marketing docs are historical
+unless updated to explicitly point at the D022 pack.
 
 ## Technology Direction
 

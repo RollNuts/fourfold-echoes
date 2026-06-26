@@ -123,6 +123,10 @@ namespace FourfoldEchoes.Editor.Mediator
                     FourfoldD021ProductContractVerifier.VerifyD021Contract();
                     break;
 
+                case "d022.contract_validate":
+                    FourfoldD022ProductContractVerifier.VerifyD022Contract();
+                    break;
+
                 case "product.validate":
                     FourfoldProductValidator.RunAll();
                     break;

@@ -231,7 +231,7 @@ namespace FourfoldEchoes.Product
             }
 
             var failWidth = Mathf.Min(540f, screenWidth - 48f);
-            var failHeight = 294f;
+            var failHeight = 326f;
             var failRect = new Rect((screenWidth - failWidth) * 0.5f, (screenHeight - failHeight) * 0.5f, failWidth, failHeight);
             if (failRect.x < 24f || failRect.y < 24f || failRect.xMax > screenWidth - 24f || failRect.yMax > screenHeight - 24f)
             {
@@ -240,7 +240,7 @@ namespace FourfoldEchoes.Product
             }
 
             var rewardNoticeWidth = Mathf.Min(440f, screenWidth - 48f);
-            var rewardNoticeRect = new Rect(screenWidth - rewardNoticeWidth - 24f, 286f, rewardNoticeWidth, 104f);
+            var rewardNoticeRect = new Rect(screenWidth - rewardNoticeWidth - 24f, 310f, rewardNoticeWidth, 104f);
             if (rewardNoticeRect.x < 24f || rewardNoticeRect.y < 24f || rewardNoticeRect.xMax > screenWidth - 24f || rewardNoticeRect.yMax > screenHeight - 24f)
             {
                 reason = $"D-020 reward notice panel exceeds safe area at {screenWidth}x{screenHeight}: {rewardNoticeRect}";
@@ -766,7 +766,9 @@ namespace FourfoldEchoes.Product
             firstRewardClaimedThisRun = true;
             previousShortcutLoaded = ToolGateSolved();
             runCleared = secondToolNode == null || secondRewardClaimPoint == null;
-            ShowRewardNotice("LUMEN EDGE ACQUIRED", "Basic attacks hit harder. Return to Hub to confirm progress.");
+            ShowRewardNotice(
+                FourfoldLanguage.T(progressData, "LUMEN EDGE EARNED", "LUMEN EDGE 獲得"),
+                FourfoldLanguage.T(progressData, "Damage improves now; return to hub to save it.", "攻撃力が今すぐ上がる。ハブへ帰還すると保存される。"));
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.92f);
             if (rewardReadyRead != null)
@@ -796,7 +798,9 @@ namespace FourfoldEchoes.Product
             rewardClaimed = true;
             runCleared = true;
             previousReturnedToHubLoaded = false;
-            ShowRewardNotice("LUMEN WARD ACQUIRED", "Incoming damage is reduced. Return to Hub to confirm both rewards.");
+            ShowRewardNotice(
+                FourfoldLanguage.T(progressData, "LUMEN WARD EARNED", "LUMEN WARD 獲得"),
+                FourfoldLanguage.T(progressData, "Damage taken drops now; return to hub to save both rewards.", "被ダメージが今すぐ下がる。ハブへ帰還すると両方の報酬が保存される。"));
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.86f);
             if (secondRewardReadyRead != null)
@@ -1686,35 +1690,74 @@ namespace FourfoldEchoes.Product
             var run = ClaimedRelicCountThisRun();
             if (LumenEdgeActive() && LumenWardActive())
             {
-                return $"Edge+Ward +DMG/-DMG  Saved{returned}/2 Now{run}/2";
+                return FourfoldLanguage.T(
+                    progressData,
+                    $"Lumen Edge +DMG / Ward -DMG  Saved{returned}/2  Run{run}/2",
+                    $"Lumen Edge +攻撃 / Ward -被弾  保存{returned}/2  今回{run}/2");
             }
 
             if (LumenEdgeActive())
             {
-                return $"Edge +DMG  Saved{returned}/2 Now{run}/2";
+                return FourfoldLanguage.T(
+                    progressData,
+                    $"Lumen Edge +DMG  Saved{returned}/2  Run{run}/2",
+                    $"Lumen Edge +攻撃  保存{returned}/2  今回{run}/2");
             }
 
             if (LumenWardActive())
             {
-                return $"Ward -DMG  Saved{returned}/2 Now{run}/2";
+                return FourfoldLanguage.T(
+                    progressData,
+                    $"Lumen Ward -DMG  Saved{returned}/2  Run{run}/2",
+                    $"Lumen Ward -被弾  保存{returned}/2  今回{run}/2");
             }
 
-            return $"Rewards locked  Saved{returned}/2 Now{run}/2";
+            return FourfoldLanguage.T(
+                progressData,
+                $"Rewards  Saved{returned}/2  Run{run}/2",
+                $"報酬  保存{returned}/2  今回{run}/2");
         }
 
         private string DodgeStateText()
         {
             if (dodgeTimer > 0f)
             {
-                return "Dodge ACTIVE";
+                return FourfoldLanguage.T(progressData, "Dodge ACTIVE", "回避中");
             }
 
             if (dodgeCooldownTimer <= 0f)
             {
-                return "Dodge READY";
+                return FourfoldLanguage.T(progressData, "Dodge READY", "回避 準備OK");
             }
 
-            return $"Dodge CD {Mathf.CeilToInt((dodgeCooldownTimer / DodgeCooldown) * 100f)}%";
+            return FourfoldLanguage.T(
+                progressData,
+                $"Dodge CD {Mathf.CeilToInt((dodgeCooldownTimer / DodgeCooldown) * 100f)}%",
+                $"回避 待機 {Mathf.CeilToInt((dodgeCooldownTimer / DodgeCooldown) * 100f)}%");
+        }
+
+        private string RunRiskStateText()
+        {
+            var runRewards = ClaimedRelicCountThisRun();
+            if (returnedToHubThisRun)
+            {
+                return FourfoldLanguage.T(progressData, "RESULT: clear saved by hub return.", "結果: ハブ帰還でクリア保存済み。");
+            }
+
+            if (runFailed)
+            {
+                return FourfoldLanguage.T(progressData, "FAILED: saved hub progress unchanged.", "失敗: ハブ保存済みの進行は変わらない。");
+            }
+
+            if (runRewards > 0)
+            {
+                return FourfoldLanguage.T(
+                    progressData,
+                    $"AT RISK: hub return saves {runRewards} earned reward(s).",
+                    $"リスク: 報酬 {runRewards} 個はハブ帰還で保存。");
+            }
+
+            return FourfoldLanguage.T(progressData, "RISK: failure restarts this attempt; saved progress stays.", "リスク: 失敗で攻略やり直し。保存済み進行は保持。");
         }
 
         private bool AllEnemiesDefeated()
@@ -1756,14 +1799,14 @@ namespace FourfoldEchoes.Product
             if (runCleared && !returnedToHubThisRun && returnGatePoint != null)
             {
                 target = returnGatePoint;
-                label = "RETURN";
+                label = FourfoldLanguage.T(progressData, "RETURN", "帰還");
                 return true;
             }
 
             if (!ToolGateSolved() && requiredToolNode != null)
             {
                 target = requiredToolNode.transform;
-                label = "TOOL NODE";
+                label = FourfoldLanguage.T(progressData, "ROUTE", "道");
                 return true;
             }
 
@@ -1773,10 +1816,10 @@ namespace FourfoldEchoes.Product
                 if (target != null)
                 {
                     label = target.name.IndexOf("Boss", StringComparison.OrdinalIgnoreCase) >= 0
-                        ? "BOSS"
+                        ? FourfoldLanguage.T(progressData, "BOSS", "ボス")
                         : target.name.IndexOf("Elite", StringComparison.OrdinalIgnoreCase) >= 0
-                            ? "ELITE"
-                            : "ENEMY";
+                            ? FourfoldLanguage.T(progressData, "ELITE", "強敵")
+                            : FourfoldLanguage.T(progressData, "ENEMY", "敵");
                     return true;
                 }
             }
@@ -1784,21 +1827,21 @@ namespace FourfoldEchoes.Product
             if (!firstRewardClaimedThisRun && RewardReady() && rewardClaimPoint != null)
             {
                 target = rewardClaimPoint;
-                label = "RELIC";
+                label = FourfoldLanguage.T(progressData, "REWARD", "報酬");
                 return true;
             }
 
             if (firstRewardClaimedThisRun && !SecondToolGateSolved() && secondToolNode != null)
             {
                 target = secondToolNode.transform;
-                label = "SECOND NODE";
+                label = FourfoldLanguage.T(progressData, "SHORTCUT", "近道");
                 return true;
             }
 
             if (!secondRewardClaimedThisRun && SecondRewardReady() && secondRewardClaimPoint != null)
             {
                 target = secondRewardClaimPoint;
-                label = "SECOND RELIC";
+                label = FourfoldLanguage.T(progressData, "SECOND REWARD", "2つ目の報酬");
                 return true;
             }
 
@@ -2306,23 +2349,23 @@ namespace FourfoldEchoes.Product
 
             var objective = runCleared
                 ? returnedToHubThisRun
-                    ? FourfoldLanguage.T(progressData, "RESULT: returned to hub. Press R to replay the region.", "結果: ハブへ帰還済み。Rで地域を再挑戦。")
-                    : FourfoldLanguage.T(progressData, "CLEAR: rewards confirmed. Press E/Y to return to hub.", "クリア: 報酬確定。E/Yでハブへ帰還。")
+                    ? FourfoldLanguage.T(progressData, "RESULT: hub return saved this clear. Press R to replay the region.", "結果: ハブ帰還で今回のクリアを保存済み。Rで地域を再挑戦。")
+                    : FourfoldLanguage.T(progressData, "CLEAR: return to hub to save rewards. Press E/Y at the return gate.", "クリア: 報酬保存のためハブへ帰還。帰還ゲートでE/Y。")
                 : runFailed
-                    ? FourfoldLanguage.T(progressData, "FAILED: press R to retry the region.", "失敗: Rで地域を再挑戦。")
+                    ? FourfoldLanguage.T(progressData, "FAILED: saved hub progress remains. Press R to retry the region.", "失敗: ハブ保存済みの進行は保持。Rで地域を再挑戦。")
                     : !ToolGateSolved()
-                        ? FourfoldLanguage.T(progressData, "Activate the glowing tool node with Q or gamepad X.", "光るツールノードを Q またはゲームパッドXで起動。")
+                        ? FourfoldLanguage.T(progressData, "Step 1/6: use the tool to open the sealed route.", "手順1/6: ツールで封じられた道を開く。")
                         : BossDefeatedThisRun() && !AllEnemiesDefeated()
-                        ? FourfoldLanguage.T(progressData, "BOSS DOWN: finish the remaining enemies.", "ボス撃破: 残りの敵を倒す。")
+                        ? FourfoldLanguage.T(progressData, "BOSS DOWN: finish the remaining enemies to unlock rewards.", "ボス撃破: 残りの敵を倒すと報酬が開く。")
                         : !AllEnemiesDefeated()
-                        ? FourfoldLanguage.T(progressData, "Defeat the enemies, then claim the reward.", "敵を倒し、報酬を獲得する。")
+                        ? FourfoldLanguage.T(progressData, "Step 2/6: defeat enemies, read tells, then claim the reward.", "手順2/6: 予兆を読みながら敵を倒し、報酬を獲得。")
                         : !firstRewardClaimedThisRun
-                        ? FourfoldLanguage.T(progressData, "Claim the first reward chest with E.", "Eで最初の報酬箱を開ける。")
+                        ? FourfoldLanguage.T(progressData, "Step 3/6: claim Lumen Edge with E.", "手順3/6: EでLumen Edgeを獲得。")
                         : !SecondToolGateSolved()
-                        ? FourfoldLanguage.T(progressData, "Use the same tool on the second node.", "同じツールを2つ目のノードに使う。")
+                        ? FourfoldLanguage.T(progressData, "Step 4/6: use the tool to open the shortcut seal.", "手順4/6: ツールで近道の封印を開く。")
                         : !secondRewardClaimedThisRun
-                        ? FourfoldLanguage.T(progressData, "Claim the second reward with E.", "Eで2つ目の報酬を獲得する。")
-                        : FourfoldLanguage.T(progressData, "Rewards confirmed. Press R to replay.", "報酬確定。Rで再挑戦。");
+                        ? FourfoldLanguage.T(progressData, "Step 5/6: claim Lumen Ward with E.", "手順5/6: EでLumen Wardを獲得。")
+                        : FourfoldLanguage.T(progressData, "Step 6/6: return to hub to save this clear.", "手順6/6: ハブへ帰還して今回のクリアを保存。");
 
             var toolState = explorationTool == null
                 ? FourfoldLanguage.T(progressData, "Tool --", "ツール --")
@@ -2331,10 +2374,10 @@ namespace FourfoldEchoes.Product
                     : FourfoldLanguage.T(progressData, $"Tool CD {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%", $"ツール 待機 {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%");
             var relicState = RelicStateText();
             var resultState = clearCount > 0
-                ? FourfoldLanguage.T(progressData, $"Clears {clearCount}", $"クリア {clearCount}")
+                ? FourfoldLanguage.T(progressData, $"Saved clears {clearCount}", $"保存クリア {clearCount}")
                 : ClaimedRelicCountThisRun() > 0
-                    ? FourfoldLanguage.T(progressData, $"Return to confirm {ClaimedRelicCountThisRun()} reward(s)", $"帰還して報酬 {ClaimedRelicCountThisRun()} 個を確定")
-                    : FourfoldLanguage.T(progressData, "Clear the boss, claim rewards, return to hub", "ボスを倒し、報酬を取り、ハブへ戻る");
+                    ? FourfoldLanguage.T(progressData, $"Return to save {ClaimedRelicCountThisRun()} reward(s)", $"帰還して報酬 {ClaimedRelicCountThisRun()} 個を保存")
+                    : FourfoldLanguage.T(progressData, "Loop: tool, boss, rewards, hub return", "ループ: ツール、ボス、報酬、ハブ帰還");
             if (failureCount > 0)
             {
                 resultState += FourfoldLanguage.T(progressData, $"  Failed runs {failureCount}", $"  失敗 {failureCount}");
@@ -2359,7 +2402,11 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(30f, 104f, width - 56f, 50f), objective, style);
             DrawRunProgressRail(new Rect(30f, 156f, width - 56f, 34f), mutedStyle);
             FourfoldRuntimeUi.DrawDivider(30f, 198f, width - 56f);
-            GUI.Label(new Rect(30f, 206f, width - 56f, 42f), $"{resultState}  {timeState}", mutedStyle);
+            var riskColor = ClaimedRelicCountThisRun() > 0 && !returnedToHubThisRun
+                ? new Color(1.0f, 0.46f, 0.22f)
+                : new Color(0.34f, 0.90f, 0.52f);
+            FourfoldRuntimeUi.DrawChip(new Rect(30f, 206f, width - 56f, 34f), RunRiskStateText(), riskColor, mutedStyle);
+            GUI.Label(new Rect(30f, 246f, width - 56f, 26f), $"{resultState}  {timeState}", mutedStyle);
             DrawObjectiveMarker(style);
             DrawRewardNotice(style, mutedStyle);
             if (progressData == null || progressData.showControlHints)
@@ -2374,7 +2421,7 @@ namespace FourfoldEchoes.Product
             else if (paused)
             {
                 var pauseWidth = Mathf.Min(480f, Screen.width - 48f);
-                var pauseHeight = settingsOpen ? 326f : 286f;
+                var pauseHeight = 326f;
                 var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
                 FourfoldRuntimeUi.DrawPanel(pauseRect);
                 GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 18f, pauseWidth - 48f, 32f), settingsOpen ? FourfoldLanguage.T(progressData, "SETTINGS", "設定") : FourfoldLanguage.T(progressData, "PAUSED", "ポーズ"), style);
@@ -2398,25 +2445,25 @@ namespace FourfoldEchoes.Product
                 var beatRect = new Rect((Screen.width - beatWidth) * 0.5f, Screen.height * 0.22f, beatWidth, beatHeight);
                 FourfoldRuntimeUi.DrawPanel(beatRect);
                 GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 20f, beatWidth - 48f, 32f), FourfoldLanguage.T(progressData, "BOSS DOWN", "ボス撃破"), style);
-                GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 56f, beatWidth - 48f, 44f), FourfoldLanguage.T(progressData, "Claim the rewards, then return to confirm progress.", "報酬を取得し、帰還して進行を確定する。"), style);
+                GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 56f, beatWidth - 48f, 44f), FourfoldLanguage.T(progressData, "Claim rewards, then return to hub to save the result.", "報酬を取得し、ハブへ帰還して結果を保存する。"), style);
             }
 
             if (previousReturnedToHubLoaded && !runCleared)
             {
-                GUI.Label(BottomProgressRect(Screen.width, Screen.height), FourfoldLanguage.T(progressData, "Local progress: hub return after clear is confirmed.", "ローカル進行: クリア後のハブ帰還は確定済み。"), style);
+                GUI.Label(BottomProgressRect(Screen.width, Screen.height), FourfoldLanguage.T(progressData, "Saved progress: hub return after clear is complete.", "保存済み進行: クリア後のハブ帰還は完了。"), style);
             }
             else if (previousClearLoaded && !runCleared)
             {
                 var progress = previousSecondRewardLoaded
-                    ? FourfoldLanguage.T(progressData, "Local progress: both rewards confirmed before.", "ローカル進行: 以前に両方の報酬を確定済み。")
+                    ? FourfoldLanguage.T(progressData, "Saved progress: both rewards active from an earlier clear.", "保存済み進行: 以前のクリアで両方の報酬が有効。")
                     : previousRewardLoaded
-                        ? FourfoldLanguage.T(progressData, "Local progress: first reward confirmed before.", "ローカル進行: 以前に最初の報酬を確定済み。")
-                        : FourfoldLanguage.T(progressData, "Local progress: this region was cleared before.", "ローカル進行: この地域はクリア済み。");
+                        ? FourfoldLanguage.T(progressData, "Saved progress: Lumen Edge active from an earlier clear.", "保存済み進行: 以前のクリアでLumen Edgeが有効。")
+                        : FourfoldLanguage.T(progressData, "Saved progress: this region was cleared before.", "保存済み進行: この地域はクリア済み。");
                 GUI.Label(BottomProgressRect(Screen.width, Screen.height), progress, style);
             }
             else if (previousShortcutLoaded)
             {
-                GUI.Label(BottomProgressRect(Screen.width, Screen.height), FourfoldLanguage.T(progressData, "Local progress: shortcut opened.", "ローカル進行: ショートカット開通済み。"), style);
+                GUI.Label(BottomProgressRect(Screen.width, Screen.height), FourfoldLanguage.T(progressData, "Saved progress: shortcut opened.", "保存済み進行: ショートカット開通済み。"), style);
             }
         }
 
@@ -2427,7 +2474,7 @@ namespace FourfoldEchoes.Product
             var panelRect = new Rect((Screen.width - panelWidth) * 0.5f, (Screen.height - panelHeight) * 0.5f, panelWidth, panelHeight);
             FourfoldRuntimeUi.DrawPanel(panelRect);
 
-            var rewardBeatCount = ClaimedRelicCountThisRun();
+            var earnedRewardCount = ClaimedRelicCountThisRun();
             var actionLabel = pendingExitAction == PendingExitAction.RetryRun
                 ? FourfoldLanguage.T(progressData, "RETRY REGION", "地域再挑戦")
                 : FourfoldLanguage.T(progressData, "RETURN TO TITLE", "タイトルへ戻る");
@@ -2435,7 +2482,7 @@ namespace FourfoldEchoes.Product
                 ? FourfoldLanguage.T(progressData, "Press R/Start or E/Y to retry from the start.", "R/Start または E/Y で最初から再挑戦。")
                 : FourfoldLanguage.T(progressData, "Press Backspace/Select or E/Y to leave for title.", "Backspace/Select または E/Y でタイトルへ。");
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 20f, panelWidth - 48f, 32f), actionLabel, style);
-            GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 58f, panelWidth - 48f, 96f), FourfoldLanguage.T(progressData, $"This attempt has {rewardBeatCount} reward beat(s). Leaving now restarts from the last confirmed hub state.", $"この攻略では報酬ビートを {rewardBeatCount} 個取得済み。ここで離脱すると、最後にハブで確定した状態から再開する。"), style);
+            GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 58f, panelWidth - 48f, 96f), FourfoldLanguage.T(progressData, $"This attempt has {earnedRewardCount} earned reward(s) not saved by hub return. Leaving now restarts from the last saved hub state.", $"この攻略ではハブ帰還で未保存の報酬を {earnedRewardCount} 個取得済み。ここで離脱すると、最後にハブで保存した状態から再開する。"), style);
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 164f, panelWidth - 48f, 42f), $"{confirmLabel}  {FourfoldLanguage.T(progressData, "Esc/Menu cancels.", "Esc/Menuでキャンセル。")}", FourfoldRuntimeUi.MutedStyle(Screen.height));
         }
 
@@ -2448,10 +2495,10 @@ namespace FourfoldEchoes.Product
 
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 18f, panelWidth - 48f, 32f), FourfoldLanguage.T(progressData, "ATTEMPT FAILED", "攻略失敗"), style);
             var lossText = lastLostRelicsOnFailure > 0
-                ? FourfoldLanguage.T(progressData, $"The attempt reset with {lastLostRelicsOnFailure} reward beat(s) left in the region. Hub-confirmed rewards remain saved.", $"報酬ビート {lastLostRelicsOnFailure} 個を地域に残して攻略がリセットされた。ハブで確定済みの報酬は保持される。")
-                : FourfoldLanguage.T(progressData, "No reward beats were carried, so confirmed progress is unchanged.", "報酬ビートは未取得のため、確定済み進行は変わらない。");
+                ? FourfoldLanguage.T(progressData, $"Failed before hub return: {lastLostRelicsOnFailure} earned reward(s) were not saved. Hub-saved rewards remain active.", $"ハブ帰還前に失敗: 報酬 {lastLostRelicsOnFailure} 個は未保存。ハブ保存済みの報酬は有効。")
+                : FourfoldLanguage.T(progressData, "No rewards were earned this attempt. Saved hub progress is unchanged.", "この攻略では報酬未取得。ハブ保存済みの進行は変わらない。");
             GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 58f, panelWidth - 48f, 48f), lossText, style);
-            FourfoldRuntimeUi.DrawChip(new Rect(panelRect.x + 24f, panelRect.y + 112f, panelWidth - 48f, 34f), FourfoldLanguage.T(progressData, $"Failed attempts {failureCount}. Confirm progress by returning to the Hub after a clear.", $"失敗 {failureCount}。クリア後にハブへ戻ると進行が確定する。"), new Color(1.0f, 0.46f, 0.22f), mutedStyle);
+            FourfoldRuntimeUi.DrawChip(new Rect(panelRect.x + 24f, panelRect.y + 112f, panelWidth - 48f, 34f), FourfoldLanguage.T(progressData, $"Failed attempts {failureCount}. Save rewards by returning to the hub after a clear.", $"失敗 {failureCount}。クリア後にハブへ戻ると報酬が保存される。"), new Color(1.0f, 0.46f, 0.22f), mutedStyle);
             FourfoldRuntimeUi.DrawDivider(panelRect.x + 24f, panelRect.y + 162f, panelWidth - 48f);
 
             var labels = new[]
@@ -2477,7 +2524,7 @@ namespace FourfoldEchoes.Product
 
             var panelWidth = Mathf.Min(440f, Screen.width - 48f);
             var panelHeight = 104f;
-            var panelRect = new Rect(Screen.width - panelWidth - 24f, 286f, panelWidth, panelHeight);
+            var panelRect = new Rect(Screen.width - panelWidth - 24f, 310f, panelWidth, panelHeight);
             FourfoldRuntimeUi.DrawPanel(panelRect);
             GUI.Label(new Rect(panelRect.x + 22f, panelRect.y + 16f, panelWidth - 44f, 28f), rewardNoticeTitle, style);
             GUI.Label(new Rect(panelRect.x + 22f, panelRect.y + 50f, panelWidth - 44f, 42f), rewardNoticeBody, mutedStyle);
@@ -2489,18 +2536,18 @@ namespace FourfoldEchoes.Product
             {
                 FourfoldLanguage.T(progressData, "1 Tool", "1 ツール"),
                 FourfoldLanguage.T(progressData, "2 Boss", "2 ボス"),
-                FourfoldLanguage.T(progressData, "3 Reward", "3 報酬"),
-                FourfoldLanguage.T(progressData, "4 Node", "4 ノード"),
-                FourfoldLanguage.T(progressData, "5 Reward", "5 報酬"),
+                FourfoldLanguage.T(progressData, "3 Edge", "3 Edge"),
+                FourfoldLanguage.T(progressData, "4 Route", "4 道"),
+                FourfoldLanguage.T(progressData, "5 Ward", "5 Ward"),
                 FourfoldLanguage.T(progressData, "6 Return", "6 帰還")
             };
             var completed = new[]
             {
                 ToolGateSolved(),
                 BossDefeatedThisRun(),
-                firstRewardClaimedThisRun || previousRewardLoaded,
+                firstRewardClaimedThisRun,
                 SecondToolGateSolved(),
-                secondRewardClaimedThisRun || previousSecondRewardLoaded,
+                secondRewardClaimedThisRun,
                 returnedToHubThisRun
             };
 
@@ -2547,9 +2594,7 @@ namespace FourfoldEchoes.Product
                 FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 24f, rect.y + 58f + i * 38f, rect.width - 48f, 32f), labels[i], selectedPauseIndex == i, style);
             }
 
-            var runRisk = ClaimedRelicCountThisRun() > 0 && !returnedToHubThisRun
-                ? FourfoldLanguage.T(progressData, "Retry or title return asks before leaving reward beats behind.", "再挑戦/タイトル帰還時は、報酬ビートを残す前に確認が出る。")
-                : FourfoldLanguage.T(progressData, "Progress is confirmed after a clear and hub return.", "進行はクリア後のハブ帰還で確定する。");
+            var runRisk = RunRiskStateText();
             GUI.Label(new Rect(rect.x + 24f, rect.y + 220f, rect.width - 48f, 48f), runRisk, mutedStyle);
         }
 
@@ -2660,7 +2705,9 @@ namespace FourfoldEchoes.Product
             var distance = player != null ? Vector3.Distance(player.position, target.position) : 0f;
             var rect = new Rect(screenX - 58f, screenY - 18f, 174f, 38f);
             FourfoldRuntimeUi.DrawPanel(rect);
-            var prefix = offscreen ? "NEXT >" : "NEXT";
+            var prefix = offscreen
+                ? FourfoldLanguage.T(progressData, "NEXT >", "次 >")
+                : FourfoldLanguage.T(progressData, "NEXT", "次");
             GUI.Label(new Rect(rect.x + 12f, rect.y + 7f, rect.width - 24f, rect.height - 10f), $"{prefix} {label} {distance:0}m", style);
         }
 
@@ -2688,7 +2735,7 @@ namespace FourfoldEchoes.Product
 
         private static Rect PrimaryHudRect(int screenWidth)
         {
-            return new Rect(16f, 16f, Mathf.Min(600f, screenWidth - 32f), 252f);
+            return new Rect(16f, 16f, Mathf.Min(600f, screenWidth - 32f), 282f);
         }
 
         private static Rect BossHudRect(int screenWidth)

@@ -6,6 +6,11 @@ const repo = process.cwd();
 
 const requiredFiles = [
   "AGENTS.md",
+  "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/00_IMPLEMENTATION_SPEC.md",
+  "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/01_CORE_SYSTEMS.md",
+  "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/02_ART_AUDIO_DIRECTION.md",
+  "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/03_VERTICAL_SLICE_AND_SCOPE.md",
+  "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/04_QA_RELEASE_STORE.md",
   "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/00_CANON.md",
   "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/01_ARCHITECTURE.md",
   "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/02_OUT_OF_SCOPE.md",
@@ -105,11 +110,15 @@ for (const file of rejectedLegacyFiles) {
 const canonicalTextChecks = [
   {
     file: "AGENTS.md",
-    required: ["single-player top-down classic", "1 exploration tool", "not an open world", "D021_COMPACT_ACTION_SPEC_PACK"]
+    required: ["single-player top-down classic", "1 exploration tool", "not an open world", "D022_TOPDOWN_ADVENTURE_MVP"]
   },
   {
-    file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/00_CANON.md",
-    required: ["current D021 source of truth", "1 hub", "3 handcrafted regions", "4 bosses", "1 exploration tool", "UI/UX is product scope"]
+    file: "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/00_IMPLEMENTATION_SPEC.md",
+    required: ["current sole product specification", "Steam-first", "single-player", "1 exploration tool", "## スコープ外一覧"]
+  },
+  {
+    file: "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/02_ART_AUDIO_DIRECTION.md",
+    required: ["遠距離で読めるスタイライズ3D", "1探索ツールが主役", "オーディオピラー", "必須SE一覧"]
   },
   {
     file: "docs/Product/MVP_BLUEPRINT.md",
@@ -137,6 +146,76 @@ for (const check of canonicalTextChecks) {
 }
 
 const requiredSectionChecks = [
+  {
+    file: "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/00_IMPLEMENTATION_SPEC.md",
+    headings: [
+      "## 仕様固定メモ",
+      "### New Project Folder Proposal",
+      "## シーン一覧",
+      "## スクリプト責務一覧",
+      "## データ設計",
+      "## 実装順",
+      "## スコープ外一覧"
+    ]
+  },
+  {
+    file: "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/01_CORE_SYSTEMS.md",
+    headings: ["## 必須", "## 不要", "## 後回し"]
+  },
+  {
+    file: "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/02_ART_AUDIO_DIRECTION.md",
+    headings: [
+      "## アートピラー",
+      "## 禁止事項",
+      "## 予算表",
+      "## 命名規則",
+      "## 地域別ルック表",
+      "## 最低品質基準",
+      "## 制作フロー",
+      "## 省略可能な表現",
+      "## 絶対に削ってはいけない表現",
+      "## オーディオピラー",
+      "## 必須SE一覧",
+      "## BGM一覧",
+      "## 探索ツール音設計",
+      "## 実装優先順位",
+      "## マイルストーン完成条件"
+    ]
+  },
+  {
+    file: "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/03_VERTICAL_SLICE_AND_SCOPE.md",
+    headings: [
+      "## 完成条件チェックリスト",
+      "## 実装順序",
+      "## 担当表",
+      "## リスク表",
+      "## 市場検証可能性メモ",
+      "## 変更管理テンプレート",
+      "## 上限定義",
+      "## 却下基準",
+      "## 週次レビュー表",
+      "## 3分類表"
+    ]
+  },
+  {
+    file: "docs/Production/D022_TOPDOWN_ADVENTURE_MVP/04_QA_RELEASE_STORE.md",
+    headings: [
+      "## Steam発売前チェックリスト",
+      "## Steam Deckテスト表",
+      "## 回帰テスト表",
+      "## コンソール事前対応表",
+      "## 30日運用計画",
+      "## ユーザー告知テンプレート",
+      "## バグ優先度表",
+      "## 短文紹介3案",
+      "## 長文紹介",
+      "## タグ優先順",
+      "## スクリーンショット計画",
+      "## トレーラー絵コンテ",
+      "## 告知文",
+      "## 翻訳優先リスト"
+    ]
+  },
   {
     file: "docs/Production/D021_COMPACT_ACTION_SPEC_PACK/00_CANON.md",
     headings: [
