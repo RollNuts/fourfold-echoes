@@ -101,6 +101,13 @@ namespace FourfoldEchoes.Product
         private const float MinZ = -6.2f;
         private const float MaxZ = 7.0f;
 
+        private enum PendingExitAction
+        {
+            None,
+            RetryRun,
+            ReturnToTitle
+        }
+
         private float attackTimer;
         private float attackReadTimer;
         private float dodgeTimer;
@@ -155,6 +162,8 @@ namespace FourfoldEchoes.Product
         private bool rewardReadyCuePlayed;
         private AudioClip currentMusicClip;
         private bool paused;
+        private PendingExitAction pendingExitAction;
+        private bool pendingExitReturnToPaused;
 
         public static bool LayoutFitsResolution(int screenWidth, int screenHeight, bool pauseOpen, out string reason)
         {
@@ -186,12 +195,12 @@ namespace FourfoldEchoes.Product
                 return true;
             }
 
-            var pauseWidth = Mathf.Min(480f, screenWidth - 48f);
-            var pauseHeight = 168f;
+            var pauseWidth = Mathf.Min(560f, screenWidth - 48f);
+            var pauseHeight = 220f;
             var pauseRect = new Rect((screenWidth - pauseWidth) * 0.5f, (screenHeight - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
             if (pauseRect.x < 24f || pauseRect.y < 24f || pauseRect.xMax > screenWidth - 24f || pauseRect.yMax > screenHeight - 24f)
             {
-                reason = $"D-020 pause panel exceeds safe area at {screenWidth}x{screenHeight}: {pauseRect}";
+                reason = $"D-020 pause/confirm panel exceeds safe area at {screenWidth}x{screenHeight}: {pauseRect}";
                 return false;
             }
 
@@ -286,9 +295,14 @@ namespace FourfoldEchoes.Product
         private void Update()
         {
             UpdateToolInputLock();
+            if (HandlePendingExitConfirmation())
+            {
+                return;
+            }
+
             if (Pressed(retryKey, gamepadRetryKey))
             {
-                ResetRun();
+                RequestRetryRun();
                 return;
             }
 
@@ -302,7 +316,7 @@ namespace FourfoldEchoes.Product
             {
                 if (Pressed(returnToTitleKey, gamepadReturnToTitleKey))
                 {
-                    TryReturnToTitle();
+                    RequestReturnToTitle();
                 }
 
                 return;
@@ -767,6 +781,7 @@ namespace FourfoldEchoes.Product
 
         public bool TryReturnToTitle()
         {
+            pendingExitAction = PendingExitAction.None;
             SetPaused(false);
             PersistProgress();
             if (Application.isPlaying)
@@ -842,6 +857,7 @@ namespace FourfoldEchoes.Product
 
         private void ResetRun()
         {
+            pendingExitAction = PendingExitAction.None;
             SetPaused(false);
             playerHealth = PlayerMaxHealth;
             playerInvulnerableTimer = 0f;
@@ -1004,6 +1020,84 @@ namespace FourfoldEchoes.Product
             {
                 musicSource.UnPause();
             }
+        }
+
+        private void RequestRetryRun()
+        {
+            if (ShouldConfirmRunAbandon())
+            {
+                OpenPendingExitConfirmation(PendingExitAction.RetryRun);
+                return;
+            }
+
+            ResetRun();
+        }
+
+        private void RequestReturnToTitle()
+        {
+            if (ShouldConfirmRunAbandon())
+            {
+                OpenPendingExitConfirmation(PendingExitAction.ReturnToTitle);
+                return;
+            }
+
+            TryReturnToTitle();
+        }
+
+        private bool ShouldConfirmRunAbandon()
+        {
+            return !returnedToHubThisRun && ClaimedRelicCountThisRun() > 0;
+        }
+
+        private void OpenPendingExitConfirmation(PendingExitAction action)
+        {
+            pendingExitAction = action;
+            pendingExitReturnToPaused = paused;
+            SetPaused(true);
+        }
+
+        private bool HandlePendingExitConfirmation()
+        {
+            if (pendingExitAction == PendingExitAction.None)
+            {
+                return false;
+            }
+
+            if (Pressed(pauseKey, gamepadPauseKey))
+            {
+                var returnToPaused = pendingExitReturnToPaused;
+                pendingExitAction = PendingExitAction.None;
+                SetPaused(returnToPaused);
+                return true;
+            }
+
+            var confirmPressed = Pressed(interactKey, gamepadInteractKey);
+            if (pendingExitAction == PendingExitAction.RetryRun)
+            {
+                confirmPressed = confirmPressed || Pressed(retryKey, gamepadRetryKey);
+            }
+            else if (pendingExitAction == PendingExitAction.ReturnToTitle)
+            {
+                confirmPressed = confirmPressed || Pressed(returnToTitleKey, gamepadReturnToTitleKey);
+            }
+
+            if (!confirmPressed)
+            {
+                return true;
+            }
+
+            var action = pendingExitAction;
+            pendingExitAction = PendingExitAction.None;
+            if (action == PendingExitAction.RetryRun)
+            {
+                ResetRun();
+            }
+            else
+            {
+                TryReturnToTitle();
+            }
+
+            return true;
         }
 
         private void UpdateToolInputLock()
@@ -1892,14 +1986,18 @@ namespace FourfoldEchoes.Product
             DrawObjectiveMarker(style);
             DrawControlHint(style);
 
-            if (paused)
+            if (pendingExitAction != PendingExitAction.None)
+            {
+                DrawPendingExitConfirmation(style);
+            }
+            else if (paused)
             {
                 var pauseWidth = Mathf.Min(480f, Screen.width - 48f);
-                var pauseHeight = 168f;
+                var pauseHeight = 220f;
                 var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
                 FourfoldRuntimeUi.DrawPanel(pauseRect);
                 GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 22f, pauseWidth - 48f, 32f), "PAUSED", style);
-                GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 58f, pauseWidth - 48f, 92f), "Solo run is stopped. Esc/Menu resumes. R/Start retries. Backspace/Select returns to title without banking unreturned relics.", style);
+                GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 58f, pauseWidth - 48f, 142f), "Solo run is stopped. Esc/Menu resumes. R/Start retries. Backspace/Select returns to title. If you are carrying unbanked relics, those actions ask for confirmation first.", style);
             }
             else if (bossDefeatTimer > 0f)
             {
@@ -1928,6 +2026,23 @@ namespace FourfoldEchoes.Product
             {
                 GUI.Label(BottomProgressRect(Screen.width, Screen.height), "Local progress: shortcut opened.", style);
             }
+        }
+
+        private void DrawPendingExitConfirmation(GUIStyle style)
+        {
+            var panelWidth = Mathf.Min(560f, Screen.width - 48f);
+            var panelHeight = 220f;
+            var panelRect = new Rect((Screen.width - panelWidth) * 0.5f, (Screen.height - panelHeight) * 0.5f, panelWidth, panelHeight);
+            FourfoldRuntimeUi.DrawPanel(panelRect);
+
+            var unbankedCount = ClaimedRelicCountThisRun();
+            var actionLabel = pendingExitAction == PendingExitAction.RetryRun ? "RETRY RUN" : "RETURN TO TITLE";
+            var confirmLabel = pendingExitAction == PendingExitAction.RetryRun
+                ? "Press R/Start or E/Y to abandon and retry."
+                : "Press Backspace/Select or E/Y to leave for title.";
+            GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 20f, panelWidth - 48f, 32f), actionLabel, style);
+            GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 58f, panelWidth - 48f, 96f), $"You are carrying {unbankedCount} unbanked relic reward(s). This action drops them because rewards only persist after returning to the Hub.", style);
+            GUI.Label(new Rect(panelRect.x + 24f, panelRect.y + 164f, panelWidth - 48f, 42f), $"{confirmLabel}  Esc/Menu cancels.", FourfoldRuntimeUi.MutedStyle(Screen.height));
         }
 
         private void DrawControlHint(GUIStyle style)

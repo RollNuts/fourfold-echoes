@@ -411,6 +411,21 @@ namespace FourfoldEchoes.Editor
                 }
 
                 SetPrivate(controller, "firstRewardClaimedThisRun", true);
+                InvokePrivate(controller, "RequestRetryRun");
+                if (GetPrivate<object>(controller, "pendingExitAction").ToString() != "RetryRun")
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: retry input did not require confirmation while carrying an unbanked relic.");
+                }
+
+                InvokePrivate(controller, "ResetRun");
+                SetPrivate(controller, "firstRewardClaimedThisRun", true);
+                InvokePrivate(controller, "SetPaused", true);
+                InvokePrivate(controller, "RequestReturnToTitle");
+                if (GetPrivate<object>(controller, "pendingExitAction").ToString() != "ReturnToTitle")
+                {
+                    throw new InvalidOperationException("D-020 death/retry verifier failed: title return input did not require confirmation while carrying an unbanked relic.");
+                }
+
                 controller.TryReturnToTitle();
                 var titleReturnSave = FourfoldProgressSave.Load();
                 if (titleReturnSave.currentScene != FourfoldGameIds.SceneD020VerticalSlice)
