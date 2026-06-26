@@ -8,46 +8,51 @@ namespace FourfoldEchoes.Product
         private static readonly Color LineColor = new Color(1.0f, 0.76f, 0.28f, 0.82f);
         private static Texture2D whiteTexture;
 
-        public static GUIStyle HeaderStyle(int screenHeight)
+        public static GUIStyle HeaderStyle(int screenHeight, float uiScale = 1f)
         {
             return new GUIStyle(GUI.skin.label)
             {
-                fontSize = Mathf.Clamp(screenHeight / 22, 28, 48),
+                fontSize = ScaledFont(screenHeight / 22, 28, 48, uiScale),
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleLeft,
                 normal = { textColor = new Color(1.0f, 0.86f, 0.52f) }
             };
         }
 
-        public static GUIStyle SubheadStyle(int screenHeight)
+        public static GUIStyle SubheadStyle(int screenHeight, float uiScale = 1f)
         {
             return new GUIStyle(GUI.skin.label)
             {
-                fontSize = Mathf.Clamp(screenHeight / 36, 18, 28),
+                fontSize = ScaledFont(screenHeight / 36, 18, 28, uiScale),
                 fontStyle = FontStyle.Bold,
                 normal = { textColor = Color.white },
                 wordWrap = true
             };
         }
 
-        public static GUIStyle BodyStyle(int screenHeight)
+        public static GUIStyle BodyStyle(int screenHeight, float uiScale = 1f)
         {
             return new GUIStyle(GUI.skin.label)
             {
-                fontSize = Mathf.Clamp(screenHeight / 46, 15, 22),
+                fontSize = ScaledFont(screenHeight / 46, 15, 22, uiScale),
                 normal = { textColor = new Color(0.92f, 0.93f, 0.98f) },
                 wordWrap = true
             };
         }
 
-        public static GUIStyle MutedStyle(int screenHeight)
+        public static GUIStyle MutedStyle(int screenHeight, float uiScale = 1f)
         {
             return new GUIStyle(GUI.skin.label)
             {
-                fontSize = Mathf.Clamp(screenHeight / 54, 13, 18),
+                fontSize = ScaledFont(screenHeight / 54, 13, 18, uiScale),
                 normal = { textColor = new Color(0.70f, 0.75f, 0.82f) },
                 wordWrap = true
             };
+        }
+
+        public static float SafeUiScale(FourfoldProgressData progressData)
+        {
+            return progressData == null ? 1f : Mathf.Clamp(progressData.uiScale, 0.85f, 1.25f);
         }
 
         public static void DrawScreenWash()
@@ -68,6 +73,17 @@ namespace FourfoldEchoes.Product
             DrawRect(new Rect(rect.x, rect.y, 4f, rect.height), color);
             GUI.Box(rect, GUIContent.none);
             GUI.Label(new Rect(rect.x + 12f, rect.y + 4f, rect.width - 18f, rect.height - 8f), text, style);
+        }
+
+        public static void DrawSelectableRow(Rect rect, string text, bool selected, GUIStyle style)
+        {
+            if (selected)
+            {
+                DrawChip(rect, "> " + text, new Color(1.0f, 0.72f, 0.24f), style);
+                return;
+            }
+
+            GUI.Label(new Rect(rect.x + 12f, rect.y + 4f, rect.width - 18f, rect.height - 8f), "  " + text, style);
         }
 
         public static void DrawBar(Rect rect, float value01, Color color, string label, GUIStyle style)
@@ -95,6 +111,11 @@ namespace FourfoldEchoes.Product
             GUI.color = color;
             GUI.DrawTexture(rect, whiteTexture);
             GUI.color = previous;
+        }
+
+        private static int ScaledFont(int raw, int min, int max, float uiScale)
+        {
+            return Mathf.RoundToInt(Mathf.Clamp(raw, min, max) * Mathf.Clamp(uiScale, 0.85f, 1.25f));
         }
     }
 }

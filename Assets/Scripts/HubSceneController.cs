@@ -29,11 +29,21 @@ namespace FourfoldEchoes.Product
         private const float MaxX = 6.0f;
         private const float MinZ = -5.0f;
         private const float MaxZ = 5.8f;
+        private const int PauseResume = 0;
+        private const int PauseSettings = 1;
+        private const int PauseTitle = 2;
+        private const int PauseMenuCount = 3;
+        private const int SettingsCount = 5;
+        private const float AxisRepeatDelay = 0.24f;
 
         private Vector3 facing = Vector3.forward;
         private FourfoldProgressData progressData;
         private float resetHoldSeconds;
         private bool paused;
+        private bool settingsOpen;
+        private int selectedPauseIndex;
+        private int selectedSettingIndex;
+        private float axisRepeatTimer;
 
         public static bool LayoutFitsResolution(int screenWidth, int screenHeight, bool pauseOpen, out string reason)
         {
@@ -57,7 +67,7 @@ namespace FourfoldEchoes.Product
             }
 
             var pauseWidth = Mathf.Min(520f, screenWidth - 48f);
-            var pauseHeight = 132f;
+            var pauseHeight = 276f;
             var pauseRect = new Rect((screenWidth - pauseWidth) * 0.5f, (screenHeight - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
             if (pauseRect.x < 24f || pauseRect.y < 24f || pauseRect.xMax > screenWidth - 24f || pauseRect.yMax > screenHeight - 24f)
             {
@@ -87,20 +97,24 @@ namespace FourfoldEchoes.Product
 
         private void Update()
         {
+            axisRepeatTimer = Mathf.Max(0f, axisRepeatTimer - Time.unscaledDeltaTime);
             if (Pressed(pauseKey, gamepadPauseKey))
             {
+                if (settingsOpen)
+                {
+                    CloseSettings();
+                    return;
+                }
+
                 paused = !paused;
+                selectedPauseIndex = 0;
                 resetHoldSeconds = 0f;
                 return;
             }
 
             if (paused)
             {
-                if (Pressed(resetKey, gamepadResetKey))
-                {
-                    TryReturnToTitle();
-                }
-
+                UpdatePauseInput();
                 return;
             }
 
@@ -155,6 +169,7 @@ namespace FourfoldEchoes.Product
             progressData.lumenRodUnlocked = true;
             FourfoldProgressSave.Save(progressData);
             paused = false;
+            settingsOpen = false;
             resetHoldSeconds = 0f;
 
             if (Application.isPlaying)
@@ -167,10 +182,54 @@ namespace FourfoldEchoes.Product
 
         public void ResetProgressForNewGame()
         {
+            var previousSettings = FourfoldProgressSave.Load();
             FourfoldProgressSave.DeleteAll();
             InitializeHubProgress();
+            FourfoldProgressSave.CopySettings(previousSettings, progressData);
+            FourfoldProgressSave.Save(progressData);
             PlacePlayerAtHubSpawn();
             resetHoldSeconds = 0f;
+            settingsOpen = false;
+        }
+
+        public void OpenSettings()
+        {
+            progressData = FourfoldProgressSave.Load();
+            paused = true;
+            settingsOpen = true;
+            selectedSettingIndex = 0;
+        }
+
+        public void CloseSettings()
+        {
+            settingsOpen = false;
+            SaveSettings();
+        }
+
+        public void AdjustSelectedSetting(float delta)
+        {
+            progressData = FourfoldProgressSave.Load();
+            var step = delta >= 0f ? 0.1f : -0.1f;
+            switch (selectedSettingIndex)
+            {
+                case 0:
+                    progressData.masterVolume = Mathf.Clamp01(progressData.masterVolume + step);
+                    break;
+                case 1:
+                    progressData.musicVolume = Mathf.Clamp01(progressData.musicVolume + step);
+                    break;
+                case 2:
+                    progressData.sfxVolume = Mathf.Clamp01(progressData.sfxVolume + step);
+                    break;
+                case 3:
+                    progressData.uiScale = Mathf.Clamp(progressData.uiScale + step, 0.85f, 1.25f);
+                    break;
+                default:
+                    progressData.showControlHints = !progressData.showControlHints;
+                    break;
+            }
+
+            SaveSettings();
         }
 
         public bool CanEnterD020Region()
@@ -232,6 +291,83 @@ namespace FourfoldEchoes.Product
             resetHoldSeconds = 0f;
         }
 
+        private void UpdatePauseInput()
+        {
+            if (settingsOpen)
+            {
+                UpdateSettingsInput();
+                return;
+            }
+
+            if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
+            {
+                selectedPauseIndex = Wrap(selectedPauseIndex - 1, PauseMenuCount);
+            }
+            else if (Pressed(KeyCode.DownArrow, KeyCode.S) || AxisPressed(-1f))
+            {
+                selectedPauseIndex = Wrap(selectedPauseIndex + 1, PauseMenuCount);
+            }
+
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            {
+                ActivatePauseSelection();
+            }
+        }
+
+        private void UpdateSettingsInput()
+        {
+            if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
+            {
+                selectedSettingIndex = Wrap(selectedSettingIndex - 1, SettingsCount);
+            }
+            else if (Pressed(KeyCode.DownArrow, KeyCode.S) || AxisPressed(-1f))
+            {
+                selectedSettingIndex = Wrap(selectedSettingIndex + 1, SettingsCount);
+            }
+
+            if (Pressed(KeyCode.LeftArrow, KeyCode.A) || HorizontalAxisPressed(-1f))
+            {
+                AdjustSelectedSetting(-1f);
+            }
+            else if (Pressed(KeyCode.RightArrow, KeyCode.D) || HorizontalAxisPressed(1f))
+            {
+                AdjustSelectedSetting(1f);
+            }
+
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey) || Pressed(resetKey, gamepadResetKey))
+            {
+                CloseSettings();
+            }
+        }
+
+        private void ActivatePauseSelection()
+        {
+            switch (selectedPauseIndex)
+            {
+                case PauseResume:
+                    paused = false;
+                    settingsOpen = false;
+                    break;
+                case PauseSettings:
+                    OpenSettings();
+                    break;
+                case PauseTitle:
+                    TryReturnToTitle();
+                    break;
+            }
+        }
+
+        private void SaveSettings()
+        {
+            if (progressData == null)
+            {
+                progressData = FourfoldProgressSave.Load();
+            }
+
+            progressData.settingsInitialized = true;
+            FourfoldProgressSave.Save(progressData);
+        }
+
         private void UpdateCamera()
         {
             if (fixedCamera == null || player == null)
@@ -245,15 +381,78 @@ namespace FourfoldEchoes.Product
 
         private static Vector3 ReadMoveInput()
         {
-            var horizontal = Input.GetAxisRaw("Horizontal");
-            var vertical = Input.GetAxisRaw("Vertical");
+            var horizontal = SafeAxis("Horizontal");
+            var vertical = SafeAxis("Vertical");
             var input = new Vector3(horizontal, 0f, vertical);
             return input.sqrMagnitude > 1f ? input.normalized : input;
         }
 
-        private static bool Pressed(KeyCode keyboard, KeyCode gamepad)
+        private bool AxisPressed(float sign)
         {
-            return Input.GetKeyDown(keyboard) || Input.GetKeyDown(gamepad);
+            var value = SafeAxis("Vertical");
+            if (sign < 0f)
+            {
+                value = -value;
+            }
+
+            return value > 0.55f && ConsumeAxisRepeat();
+        }
+
+        private bool HorizontalAxisPressed(float sign)
+        {
+            var value = SafeAxis("Horizontal");
+            if (sign < 0f)
+            {
+                value = -value;
+            }
+
+            return value > 0.55f && ConsumeAxisRepeat();
+        }
+
+        private bool ConsumeAxisRepeat()
+        {
+            if (axisRepeatTimer > 0f)
+            {
+                return false;
+            }
+
+            axisRepeatTimer = AxisRepeatDelay;
+            return true;
+        }
+
+        private static float SafeAxis(string axisName)
+        {
+            try
+            {
+                return Input.GetAxisRaw(axisName);
+            }
+            catch (System.ArgumentException)
+            {
+                return 0f;
+            }
+        }
+
+        private static bool Pressed(params KeyCode[] keys)
+        {
+            for (var i = 0; i < keys.Length; i++)
+            {
+                if (keys[i] != KeyCode.None && Input.GetKeyDown(keys[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static int Wrap(int value, int count)
+        {
+            if (count <= 0)
+            {
+                return 0;
+            }
+
+            return (value % count + count) % count;
         }
 
         private static float FlatDistance(Vector3 a, Vector3 b)
@@ -266,6 +465,12 @@ namespace FourfoldEchoes.Product
         private void OnGUI()
         {
             FourfoldRuntimeUi.DrawScreenWash();
+            if (progressData == null)
+            {
+                progressData = FourfoldProgressSave.Load();
+            }
+
+            var uiScale = FourfoldRuntimeUi.SafeUiScale(progressData);
             var cleared = progressData != null && progressData.regionD020Cleared;
             var clearCount = progressData == null ? 0 : progressData.d020ClearCount;
             var relics = progressData == null ? 0 : (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
@@ -274,16 +479,19 @@ namespace FourfoldEchoes.Product
                 : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
             var panel = new Rect(18f, 18f, Mathf.Min(760f, Screen.width - 36f), 190f);
             FourfoldRuntimeUi.DrawPanel(panel);
-            var header = FourfoldRuntimeUi.SubheadStyle(Screen.height);
-            var body = FourfoldRuntimeUi.BodyStyle(Screen.height);
-            var muted = FourfoldRuntimeUi.MutedStyle(Screen.height);
+            var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, uiScale);
+            var body = FourfoldRuntimeUi.BodyStyle(Screen.height, uiScale);
+            var muted = FourfoldRuntimeUi.MutedStyle(Screen.height, uiScale);
             GUI.Label(new Rect(panel.x + 18f, panel.y + 12f, panel.width - 36f, 34f), "HUB: Crossroads", header);
             GUI.Label(new Rect(panel.x + 18f, panel.y + 48f, panel.width - 36f, 42f), cleared ? "D-020 cleared. Re-enter to improve your time or test the build." : "Mission: enter D-020, defeat the boss, claim both relic rewards, and return to bank them.", body);
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 96f, 230f, 34f), $"Clears {clearCount}   Best {bestTime}", new Color(1.0f, 0.72f, 0.24f), muted);
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 260f, panel.y + 96f, 220f, 34f), $"Relics banked {relics}/2", new Color(0.22f, 0.70f, 1.0f), muted);
             var prompt = CanEnterD020Region() ? "Press E / Y: Enter D-020" : "Move to the gold gate to start the run.";
             GUI.Label(new Rect(panel.x + 18f, panel.y + 142f, panel.width - 36f, 24f), prompt, body);
-            GUI.Label(new Rect(panel.x + 18f, panel.y + 166f, panel.width - 36f, 24f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Esc/Menu: Pause   Hold Backspace / Select: Reset save", muted);
+            if (progressData == null || progressData.showControlHints)
+            {
+                GUI.Label(new Rect(panel.x + 18f, panel.y + 166f, panel.width - 36f, 24f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Esc/Menu: Pause   Hold Backspace / Select: Reset save", muted);
+            }
 
             if (!paused)
             {
@@ -291,11 +499,44 @@ namespace FourfoldEchoes.Product
             }
 
             var pauseWidth = Mathf.Min(520f, Screen.width - 48f);
-            var pauseHeight = 132f;
+            var pauseHeight = 276f;
             var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
             FourfoldRuntimeUi.DrawPanel(pauseRect);
-            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 20f, pauseWidth - 48f, 30f), "PAUSED", header);
-            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 62f, pauseWidth - 48f, 58f), "Esc/Menu resumes. Backspace/Select returns to title.", body);
+            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 18f, pauseWidth - 48f, 30f), settingsOpen ? "SETTINGS" : "PAUSED", header);
+
+            if (settingsOpen)
+            {
+                DrawSettings(pauseRect, body, muted);
+                return;
+            }
+
+            var labels = new[] { "Resume", "Settings", "Return to Title" };
+            for (var i = 0; i < labels.Length; i++)
+            {
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(pauseRect.x + 24f, pauseRect.y + 62f + i * 40f, pauseWidth - 48f, 34f), labels[i], selectedPauseIndex == i, body);
+            }
+
+            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 194f, pauseWidth - 48f, 58f), "Hub is safe. Use reset only with the long-hold command shown in the HUD.", muted);
+        }
+
+        private void DrawSettings(Rect rect, GUIStyle body, GUIStyle muted)
+        {
+            progressData = FourfoldProgressSave.Load();
+            var labels = new[]
+            {
+                $"Master Volume {Mathf.RoundToInt(progressData.masterVolume * 100f)}%",
+                $"Music Volume {Mathf.RoundToInt(progressData.musicVolume * 100f)}%",
+                $"SFX Volume {Mathf.RoundToInt(progressData.sfxVolume * 100f)}%",
+                $"UI Scale {Mathf.RoundToInt(progressData.uiScale * 100f)}%",
+                $"Control Hints {(progressData.showControlHints ? "On" : "Off")}"
+            };
+
+            for (var i = 0; i < labels.Length; i++)
+            {
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 24f, rect.y + 58f + i * 34f, rect.width - 48f, 30f), labels[i], selectedSettingIndex == i, body);
+            }
+
+            GUI.Label(new Rect(rect.x + 24f, rect.y + 236f, rect.width - 48f, 28f), "Left/Right changes value. E/Enter/Y or Backspace/Select returns.", muted);
         }
     }
 }

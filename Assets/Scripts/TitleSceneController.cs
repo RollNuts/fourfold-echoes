@@ -23,6 +23,7 @@ namespace FourfoldEchoes.Product
         private const int MenuSettings = 2;
         private const int MenuQuit = 3;
         private const int MenuCount = 4;
+        private const int SettingsCount = 5;
         private const float AxisRepeatDelay = 0.24f;
 
         private int selectedIndex;
@@ -43,7 +44,7 @@ namespace FourfoldEchoes.Product
             }
 
             var width = Mathf.Min(760f, screenWidth - 48f);
-            var height = settingsOpen ? 360f : 430f;
+            var height = 430f;
             var rect = new Rect((screenWidth - width) * 0.5f, (screenHeight - height) * 0.5f, width, height);
             if (rect.x < 24f || rect.y < 24f || rect.xMax > screenWidth - 24f || rect.yMax > screenHeight - 24f)
             {
@@ -85,8 +86,10 @@ namespace FourfoldEchoes.Product
 
         public string StartNewGame()
         {
+            var previousSettings = FourfoldProgressSave.Load();
             FourfoldProgressSave.DeleteAll();
             progressData = NewGameProgress();
+            FourfoldProgressSave.CopySettings(previousSettings, progressData);
             FourfoldProgressSave.Save(progressData);
             return RequestScene(FourfoldGameIds.UnitySceneHubCrossroads);
         }
@@ -127,8 +130,14 @@ namespace FourfoldEchoes.Product
                 case 1:
                     progressData.musicVolume = Mathf.Clamp01(progressData.musicVolume + step);
                     break;
-                default:
+                case 2:
                     progressData.sfxVolume = Mathf.Clamp01(progressData.sfxVolume + step);
+                    break;
+                case 3:
+                    progressData.uiScale = Mathf.Clamp(progressData.uiScale + step, 0.85f, 1.25f);
+                    break;
+                default:
+                    progressData.showControlHints = !progressData.showControlHints;
                     break;
             }
 
@@ -186,11 +195,11 @@ namespace FourfoldEchoes.Product
         {
             if (Pressed(upKey) || AxisPressed(-1f))
             {
-                selectedSettingIndex = Wrap(selectedSettingIndex - 1, 3);
+                selectedSettingIndex = Wrap(selectedSettingIndex - 1, SettingsCount);
             }
             else if (Pressed(downKey) || AxisPressed(1f))
             {
-                selectedSettingIndex = Wrap(selectedSettingIndex + 1, 3);
+                selectedSettingIndex = Wrap(selectedSettingIndex + 1, SettingsCount);
             }
 
             if (Pressed(leftKey) || HorizontalAxisPressed(-1f))
@@ -265,7 +274,9 @@ namespace FourfoldEchoes.Product
                 settingsInitialized = true,
                 masterVolume = 1f,
                 musicVolume = 1f,
-                sfxVolume = 1f
+                sfxVolume = 1f,
+                uiScale = 1f,
+                showControlHints = true
             };
         }
 
@@ -346,15 +357,16 @@ namespace FourfoldEchoes.Product
         private void OnGUI()
         {
             var width = Mathf.Min(760f, Screen.width - 48f);
-            var height = settingsOpen ? 360f : 430f;
+            var height = 430f;
             var rect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
             FourfoldRuntimeUi.DrawScreenWash();
             FourfoldRuntimeUi.DrawPanel(rect);
 
-            var titleStyle = FourfoldRuntimeUi.HeaderStyle(Screen.height);
-            var labelStyle = FourfoldRuntimeUi.BodyStyle(Screen.height);
-            var subheadStyle = FourfoldRuntimeUi.SubheadStyle(Screen.height);
-            var mutedStyle = FourfoldRuntimeUi.MutedStyle(Screen.height);
+            var uiScale = FourfoldRuntimeUi.SafeUiScale(progressData);
+            var titleStyle = FourfoldRuntimeUi.HeaderStyle(Screen.height, uiScale);
+            var labelStyle = FourfoldRuntimeUi.BodyStyle(Screen.height, uiScale);
+            var subheadStyle = FourfoldRuntimeUi.SubheadStyle(Screen.height, uiScale);
+            var mutedStyle = FourfoldRuntimeUi.MutedStyle(Screen.height, uiScale);
 
             GUI.Label(new Rect(rect.x + 40f, rect.y + 22f, width - 80f, 62f), "FOURFOLD ECHOES", titleStyle);
             GUI.Label(new Rect(rect.x + 42f, rect.y + 82f, width - 84f, 34f), "Boss-run fantasy action RPG", subheadStyle);
@@ -377,16 +389,8 @@ namespace FourfoldEchoes.Product
             var labels = new[] { "New Game", FourfoldProgressSave.HasSaveFile() ? "Continue" : "Continue (starts new)", "Settings", "Quit" };
             for (var i = 0; i < labels.Length; i++)
             {
-                var prefix = selectedIndex == i ? "> " : "  ";
                 var itemRect = new Rect(rect.x + 54f, rect.y + 178f + i * 36f, rect.width - 108f, 32f);
-                if (selectedIndex == i)
-                {
-                    FourfoldRuntimeUi.DrawChip(itemRect, prefix + labels[i], new Color(1.0f, 0.72f, 0.24f), style);
-                }
-                else
-                {
-                    GUI.Label(itemRect, prefix + labels[i], style);
-                }
+                FourfoldRuntimeUi.DrawSelectableRow(itemRect, labels[i], selectedIndex == i, style);
             }
 
             FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 54f, rect.y + 330f, rect.width - 108f, 48f), ContinueSummary(), new Color(0.25f, 0.68f, 1.0f), mutedStyle);
@@ -400,15 +404,16 @@ namespace FourfoldEchoes.Product
             {
                 $"Master Volume {Mathf.RoundToInt(progressData.masterVolume * 100f)}%",
                 $"Music Volume {Mathf.RoundToInt(progressData.musicVolume * 100f)}%",
-                $"SFX Volume {Mathf.RoundToInt(progressData.sfxVolume * 100f)}%"
+                $"SFX Volume {Mathf.RoundToInt(progressData.sfxVolume * 100f)}%",
+                $"UI Scale {Mathf.RoundToInt(progressData.uiScale * 100f)}%",
+                $"Control Hints {(progressData.showControlHints ? "On" : "Off")}"
             };
             for (var i = 0; i < labels.Length; i++)
             {
-                var prefix = selectedSettingIndex == i ? "> " : "  ";
-                GUI.Label(new Rect(rect.x + 64f, rect.y + 150f + i * 36f, rect.width - 128f, 32f), prefix + labels[i], style);
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 54f, rect.y + 150f + i * 36f, rect.width - 108f, 32f), labels[i], selectedSettingIndex == i, style);
             }
 
-            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 70f, rect.width - 128f, 52f), "Left/Right changes value. Enter/A or Esc/B returns.", style);
+            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 54f, rect.width - 128f, 40f), "Left/Right changes value. Enter/A or Esc/B returns.", style);
         }
     }
 }

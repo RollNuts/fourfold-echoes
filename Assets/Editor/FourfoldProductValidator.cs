@@ -33,7 +33,7 @@ namespace FourfoldEchoes.Editor
             try
             {
                 FourfoldSaveVerifier.VerifySaveRoundtripAndRecovery();
-                findings.Add(Finding.Info("save.service", "Versioned local save validated with settings defaults, roundtrip persistence, backup recovery, and corrupt-save fallback."));
+                findings.Add(Finding.Info("save.service", "Versioned local save validated with settings defaults, UI scale/control-hint preferences, settings preservation across reset, roundtrip persistence, backup recovery, and corrupt-save fallback."));
             }
             catch (Exception exception)
             {
@@ -47,7 +47,7 @@ namespace FourfoldEchoes.Editor
                 FourfoldD020GameplayVerifier.VerifyExistingSceneDeathRetryAndTitlePath();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFullProgressionLoop();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFailureLoop();
-                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, unbanked relic abandon confirmation, two distinct relic effects, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."));
+                findings.Add(Finding.Info("d020.slice", "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, shared pause/settings UX, unbanked relic abandon confirmation, two distinct relic effects, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."));
             }
             catch (Exception exception)
             {
@@ -58,7 +58,7 @@ namespace FourfoldEchoes.Editor
             {
                 FourfoldHubSceneBuilder.BuildAndValidate();
                 FourfoldHubGameplayVerifier.VerifyHubEnterRegionProgress();
-                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, progress initialization, reset, and return-to-title persistence."));
+                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, progress initialization, pause/settings UX, reset, and return-to-title persistence."));
             }
             catch (Exception exception)
             {

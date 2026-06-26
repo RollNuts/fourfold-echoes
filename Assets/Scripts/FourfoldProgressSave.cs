@@ -29,6 +29,8 @@ namespace FourfoldEchoes.Product
         public float masterVolume = 1f;
         public float musicVolume = 1f;
         public float sfxVolume = 1f;
+        public float uiScale = 1f;
+        public bool showControlHints = true;
     }
 
     public static class FourfoldProgressSave
@@ -104,6 +106,22 @@ namespace FourfoldEchoes.Product
             DeleteIfExists(BackupPath());
         }
 
+        public static void CopySettings(FourfoldProgressData source, FourfoldProgressData target)
+        {
+            if (source == null || target == null)
+            {
+                return;
+            }
+
+            var clean = Sanitize(source);
+            target.settingsInitialized = true;
+            target.masterVolume = clean.masterVolume;
+            target.musicVolume = clean.musicVolume;
+            target.sfxVolume = clean.sfxVolume;
+            target.uiScale = clean.uiScale;
+            target.showControlHints = clean.showControlHints;
+        }
+
         public static string SavePath()
         {
             return Path.Combine(Application.persistentDataPath, FileName);
@@ -137,7 +155,9 @@ namespace FourfoldEchoes.Product
                 settingsInitialized = true,
                 masterVolume = 1f,
                 musicVolume = 1f,
-                sfxVolume = 1f
+                sfxVolume = 1f,
+                uiScale = 1f,
+                showControlHints = true
             };
         }
 
@@ -165,12 +185,15 @@ namespace FourfoldEchoes.Product
                 data.masterVolume = 1f;
                 data.musicVolume = 1f;
                 data.sfxVolume = 1f;
+                data.uiScale = 1f;
+                data.showControlHints = true;
                 data.settingsInitialized = true;
             }
 
             data.masterVolume = SanitizeVolume(data.masterVolume, 1f);
             data.musicVolume = SanitizeVolume(data.musicVolume, 1f);
             data.sfxVolume = SanitizeVolume(data.sfxVolume, 1f);
+            data.uiScale = SanitizeScale(data.uiScale, 1f);
             return data;
         }
 
@@ -182,6 +205,16 @@ namespace FourfoldEchoes.Product
             }
 
             return Mathf.Clamp01(value);
+        }
+
+        private static float SanitizeScale(float value, float fallback)
+        {
+            if (float.IsNaN(value) || float.IsInfinity(value) || value <= 0f)
+            {
+                return fallback;
+            }
+
+            return Mathf.Clamp(value, 0.85f, 1.25f);
         }
     }
 }

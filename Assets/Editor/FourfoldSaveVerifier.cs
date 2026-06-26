@@ -36,9 +36,9 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Save verifier failed: empty save did not initialize version or settings.");
                 }
 
-                if (!ApproximatelyOne(empty.masterVolume) || !ApproximatelyOne(empty.musicVolume) || !ApproximatelyOne(empty.sfxVolume))
+                if (!ApproximatelyOne(empty.masterVolume) || !ApproximatelyOne(empty.musicVolume) || !ApproximatelyOne(empty.sfxVolume) || !ApproximatelyOne(empty.uiScale) || !empty.showControlHints)
                 {
-                    throw new InvalidOperationException("Save verifier failed: empty save did not initialize default volumes.");
+                    throw new InvalidOperationException("Save verifier failed: empty save did not initialize default settings.");
                 }
 
                 var data = new FourfoldProgressData
@@ -52,7 +52,9 @@ namespace FourfoldEchoes.Editor
                     settingsInitialized = true,
                     masterVolume = 0.7f,
                     musicVolume = 0.5f,
-                    sfxVolume = 0.9f
+                    sfxVolume = 0.9f,
+                    uiScale = 1.15f,
+                    showControlHints = false
                 };
                 FourfoldProgressSave.Save(data);
 
@@ -65,9 +67,22 @@ namespace FourfoldEchoes.Editor
                     || roundtrip.d020FailureCount != 3
                     || !Approximately(roundtrip.masterVolume, 0.7f)
                     || !Approximately(roundtrip.musicVolume, 0.5f)
-                    || !Approximately(roundtrip.sfxVolume, 0.9f))
+                    || !Approximately(roundtrip.sfxVolume, 0.9f)
+                    || !Approximately(roundtrip.uiScale, 1.15f)
+                    || roundtrip.showControlHints)
                 {
                     throw new InvalidOperationException("Save verifier failed: save/load roundtrip did not preserve progress and settings.");
+                }
+
+                var resetProgress = new FourfoldProgressData();
+                FourfoldProgressSave.CopySettings(roundtrip, resetProgress);
+                if (!Approximately(resetProgress.masterVolume, 0.7f)
+                    || !Approximately(resetProgress.musicVolume, 0.5f)
+                    || !Approximately(resetProgress.sfxVolume, 0.9f)
+                    || !Approximately(resetProgress.uiScale, 1.15f)
+                    || resetProgress.showControlHints)
+                {
+                    throw new InvalidOperationException("Save verifier failed: settings copy did not preserve user UX preferences.");
                 }
 
                 FourfoldProgressSave.Save(roundtrip);
