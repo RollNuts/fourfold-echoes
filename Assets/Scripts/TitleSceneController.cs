@@ -43,7 +43,7 @@ namespace FourfoldEchoes.Product
             }
 
             var width = Mathf.Min(760f, screenWidth - 48f);
-            var height = settingsOpen ? 360f : 380f;
+            var height = settingsOpen ? 360f : 430f;
             var rect = new Rect((screenWidth - width) * 0.5f, (screenHeight - height) * 0.5f, width, height);
             if (rect.x < 24f || rect.y < 24f || rect.xMax > screenWidth - 24f || rect.yMax > screenHeight - 24f)
             {
@@ -346,24 +346,20 @@ namespace FourfoldEchoes.Product
         private void OnGUI()
         {
             var width = Mathf.Min(760f, Screen.width - 48f);
-            var height = settingsOpen ? 360f : 380f;
+            var height = settingsOpen ? 360f : 430f;
             var rect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
-            GUI.Box(rect, GUIContent.none);
+            FourfoldRuntimeUi.DrawScreenWash();
+            FourfoldRuntimeUi.DrawPanel(rect);
 
-            var titleStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontSize = Mathf.Clamp(Screen.height / 18, 34, 62),
-                alignment = TextAnchor.MiddleCenter,
-                normal = { textColor = new Color(1.0f, 0.86f, 0.50f) }
-            };
-            var labelStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontSize = Mathf.Clamp(Screen.height / 38, 18, 26),
-                normal = { textColor = Color.white }
-            };
+            var titleStyle = FourfoldRuntimeUi.HeaderStyle(Screen.height);
+            var labelStyle = FourfoldRuntimeUi.BodyStyle(Screen.height);
+            var subheadStyle = FourfoldRuntimeUi.SubheadStyle(Screen.height);
+            var mutedStyle = FourfoldRuntimeUi.MutedStyle(Screen.height);
 
-            GUI.Label(new Rect(rect.x + 24f, rect.y + 20f, width - 48f, 70f), "FOURFOLD ECHOES", titleStyle);
-            GUI.Label(new Rect(rect.x + 40f, rect.y + 92f, width - 80f, 42f), "Compact single-player action adventure", labelStyle);
+            GUI.Label(new Rect(rect.x + 40f, rect.y + 22f, width - 80f, 62f), "FOURFOLD ECHOES", titleStyle);
+            GUI.Label(new Rect(rect.x + 42f, rect.y + 82f, width - 84f, 34f), "Boss-run fantasy action RPG", subheadStyle);
+            GUI.Label(new Rect(rect.x + 42f, rect.y + 112f, width - 84f, 42f), "Prepare in the hub, enter D-020, defeat the boss, secure relic skills, then return before a failed run drops unbanked rewards.", mutedStyle);
+            FourfoldRuntimeUi.DrawDivider(rect.x + 40f, rect.y + 158f, width - 80f);
 
             if (settingsOpen)
             {
@@ -377,15 +373,24 @@ namespace FourfoldEchoes.Product
 
         private void DrawMenu(Rect rect, GUIStyle style)
         {
+            var mutedStyle = FourfoldRuntimeUi.MutedStyle(Screen.height);
             var labels = new[] { "New Game", FourfoldProgressSave.HasSaveFile() ? "Continue" : "Continue (starts new)", "Settings", "Quit" };
             for (var i = 0; i < labels.Length; i++)
             {
                 var prefix = selectedIndex == i ? "> " : "  ";
-                GUI.Label(new Rect(rect.x + 64f, rect.y + 148f + i * 34f, rect.width - 128f, 30f), prefix + labels[i], style);
+                var itemRect = new Rect(rect.x + 54f, rect.y + 178f + i * 36f, rect.width - 108f, 32f);
+                if (selectedIndex == i)
+                {
+                    FourfoldRuntimeUi.DrawChip(itemRect, prefix + labels[i], new Color(1.0f, 0.72f, 0.24f), style);
+                }
+                else
+                {
+                    GUI.Label(itemRect, prefix + labels[i], style);
+                }
             }
 
-            GUI.Label(new Rect(rect.x + 64f, rect.y + 292f, rect.width - 128f, 46f), ContinueSummary(), style);
-            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 42f, rect.width - 128f, 28f), "Move: arrows/stick   Confirm: Enter/A   Back: Esc/B", style);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 54f, rect.y + 330f, rect.width - 108f, 48f), ContinueSummary(), new Color(0.25f, 0.68f, 1.0f), mutedStyle);
+            GUI.Label(new Rect(rect.x + 64f, rect.y + rect.height - 38f, rect.width - 128f, 28f), "Move: arrows/stick   Confirm: Enter/A   Back: Esc/B", mutedStyle);
         }
 
         private void DrawSettings(Rect rect, GUIStyle style)

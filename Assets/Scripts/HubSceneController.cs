@@ -44,7 +44,7 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
-            var topPanel = new Rect(18f, 18f, Mathf.Min(720f, screenWidth - 36f), 128f);
+            var topPanel = new Rect(18f, 18f, Mathf.Min(760f, screenWidth - 36f), 190f);
             if (topPanel.xMax > screenWidth - 18f || topPanel.yMax > screenHeight - 18f)
             {
                 reason = $"hub status text exceeds safe area at {screenWidth}x{screenHeight}: {topPanel}";
@@ -265,16 +265,25 @@ namespace FourfoldEchoes.Product
 
         private void OnGUI()
         {
+            FourfoldRuntimeUi.DrawScreenWash();
             var cleared = progressData != null && progressData.regionD020Cleared;
             var clearCount = progressData == null ? 0 : progressData.d020ClearCount;
+            var relics = progressData == null ? 0 : (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
             var bestTime = progressData == null || progressData.d020BestClearTimeSeconds <= 0f
                 ? "--"
                 : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
-            GUI.Label(new Rect(18f, 18f, 520f, 24f), "HUB: Crossroads");
-            GUI.Label(new Rect(18f, 42f, 520f, 24f), cleared ? "D-020 cleared. Re-enter to improve the run." : "Objective: enter D-020 and defeat the boss.");
-            GUI.Label(new Rect(18f, 66f, 520f, 24f), CanEnterD020Region() ? "Press E / Y: Enter D-020" : "Move to the gold gate to start the run.");
-            GUI.Label(new Rect(18f, 90f, 520f, 24f), $"D-020 clears: {clearCount}   Best: {bestTime}");
-            GUI.Label(new Rect(18f, 114f, 680f, 24f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Esc/Menu: Pause   Hold Backspace / Select: Reset save");
+            var panel = new Rect(18f, 18f, Mathf.Min(760f, Screen.width - 36f), 190f);
+            FourfoldRuntimeUi.DrawPanel(panel);
+            var header = FourfoldRuntimeUi.SubheadStyle(Screen.height);
+            var body = FourfoldRuntimeUi.BodyStyle(Screen.height);
+            var muted = FourfoldRuntimeUi.MutedStyle(Screen.height);
+            GUI.Label(new Rect(panel.x + 18f, panel.y + 12f, panel.width - 36f, 34f), "HUB: Crossroads", header);
+            GUI.Label(new Rect(panel.x + 18f, panel.y + 48f, panel.width - 36f, 42f), cleared ? "D-020 cleared. Re-enter to improve your time or test the build." : "Mission: enter D-020, defeat the boss, claim both relic rewards, and return to bank them.", body);
+            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 96f, 230f, 34f), $"Clears {clearCount}   Best {bestTime}", new Color(1.0f, 0.72f, 0.24f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 260f, panel.y + 96f, 220f, 34f), $"Relics banked {relics}/2", new Color(0.22f, 0.70f, 1.0f), muted);
+            var prompt = CanEnterD020Region() ? "Press E / Y: Enter D-020" : "Move to the gold gate to start the run.";
+            GUI.Label(new Rect(panel.x + 18f, panel.y + 142f, panel.width - 36f, 24f), prompt, body);
+            GUI.Label(new Rect(panel.x + 18f, panel.y + 166f, panel.width - 36f, 24f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Esc/Menu: Pause   Hold Backspace / Select: Reset save", muted);
 
             if (!paused)
             {
@@ -284,9 +293,9 @@ namespace FourfoldEchoes.Product
             var pauseWidth = Mathf.Min(520f, Screen.width - 48f);
             var pauseHeight = 132f;
             var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
-            GUI.Box(pauseRect, GUIContent.none);
-            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 20f, pauseWidth - 48f, 30f), "PAUSED");
-            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 56f, pauseWidth - 48f, 58f), "Esc/Menu resumes. Backspace/Select returns to title.");
+            FourfoldRuntimeUi.DrawPanel(pauseRect);
+            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 20f, pauseWidth - 48f, 30f), "PAUSED", header);
+            GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 62f, pauseWidth - 48f, 58f), "Esc/Menu resumes. Backspace/Select returns to title.", body);
         }
     }
 }

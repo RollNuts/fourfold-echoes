@@ -1825,7 +1825,7 @@ namespace FourfoldEchoes.Product
         {
             var width = Mathf.Min(600f, Screen.width - 32f);
             var rect = new Rect(16f, 16f, width, 214f);
-            GUI.Box(rect, GUIContent.none);
+            FourfoldRuntimeUi.DrawPanel(rect);
 
             var style = new GUIStyle(GUI.skin.label)
             {
@@ -1833,6 +1833,8 @@ namespace FourfoldEchoes.Product
                 normal = { textColor = Color.white },
                 wordWrap = true
             };
+            var mutedStyle = FourfoldRuntimeUi.MutedStyle(Screen.height);
+            var hpStyle = FourfoldRuntimeUi.BodyStyle(Screen.height);
 
             var objective = runCleared
                 ? returnedToHubThisRun
@@ -1881,11 +1883,12 @@ namespace FourfoldEchoes.Product
                 timeState += $"  Best {FormatRunTime(bestClearTimeSeconds)}";
             }
 
-            GUI.Label(new Rect(30f, 26f, width - 28f, 34f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}{BossHealthSuffix()}", style);
-            GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
-            GUI.Label(new Rect(30f, 88f, width - 28f, 30f), relicState, style);
-            GUI.Label(new Rect(30f, 118f, width - 28f, 52f), objective, style);
-            GUI.Label(new Rect(30f, 164f, width - 28f, 52f), $"{resultState}  {timeState}", style);
+            FourfoldRuntimeUi.DrawBar(new Rect(30f, 30f, width - 56f, 26f), playerHealth / PlayerMaxHealth, new Color(0.35f, 0.92f, 0.52f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}{BossHealthSuffix()}", hpStyle);
+            FourfoldRuntimeUi.DrawChip(new Rect(30f, 64f, (width - 70f) * 0.42f, 30f), toolState, new Color(0.25f, 0.70f, 1.0f), mutedStyle);
+            FourfoldRuntimeUi.DrawChip(new Rect(42f + (width - 70f) * 0.42f, 64f, (width - 70f) * 0.58f, 30f), relicState, new Color(1.0f, 0.72f, 0.24f), mutedStyle);
+            GUI.Label(new Rect(30f, 104f, width - 56f, 50f), objective, style);
+            FourfoldRuntimeUi.DrawDivider(30f, 158f, width - 56f);
+            GUI.Label(new Rect(30f, 166f, width - 56f, 44f), $"{resultState}  {timeState}", mutedStyle);
             DrawObjectiveMarker(style);
             DrawControlHint(style);
 
@@ -1894,7 +1897,7 @@ namespace FourfoldEchoes.Product
                 var pauseWidth = Mathf.Min(480f, Screen.width - 48f);
                 var pauseHeight = 168f;
                 var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
-                GUI.Box(pauseRect, GUIContent.none);
+                FourfoldRuntimeUi.DrawPanel(pauseRect);
                 GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 22f, pauseWidth - 48f, 32f), "PAUSED", style);
                 GUI.Label(new Rect(pauseRect.x + 24f, pauseRect.y + 58f, pauseWidth - 48f, 92f), "Solo run is stopped. Esc/Menu resumes. R/Start retries. Backspace/Select returns to title without banking unreturned relics.", style);
             }
@@ -1903,7 +1906,7 @@ namespace FourfoldEchoes.Product
                 var beatWidth = Mathf.Min(520f, Screen.width - 48f);
                 var beatHeight = 116f;
                 var beatRect = new Rect((Screen.width - beatWidth) * 0.5f, Screen.height * 0.22f, beatWidth, beatHeight);
-                GUI.Box(beatRect, GUIContent.none);
+                FourfoldRuntimeUi.DrawPanel(beatRect);
                 GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 20f, beatWidth - 48f, 32f), "BOSS DOWN", style);
                 GUI.Label(new Rect(beatRect.x + 24f, beatRect.y + 56f, beatWidth - 48f, 44f), "Secure the relics, then return to save progress.", style);
             }
@@ -1964,7 +1967,7 @@ namespace FourfoldEchoes.Product
             var screenY = Mathf.Clamp((1f - viewport.y) * Screen.height, 64f, Screen.height - 72f);
             var distance = player != null ? Vector3.Distance(player.position, target.position) : 0f;
             var rect = new Rect(screenX - 58f, screenY - 18f, 174f, 38f);
-            GUI.Box(rect, GUIContent.none);
+            FourfoldRuntimeUi.DrawPanel(rect);
             var prefix = offscreen ? "NEXT >" : "NEXT";
             GUI.Label(new Rect(rect.x + 12f, rect.y + 7f, rect.width - 24f, rect.height - 10f), $"{prefix} {label} {distance:0}m", style);
         }
