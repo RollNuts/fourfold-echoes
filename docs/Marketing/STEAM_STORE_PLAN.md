@@ -39,9 +39,11 @@ focused premium adventure that feels good to play and reads clearly in motion.
 11. Puzzle
 12. Atmospheric
 
-Hard-exclude "Open World", "MMO", "Survival", "Crafting", and "Souls-like"
-from tags and store copy for the current canon. They can only return through a
-future accepted product-direction decision, not by marketing wording.
+Hard-exclude "Open World", "MMO", "Survival", "Crafting", "Souls-like",
+"Co-op", "Multiplayer", "Live Service", "Social", "Inventory", "Loot",
+"Quest", and "Open-Ended" from tags and store copy for the current canon. They
+can only return through a future accepted product-direction decision, not by
+marketing wording.
 
 ## スクリーンショット計画
 
