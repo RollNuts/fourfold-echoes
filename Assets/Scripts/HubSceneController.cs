@@ -41,6 +41,9 @@ namespace FourfoldEchoes.Product
         private const int SummaryContinue = 1;
         private const int SummaryTitle = 2;
         private const int SummaryMenuCount = 3;
+        private const int ResetConfirmReset = 0;
+        private const int ResetConfirmCancel = 1;
+        private const int ResetConfirmMenuCount = 2;
         private const int SettingsCount = 5;
         private const float AxisRepeatDelay = 0.24f;
 
@@ -51,10 +54,12 @@ namespace FourfoldEchoes.Product
         private bool settingsOpen;
         private bool missionBriefingOpen;
         private bool runSummaryOpen;
+        private bool resetConfirmOpen;
         private bool settingsOpenedFromMissionBriefing;
         private int selectedPauseIndex;
         private int selectedMissionIndex;
         private int selectedSummaryIndex = SummaryContinue;
+        private int selectedResetIndex = ResetConfirmCancel;
         private int selectedSettingIndex;
         private float axisRepeatTimer;
 
@@ -85,6 +90,15 @@ namespace FourfoldEchoes.Product
             if (pauseRect.x < 24f || pauseRect.y < 24f || pauseRect.xMax > screenWidth - 24f || pauseRect.yMax > screenHeight - 24f)
             {
                 reason = $"hub pause panel exceeds safe area at {screenWidth}x{screenHeight}: {pauseRect}";
+                return false;
+            }
+
+            var resetWidth = Mathf.Min(560f, screenWidth - 48f);
+            var resetHeight = 262f;
+            var resetRect = new Rect((screenWidth - resetWidth) * 0.5f, (screenHeight - resetHeight) * 0.5f, resetWidth, resetHeight);
+            if (resetRect.x < 24f || resetRect.y < 24f || resetRect.xMax > screenWidth - 24f || resetRect.yMax > screenHeight - 24f)
+            {
+                reason = $"hub reset confirmation panel exceeds safe area at {screenWidth}x{screenHeight}: {resetRect}";
                 return false;
             }
 
@@ -128,6 +142,12 @@ namespace FourfoldEchoes.Product
                     return;
                 }
 
+                if (resetConfirmOpen)
+                {
+                    CloseResetConfirmation();
+                    return;
+                }
+
                 if (missionBriefingOpen)
                 {
                     CloseMissionBriefing();
@@ -155,6 +175,12 @@ namespace FourfoldEchoes.Product
             if (runSummaryOpen)
             {
                 UpdateRunSummaryInput();
+                return;
+            }
+
+            if (resetConfirmOpen)
+            {
+                UpdateResetConfirmationInput();
                 return;
             }
 
@@ -203,6 +229,7 @@ namespace FourfoldEchoes.Product
         {
             missionBriefingOpen = false;
             runSummaryOpen = false;
+            resetConfirmOpen = false;
             settingsOpenedFromMissionBriefing = false;
             settingsOpen = false;
             paused = false;
@@ -233,6 +260,7 @@ namespace FourfoldEchoes.Product
             settingsOpen = false;
             missionBriefingOpen = false;
             runSummaryOpen = false;
+            resetConfirmOpen = false;
             settingsOpenedFromMissionBriefing = false;
             resetHoldSeconds = 0f;
 
@@ -256,6 +284,7 @@ namespace FourfoldEchoes.Product
             settingsOpen = false;
             missionBriefingOpen = false;
             runSummaryOpen = false;
+            resetConfirmOpen = false;
             settingsOpenedFromMissionBriefing = false;
             paused = false;
         }
@@ -265,6 +294,7 @@ namespace FourfoldEchoes.Product
             progressData = FourfoldProgressSave.Load();
             paused = true;
             runSummaryOpen = false;
+            resetConfirmOpen = false;
             settingsOpen = true;
             settingsOpenedFromMissionBriefing = false;
             selectedSettingIndex = 0;
@@ -280,6 +310,7 @@ namespace FourfoldEchoes.Product
             progressData = FourfoldProgressSave.Load();
             missionBriefingOpen = true;
             runSummaryOpen = false;
+            resetConfirmOpen = false;
             settingsOpen = false;
             settingsOpenedFromMissionBriefing = false;
             paused = false;
@@ -316,6 +347,29 @@ namespace FourfoldEchoes.Product
             FourfoldProgressSave.Save(progressData);
             runSummaryOpen = false;
             selectedSummaryIndex = SummaryContinue;
+        }
+
+        public bool IsResetConfirmationOpen()
+        {
+            return resetConfirmOpen;
+        }
+
+        private void OpenResetConfirmation()
+        {
+            resetConfirmOpen = true;
+            paused = false;
+            missionBriefingOpen = false;
+            runSummaryOpen = false;
+            settingsOpen = false;
+            selectedResetIndex = ResetConfirmCancel;
+            resetHoldSeconds = 0f;
+        }
+
+        private void CloseResetConfirmation()
+        {
+            resetConfirmOpen = false;
+            selectedResetIndex = ResetConfirmCancel;
+            resetHoldSeconds = 0f;
         }
 
         public void CloseSettings()
@@ -407,7 +461,7 @@ namespace FourfoldEchoes.Product
                 resetHoldSeconds += deltaTime;
                 if (resetHoldSeconds >= ResetHoldDuration)
                 {
-                    ResetProgressForNewGame();
+                    OpenResetConfirmation();
                 }
 
                 return;
@@ -491,6 +545,29 @@ namespace FourfoldEchoes.Product
             }
         }
 
+        private void UpdateResetConfirmationInput()
+        {
+            if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
+            {
+                selectedResetIndex = Wrap(selectedResetIndex - 1, ResetConfirmMenuCount);
+            }
+            else if (Pressed(KeyCode.DownArrow, KeyCode.S) || AxisPressed(-1f))
+            {
+                selectedResetIndex = Wrap(selectedResetIndex + 1, ResetConfirmMenuCount);
+            }
+
+            if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey))
+            {
+                CloseResetConfirmation();
+                return;
+            }
+
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey))
+            {
+                ActivateResetConfirmationSelection();
+            }
+        }
+
         private void UpdateSettingsInput()
         {
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
@@ -569,6 +646,17 @@ namespace FourfoldEchoes.Product
                     TryReturnToTitle();
                     break;
             }
+        }
+
+        private void ActivateResetConfirmationSelection()
+        {
+            if (selectedResetIndex == ResetConfirmReset)
+            {
+                ResetProgressForNewGame();
+                return;
+            }
+
+            CloseResetConfirmation();
         }
 
         private void SaveSettings()
@@ -718,10 +806,16 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(panel.x + 18f, panel.y + 164f, panel.width - 36f, 24f), next, muted);
             if (progressData == null || progressData.showControlHints)
             {
-                GUI.Label(new Rect(panel.x + 18f, panel.y + 188f, panel.width - 36f, 20f), resetHoldSeconds > 0f ? "Keep holding reset to erase progress." : "Esc/Menu: Pause   Hold Backspace / Select: Reset save", muted);
+                GUI.Label(new Rect(panel.x + 18f, panel.y + 188f, panel.width - 36f, 20f), resetHoldSeconds > 0f ? "Keep holding reset to open confirmation." : "Esc/Menu: Pause   Hold Backspace / Select: Reset confirmation", muted);
             }
 
             DrawObjectiveMarker(body);
+
+            if (resetConfirmOpen)
+            {
+                DrawResetConfirmation(body, muted);
+                return;
+            }
 
             if (runSummaryOpen)
             {
@@ -789,6 +883,26 @@ namespace FourfoldEchoes.Product
             }
 
             GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 48f, rect.width - 68f, 30f), "Move: arrows/stick   Confirm: E/Enter/Y   Close: Esc/Backspace/Menu", muted);
+        }
+
+        private void DrawResetConfirmation(GUIStyle body, GUIStyle muted)
+        {
+            var width = Mathf.Min(560f, Screen.width - 48f);
+            var height = 262f;
+            var rect = new Rect((Screen.width - width) * 0.5f, (Screen.height - height) * 0.5f, width, height);
+            FourfoldRuntimeUi.DrawPanel(rect);
+            var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData));
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), "RESET SAVE?", header);
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 58f), "This erases D-020 clears, banked relic rewards, best time, and failure count. Audio/UI settings are kept.", body);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 126f, rect.width - 52f, 34f), "This cannot be undone from inside the game.", new Color(1.0f, 0.46f, 0.22f), muted);
+
+            var labels = new[] { "Reset Save", "Cancel" };
+            for (var i = 0; i < labels.Length; i++)
+            {
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 34f, rect.y + 176f + i * 34f, rect.width - 68f, 30f), labels[i], selectedResetIndex == i, body);
+            }
+
+            GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 32f, rect.width - 68f, 24f), "Confirm: E/Enter/Y   Cancel: Esc/Backspace/Menu", muted);
         }
 
         private void DrawMissionBriefing(GUIStyle body, GUIStyle muted)

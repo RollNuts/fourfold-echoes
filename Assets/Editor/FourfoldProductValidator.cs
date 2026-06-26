@@ -58,7 +58,7 @@ namespace FourfoldEchoes.Editor
             {
                 FourfoldHubSceneBuilder.BuildAndValidate();
                 FourfoldHubGameplayVerifier.VerifyHubEnterRegionProgress();
-                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, mission briefing/start confirmation, returned-run summary/replay UX, objective marker, progress initialization, pause/settings UX, reset, and return-to-title persistence."));
+                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, mission briefing/start confirmation, returned-run summary/replay UX, objective marker, progress initialization, pause/settings UX, reset confirmation, and return-to-title persistence."));
             }
             catch (Exception exception)
             {
