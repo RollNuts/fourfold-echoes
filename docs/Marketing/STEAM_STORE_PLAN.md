@@ -39,8 +39,9 @@ focused premium adventure that feels good to play and reads clearly in motion.
 11. Puzzle
 12. Atmospheric
 
-Avoid overpromising with "Open World", "MMO", "Survival", "Crafting", or
-"Souls-like" unless the final game truly fits those expectations.
+Hard-exclude "Open World", "MMO", "Survival", "Crafting", and "Souls-like"
+from tags and store copy for the current canon. They can only return through a
+future accepted product-direction decision, not by marketing wording.
 
 ## スクリーンショット計画
 

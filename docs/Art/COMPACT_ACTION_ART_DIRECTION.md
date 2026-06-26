@@ -35,7 +35,11 @@ Status: canonical after D-020.
 
 ## 予算表
 
-| Asset Class | MVP Upper Bound | Material Budget | Texture Budget | Notes |
+This table budgets the market-validation vertical slice. The full MVP cap is
+still 1 hub, 3 regions, 4 bosses, and 1 exploration tool; do not read the slice
+boss count as a lower final-MVP cap.
+
+| Asset Class | Vertical Slice Upper Bound | Material Budget | Texture Budget | Notes |
 | --- | ---: | ---: | ---: | --- |
 | Hero | 1 model | 3 materials | 1024 max | readable tool socket |
 | Exploration tool | 1 model | 2 materials | 512 max | glow/emission variant |
