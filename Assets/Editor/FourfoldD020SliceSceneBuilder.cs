@@ -82,8 +82,11 @@ namespace FourfoldEchoes.Editor
             Require("D020 First Boss");
             Require("D020 Relic Chest");
             Require("D020 Second Relic Chest");
+            Require("D020 Hub Return Gate");
             Require("D020 Exploration Tool Node");
             Require("D020 Second Exploration Tool Node");
+            Require("D020 Shortcut Locked Barrier");
+            Require("D020 Second Route Locked Barrier");
             Require("D020 Shortcut Route");
             Require("D020 Second Gimmick Route");
             Require("D020 Top Down Camera");
@@ -115,9 +118,9 @@ namespace FourfoldEchoes.Editor
             }
 
             var controller = hook.GetComponent<D020SliceController>();
-            if (controller == null || controller.player == null || controller.enemies == null || controller.enemies.Length < 2 || controller.rewardClaimPoint == null || controller.secondRewardClaimPoint == null)
+            if (controller == null || controller.player == null || controller.enemies == null || controller.enemies.Length < 3 || controller.rewardClaimPoint == null || controller.secondRewardClaimPoint == null || controller.returnGatePoint == null)
             {
-                throw new InvalidOperationException("D-020 playable controller is missing required player, enemies, or reward references.");
+                throw new InvalidOperationException("D-020 playable controller is missing required player, enemies, reward, or return references.");
             }
 
             if (hook.GetComponent<AudioSource>() == null)
@@ -131,9 +134,9 @@ namespace FourfoldEchoes.Editor
                 throw new InvalidOperationException("D-020 exploration tool is missing required player or two node references.");
             }
 
-            if (controller.explorationTool == null || controller.requiredToolNode == null || controller.secondToolNode == null)
+            if (controller.explorationTool == null || controller.requiredToolNode == null || controller.secondToolNode == null || controller.shortcutLockedRead == null || controller.secondRouteLockedRead == null)
             {
-                throw new InvalidOperationException("D-020 playable controller is missing exploration tool gate references.");
+                throw new InvalidOperationException("D-020 playable controller is missing exploration tool gate or lock-read references.");
             }
         }
 
@@ -274,6 +277,8 @@ namespace FourfoldEchoes.Editor
             CreateBlock(field.transform, "D020 Combat Route Line", assets.route, new Vector3(-1.15f, 0.035f, -0.20f), new Vector3(3.4f, 0.06f, 0.18f), Quaternion.Euler(0f, 25f, 0f));
             CreateBlock(field.transform, "D020 Reward Route Line", assets.route, new Vector3(5.95f, 0.035f, 3.45f), new Vector3(4.2f, 0.06f, 0.18f), Quaternion.Euler(0f, 18f, 0f));
             CreateBlock(field.transform, "D020 Second Room Route Line", assets.route, new Vector3(7.4f, 0.035f, -2.55f), new Vector3(3.4f, 0.06f, 0.18f), Quaternion.Euler(0f, -30f, 0f));
+            CreateBlock(field.transform, "D020 Shortcut Locked Barrier", assets.tool, new Vector3(-2.60f, 0.35f, -0.92f), new Vector3(1.56f, 0.70f, 0.18f), Quaternion.Euler(0f, 24f, 0f));
+            CreateBlock(field.transform, "D020 Second Route Locked Barrier", assets.tool, new Vector3(10.06f, 0.32f, -5.08f), new Vector3(1.36f, 0.64f, 0.16f), Quaternion.Euler(0f, -18f, 0f));
             CreateBlock(field.transform, "D020 Reward Low Rail A", assets.floorDark, new Vector3(7.2f, 0.28f, 6.85f), new Vector3(2.2f, 0.52f, 0.22f));
             CreateBlock(field.transform, "D020 Reward Low Rail B", assets.floorDark, new Vector3(10.4f, 0.28f, 6.85f), new Vector3(2.2f, 0.52f, 0.22f));
             CreateBlock(field.transform, "D020 Enemy Arena Marker", assets.enemyTell, new Vector3(1.8f, 0.018f, 0.95f), new Vector3(2.8f, 0.04f, 1.55f), Quaternion.Euler(0f, 24f, 0f));
@@ -403,6 +408,9 @@ namespace FourfoldEchoes.Editor
             CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Second Reward Footprint", assets.relic, new Vector3(0f, 0.03f, 0f), new Vector3(1.02f, 0.026f, 1.02f));
             CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Second Reward Beam", assets.relic, new Vector3(0f, 1.48f, 0f), new Vector3(0.10f, 1.0f, 0.10f));
             CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Second Reward Beacon", assets.relic, new Vector3(0f, 2.48f, 0f), new Vector3(0.18f, 0.28f, 0.18f));
+            CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Hub Return Gate", assets.route, new Vector3(0f, 0.06f, 0f), new Vector3(1.45f, 0.03f, 1.45f));
+            var returnBeacon = CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Return Gate Beacon", assets.route, new Vector3(0f, 1.10f, 0.42f), new Vector3(0.20f, 0.20f, 0.20f));
+            returnBeacon.SetActive(false);
             return chest;
         }
 
@@ -504,12 +512,16 @@ namespace FourfoldEchoes.Editor
             controller.enemies = enemies;
             controller.explorationTool = tool;
             controller.requiredToolNode = node;
+            controller.shortcutLockedRead = FindSceneObject("D020 Shortcut Locked Barrier");
             controller.secondToolNode = secondNode;
+            controller.secondRouteLockedRead = FindSceneObject("D020 Second Route Locked Barrier");
             controller.rewardReadyRead = FindInChildren(rewardClaimPoint, "D020 Reward Beacon")?.gameObject
                 ?? FindInChildren(rewardClaimPoint, "FE_RELIC_SPARK_P0")?.gameObject;
             controller.rewardClaimPoint = rewardClaimPoint;
             controller.secondRewardReadyRead = FindInChildren(secondRewardClaimPoint, "D020 Second Reward Beacon")?.gameObject;
             controller.secondRewardClaimPoint = secondRewardClaimPoint;
+            controller.returnReadyRead = FindInChildren(secondRewardClaimPoint, "D020 Return Gate Beacon")?.gameObject;
+            controller.returnGatePoint = secondRewardClaimPoint;
             controller.fixedCamera = camera;
             controller.audioSource = audioSource;
             controller.attackClip = LoadOptionalAudioClip(AttackClipPath);

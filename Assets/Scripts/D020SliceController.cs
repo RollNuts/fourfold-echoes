@@ -12,9 +12,13 @@ namespace FourfoldEchoes.Product
         public Transform rewardClaimPoint;
         public ExplorationTool explorationTool;
         public ExplorationNode requiredToolNode;
+        public GameObject shortcutLockedRead;
         public GameObject secondRewardReadyRead;
         public Transform secondRewardClaimPoint;
         public ExplorationNode secondToolNode;
+        public GameObject secondRouteLockedRead;
+        public GameObject returnReadyRead;
+        public Transform returnGatePoint;
         public Camera fixedCamera;
 
         [Header("Input")]
@@ -61,6 +65,8 @@ namespace FourfoldEchoes.Product
         private const string SaveKeyRewardClaimed = "fourfold.d020.slice.reward_claimed";
         private const string SaveKeySecondNodeOpened = "fourfold.d020.slice.second_node_opened";
         private const string SaveKeySecondRewardClaimed = "fourfold.d020.slice.second_reward_claimed";
+        private const string SaveKeyReturnedToHub = "fourfold.d020.slice.returned_to_hub";
+        private const string SaveKeyClearCount = "fourfold.d020.slice.clear_count";
         private const string SaveKeySkillStock = "fourfold.d020.skill.lumen_edge.stock";
         private const string SaveKeyEquippedSkill = "fourfold.d020.skill.equipped";
         private const string SaveKeyLostSkillCount = "fourfold.d020.skill.lost_count";
@@ -96,16 +102,21 @@ namespace FourfoldEchoes.Product
         private bool previousRewardLoaded;
         private bool previousSecondNodeLoaded;
         private bool previousSecondRewardLoaded;
+        private bool previousReturnedToHubLoaded;
         private int skillStock;
         private int equippedSkill;
         private int lostSkillCount;
+        private int clearCount;
         private bool skillAwardedThisRun;
         private bool failureLossApplied;
         private bool lostSkillThisRun;
+        private bool returnedToHubThisRun;
+        private bool returnRegisteredThisRun;
         private FourfoldProgressData progressData;
         private GameObject attackRead;
         private GameObject rewardClaimRead;
         private GameObject secondRewardClaimRead;
+        private GameObject returnGateClaimRead;
         private Material attackMaterial;
         private Material enemyAttackMaterial;
         private Material rewardMaterial;
@@ -166,6 +177,12 @@ namespace FourfoldEchoes.Product
                 secondRewardClaimRead.transform.position = secondRewardClaimPoint.position + new Vector3(0f, 0.08f, 0f);
             }
             secondRewardClaimRead.SetActive(false);
+            returnGateClaimRead = CreateDisc("D020 Runtime Return Claim Read", rewardMaterial, 1.55f);
+            if (returnGatePoint != null)
+            {
+                returnGateClaimRead.transform.position = returnGatePoint.position + new Vector3(0f, 0.08f, 0f);
+            }
+            returnGateClaimRead.SetActive(false);
             SetRewardReady(false);
         }
 
@@ -203,6 +220,12 @@ namespace FourfoldEchoes.Product
                 UpdateAttackRead();
                 UpdateEnemyAttackReads();
                 UpdateRewardState();
+                UpdateReturnState();
+                UpdateTraversalReads();
+                if (runCleared && Pressed(interactKey, gamepadInteractKey))
+                {
+                    TryReturnToHub();
+                }
                 return;
             }
 
@@ -212,6 +235,8 @@ namespace FourfoldEchoes.Product
             UpdateAttackRead();
             UpdateEnemyAttackReads();
             UpdateRewardState();
+            UpdateReturnState();
+            UpdateTraversalReads();
 
             if (Pressed(attackKey, gamepadAttackKey) || Input.GetMouseButtonDown(0))
             {
@@ -239,11 +264,12 @@ namespace FourfoldEchoes.Product
 
             var move = dodgeTimer > 0f ? dodgeDirection : input;
             var speed = dodgeTimer > 0f ? DodgeSpeed : MoveSpeed;
-            player.position += move * speed * dt;
-            player.position = new Vector3(
-                Mathf.Clamp(player.position.x, MinX, MaxX),
-                player.position.y,
-                Mathf.Clamp(player.position.z, MinZ, MaxZ));
+            var proposed = player.position + move * speed * dt;
+            proposed = new Vector3(
+                Mathf.Clamp(proposed.x, MinX, MaxX),
+                proposed.y,
+                Mathf.Clamp(proposed.z, MinZ, MaxZ));
+            player.position = ResolveBlockedMove(player.position, proposed);
 
             if (facing.sqrMagnitude > 0.001f)
             {
@@ -541,6 +567,7 @@ namespace FourfoldEchoes.Product
             previousClearLoaded = true;
             rewardClaimed = true;
             runCleared = true;
+            previousReturnedToHubLoaded = false;
             PersistProgress();
             PlayCue(rewardClaimClip, 0.86f);
             if (secondRewardReadyRead != null)
@@ -554,6 +581,82 @@ namespace FourfoldEchoes.Product
             return true;
         }
 
+        private void UpdateReturnState()
+        {
+            var ready = runCleared && !returnedToHubThisRun && returnGatePoint != null;
+            if (returnReadyRead != null)
+            {
+                returnReadyRead.SetActive(ready);
+            }
+
+            if (returnGateClaimRead == null)
+            {
+                return;
+            }
+
+            returnGateClaimRead.SetActive(ready);
+            if (!ready)
+            {
+                return;
+            }
+
+            returnGateClaimRead.transform.position = returnGatePoint.position + new Vector3(0f, 0.08f, 0f);
+            var pulse = 1.08f + Mathf.Sin(Time.time * 4.0f) * 0.09f;
+            returnGateClaimRead.transform.localScale = new Vector3(pulse, 0.025f, pulse);
+        }
+
+        private bool TryReturnToHub()
+        {
+            if (!runCleared || returnedToHubThisRun || returnGatePoint == null)
+            {
+                return false;
+            }
+
+            if (Vector3.Distance(player.position, returnGatePoint.position) > RewardRange)
+            {
+                return false;
+            }
+
+            returnedToHubThisRun = true;
+            previousReturnedToHubLoaded = true;
+            if (!returnRegisteredThisRun)
+            {
+                clearCount += 1;
+                returnRegisteredThisRun = true;
+            }
+
+            if (player != null)
+            {
+                player.position = initialPlayerPosition;
+                player.rotation = initialPlayerRotation;
+            }
+
+            PersistProgress();
+            if (returnReadyRead != null)
+            {
+                returnReadyRead.SetActive(false);
+            }
+            if (returnGateClaimRead != null)
+            {
+                returnGateClaimRead.SetActive(false);
+            }
+            PlayCue(rewardReadyClip, 0.58f);
+            return true;
+        }
+
+        private void UpdateTraversalReads()
+        {
+            if (shortcutLockedRead != null)
+            {
+                shortcutLockedRead.SetActive(!ToolGateSolved());
+            }
+
+            if (secondRouteLockedRead != null)
+            {
+                secondRouteLockedRead.SetActive(previousRewardLoaded && !SecondToolGateSolved());
+            }
+        }
+
         private void ResetRun()
         {
             playerHealth = PlayerMaxHealth;
@@ -565,6 +668,8 @@ namespace FourfoldEchoes.Product
             skillAwardedThisRun = false;
             failureLossApplied = false;
             lostSkillThisRun = false;
+            returnedToHubThisRun = false;
+            returnRegisteredThisRun = false;
             attackTimer = 0f;
             attackReadTimer = 0f;
             dodgeTimer = 0f;
@@ -608,6 +713,10 @@ namespace FourfoldEchoes.Product
             {
                 secondRewardClaimRead.SetActive(false);
             }
+            if (returnGateClaimRead != null)
+            {
+                returnGateClaimRead.SetActive(false);
+            }
             if (requiredToolNode != null)
             {
                 requiredToolNode.SetSolved(previousShortcutLoaded);
@@ -632,6 +741,8 @@ namespace FourfoldEchoes.Product
             previousRewardLoaded = progressData.d020RewardClaimed && previousClearLoaded;
             previousSecondNodeLoaded = progressData.d020SecondNodeOpened;
             previousSecondRewardLoaded = progressData.d020SecondRewardClaimed && previousClearLoaded;
+            previousReturnedToHubLoaded = progressData.d020ReturnedToHub && previousClearLoaded;
+            clearCount = Mathf.Max(0, progressData.d020ClearCount);
             skillStock = Mathf.Max(0, progressData.d020LumenEdgeStock);
             equippedSkill = progressData.d020EquippedSkill;
             lostSkillCount = Mathf.Max(0, progressData.d020LostSkillCount);
@@ -792,6 +903,48 @@ namespace FourfoldEchoes.Product
             return secondToolNode == null || secondToolNode.IsSolved;
         }
 
+        private Vector3 ResolveBlockedMove(Vector3 current, Vector3 proposed)
+        {
+            if (!IsPositionBlocked(proposed))
+            {
+                return proposed;
+            }
+
+            var xOnly = new Vector3(proposed.x, proposed.y, current.z);
+            if (!IsPositionBlocked(xOnly))
+            {
+                return xOnly;
+            }
+
+            var zOnly = new Vector3(current.x, proposed.y, proposed.z);
+            if (!IsPositionBlocked(zOnly))
+            {
+                return zOnly;
+            }
+
+            return current;
+        }
+
+        private bool IsPositionBlocked(Vector3 position)
+        {
+            if (!ToolGateSolved() && InsideRect(position, -3.65f, -1.55f, -3.05f, 1.35f))
+            {
+                return true;
+            }
+
+            if (!SecondToolGateSolved() && InsideRect(position, 9.15f, 11.25f, -6.15f, -4.40f))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool InsideRect(Vector3 position, float minX, float maxX, float minZ, float maxZ)
+        {
+            return position.x >= minX && position.x <= maxX && position.z >= minZ && position.z <= maxZ;
+        }
+
         private void UpdateProgressFlags()
         {
             if (requiredToolNode != null && requiredToolNode.IsSolved && !previousShortcutLoaded)
@@ -883,6 +1036,8 @@ namespace FourfoldEchoes.Product
             data.d020RewardClaimed = PlayerPrefs.GetInt(SaveKeyRewardClaimed, 0) == 1 && data.d020Cleared;
             data.d020SecondNodeOpened = PlayerPrefs.GetInt(SaveKeySecondNodeOpened, 0) == 1;
             data.d020SecondRewardClaimed = PlayerPrefs.GetInt(SaveKeySecondRewardClaimed, 0) == 1 && data.d020Cleared;
+            data.d020ReturnedToHub = PlayerPrefs.GetInt(SaveKeyReturnedToHub, 0) == 1 && data.d020Cleared;
+            data.d020ClearCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyClearCount, 0));
             data.d020LumenEdgeStock = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeySkillStock, 0));
             data.d020EquippedSkill = PlayerPrefs.GetInt(SaveKeyEquippedSkill, SkillNone);
             data.d020LostSkillCount = Mathf.Max(0, PlayerPrefs.GetInt(SaveKeyLostSkillCount, 0));
@@ -901,6 +1056,8 @@ namespace FourfoldEchoes.Product
             progressData.d020RewardClaimed = previousRewardLoaded || rewardClaimed;
             progressData.d020SecondNodeOpened = previousSecondNodeLoaded;
             progressData.d020SecondRewardClaimed = previousSecondRewardLoaded;
+            progressData.d020ReturnedToHub = previousReturnedToHubLoaded;
+            progressData.d020ClearCount = Mathf.Max(0, clearCount);
             progressData.d020LumenEdgeStock = Mathf.Max(0, skillStock);
             progressData.d020EquippedSkill = equippedSkill;
             progressData.d020LostSkillCount = Mathf.Max(0, lostSkillCount);
@@ -915,6 +1072,8 @@ namespace FourfoldEchoes.Product
             PlayerPrefs.SetInt(SaveKeyRewardClaimed, progressData.d020RewardClaimed ? 1 : 0);
             PlayerPrefs.SetInt(SaveKeySecondNodeOpened, progressData.d020SecondNodeOpened ? 1 : 0);
             PlayerPrefs.SetInt(SaveKeySecondRewardClaimed, progressData.d020SecondRewardClaimed ? 1 : 0);
+            PlayerPrefs.SetInt(SaveKeyReturnedToHub, progressData.d020ReturnedToHub ? 1 : 0);
+            PlayerPrefs.SetInt(SaveKeyClearCount, progressData.d020ClearCount);
             PlayerPrefs.SetInt(SaveKeySkillStock, progressData.d020LumenEdgeStock);
             PlayerPrefs.SetInt(SaveKeyEquippedSkill, progressData.d020EquippedSkill);
             PlayerPrefs.SetInt(SaveKeyLostSkillCount, progressData.d020LostSkillCount);
@@ -1009,9 +1168,9 @@ namespace FourfoldEchoes.Product
             };
 
             var objective = runCleared
-                ? skillAwardedThisRun
-                    ? "CLEAR: relic skills secured. Press R to replay."
-                    : "CLEAR: rewards secured. Press R to replay."
+                ? returnedToHubThisRun
+                    ? "RESULT: returned to hub. Press R to replay the run."
+                    : "CLEAR: rewards secured. Press E/Y to return to hub."
                 : runFailed
                     ? lostSkillThisRun
                         ? "FAILED: equipped skill shattered. Press R to retry."
@@ -1036,14 +1195,21 @@ namespace FourfoldEchoes.Product
             var skillState = EquippedLumenEdge()
                 ? $"Skill Lumen Edge equipped  Stock {skillStock}"
                 : $"Skill empty  Stock {skillStock}";
+            var resultState = clearCount > 0
+                ? $"Clears returned {clearCount}"
+                : "Clear the boss, claim both relics, return to hub";
 
             GUI.Label(new Rect(30f, 26f, width - 28f, 34f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}{BossHealthSuffix()}", style);
             GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
             GUI.Label(new Rect(30f, 88f, width - 28f, 30f), skillState, style);
             GUI.Label(new Rect(30f, 118f, width - 28f, 52f), objective, style);
-            GUI.Label(new Rect(30f, 164f, width - 28f, 34f), "Move WASD/Arrows/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Retry R/Start", style);
+            GUI.Label(new Rect(30f, 164f, width - 28f, 34f), $"{resultState}  Move WASD/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y", style);
 
-            if (previousClearLoaded && !runCleared)
+            if (previousReturnedToHubLoaded && !runCleared)
+            {
+                GUI.Label(new Rect(16f, Screen.height - 42f, width, 28f), "Local progress: returned to hub after a clear.", style);
+            }
+            else if (previousClearLoaded && !runCleared)
             {
                 var progress = previousSecondRewardLoaded
                     ? "Local progress: both relics secured before."
