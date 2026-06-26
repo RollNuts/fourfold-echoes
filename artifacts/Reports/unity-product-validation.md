@@ -1,14 +1,14 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-26T15:00:14.2019310Z`
+Generated UTC: `2026-06-26T15:17:25.9390930Z`
 
 ## Metrics
 
 | Metric | Value |
 | --- | ---: |
-| Active scene objects | 19 |
-| Renderers | 12 |
-| AudioSources | 0 |
+| Active scene objects | 533 |
+| Renderers | 508 |
+| AudioSources | 2 |
 | LODGroups | 0 |
 | Missing material slots | 0 |
 | Missing scripts | 0 |
@@ -28,10 +28,10 @@ Generated UTC: `2026-06-26T15:00:14.2019310Z`
 - **info** `d020.slice`: D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking.
 - **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with a D-020 region gate, progress initialization, reset, and return-to-title persistence.
 - **info** `title.entry`: Title scene generated and validated with New Game, Continue, Settings volume persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice.
+- **info** `steam_deck.readiness`: Title, Hub, and D-020 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings.
 - **info** `prototype.gate_a`: Legacy Gate A generation skipped. Set FOURFOLD_INCLUDE_LEGACY_GATE_A=1 to validate the old harness explicitly.
 - **warn** `texture.assets`: No production texture assets found. Store-quality art pass has not started.
 - **warn** `lod.prefabs`: Prefab assets exist but none include LODGroup components.
-- **warn** `scene.audio_sources`: Active scene has no AudioSource components at validation time.
 - **warn** `scene.lod`: Active scene has no LODGroup components. This is acceptable for the reset baseline but not for production outdoor assets.
 
 ## Product Interpretation

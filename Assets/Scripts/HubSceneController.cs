@@ -35,6 +35,39 @@ namespace FourfoldEchoes.Product
         private float resetHoldSeconds;
         private bool paused;
 
+        public static bool LayoutFitsResolution(int screenWidth, int screenHeight, bool pauseOpen, out string reason)
+        {
+            reason = string.Empty;
+            if (screenWidth < 960 || screenHeight < 540)
+            {
+                reason = $"resolution too small for hub HUD: {screenWidth}x{screenHeight}";
+                return false;
+            }
+
+            var topPanel = new Rect(18f, 18f, Mathf.Min(720f, screenWidth - 36f), 128f);
+            if (topPanel.xMax > screenWidth - 18f || topPanel.yMax > screenHeight - 18f)
+            {
+                reason = $"hub status text exceeds safe area at {screenWidth}x{screenHeight}: {topPanel}";
+                return false;
+            }
+
+            if (!pauseOpen)
+            {
+                return true;
+            }
+
+            var pauseWidth = Mathf.Min(520f, screenWidth - 48f);
+            var pauseHeight = 132f;
+            var pauseRect = new Rect((screenWidth - pauseWidth) * 0.5f, (screenHeight - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
+            if (pauseRect.x < 24f || pauseRect.y < 24f || pauseRect.xMax > screenWidth - 24f || pauseRect.yMax > screenHeight - 24f)
+            {
+                reason = $"hub pause panel exceeds safe area at {screenWidth}x{screenHeight}: {pauseRect}";
+                return false;
+            }
+
+            return true;
+        }
+
         private void Awake()
         {
             if (player == null)

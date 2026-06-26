@@ -156,6 +156,48 @@ namespace FourfoldEchoes.Product
         private AudioClip currentMusicClip;
         private bool paused;
 
+        public static bool LayoutFitsResolution(int screenWidth, int screenHeight, bool pauseOpen, out string reason)
+        {
+            reason = string.Empty;
+            if (screenWidth < 960 || screenHeight < 540)
+            {
+                reason = $"resolution too small for D-020 HUD: {screenWidth}x{screenHeight}";
+                return false;
+            }
+
+            var hudWidth = Mathf.Min(600f, screenWidth - 32f);
+            var hudRect = new Rect(16f, 16f, hudWidth, 214f);
+            var bottomHintRect = BottomHintRect(screenWidth, screenHeight);
+            var bottomProgressRect = BottomProgressRect(screenWidth, screenHeight);
+            if (hudRect.xMax > screenWidth - 16f || hudRect.yMax >= bottomHintRect.y - 12f)
+            {
+                reason = $"D-020 primary HUD overlaps safe area or bottom hints at {screenWidth}x{screenHeight}: hud={hudRect} hints={bottomHintRect}";
+                return false;
+            }
+
+            if (bottomHintRect.x < 16f || bottomHintRect.xMax > screenWidth - 16f || bottomProgressRect.yMax > screenHeight - 10f)
+            {
+                reason = $"D-020 bottom hints exceed safe area at {screenWidth}x{screenHeight}: controls={bottomHintRect} progress={bottomProgressRect}";
+                return false;
+            }
+
+            if (!pauseOpen)
+            {
+                return true;
+            }
+
+            var pauseWidth = Mathf.Min(480f, screenWidth - 48f);
+            var pauseHeight = 168f;
+            var pauseRect = new Rect((screenWidth - pauseWidth) * 0.5f, (screenHeight - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
+            if (pauseRect.x < 24f || pauseRect.y < 24f || pauseRect.xMax > screenWidth - 24f || pauseRect.yMax > screenHeight - 24f)
+            {
+                reason = $"D-020 pause panel exceeds safe area at {screenWidth}x{screenHeight}: {pauseRect}";
+                return false;
+            }
+
+            return true;
+        }
+
         private void Awake()
         {
             if (player == null)
@@ -1843,8 +1885,9 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(30f, 58f, width - 28f, 30f), toolState, style);
             GUI.Label(new Rect(30f, 88f, width - 28f, 30f), relicState, style);
             GUI.Label(new Rect(30f, 118f, width - 28f, 52f), objective, style);
-            GUI.Label(new Rect(30f, 164f, width - 28f, 52f), $"{resultState}  {timeState}  Move WASD/Stick  Attack Space/A  Dodge Shift/B  Tool Q/X  Interact E/Y  Pause Esc/Menu", style);
+            GUI.Label(new Rect(30f, 164f, width - 28f, 52f), $"{resultState}  {timeState}", style);
             DrawObjectiveMarker(style);
+            DrawControlHint(style);
 
             if (paused)
             {
@@ -1867,7 +1910,7 @@ namespace FourfoldEchoes.Product
 
             if (previousReturnedToHubLoaded && !runCleared)
             {
-                GUI.Label(new Rect(16f, Screen.height - 42f, width, 28f), "Local progress: returned to hub after a clear.", style);
+                GUI.Label(BottomProgressRect(Screen.width, Screen.height), "Local progress: returned to hub after a clear.", style);
             }
             else if (previousClearLoaded && !runCleared)
             {
@@ -1876,12 +1919,22 @@ namespace FourfoldEchoes.Product
                     : previousRewardLoaded
                         ? "Local progress: first relic secured before."
                         : "Local progress: this slice was cleared before.";
-                GUI.Label(new Rect(16f, Screen.height - 42f, width, 28f), progress, style);
+                GUI.Label(BottomProgressRect(Screen.width, Screen.height), progress, style);
             }
             else if (previousShortcutLoaded)
             {
-                GUI.Label(new Rect(16f, Screen.height - 42f, width, 28f), "Local progress: shortcut opened.", style);
+                GUI.Label(BottomProgressRect(Screen.width, Screen.height), "Local progress: shortcut opened.", style);
             }
+        }
+
+        private void DrawControlHint(GUIStyle style)
+        {
+            if (paused)
+            {
+                return;
+            }
+
+            GUI.Label(BottomHintRect(Screen.width, Screen.height), "Move Stick/WASD   Attack A/Space   Dodge B/Shift   Tool X/Q   Interact Y/E   Pause Menu/Esc", style);
         }
 
         private void DrawObjectiveMarker(GUIStyle style)
@@ -1926,6 +1979,16 @@ namespace FourfoldEchoes.Product
             material.EnableKeyword("_EMISSION");
             material.SetColor("_EmissionColor", emission);
             return material;
+        }
+
+        private static Rect BottomHintRect(int screenWidth, int screenHeight)
+        {
+            return new Rect(16f, screenHeight - 76f, Mathf.Min(900f, screenWidth - 32f), 30f);
+        }
+
+        private static Rect BottomProgressRect(int screenWidth, int screenHeight)
+        {
+            return new Rect(16f, screenHeight - 44f, Mathf.Min(760f, screenWidth - 32f), 28f);
         }
     }
 }

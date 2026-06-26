@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-26T15:00:14.1990720Z",
+  "generatedAtUtc": "2026-06-26T15:17:25.9363560Z",
   "metrics": {
-    "sceneObjects": 19,
-    "sceneRenderers": 12,
-    "sceneAudioSources": 0,
+    "sceneObjects": 533,
+    "sceneRenderers": 508,
+    "sceneAudioSources": 2,
     "sceneLodGroups": 0,
     "sceneMissingMaterials": 0,
     "sceneMissingScripts": 0,
@@ -23,10 +23,10 @@
     {"severity": "info", "code": "d020.slice", "message": "D-020 vertical slice generated and validated with one exploration tool, two tool nodes, shortcut route, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, retry, title return, two relic rewards, return gate, failed-run reward loss, required SFX, two BGM clips, and full-loop reward banking."},
     {"severity": "info", "code": "hub.crossroads", "message": "Hub Crossroads generated and validated as the playable hub with a D-020 region gate, progress initialization, reset, and return-to-title persistence."},
     {"severity": "info", "code": "title.entry", "message": "Title scene generated and validated with New Game, Continue, Settings volume persistence, Quit request, and Build Settings order Title -> HubCrossroads -> D020VerticalSlice."},
+    {"severity": "info", "code": "steam_deck.readiness", "message": "Title, Hub, and D-020 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings."},
     {"severity": "info", "code": "prototype.gate_a", "message": "Legacy Gate A generation skipped. Set FOURFOLD_INCLUDE_LEGACY_GATE_A=1 to validate the old harness explicitly."},
     {"severity": "warn", "code": "texture.assets", "message": "No production texture assets found. Store-quality art pass has not started."},
     {"severity": "warn", "code": "lod.prefabs", "message": "Prefab assets exist but none include LODGroup components."},
-    {"severity": "warn", "code": "scene.audio_sources", "message": "Active scene has no AudioSource components at validation time."},
     {"severity": "warn", "code": "scene.lod", "message": "Active scene has no LODGroup components. This is acceptable for the reset baseline but not for production outdoor assets."}
   ]
 }

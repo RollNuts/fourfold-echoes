@@ -33,6 +33,34 @@ namespace FourfoldEchoes.Product
 
         public string LastRequestedUnityScene { get; private set; } = string.Empty;
 
+        public static bool LayoutFitsResolution(int screenWidth, int screenHeight, bool settingsOpen, out string reason)
+        {
+            reason = string.Empty;
+            if (screenWidth < 960 || screenHeight < 540)
+            {
+                reason = $"resolution too small for product HUD: {screenWidth}x{screenHeight}";
+                return false;
+            }
+
+            var width = Mathf.Min(760f, screenWidth - 48f);
+            var height = settingsOpen ? 360f : 330f;
+            var rect = new Rect((screenWidth - width) * 0.5f, (screenHeight - height) * 0.5f, width, height);
+            if (rect.x < 24f || rect.y < 24f || rect.xMax > screenWidth - 24f || rect.yMax > screenHeight - 24f)
+            {
+                reason = $"title layout exceeds safe area at {screenWidth}x{screenHeight}: {rect}";
+                return false;
+            }
+
+            var labelFont = Mathf.Clamp(screenHeight / 38, 18, 26);
+            if (labelFont < 18)
+            {
+                reason = $"title menu font is too small at {screenWidth}x{screenHeight}: {labelFont}";
+                return false;
+            }
+
+            return true;
+        }
+
         private void Awake()
         {
             if (titleCamera == null)

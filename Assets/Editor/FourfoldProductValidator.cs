@@ -76,6 +76,16 @@ namespace FourfoldEchoes.Editor
                 findings.Add(Finding.Error("title.entry", "Title scene generation, validation, or entry-flow verification failed: " + exception.Message));
             }
 
+            try
+            {
+                FourfoldSteamDeckReadinessVerifier.VerifyProductLoopReadiness();
+                findings.Add(Finding.Info("steam_deck.readiness", "Title, Hub, and D-020 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings."));
+            }
+            catch (Exception exception)
+            {
+                findings.Add(Finding.Error("steam_deck.readiness", "Steam Deck/controller readiness validation failed: " + exception.Message));
+            }
+
             if (ShouldIncludeLegacyGateA())
             {
                 try
