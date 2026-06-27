@@ -96,7 +96,7 @@ namespace FourfoldEchoes.Product
             }
 
             var pauseWidth = Mathf.Min(520f, screenWidth - 48f);
-            var pauseHeight = 360f;
+            var pauseHeight = 430f;
             var pauseRect = new Rect((screenWidth - pauseWidth) * 0.5f, (screenHeight - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
             if (pauseRect.x < 24f || pauseRect.y < 24f || pauseRect.xMax > screenWidth - 24f || pauseRect.yMax > screenHeight - 24f)
             {
@@ -986,6 +986,38 @@ namespace FourfoldEchoes.Product
             return FourfoldLanguage.T(data, "reduced damage taken", "被ダメージ軽減");
         }
 
+        private static string LoadoutSynergyText(FourfoldProgressData data)
+        {
+            var edgeActive = data != null && data.d020RewardClaimed && data.d020EdgeEquipped;
+            var wardActive = data != null && data.d020SecondRewardClaimed && data.d020WardEquipped;
+            if (edgeActive && wardActive)
+            {
+                return FourfoldLanguage.T(data, "Current synergy: Lumen Link = Edge + Ward, stronger attacks, less damage, hit recovery.", "現在のシナジー: Lumen Link = Edge + Ward。攻撃強化、被ダメージ軽減、命中回復。");
+            }
+
+            if (edgeActive)
+            {
+                return FourfoldLanguage.T(data, "Current synergy: Edge only, stronger attacks; add Ward for Lumen Link recovery.", "現在のシナジー: Edgeのみで攻撃強化。Ward追加でLumen Link回復。");
+            }
+
+            if (wardActive)
+            {
+                return FourfoldLanguage.T(data, "Current synergy: Ward only, less damage; add Edge for Lumen Link recovery.", "現在のシナジー: Wardのみで被ダメージ軽減。Edge追加でLumen Link回復。");
+            }
+
+            if (SavedRewardCount(data) > 0)
+            {
+                return FourfoldLanguage.T(data, "Current synergy: none equipped; turn on saved skills for R01 bonuses.", "現在のシナジー: 装備なし。保存済みスキルをONにするとR01で発動。");
+            }
+
+            return FourfoldLanguage.T(data, "Current synergy: base kit; R01 rewards activate after a hub return.", "現在のシナジー: 基礎ビルド。R01報酬はハブ帰還後に有効。");
+        }
+
+        private static string MissionRewardRiskText(FourfoldProgressData data)
+        {
+            return FourfoldLanguage.T(data, "Loss risk: new R01 rewards save on hub return; fail or leave before return loses them.", "喪失リスク: R01新報酬はハブ帰還で保存。失敗や帰還前の離脱で失う。");
+        }
+
         private static string LoadoutRowLabel(FourfoldProgressData data, int index)
         {
             switch (index)
@@ -1084,7 +1116,7 @@ namespace FourfoldEchoes.Product
             }
 
             var pauseWidth = Mathf.Min(520f, Screen.width - 48f);
-            var pauseHeight = settingsOpen || loadoutOpen ? 360f : 340f;
+            var pauseHeight = loadoutOpen ? 430f : settingsOpen ? 360f : 340f;
             var pauseRect = new Rect((Screen.width - pauseWidth) * 0.5f, (Screen.height - pauseHeight) * 0.5f, pauseWidth, pauseHeight);
             FourfoldRuntimeUi.DrawPanel(pauseRect);
             var pauseTitle = settingsOpen
@@ -1203,9 +1235,9 @@ namespace FourfoldEchoes.Product
             }
 
             GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 52f), FourfoldLanguage.T(progressData, "Goal: use the exploration tool, defeat the boss, claim two reward skills, and return to the hub to save the result.", "目標: 探索ツールを使い、ボスを倒し、2つの報酬スキルを得て、ハブへ戻って結果を保存する。"), body);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 120f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "Risk: failure restarts this attempt; saved hub progress remains active.", "リスク: 失敗するとこの攻略をやり直す。ハブで保存済みの進行は有効なまま。"), new Color(1.0f, 0.46f, 0.22f), muted);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 164f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, $"Loadout: {LoadoutEffectText(progressData)}", $"ロードアウト: {LoadoutEffectText(progressData)}"), new Color(0.62f, 0.44f, 1.0f), muted);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 208f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "Reward: Lumen Edge and Lumen Ward can be equipped after hub return.", "報酬: Lumen Edge / Ward はハブ帰還後に装備できる。"), new Color(0.22f, 0.70f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 120f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, $"Equipped reward skills {EquippedRewardCount(progressData)}/{SavedRewardCount(progressData)}: {LoadoutEffectText(progressData)}", $"装備中報酬スキル {EquippedRewardCount(progressData)}/{SavedRewardCount(progressData)}: {LoadoutEffectText(progressData)}"), new Color(0.62f, 0.44f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 164f, rect.width - 52f, 34f), LoadoutSynergyText(progressData), new Color(0.62f, 0.44f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 208f, rect.width - 52f, 34f), MissionRewardRiskText(progressData), new Color(1.0f, 0.46f, 0.22f), muted);
             FourfoldRuntimeUi.DrawDivider(rect.x + 26f, rect.y + 256f, rect.width - 52f);
 
             var labels = new[]
@@ -1228,11 +1260,13 @@ namespace FourfoldEchoes.Product
             progressData = FourfoldProgressSave.Load();
             GUI.Label(new Rect(rect.x + 24f, rect.y + 58f, rect.width - 48f, 48f), FourfoldLanguage.T(progressData, "Equip saved reward skills before starting a region. Locked skills must be earned and saved by returning to the hub.", "地域へ入る前に、保存済み報酬スキルを装備する。未取得のスキルは、獲得してハブへ帰還すると保存される。"), body);
             FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 24f, rect.y + 112f, rect.width - 48f, 34f), LoadoutSummary(progressData) + " - " + LoadoutEffectText(progressData), new Color(0.62f, 0.44f, 1.0f), muted);
-            FourfoldRuntimeUi.DrawDivider(rect.x + 24f, rect.y + 162f, rect.width - 48f);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 24f, rect.y + 154f, rect.width - 48f, 34f), LoadoutSynergyText(progressData), new Color(0.62f, 0.44f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 24f, rect.y + 196f, rect.width - 48f, 34f), MissionRewardRiskText(progressData), new Color(1.0f, 0.46f, 0.22f), muted);
+            FourfoldRuntimeUi.DrawDivider(rect.x + 24f, rect.y + 246f, rect.width - 48f);
 
             for (var i = 0; i < LoadoutMenuCount; i++)
             {
-                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 32f, rect.y + 178f + i * 40f, rect.width - 64f, 34f), LoadoutRowLabel(progressData, i), selectedLoadoutIndex == i, body);
+                FourfoldRuntimeUi.DrawSelectableRow(new Rect(rect.x + 32f, rect.y + 260f + i * 38f, rect.width - 64f, 34f), LoadoutRowLabel(progressData, i), selectedLoadoutIndex == i, body);
             }
 
             GUI.Label(new Rect(rect.x + 32f, rect.y + rect.height - 54f, rect.width - 64f, 42f), FourfoldLanguage.T(progressData, "Confirm toggles equipped saved skills. Locked rows are read-only.", "決定で保存済みスキルの装備を切り替える。未取得行は確認のみ。") + "\n" + FourfoldInputPrompts.HubConfirm(progressData), muted);

@@ -91,6 +91,20 @@ namespace FourfoldEchoes.Product
                 : FourfoldLanguage.T(data, "Move WASD or arrows   Attack Space   Dodge Shift   Tool Q   Interact E   Pause Esc", "移動 WASD または 矢印   攻撃 Space   回避 Shift   ツール Q   調べる E   ポーズ Esc");
         }
 
+        public static string RegionBossToolReady(FourfoldProgressData data)
+        {
+            return PreferGamepad()
+                ? FourfoldLanguage.T(data, "Boss close: press X to expose an opening, then attack with A.", "ボス接近: Xで隙を作り、Aで攻撃。")
+                : FourfoldLanguage.T(data, "Boss close: press Q to expose an opening, then attack with Space.", "ボス接近: Qで隙を作り、Spaceで攻撃。");
+        }
+
+        public static string RegionBossOpeningActive(FourfoldProgressData data)
+        {
+            return PreferGamepad()
+                ? FourfoldLanguage.T(data, "Boss open: attack with A before the window closes.", "ボスに隙あり: 閉じる前にAで攻撃。")
+                : FourfoldLanguage.T(data, "Boss open: attack with Space before the window closes.", "ボスに隙あり: 閉じる前にSpaceで攻撃。");
+        }
+
         public static string RegionFailure(FourfoldProgressData data)
         {
             return PreferGamepad()

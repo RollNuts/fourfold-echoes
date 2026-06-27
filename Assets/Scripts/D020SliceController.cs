@@ -1594,6 +1594,24 @@ namespace FourfoldEchoes.Product
             return bossOpeningTimer != null && index >= 0 && index < bossOpeningTimer.Length && bossOpeningTimer[index] > 0f;
         }
 
+        private bool AnyBossOpeningActive()
+        {
+            if (bossOpeningTimer == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < bossOpeningTimer.Length; i++)
+            {
+                if (BossOpeningActive(i))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void UpdateBossOpenings(float deltaTime)
         {
             if (bossOpeningTimer == null)
@@ -2492,7 +2510,11 @@ namespace FourfoldEchoes.Product
                         : BossDefeatedThisRun() && !AllEnemiesDefeated()
                         ? FourfoldLanguage.T(progressData, "BOSS DOWN: finish the remaining enemies to unlock rewards.", "ボス撃破: 残りの敵を倒すと報酬が開く。")
                         : !AllEnemiesDefeated()
-                        ? FourfoldLanguage.T(progressData, "Step 2/6: defeat enemies, read tells, then claim the reward.", "手順2/6: 予兆を読みながら敵を倒し、報酬を獲得。")
+                        ? AnyBossOpeningActive()
+                            ? FourfoldLanguage.T(progressData, "BOSS OPEN: attack now before the window closes.", "ボスに隙あり: 閉じる前に攻撃。")
+                            : explorationTool != null && explorationTool.IsReady && NearestOpenableBossIndex() >= 0
+                                ? FourfoldLanguage.T(progressData, "BOSS TOOL: use the tool to expose an attack window.", "ボスツール: ツールで攻撃の隙を作る。")
+                                : FourfoldLanguage.T(progressData, "Step 2/6: defeat enemies, read tells, then claim the reward.", "手順2/6: 予兆を読みながら敵を倒し、報酬を獲得。")
                         : !firstRewardClaimedThisRun
                         ? FourfoldInputPrompts.RegionClaimEdgeObjective(progressData)
                         : !SecondToolGateSolved()
@@ -2503,7 +2525,11 @@ namespace FourfoldEchoes.Product
 
             var toolState = explorationTool == null
                 ? FourfoldLanguage.T(progressData, "Tool --", "ツール --")
-                : explorationTool.IsReady
+                : AnyBossOpeningActive()
+                    ? FourfoldLanguage.T(progressData, "Boss OPEN", "ボス 隙あり")
+                : explorationTool.IsReady && NearestOpenableBossIndex() >= 0
+                    ? FourfoldLanguage.T(progressData, "Tool READY: boss opening", "ツール 準備OK: ボスに隙")
+                    : explorationTool.IsReady
                     ? FourfoldLanguage.T(progressData, "Tool READY", "ツール 準備OK")
                     : FourfoldLanguage.T(progressData, $"Tool CD {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%", $"ツール 待機 {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%");
             var relicState = RelicStateText();
@@ -2820,7 +2846,17 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            GUI.Label(BottomHintRect(Screen.width, Screen.height), FourfoldInputPrompts.RegionControls(progressData), style);
+            var hint = FourfoldInputPrompts.RegionControls(progressData);
+            if (AnyBossOpeningActive())
+            {
+                hint = FourfoldInputPrompts.RegionBossOpeningActive(progressData);
+            }
+            else if (explorationTool != null && explorationTool.IsReady && NearestOpenableBossIndex() >= 0)
+            {
+                hint = FourfoldInputPrompts.RegionBossToolReady(progressData);
+            }
+
+            GUI.Label(BottomHintRect(Screen.width, Screen.height), hint, style);
         }
 
         private void DrawObjectiveMarker(GUIStyle style)

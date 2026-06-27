@@ -170,6 +170,8 @@ namespace FourfoldEchoes.Editor
             RequireContains(hubCopy, "Goal: use the exploration tool, defeat the boss, claim two reward skills, and return to the hub to save the result.", "Hub mission briefing");
             RequireContains(hubCopy, "LOADOUT", "Hub loadout panel");
             RequireContains(hubCopy, "Equipped reward skills", "Hub equipped reward HUD");
+            RequireContains(hubCopy, "Current synergy: Lumen Link = Edge + Ward", "Hub reward-skill synergy briefing");
+            RequireContains(hubCopy, "Loss risk: new R01 rewards save on hub return; fail or leave before return loses them.", "Hub R01 reward-loss risk briefing");
             RequireContains(hubCopy, "REGION CLEARED", "Hub result summary");
             RequireContains(hubCopy, "RESET SAVE?", "Hub reset confirmation");
 
@@ -185,6 +187,8 @@ namespace FourfoldEchoes.Editor
             RequireContains(regionCopy, "use the tool to open the shortcut seal", "Region shortcut cause/effect");
             RequireContains(regionCopy, "BOSS HP", "Region boss HP UI");
             RequireContains(regionCopy, "BOSS DOWN", "Region boss defeat beat");
+            RequireContains(regionCopy, "BOSS TOOL", "Region boss tool opportunity objective");
+            RequireContains(regionCopy, "BOSS OPEN", "Region boss opening objective");
             RequireContains(regionCopy, "BOSS OPENING", "Region boss tool-opening beat");
             RequireContains(regionCopy, "Tool opening active. Attack now.", "Region boss opening HUD hint");
             RequireContains(regionCopy, "AT RISK: hub return saves", "Region reward risk UI");
@@ -199,6 +203,8 @@ namespace FourfoldEchoes.Editor
             RequireContains(inputPrompts, "Attack A", "Region controller attack prompt");
             RequireContains(inputPrompts, "Attack Space", "Region keyboard attack prompt");
             RequireContains(inputPrompts, "Tool X", "Region controller tool prompt");
+            RequireContains(inputPrompts, "Boss close: press X", "Region controller boss tool prompt");
+            RequireContains(inputPrompts, "Boss close: press Q", "Region keyboard boss tool prompt");
             RequireContains(inputPrompts, "Press Start, A, or Y", "Region controller retry prompt");
             RequireContains(inputPrompts, "HubStartReady", "Hub start prompt helper");
         }

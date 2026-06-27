@@ -707,6 +707,11 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("D-020 combat verifier failed: boss opening timer did not start after tool use.");
                 }
 
+                if (!InvokePrivateBool(controller, "AnyBossOpeningActive"))
+                {
+                    throw new InvalidOperationException("D-020 combat verifier failed: boss opening HUD state did not become active after tool use.");
+                }
+
                 var openingAttack = InvokePrivateFloat(controller, "CurrentAttackDamage", bossIndex);
                 if (openingAttack <= baseAttack)
                 {
