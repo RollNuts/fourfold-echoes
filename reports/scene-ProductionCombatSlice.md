@@ -4,7 +4,7 @@
 
 ## 1. Final Goal Support
 
-`ProductionCombatSlice` を、既存 Production Prefab を使った top-down combat / exploration-tool proof scene として扱いやすくするため、Hierarchy / Inspector で追跡しやすいランドマークを追加した。
+`ProductionCombatSlice` を、既存 Production Prefab を使った top-down combat / exploration-tool proof scene として扱いやすくするため、Hierarchy / Inspector で追跡しやすいランドマークを読みやすく調整した。
 
 対象シーン名は依頼文では `{{SCENE_NAME}}` のままだったため、既存シーン構造、Prefab 使用量、現在の production evidence に最も合う `Assets/Scenes/ProductionCombatSlice.unity` を対象と仮定した。
 
@@ -30,16 +30,18 @@ Existing unrelated work was preserved:
 
 ## 4. Implementation
 
-Added one existing Prefab instance under `PCS Interactables`:
+Existing Prefab instance under `PCS Interactables`:
 
 - `PCS Inspector Landmark - Tool Shortcut Reward`
 - Source Prefab: `Assets/Prefabs/Production/P1/FE_PROP_R01_RevealMarker_01.prefab`
-- Position: `x=-0.85, y=0.12, z=-2.35`
+- Position: `x=-0.85, y=0.16, z=-2.35`
 - Rotation: `y=45`
-- Scale: `0.62`
+- Scale: `0.78`
 - Collider override: disabled, so it does not alter player movement, combat, or tool interaction.
 
-Added one `AudioListener` component to `PCS Top Down Camera`.
+The landmark was kept on the existing reward/shortcut read line, with scale increased from `0.62` to `0.78` and local height raised from `0.12` to `0.16` so it reads more clearly from the top-down camera.
+
+Existing `AudioListener` component on `PCS Top Down Camera` was preserved.
 
 The scene now has:
 
@@ -66,6 +68,9 @@ Addressables settings were not added because Addressables is not present in `Pac
 
 Static checks completed:
 
+- `git diff --check -- Assets/Scenes/ProductionCombatSlice.unity reports/scene-ProductionCombatSlice.md`: passed.
+- `node Scripts/Validation/validate_repo.mjs`: passed.
+- `node Scripts/Validation/check_public_repo_hygiene.mjs`: passed.
 - Confirmed `Packages/manifest.json` has no Cinemachine or Addressables dependency. Unity Test Framework is present in the current worktree, from separate changes.
 - Confirmed the scene still has `PCS Top Down Camera` tagged `MainCamera`.
 - Confirmed `PCS Top Down Camera` has an `AudioListener`.
@@ -74,11 +79,13 @@ Static checks completed:
 - Confirmed the added Prefab instance resolves to `FE_PROP_R01_RevealMarker_01.prefab`.
 - Confirmed prefab instance count increased to 159 and distinct Prefab count to 87.
 
-Unity execution checks not fully completed:
+Unity execution checks:
 
-- Direct Unity batchmode validation could not run because the same project is already open in another Unity instance.
-- The running Editor command inbox already has pending commands, including `production_slice.validate` and `production_art.import_model_pack`, so no new validation command was queued to avoid reordering unrelated work.
-- Current worktree contains unrelated C# / test / package changes. This scene pass did not edit C#, but Unity compile and PlayMode results may be affected by those separate changes.
+- Unity batchmode scene-builder verification was run against a temporary project copy to avoid launching against the open working checkout.
+- `FourfoldEchoes.Editor.FourfoldProductionCombatSliceSceneBuilder.ValidateGeneratedScene`: exit code 0.
+- Verifier pass line: `prefabInstances=159`, `distinctPrefabs=87`, `renderers=156`.
+- A dedicated 30-second Play Mode smoke was run against the same temporary project copy. Result line: `nullReferences=0`, `errors=0`, `ok=True`.
+- The smoke verifier emitted Unity Editor service noise after Play Mode entry, including QuickSearch indexing and UI Toolkit theme warnings. No `NullReferenceException` was counted during the 30-second smoke window.
 
 ## 7. Acceptance Conditions
 
@@ -91,6 +98,7 @@ Current evidence:
 - EventSystem / Input settings preserved: yes, no related files or scene objects were changed.
 - Cinemachine / Addressables constraints preserved: yes, neither was added.
 - Audio listener warning addressed: yes, `PCS Top Down Camera` now has one `AudioListener`.
+- Player-visible improvement: yes, the existing reveal-marker landmark now reads larger and slightly higher from the top-down camera, while keeping collision disabled.
 - Major objects remain traceable:
   - `Production Combat Slice World`
   - `PCS Block Field Arena`
@@ -102,16 +110,14 @@ Current evidence:
   - `PCS Top Down Camera`
   - `PCS Inspector Landmark - Tool Shortcut Reward`
 
-Not yet proven by runtime evidence:
+Remaining runtime caveat:
 
-- Scene-open errors: pending Unity Editor validation.
-- NullReference within first 30 seconds of play: pending Play Mode validation.
+- The 30-second pass was automated batchmode smoke verification, not a manual controller playthrough in the live Unity viewport.
 
 ## 8. Next Smallest Useful Task
 
-After Unity is free or the existing inbox command is processed, run:
+Next run:
 
-- `production_slice.validate`
-- A 30-second Play Mode smoke pass for `ProductionCombatSlice`
+- A 30-second manual controller playthrough for `ProductionCombatSlice` in the live Unity viewport.
 
 If `{{SCENE_NAME}}` was intended to mean a different scene, redo this pass against the explicitly named scene and keep this change as a small production-slice traceability improvement only if desired.
