@@ -522,6 +522,34 @@ namespace FourfoldEchoes.Editor
             {
                 throw new InvalidOperationException("D-020 gameplay verifier failed: D020SliceController.player and ExplorationTool.player must reference the same transform.");
             }
+
+            ValidateAudioFallbacks(controller, tool);
+        }
+
+        private static void ValidateAudioFallbacks(D020SliceController controller, ExplorationTool tool)
+        {
+            InvokePrivate(controller, "EnsureAudioSource");
+            InvokePrivate(controller, "EnsureExplorationReferences");
+
+            RequireAudioClip(controller.attackClip, "D020SliceController.attackClip");
+            RequireAudioClip(controller.hitClip, "D020SliceController.hitClip");
+            RequireAudioClip(controller.dodgeClip, "D020SliceController.dodgeClip");
+            RequireAudioClip(controller.rewardClaimClip, "D020SliceController.rewardClaimClip");
+            RequireAudioClip(controller.rewardReadyClip, "D020SliceController.rewardReadyClip");
+            RequireAudioClip(controller.explorationMusicClip, "D020SliceController.explorationMusicClip");
+            RequireAudioClip(controller.bossMusicClip, "D020SliceController.bossMusicClip");
+            RequireAudioClip(tool.pulse, "ExplorationTool.pulse");
+            RequireAudioClip(tool.targetHit, "ExplorationTool.targetHit");
+            RequireAudioClip(tool.fail, "ExplorationTool.fail");
+        }
+
+        private static void RequireAudioClip(AudioClip clip, string name)
+        {
+            RequireReference(clip, name);
+            if (clip.samples <= 0 || clip.frequency <= 0)
+            {
+                throw new InvalidOperationException($"D-020 gameplay verifier failed: {name} must contain playable PCM samples.");
+            }
         }
 
         private static void VerifyNodeUse(ExplorationTool tool, ExplorationNode node, int index)
