@@ -1,0 +1,28 @@
+asset_id: audio.music.bgm_normal_combat
+title: Threadline Clash
+scene_type: battle
+mood: tense
+bpm_target: 112
+loop_requirement:
+  intro_bars: 2
+  loop_bars: 16
+  seamless_loop: true
+  full_master_loop_start_sample: 189000
+  full_master_loop_end_sample: 1701000
+  runtime_intro_clip: Assets/Audio/Generated/BGM_Battle_Tense_AIntro_112_v0.1.0.ogg
+  runtime_loop_clip: Assets/Audio/Generated/BGM_Battle_Tense_ALoop_112_v0.1.0.ogg
+stems_requirement:
+  - rhythm
+  - harmony
+  - lead
+  - percussion
+target_platforms:
+  - Steam PC
+  - future console portable
+source_strategy: repository-authored deterministic procedural synthesis
+license: repository-authored
+status: generated_pilot
+notes:
+  - Keep combat SFX above the loop: no heavy kick, no constant crash layer.
+  - Use the intro only for combat escalation; loop clip can start directly for quick encounters.
+  - Stems are for mix/edit review, not a complex MVP dynamic music system.

@@ -1,0 +1,90 @@
+{
+  "asset_id": "audio.music.bgm_normal_combat",
+  "qc_status": "pass_with_notes",
+  "checks": [
+    {
+      "name": "loop_point_recorded",
+      "status": "pass",
+      "detail": "loop_start_sample=189000, loop_end_sample=1701000"
+    },
+    {
+      "name": "loop_boundary_click_risk",
+      "status": "pass",
+      "detail": "loop clip first/last sample delta 0.000000"
+    },
+    {
+      "name": "loop_tail_release",
+      "status": "pass",
+      "detail": "last 1024 sample peak 0.000000"
+    },
+    {
+      "name": "low_end_control",
+      "status": "pass",
+      "detail": "20-160 Hz energy ratio 0.1734"
+    },
+    {
+      "name": "dialogue_band_control",
+      "status": "pass",
+      "detail": "1-4 kHz energy ratio 0.0057"
+    },
+    {
+      "name": "headroom",
+      "status": "pass",
+      "detail": "peak -6.92 dBFS"
+    },
+    {
+      "name": "combat_sfx_space",
+      "status": "pass",
+      "detail": "No kick/snare wall; sparse high ticks and weak-beat ostinato leave attack transients open."
+    }
+  ],
+  "metrics": {
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "channels": 2,
+    "bpm": 112,
+    "beats_per_bar": 4,
+    "duration_seconds": 38.57142857142857,
+    "total_samples": 1701000,
+    "intro_bars": 2,
+    "loop_bars": 16,
+    "loop_start_sample": 189000,
+    "loop_end_sample": 1701000,
+    "loop_start_seconds": 4.285714285714286,
+    "loop_end_seconds": 38.57142857142857,
+    "loop_length_samples": 1512000,
+    "loop_length_seconds": 34.285714285714285,
+    "peak_dbfs": -6.924029795656203,
+    "rms_dbfs": -23.500002143661337,
+    "loop_boundary_delta_peak": 0.0,
+    "loop_tail_peak": 0.0,
+    "low_energy_ratio_20_160hz": 0.17343085556287213,
+    "dialogue_band_ratio_1_4khz": 0.0057134350213491536,
+    "runtime_bytes": {
+      "intro": 25713,
+      "loop": 170761
+    },
+    "stem_metrics": {
+      "rhythm": {
+        "peak_dbfs": -11.287744589946666,
+        "rms_dbfs": -33.15869743068486
+      },
+      "harmony": {
+        "peak_dbfs": -7.699169109554411,
+        "rms_dbfs": -24.116480070280616
+      },
+      "lead": {
+        "peak_dbfs": -12.342098740794516,
+        "rms_dbfs": -40.6965453441629
+      },
+      "percussion": {
+        "peak_dbfs": -15.323589817277487,
+        "rms_dbfs": -49.52828991246414
+      }
+    }
+  },
+  "notes": [
+    "Procedural pilot only; requires listening review in a combat scene before Steam capture.",
+    "Runtime is split into intro and loop clips so Unity does not need sub-sample loop metadata for this pilot."
+  ]
+}

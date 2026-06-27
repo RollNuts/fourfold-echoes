@@ -1,0 +1,5 @@
+stem,path,role
+rhythm,Stems/BGM_Battle_Tense_ARhythm_112_v0.1.0.wav,"muted weak-beat ostinato, avoids SFX attack masking"
+harmony,Stems/BGM_Battle_Tense_AHarmony_112_v0.1.0.wav,"short tense chord bed, restrained low roots"
+lead,Stems/BGM_Battle_Tense_ALead_112_v0.1.0.wav,"brief callouts only, no constant melody"
+percussion,Stems/BGM_Battle_Tense_APercussion_112_v0.1.0.wav,"quiet high ticks, no heavy kick/snare layer"
