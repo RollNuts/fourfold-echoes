@@ -14,15 +14,27 @@ namespace FourfoldEchoes.Product
         public Transform targetOverride;
         public bool autoStart = true;
 
+        [Header("Readability")]
+        public bool applyStateReadabilityTint = true;
+        public Renderer[] readabilityRenderers;
+        public Color telegraphTint = new Color(1f, 0.72f, 0.18f, 1f);
+        public Color attackTint = new Color(1f, 0.2f, 0.12f, 1f);
+        public Color recoverTint = new Color(0.55f, 0.62f, 0.7f, 1f);
+
         [Header("Debug")]
         [SerializeField]
         private EnemyState currentState = EnemyState.Search;
+
+        private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
+        private static readonly int ColorProperty = Shader.PropertyToID("_Color");
 
         private EnemyMotor motor;
         private EnemySensor sensor;
         private EnemyAnimatorBridge animatorBridge;
         private EnemyAttackDriver attackDriver;
+        private EnemyTelegraphVfx telegraphVfx;
         private Damageable damageable;
+        private MaterialPropertyBlock readabilityBlock;
         private Vector3 homePosition;
         private Vector3 lastKnownTargetPosition;
         private float stateTimer;
@@ -68,6 +80,8 @@ namespace FourfoldEchoes.Product
                 damageable.Damaged -= HandleDamaged;
                 damageable.Died -= HandleDied;
             }
+            telegraphVfx?.Hide();
+            ClearReadabilityTint();
         }
 
         private void Update()
@@ -101,7 +115,9 @@ namespace FourfoldEchoes.Product
             motor.Configure(definition);
             attackDriver.Configure(definition);
             damageable.ConfigureMaxHealth(definition.maxHealth, true);
+            telegraphVfx?.Hide();
             ChangeState(EnemyState.Search);
+            ApplyReadabilityTint(currentState);
         }
 
         public void Tick(float dt)
@@ -205,6 +221,7 @@ namespace FourfoldEchoes.Product
             motor.Stop();
             var facing = perception.HasKnownTarget ? lastKnownTargetPosition - transform.position : transform.forward;
             motor.Face(facing, definition, dt);
+            UpdateTelegraphVfx(definition.telegraphTime <= 0f ? 1f : stateTimer / definition.telegraphTime);
 
             if (perception.OutsideLeash)
             {
@@ -221,6 +238,7 @@ namespace FourfoldEchoes.Product
         private void TickAttack(float dt)
         {
             motor.Stop();
+            UpdateTelegraphVfx(1f);
             if (!attackResolved)
             {
                 attackDriver.ResolveHit(definition, gameObject);
@@ -325,6 +343,7 @@ namespace FourfoldEchoes.Product
             if (next == EnemyState.Telegraph)
             {
                 animatorBridge.TriggerTelegraph();
+                UpdateTelegraphVfx(0f);
             }
             else if (next == EnemyState.Attack)
             {
@@ -335,7 +354,33 @@ namespace FourfoldEchoes.Product
                 animatorBridge.TriggerDeath();
             }
 
+            if (next != EnemyState.Telegraph && next != EnemyState.Attack)
+            {
+                telegraphVfx?.Hide();
+            }
+
+            ApplyReadabilityTint(next);
             StateChanged?.Invoke(previous, next);
+        }
+
+        private void UpdateTelegraphVfx(float normalizedProgress)
+        {
+            if (telegraphVfx == null || definition == null)
+            {
+                return;
+            }
+
+            var origin = attackDriver != null && attackDriver.attackOrigin != null ? attackDriver.attackOrigin : transform;
+            var forward = origin.forward;
+            forward.y = 0f;
+            if (forward.sqrMagnitude <= 0.0001f)
+            {
+                forward = transform.forward;
+                forward.y = 0f;
+            }
+            forward = forward.sqrMagnitude <= 0.0001f ? Vector3.forward : forward.normalized;
+
+            telegraphVfx.Show(definition, origin.position + forward * definition.attackRange, forward, normalizedProgress);
         }
 
         private void CacheComponents()
@@ -348,7 +393,87 @@ namespace FourfoldEchoes.Product
                 animatorBridge = gameObject.AddComponent<EnemyAnimatorBridge>();
             }
             attackDriver = attackDriver != null ? attackDriver : GetComponent<EnemyAttackDriver>();
+            telegraphVfx = telegraphVfx != null ? telegraphVfx : GetComponent<EnemyTelegraphVfx>();
             damageable = damageable != null ? damageable : GetComponent<Damageable>();
+            CacheReadabilityRenderers();
+        }
+
+        private void CacheReadabilityRenderers()
+        {
+            if (readabilityRenderers != null && readabilityRenderers.Length > 0)
+            {
+                return;
+            }
+
+            readabilityRenderers = GetComponentsInChildren<Renderer>();
+        }
+
+        private void ApplyReadabilityTint(EnemyState state)
+        {
+            if (!applyStateReadabilityTint)
+            {
+                ClearReadabilityTint();
+                return;
+            }
+
+            switch (state)
+            {
+                case EnemyState.Telegraph:
+                    SetReadabilityTint(telegraphTint);
+                    break;
+                case EnemyState.Attack:
+                    SetReadabilityTint(attackTint);
+                    break;
+                case EnemyState.Recover:
+                    SetReadabilityTint(recoverTint);
+                    break;
+                default:
+                    ClearReadabilityTint();
+                    break;
+            }
+        }
+
+        private void SetReadabilityTint(Color color)
+        {
+            CacheReadabilityRenderers();
+            if (readabilityRenderers == null || readabilityRenderers.Length == 0)
+            {
+                return;
+            }
+
+            if (readabilityBlock == null)
+            {
+                readabilityBlock = new MaterialPropertyBlock();
+            }
+            for (var index = 0; index < readabilityRenderers.Length; index++)
+            {
+                var targetRenderer = readabilityRenderers[index];
+                if (targetRenderer == null)
+                {
+                    continue;
+                }
+
+                targetRenderer.GetPropertyBlock(readabilityBlock);
+                readabilityBlock.SetColor(BaseColorProperty, color);
+                readabilityBlock.SetColor(ColorProperty, color);
+                targetRenderer.SetPropertyBlock(readabilityBlock);
+            }
+        }
+
+        private void ClearReadabilityTint()
+        {
+            if (readabilityRenderers == null)
+            {
+                return;
+            }
+
+            for (var index = 0; index < readabilityRenderers.Length; index++)
+            {
+                if (readabilityRenderers[index] != null)
+                {
+                    readabilityRenderers[index].SetPropertyBlock(null);
+                }
+            }
         }
 
         private void HandleDamaged(Damageable target, DamageInfo info)

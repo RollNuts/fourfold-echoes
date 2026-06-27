@@ -9,6 +9,8 @@ namespace FourfoldEchoes.Tests
 {
     public sealed class EnemyControllerPlayModeTests
     {
+        private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
+
         private readonly List<Object> cleanup = new List<Object>();
 
         [TearDown]
@@ -60,6 +62,37 @@ namespace FourfoldEchoes.Tests
         }
 
         [UnityTest]
+        public IEnumerator EnemyController_TintsRendererDuringReadableAttackStates()
+        {
+            var definition = CreateDefinition("test_readability");
+            definition.attackRange = 1.4f;
+            definition.telegraphTime = 0.12f;
+            definition.activeTime = 0.08f;
+            definition.recoveryTime = 0.12f;
+            definition.retreatAfterAttack = false;
+
+            var target = CreateTarget(new Vector3(0.9f, 0f, 0f), 100f);
+            var controller = CreateEnemy(Vector3.zero, definition, target.transform);
+            var enemyRenderer = controller.GetComponentInChildren<Renderer>();
+            Assert.IsNotNull(enemyRenderer);
+
+            controller.Tick(0.01f);
+            controller.Tick(0.01f);
+            Assert.AreEqual(EnemyState.Telegraph, controller.CurrentState);
+            AssertColorApproximately(controller.telegraphTint, ReadTint(enemyRenderer));
+
+            controller.Tick(definition.telegraphTime + 0.01f);
+            Assert.AreEqual(EnemyState.Attack, controller.CurrentState);
+            AssertColorApproximately(controller.attackTint, ReadTint(enemyRenderer));
+
+            controller.Tick(definition.activeTime + 0.01f);
+            Assert.AreEqual(EnemyState.Recover, controller.CurrentState);
+            AssertColorApproximately(controller.recoverTint, ReadTint(enemyRenderer));
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator EnemyController_ReturnsHomeWhenTargetBreaksLeash()
         {
             var definition = CreateDefinition("test_leash");
@@ -84,6 +117,40 @@ namespace FourfoldEchoes.Tests
 
             Assert.AreEqual(EnemyState.Search, controller.CurrentState);
             Assert.LessOrEqual(Vector3.Distance(controller.transform.position, controller.HomePosition), definition.stoppingDistance + 0.15f);
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator EnemyController_ShowsTelegraphVfxDuringTellAndHidesAfterImpact()
+        {
+            var definition = CreateDefinition("test_vfx");
+            definition.attackRange = 0.85f;
+            definition.attackRadius = 0.35f;
+            definition.telegraphTime = 0.12f;
+            definition.activeTime = 0.04f;
+            definition.recoveryTime = 0.08f;
+            definition.retreatAfterAttack = false;
+
+            var target = CreateTarget(new Vector3(0.65f, 0f, 0f), 100f);
+            var controller = CreateEnemy(Vector3.zero, definition, target.transform, CreateTelegraphPrefab());
+            var telegraphVfx = controller.GetComponent<EnemyTelegraphVfx>();
+
+            controller.Tick(0.02f);
+            controller.Tick(0.02f);
+
+            Assert.AreEqual(EnemyState.Telegraph, controller.CurrentState);
+            Assert.IsTrue(telegraphVfx.IsVisible);
+            Assert.NotNull(telegraphVfx.ActiveInstance);
+            Assert.Greater(telegraphVfx.ActiveInstance.transform.localScale.x, 0f);
+
+            for (var index = 0; index < 12 && controller.CurrentState != EnemyState.Recover; index++)
+            {
+                controller.Tick(0.05f);
+            }
+
+            Assert.AreEqual(EnemyState.Recover, controller.CurrentState);
+            Assert.IsFalse(telegraphVfx.IsVisible);
 
             yield return null;
         }
@@ -142,13 +209,19 @@ namespace FourfoldEchoes.Tests
             yield return null;
         }
 
-        private EnemyController CreateEnemy(Vector3 position, EnemyDefinition definition, Transform target)
+        private EnemyController CreateEnemy(Vector3 position, EnemyDefinition definition, Transform target, GameObject telegraphPrefab = null)
         {
             var enemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             cleanup.Add(enemy);
             enemy.name = "AI Test Enemy";
             enemy.transform.position = position;
             enemy.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
+
+            if (telegraphPrefab != null)
+            {
+                var telegraphVfx = enemy.AddComponent<EnemyTelegraphVfx>();
+                telegraphVfx.telegraphPrefab = telegraphPrefab;
+            }
 
             var controller = enemy.AddComponent<EnemyController>();
             controller.autoStart = false;
@@ -167,6 +240,15 @@ namespace FourfoldEchoes.Tests
             var damageable = target.AddComponent<Damageable>();
             damageable.ConfigureMaxHealth(health, true);
             return target;
+        }
+
+        private GameObject CreateTelegraphPrefab()
+        {
+            var prefab = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            cleanup.Add(prefab);
+            prefab.name = "AI Test Enemy Telegraph VFX Prefab";
+            prefab.SetActive(false);
+            return prefab;
         }
 
         private EnemyDefinition CreateDefinition(string id)
@@ -193,6 +275,21 @@ namespace FourfoldEchoes.Tests
             definition.cooldownTime = 0.05f;
             definition.drawDebug = false;
             return definition;
+        }
+
+        private static Color ReadTint(Renderer targetRenderer)
+        {
+            var block = new MaterialPropertyBlock();
+            targetRenderer.GetPropertyBlock(block);
+            return block.GetColor(BaseColorProperty);
+        }
+
+        private static void AssertColorApproximately(Color expected, Color actual)
+        {
+            Assert.That(actual.r, Is.EqualTo(expected.r).Within(0.01f));
+            Assert.That(actual.g, Is.EqualTo(expected.g).Within(0.01f));
+            Assert.That(actual.b, Is.EqualTo(expected.b).Within(0.01f));
+            Assert.That(actual.a, Is.EqualTo(expected.a).Within(0.01f));
         }
     }
 }
