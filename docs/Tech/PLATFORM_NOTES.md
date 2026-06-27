@@ -2,7 +2,9 @@
 
 ## Steam First
 
-Steam Windows is the first shipping target. The repo currently supports Unity macOS editor-side validation and macOS standalone build for evidence.
+Steam Windows is the first shipping target. The repo build automation should
+produce Windows evidence first; macOS builds are development evidence only
+unless a later product decision promotes them to release scope.
 
 ## Future PS5
 

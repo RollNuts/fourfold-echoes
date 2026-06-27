@@ -1,0 +1,21 @@
+{
+    "name": "FourfoldEchoes.EditModeTests",
+    "rootNamespace": "FourfoldEchoes.Tests.EditMode",
+    "references": [
+        "FourfoldEchoes.Product"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

@@ -311,6 +311,7 @@ namespace FourfoldEchoes.Editor
             controller.gateOpenMaterial = materials.gateOpen;
             controller.gateReadyMaterial = materials.gateReady;
             controller.rewardMaterial = materials.prism;
+            controller.useLocalSave = true;
 
             var explorationHook = new GameObject("PCS Exploration Tool Runtime");
             explorationHook.transform.SetParent(root);

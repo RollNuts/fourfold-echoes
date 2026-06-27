@@ -30,9 +30,10 @@ tools/unity_build_gate_a.sh
   -> Build/GateA/
 ```
 
-The default Gate A build target is the macOS standalone app. Windows can be
-requested from the same wrapper when the Unity Windows standalone module is
-available, but macOS is the verified path for Gate A.
+The historical Gate A wrapper still supports macOS and Windows when the
+matching Unity standalone module is available. Current commercial slice build
+automation should prefer Windows because Steam Windows is the first shipping
+target.
 
 ## Acceleration Layer
 

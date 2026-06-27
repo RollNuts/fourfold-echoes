@@ -1,0 +1,19 @@
+{
+  "name": "FourfoldEchoes.PlayModeTests",
+  "rootNamespace": "FourfoldEchoes.Tests",
+  "references": [
+    "FourfoldEchoes.Product"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}

@@ -2,6 +2,42 @@
 
 This private repository is the commercial runtime path for FOURFOLD ECHOES.
 
+Repository: https://github.com/RollNuts/fourfold-echoes
+
+## Asset Library Repository
+
+- Reusable, bulky, source, reference, and non-runtime asset groups belong in
+  https://github.com/RollNuts/unity-game-asset-library.
+- Store asset groups there so they are easy to reuse: clear folder names,
+  previews when useful, source/license notes, and Unity import notes.
+- Keep this game repository focused on shipping runtime assets, active slice
+  work, and small documentation/previews.
+- The local checkout is not an infinite asset warehouse. Before importing large
+  asset packs, measure the current footprint with `du -sh .`, targeted
+  `du -sh Assets Library .git`, and `df -h .`.
+- Last measured on 2026-06-27 in this checkout: repository `2.4G`, `Assets`
+  `44M`, `Library` `2.1G`, `.git` `119M`, and the volume had `67Gi` free out
+  of `460Gi` with `84%` used.
+- The local git remote `private-assets` points to
+  `https://github.com/RollNuts/unity-game-asset-library.git`; use it for
+  organized asset storage/access instead of piling reusable material into this
+  repository.
+
+## Storage Hygiene
+
+- Periodically check for local junk when doing asset-heavy, Unity import, build,
+  or milestone cleanup work.
+- Start with measurement and reporting: `du -sh .`, `du -sh Assets Library Temp
+  Logs artifacts .git`, `df -h .`, and `git status --short`.
+- Prefer removing only clearly generated, reproducible, or obsolete local
+  outputs such as Unity cache/import byproducts, stale temporary files, old
+  logs, duplicate exported previews, and superseded build artifacts.
+- Do not delete source assets, licensed downloads, references, docs, save data,
+  `.meta` files, or untracked creative work without explicit approval.
+- When cleanup would remove more than small temporary/log files, report the
+  candidates, estimated space recovered, and risk before deleting.
+- After cleanup, re-measure and report the before/after size change.
+
 ## Protected Repositories
 
 - Do not delete, rewrite, or repurpose the separate public Veripsa dogfood repository clone.

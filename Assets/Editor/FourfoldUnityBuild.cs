@@ -18,7 +18,7 @@ namespace FourfoldEchoes.Editor
 
         public static void BuildCurrentD020Slice()
         {
-            var target = GetRequestedTarget();
+            var target = GetRequestedTarget("windows");
             var buildRoot = GetRequestedBuildRoot(DefaultD020SliceBuildRoot);
             var artifactPath = GetArtifactPath(buildRoot, target, D020SliceProductName);
 
@@ -69,7 +69,7 @@ namespace FourfoldEchoes.Editor
             BuildScene(target, artifactPath, GateAScenePath, ProductName, "Gate A");
         }
 
-        private static BuildTarget GetRequestedTarget()
+        private static BuildTarget GetRequestedTarget(string defaultValue = "macos")
         {
             var value = GetArgument("--fourfoldBuildTarget");
             if (string.IsNullOrWhiteSpace(value))
@@ -78,7 +78,7 @@ namespace FourfoldEchoes.Editor
             }
             if (string.IsNullOrWhiteSpace(value))
             {
-                value = "macos";
+                value = defaultValue;
             }
 
             switch (value.Trim().ToLowerInvariant())

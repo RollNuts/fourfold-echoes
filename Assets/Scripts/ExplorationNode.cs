@@ -22,8 +22,7 @@ namespace FourfoldEchoes.Product
 
         private void Awake()
         {
-            used = false;
-            ApplyState(revealOnAwake);
+            ApplyState(used || revealOnAwake);
         }
 
         public bool CanUse(Transform user, float range)

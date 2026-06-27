@@ -33,14 +33,7 @@ namespace FourfoldEchoes.Product
                 player = transform;
             }
 
-            audioSource = GetComponent<AudioSource>();
-            if (audioSource == null)
-            {
-                audioSource = gameObject.AddComponent<AudioSource>();
-                audioSource.playOnAwake = false;
-                audioSource.spatialBlend = 0f;
-                audioSource.volume = 0.72f;
-            }
+            EnsureAudioSource();
 
             if (pulseRead != null)
             {
@@ -128,10 +121,29 @@ namespace FourfoldEchoes.Product
 
         private void Play(AudioClip clip)
         {
-            if (audioSource != null && clip != null)
+            var source = EnsureAudioSource();
+            if (source != null && clip != null)
             {
-                audioSource.PlayOneShot(clip);
+                source.PlayOneShot(clip);
             }
+        }
+
+        private AudioSource EnsureAudioSource()
+        {
+            if (audioSource == null)
+            {
+                audioSource = GetComponent<AudioSource>();
+            }
+
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                audioSource.spatialBlend = 0f;
+                audioSource.volume = 0.72f;
+            }
+
+            audioSource.playOnAwake = false;
+            return audioSource;
         }
 
         private void OnDrawGizmosSelected()
