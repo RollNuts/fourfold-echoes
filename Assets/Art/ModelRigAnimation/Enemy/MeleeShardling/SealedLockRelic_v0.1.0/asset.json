@@ -51,7 +51,11 @@
     "preview_gif": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Previews/preview.gif",
     "asset_json": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/asset.json",
     "qc_result": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/qc_result.json",
-    "unity_import_qc": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/unity_import_qc.json"
+    "unity_import_qc": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/unity_import_qc.json",
+    "animator_controller": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Animator/AC_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.controller",
+    "runtime_prefab": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Prefabs/PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.prefab",
+    "runtime_preview_scene": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity",
+    "runtime_binding_qc": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/runtime_binding_qc.json"
   },
   "rig": {
     "unity_animation_type": "mechanical_transform_hierarchy",
@@ -577,7 +581,13 @@
     ]
   },
   "prefab_integration": {
-    "collider": "BoxCollider or convex hull on prefab root plus trigger hitbox at SOCKET_ForwardHit",
+    "runtime_status": "gameplay_bind_ready_preview",
+    "animator_controller": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Animator/AC_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.controller",
+    "prefab": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Prefabs/PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.prefab",
+    "preview_scene": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity",
+    "root_motion": "off",
+    "collider": "Generated BoxCollider on prefab root plus trigger hitbox at SOCKET_ForwardHit/HITBOX_ForwardPreview",
+    "forward_hitbox": "SOCKET_ForwardHit/HITBOX_ForwardPreview",
     "vfx_sockets": [
       "SOCKET_RedSeamVFX",
       "SOCKET_Cast",
@@ -588,7 +598,7 @@
       "SOCKET_ForwardHit",
       "SOCKET_WeakPoint"
     ],
-    "sample_scene_setup": "Animator + simple collider + forward trigger hitbox + VFX anchors; all root transforms start at origin."
+    "sample_scene_setup": "Generated runtime preview scene contains the animated prefab at world origin, camera, key light, and floor."
   },
   "qc": {
     "generated_at": "2026-06-27T07:25:00Z",
@@ -697,6 +707,11 @@
     "unity_animation_clip_count": 14,
     "unity_animation_errors": [],
     "unity_animation_warnings": [],
-    "animation_clip_curves_verified": "pass"
+    "animation_clip_curves_verified": "pass",
+    "runtime_binding_qc": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/runtime_binding_qc.json",
+    "runtime_binding_status": "pass",
+    "runtime_prefab_status": "pass",
+    "runtime_animator_state_count": 14,
+    "runtime_root_motion": "off"
   }
 }
