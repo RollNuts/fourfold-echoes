@@ -32,10 +32,14 @@ namespace FourfoldEchoes.Product
         public GameObject hitFlashPrefab;
         public Color hitFlashColor = new Color(1f, 0.92f, 0.28f, 0.95f);
         public Color defeatFlashColor = new Color(1f, 0.36f, 0.14f, 1f);
+        public bool showHitConfirmFlash = true;
+        public Color hitConfirmFlashColor = new Color(0.42f, 0.88f, 1f, 0.9f);
         public float hitFlashDuration = 0.16f;
         public float defeatFlashDuration = 0.28f;
+        public float hitConfirmFlashDuration = 0.1f;
         public float hitFlashScale = 0.36f;
         public float defeatFlashScaleMultiplier = 1.55f;
+        public float hitConfirmFlashScale = 0.28f;
         public float hitFlashHeight = 0.55f;
 
         [SerializeField]
@@ -114,7 +118,12 @@ namespace FourfoldEchoes.Product
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             var defeated = currentHealth <= 0f;
             var info = new DamageInfo(applied, source, point);
-            TriggerHitFlash(point, defeated);
+            if (showHitFlash)
+            {
+                var flashScale = hitFlashScale * (defeated ? Mathf.Max(1f, defeatFlashScaleMultiplier) : 1f);
+                var flashDuration = defeated ? defeatFlashDuration : hitFlashDuration;
+                TriggerFlash(point, defeated ? defeatFlashColor : hitFlashColor, flashScale, flashDuration);
+            }
             Damaged?.Invoke(this, info);
 
             if (defeated)
@@ -130,13 +139,18 @@ namespace FourfoldEchoes.Product
             ApplyDamage(Mathf.Max(currentHealth, maxHealth), source, transform.position);
         }
 
-        private void TriggerHitFlash(Vector3 point, bool defeated)
+        public void ShowHitConfirm(Vector3 point = default)
         {
-            if (!showHitFlash)
+            if (!showHitConfirmFlash)
             {
                 return;
             }
 
+            TriggerFlash(point, hitConfirmFlashColor, hitConfirmFlashScale, hitConfirmFlashDuration);
+        }
+
+        private void TriggerFlash(Vector3 point, Color color, float scale, float duration)
+        {
             EnsureHitFlash();
             if (hitFlashInstance == null)
             {
@@ -147,10 +161,9 @@ namespace FourfoldEchoes.Product
             markerPosition.y = Mathf.Max(markerPosition.y, transform.position.y + Mathf.Max(0f, hitFlashHeight));
             hitFlashInstance.transform.position = markerPosition;
             hitFlashInstance.transform.rotation = Quaternion.identity;
-            var flashScale = hitFlashScale * (defeated ? Mathf.Max(1f, defeatFlashScaleMultiplier) : 1f);
-            hitFlashInstance.transform.localScale = Vector3.one * Mathf.Max(0.05f, flashScale);
-            ApplyHitFlashColor(defeated ? defeatFlashColor : hitFlashColor);
-            hitFlashTimer = Mathf.Max(0.02f, defeated ? defeatFlashDuration : hitFlashDuration);
+            hitFlashInstance.transform.localScale = Vector3.one * Mathf.Max(0.05f, scale);
+            ApplyHitFlashColor(color);
+            hitFlashTimer = Mathf.Max(0.02f, duration);
             SetHitFlashVisible(true);
         }
 
