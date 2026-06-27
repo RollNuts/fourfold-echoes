@@ -1,0 +1,120 @@
+{
+  "asset_id": "art.ui.exploration_tool_glyphs.v0_1_0",
+  "family": "FoldedReliquary",
+  "subject": "ToolGlyph",
+  "version": "0.1.0",
+  "adopted_concept": "Exploration tool state glyph family for minimal HUD and material/VFX prototyping.",
+  "status": "production-intent draft",
+  "source_strategy": "repository-authored procedural raster generation",
+  "asset_request": {
+    "source": "inferred because no visual asset_request.yaml was present in the checkout",
+    "out_of_scope_asset_requests": [
+      "artifacts/Reports/SFXPack_v0_1_0/asset_request.yaml is an SFX Session request and was not used for this visual asset family."
+    ],
+    "usage_context": "FOURFOLD ECHOES minimal HUD: one exploration tool state readability; optional 3D material/VFX atlas use",
+    "target_platforms": [
+      "Steam Windows",
+      "Steam Deck-oriented PC handheld readability"
+    ],
+    "constraints": {
+      "size_px": [
+        128,
+        256
+      ],
+      "texture_budget": "512px atlas for BaseColor/Mask/Normal/Emissive",
+      "background": "transparent",
+      "text": "none"
+    }
+  },
+  "style_ref": [
+    "docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md",
+    "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+    "docs/Product/MVP_BLUEPRINT.md",
+    "docs/Art/NEXT_ASSET_BATCH.md"
+  ],
+  "style_tokens": [
+    "folded_reliquary",
+    "fourfold_inlay",
+    "chunk_tabs",
+    "signal_thread",
+    "broad_color_planes",
+    "top_down_readability",
+    "low_noise"
+  ],
+  "tags": [
+    "ui",
+    "exploration-tool",
+    "tool-state",
+    "folded-reliquary",
+    "transparent-png",
+    "steam-first",
+    "controller-first",
+    "p0-readability",
+    "runtime-art"
+  ],
+  "license_spdx": "LicenseRef-RepositoryAuthored-Proprietary",
+  "prompt_hash": "73dfe14fa1af591ea69137e6b4842b354e93b4bc0902416eca25b639e47d98b5",
+  "prompt_contract": "Use case: stylized-concept\nAsset type: Unity UI icon family plus 3D material atlas maps\nPrimary request: compact FOURFOLD ECHOES exploration-tool state glyphs, no text, no background\nStyle/medium: procedural 2D raster icon, folded reliquary miniature product line\nSubject: one central exploration instrument glyph with fourfold folded slabs, thick chipped tabs, visible socket, and a single signal thread\nComposition/framing: centered silhouette, generous transparent padding, readable at 64px, 128px, and 256px\nColor palette: saturated but controlled ivory stone, warm gold, cool blue signal, muted cooldown variant\nMaterials/textures: broad color planes, large bevel read, sparse normal detail, no photoreal grime, no noisy fantasy texture\nConstraints: transparent PNG, no labels, no letters, no background plate, no cast shadow, variation by outline/material/socket/signal temperature rather than color alone\nAvoid: generic magic staff, antenna, inventory/crafting/quest symbols, external IP style names, fine decorative clutter, text, watermark",
+  "library_path_proposal": "unity-game-asset-library/Runtime/Art/UI/ExplorationTool/ToolGlyphs/ART_FoldedReliquary_ToolGlyphs_v0.1.0/",
+  "unity_runtime_path": "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/",
+  "unity_import": {
+    "texture_type": "Sprite (2D and UI) for individual icons; Default/Normal Map for atlas maps as needed",
+    "pixels_per_unit": 100,
+    "max_texture_size": 512,
+    "alpha_is_transparency": true,
+    "wrap_mode": "Clamp",
+    "filter_mode": "Bilinear"
+  },
+  "texture_maps": {
+    "BaseColor": "ART_FoldedReliquary_ToolGlyphAtlas_BaseColor_v0.1.0.png",
+    "Mask": "ART_FoldedReliquary_ToolGlyphAtlas_Mask_v0.1.0.png",
+    "Normal": "ART_FoldedReliquary_ToolGlyphAtlas_Normal_v0.1.0.png",
+    "Emissive": "ART_FoldedReliquary_ToolGlyphAtlas_Emissive_v0.1.0.png",
+    "Mask_channels": "R=silhouette/occlusion, G=material roughness group, B=emissive mask, A=alpha"
+  },
+  "variants": [
+    {
+      "name": "Ready",
+      "difference": "complete silhouette, vertical ready thread, bright central socket"
+    },
+    {
+      "name": "Pulse",
+      "difference": "expanded side/top/bottom tabs and broad signal rays"
+    },
+    {
+      "name": "TargetHit",
+      "difference": "exposed socket/star and lower latch read as tool success"
+    },
+    {
+      "name": "Cooldown",
+      "difference": "closed shutter plates, darker material, dim signal slit"
+    }
+  ],
+  "files": [
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyphAtlas_BaseColor_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyphAtlas_Emissive_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyphAtlas_Mask_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyphAtlas_Normal_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyph_Cooldown128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyph_Cooldown_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyph_Pulse128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyph_Pulse_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyph_Ready128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyph_Ready_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyph_TargetHit128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/ART_FoldedReliquary_ToolGlyph_TargetHit_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/asset.json",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_ToolGlyphs_v0.1.0/preview.png"
+  ],
+  "qc": {
+    "transparent_corners": true,
+    "no_text_or_background": true,
+    "min_canvas_margin_px_256": 16,
+    "readability_checks": [
+      "64px preview sample included in preview.png",
+      "128px and 256px individual sprites exported"
+    ],
+    "edge_bleed": "none detected in alpha-corner and bbox checks after inset pass",
+    "tile_seam": "not applicable; icons and atlas, not loop tiles"
+  }
+}
