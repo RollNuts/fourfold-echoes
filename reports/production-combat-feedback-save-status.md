@@ -29,10 +29,11 @@ This lane moves `ProductionCombatSlice` closer to a commercial vertical slice by
 - `node Scripts/Validation/check_public_repo_hygiene.mjs`: passed.
 - Sanitization scan over changed C# and test files: passed.
 - Unity production scene validation in an isolated worktree: exit code 0; validation passed.
-- Unity PlayMode was attempted twice in the isolated worktree, but Unity shut down without producing Test Runner XML. No latest PlayMode pass is claimed.
+- Unity EditMode process exit code 0; Test Runner XML passed 39/39.
+- Unity PlayMode process exit code 0; Test Runner XML passed 11/11.
 - Unity Windows build smoke reached the production build entry point, then exited 1 because this editor does not have `StandaloneWindows64` support installed. No artifact was produced.
 - Earlier `ProductionCombatSlice` scene verifier and 30-second smoke evidence remain recorded in `reports/scene-ProductionCombatSlice.md`.
-- The fresh-start-equivalent PlayMode test still needs a serialized Test Runner rerun with XML output and exit code 0.
+- The fresh-start-equivalent PlayMode test passed.
 
 ## Warnings
 
@@ -42,7 +43,6 @@ This lane moves `ProductionCombatSlice` closer to a commercial vertical slice by
 ## Remaining Gap
 
 - Manual controller-device playthrough is still required; automated PlayMode proves the route state and save flags, not controller feel.
-- Current Unity Test Runner XML evidence still needs to be regenerated.
 - Windows Standalone build support is required before the slice can produce a release-candidate Windows artifact.
 
 ## Asset Library Note

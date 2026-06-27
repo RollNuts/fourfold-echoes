@@ -483,7 +483,7 @@ namespace FourfoldEchoes.Product
             }
         }
 
-        public static string BuildTitleSaveLine(bool shortcutOpen, bool gateOpen, bool rewardClaimed, string saveStatus)
+        internal static string BuildTitleSaveLine(bool shortcutOpen, bool gateOpen, bool rewardClaimed, string saveStatus)
         {
             if (!string.IsNullOrEmpty(saveStatus) && saveStatus.StartsWith("Save failed", StringComparison.Ordinal))
             {
@@ -508,7 +508,7 @@ namespace FourfoldEchoes.Product
             return "No saved slice progress yet.";
         }
 
-        public static string BuildStartButtonText(bool shortcutOpen, bool gateOpen, bool rewardClaimed)
+        internal static string BuildStartButtonText(bool shortcutOpen, bool gateOpen, bool rewardClaimed)
         {
             return HasSavedSliceProgress(shortcutOpen, gateOpen, rewardClaimed)
                 ? "Continue Saved Slice"
