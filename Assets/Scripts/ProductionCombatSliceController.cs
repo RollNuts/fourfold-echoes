@@ -73,7 +73,8 @@ namespace FourfoldEchoes.Product
         private const string AutosaveOffStatus = "Autosave off";
         private const string ProgressRestoredStatus = "Progress restored";
         private const string ProgressSavedStatus = "Progress saved";
-        private const string SaveFailedStatus = "Save failed - progress kept";
+        private const string SettingsSavedStatus = "Settings saved";
+        private const string SaveFailedStatus = "Save failed - changes kept";
 
         private float[] health;
         private float[] strikeCooldowns;
@@ -94,6 +95,7 @@ namespace FourfoldEchoes.Product
         private bool rewardClaimed;
         private ProductionCombatRunState runState = ProductionCombatRunState.Title;
         private ProductionCombatSliceProgressSnapshot lastSavedProgress;
+        private FourfoldSaveSettings currentSettings = new FourfoldSaveSettings();
         private LocalSaveService localSaveService;
         private string lastEvent = "Production slice ready";
         private string saveStatus = LocalSaveReadyStatus;
@@ -110,6 +112,8 @@ namespace FourfoldEchoes.Product
         public float WardensHealth01 => LivingMinor01();
         public float BossHealth01 => Boss01();
         public float ToolReady01 => explorationTool == null ? 1f : 1f - explorationTool.Cooldown01;
+        public float MasterVolume01 => currentSettings.masterVolume;
+        public int MasterVolumePercent => Mathf.RoundToInt(MasterVolume01 * 100f);
         public bool CanPause => runState == ProductionCombatRunState.Playing || runState == ProductionCombatRunState.Paused;
 
         private void Awake()
@@ -224,6 +228,21 @@ namespace FourfoldEchoes.Product
             return useLocalSave && GetSaveService().TryLoad(out _);
         }
 
+        public void AdjustMasterVolume(float delta)
+        {
+            SetMasterVolume(currentSettings.masterVolume + delta);
+        }
+
+        public void SetMasterVolume(float value)
+        {
+            currentSettings.masterVolume = value;
+            ApplySettings(currentSettings);
+            if (SaveSettingsIfEnabled())
+            {
+                lastEvent = $"Master volume {MasterVolumePercent}%";
+            }
+        }
+
         public void RetryRun()
         {
             ResetSliceCore();
@@ -272,6 +291,7 @@ namespace FourfoldEchoes.Product
 
         public void ApplySavedProgress(FourfoldSaveData data)
         {
+            ApplySettings(data == null ? null : data.settings);
             ApplyProgressSnapshot(ProductionCombatSliceProgress.Read(data));
             lastSavedProgress = CaptureProgressSnapshot();
             saveStatus = HasAnyProgress(lastSavedProgress) ? ProgressRestoredStatus : LocalSaveReadyStatus;
@@ -797,6 +817,7 @@ namespace FourfoldEchoes.Product
             try
             {
                 var data = FourfoldSaveData.CreateNewGame();
+                data.settings = CloneSettings(currentSettings);
                 ProductionCombatSliceProgress.Write(data, CaptureProgressSnapshot());
                 GetSaveService().Save(data);
                 lastSavedProgress = CaptureProgressSnapshot();
@@ -818,6 +839,41 @@ namespace FourfoldEchoes.Product
             catch (ArgumentException)
             {
                 lastEvent = "Save failed - new game kept in memory";
+                saveStatus = SaveFailedStatus;
+                return false;
+            }
+        }
+
+        private bool SaveSettingsIfEnabled()
+        {
+            if (!useLocalSave)
+            {
+                return true;
+            }
+
+            try
+            {
+                var data = GetSaveService().LoadOrCreate();
+                data.settings = CloneSettings(currentSettings);
+                GetSaveService().Save(data);
+                saveStatus = SettingsSavedStatus;
+                return true;
+            }
+            catch (IOException)
+            {
+                lastEvent = "Save failed - settings kept in memory";
+                saveStatus = SaveFailedStatus;
+                return false;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                lastEvent = "Save failed - settings kept in memory";
+                saveStatus = SaveFailedStatus;
+                return false;
+            }
+            catch (ArgumentException)
+            {
+                lastEvent = "Save failed - settings kept in memory";
                 saveStatus = SaveFailedStatus;
                 return false;
             }
@@ -904,6 +960,27 @@ namespace FourfoldEchoes.Product
                         ? "Boss gate already open"
                         : "Shortcut already open";
             }
+        }
+
+        private void ApplySettings(FourfoldSaveSettings settings)
+        {
+            currentSettings = CloneSettings(settings);
+            AudioListener.volume = currentSettings.masterVolume;
+        }
+
+        private static FourfoldSaveSettings CloneSettings(FourfoldSaveSettings settings)
+        {
+            var clone = new FourfoldSaveSettings();
+            if (settings != null)
+            {
+                clone.masterVolume = settings.masterVolume;
+                clone.musicVolume = settings.musicVolume;
+                clone.sfxVolume = settings.sfxVolume;
+                clone.fullscreen = settings.fullscreen;
+            }
+
+            clone.Normalize();
+            return clone;
         }
 
         private static bool HasSameProgress(ProductionCombatSliceProgressSnapshot left, ProductionCombatSliceProgressSnapshot right)

@@ -98,6 +98,42 @@ namespace FourfoldEchoes.Tests.EditMode
             }
         }
 
+        [Test]
+        public void UI_ProductionCombatSettings_MasterVolumeClampsAppliesAndSaves()
+        {
+            var originalVolume = AudioListener.volume;
+            var tempDirectory = CreateTempDirectory();
+            var savePath = Path.Combine(tempDirectory, LocalSaveService.DefaultFileName);
+            var service = new LocalSaveService(savePath);
+            var controllerObject = new GameObject("Settings Controller");
+            ProductionCombatSliceController.SaveServiceFactory = () => new LocalSaveService(savePath);
+
+            try
+            {
+                var controller = controllerObject.AddComponent<ProductionCombatSliceController>();
+
+                controller.SetMasterVolume(0.35f);
+
+                Assert.That(controller.MasterVolume01, Is.EqualTo(0.35f).Within(0.001f));
+                Assert.That(AudioListener.volume, Is.EqualTo(0.35f).Within(0.001f));
+                Assert.That(controller.SaveStatus, Is.EqualTo("Settings saved"));
+                Assert.That(service.TryLoad(out var saved), Is.True);
+                Assert.That(saved.settings.masterVolume, Is.EqualTo(0.35f).Within(0.001f));
+
+                controller.SetMasterVolume(1.4f);
+
+                Assert.That(controller.MasterVolume01, Is.EqualTo(1f));
+                Assert.That(AudioListener.volume, Is.EqualTo(1f));
+            }
+            finally
+            {
+                AudioListener.volume = originalVolume;
+                ProductionCombatSliceController.SaveServiceFactory = LocalSaveService.CreateDefault;
+                UnityEngine.Object.DestroyImmediate(controllerObject);
+                Directory.Delete(tempDirectory, true);
+            }
+        }
+
         private static string CreateTempDirectory()
         {
             var tempDirectory = Path.Combine(Path.GetTempPath(), "fourfold-title-flow-" + Guid.NewGuid().ToString("N"));

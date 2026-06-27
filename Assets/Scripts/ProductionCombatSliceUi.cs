@@ -16,6 +16,7 @@ namespace FourfoldEchoes.Product
             Title,
             Playing,
             Paused,
+            Settings,
             Retry,
             Complete
         }
@@ -40,6 +41,7 @@ namespace FourfoldEchoes.Product
         private VisualElement hud;
         private VisualElement titleOverlay;
         private VisualElement pauseOverlay;
+        private VisualElement settingsOverlay;
         private VisualElement retryOverlay;
         private VisualElement completeOverlay;
         private VisualElement heroFill;
@@ -50,14 +52,18 @@ namespace FourfoldEchoes.Product
         private Label statusLabel;
         private Label toolLabel;
         private Label saveLabel;
+        private Label settingsVolumeLabel;
         private Button titleContinueButton;
         private readonly List<Button> titleButtons = new List<Button>();
         private readonly List<Button> pauseButtons = new List<Button>();
+        private readonly List<Button> settingsButtons = new List<Button>();
         private readonly List<Button> retryButtons = new List<Button>();
         private readonly List<Button> completeButtons = new List<Button>();
         private readonly Dictionary<Button, Action> buttonActions = new Dictionary<Button, Action>();
         private List<Button> activeButtons;
         private ScreenState activeScreen = ScreenState.None;
+        private ScreenState settingsReturnScreen = ScreenState.Title;
+        private bool settingsOpen;
         private int selectedButtonIndex;
         private float navigationRepeatTimer;
 
@@ -134,12 +140,14 @@ namespace FourfoldEchoes.Product
             hud = BuildHud();
             titleOverlay = BuildTitleOverlay();
             pauseOverlay = BuildPauseOverlay();
+            settingsOverlay = BuildSettingsOverlay();
             retryOverlay = BuildRetryOverlay();
             completeOverlay = BuildCompleteOverlay();
 
             root.Add(hud);
             root.Add(titleOverlay);
             root.Add(pauseOverlay);
+            root.Add(settingsOverlay);
             root.Add(retryOverlay);
             root.Add(completeOverlay);
         }
@@ -200,6 +208,7 @@ namespace FourfoldEchoes.Product
             panel.Add(MakeBodyLabel("Controller: Left Stick, South Button, East Button, North Button, Menu. Keyboard: WASD, J / Mouse, Space, E / Right Mouse, Esc or P."));
             AddButton(panel, titleButtons, "New Game", () => controller?.StartNewGame());
             titleContinueButton = AddButton(panel, titleButtons, "Continue", () => controller?.ContinueRun());
+            AddButton(panel, titleButtons, "Settings", OpenSettings);
             AddButton(panel, titleButtons, "Quit", Application.Quit);
             WireButtons(titleButtons);
             overlay.Add(panel);
@@ -213,9 +222,29 @@ namespace FourfoldEchoes.Product
             panel.Add(MakeLabel("Paused", 34, FontStyle.Bold));
             panel.Add(MakeBodyLabel("The run is held without advancing combat or exploration tool input."));
             AddButton(panel, pauseButtons, "Resume", () => controller?.SetPaused(false));
+            AddButton(panel, pauseButtons, "Settings", OpenSettings);
             AddButton(panel, pauseButtons, "Retry", () => controller?.RetryRun());
             AddButton(panel, pauseButtons, "Title", () => controller?.ReturnToTitle());
             WireButtons(pauseButtons);
+            overlay.Add(panel);
+            return overlay;
+        }
+
+        private VisualElement BuildSettingsOverlay()
+        {
+            var overlay = BuildOverlay("PCS Settings Screen");
+            var panel = BuildOverlayPanel();
+            panel.Add(MakeLabel("Settings", 34, FontStyle.Bold));
+            panel.Add(MakeBodyLabel("Master volume"));
+            settingsVolumeLabel = MakeLabel("100%", 28, FontStyle.Bold);
+            settingsVolumeLabel.style.color = AccentColor;
+            settingsVolumeLabel.style.marginTop = 2f;
+            settingsVolumeLabel.style.marginBottom = 12f;
+            panel.Add(settingsVolumeLabel);
+            AddButton(panel, settingsButtons, "Master -", () => controller?.AdjustMasterVolume(-0.1f));
+            AddButton(panel, settingsButtons, "Master +", () => controller?.AdjustMasterVolume(0.1f));
+            AddButton(panel, settingsButtons, "Back", CloseSettings);
+            WireButtons(settingsButtons);
             overlay.Add(panel);
             return overlay;
         }
@@ -365,6 +394,12 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            if (settingsOpen && (PausePressed() || CancelPressed()))
+            {
+                CloseSettings();
+                return;
+            }
+
             if (controller.State == ProductionCombatRunState.Paused && (PausePressed() || CancelPressed()))
             {
                 controller.SetPaused(false);
@@ -395,7 +430,7 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            var nextScreen = ToScreenState(controller.State);
+            var nextScreen = settingsOpen ? ScreenState.Settings : ToScreenState(controller.State);
             if (forceScreen || activeScreen != nextScreen)
             {
                 SetActiveScreen(nextScreen);
@@ -435,14 +470,20 @@ namespace FourfoldEchoes.Product
                 titleContinueButton.text = hasContinue ? "Continue" : "Continue (No Save)";
                 titleContinueButton.style.color = hasContinue ? TextColor : MutedTextColor;
             }
+
+            if (settingsVolumeLabel != null)
+            {
+                settingsVolumeLabel.text = $"{controller.MasterVolumePercent}%";
+            }
         }
 
         private void SetActiveScreen(ScreenState screen)
         {
             activeScreen = screen;
-            SetVisible(hud, screen != ScreenState.Title);
+            SetVisible(hud, screen != ScreenState.Title && !(screen == ScreenState.Settings && settingsReturnScreen == ScreenState.Title));
             SetVisible(titleOverlay, screen == ScreenState.Title);
             SetVisible(pauseOverlay, screen == ScreenState.Paused);
+            SetVisible(settingsOverlay, screen == ScreenState.Settings);
             SetVisible(retryOverlay, screen == ScreenState.Retry);
             SetVisible(completeOverlay, screen == ScreenState.Complete);
 
@@ -453,6 +494,10 @@ namespace FourfoldEchoes.Product
             else if (screen == ScreenState.Paused)
             {
                 activeButtons = pauseButtons;
+            }
+            else if (screen == ScreenState.Settings)
+            {
+                activeButtons = settingsButtons;
             }
             else if (screen == ScreenState.Retry)
             {
@@ -469,6 +514,19 @@ namespace FourfoldEchoes.Product
 
             selectedButtonIndex = 0;
             RefreshButtonSelection();
+        }
+
+        private void OpenSettings()
+        {
+            settingsReturnScreen = activeScreen == ScreenState.Paused ? ScreenState.Paused : ScreenState.Title;
+            settingsOpen = true;
+            SetActiveScreen(ScreenState.Settings);
+        }
+
+        private void CloseSettings()
+        {
+            settingsOpen = false;
+            SetActiveScreen(settingsReturnScreen);
         }
 
         private static ScreenState ToScreenState(ProductionCombatRunState state)
