@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using FourfoldEchoes.Spike;
 using UnityEngine;
 
 namespace FourfoldEchoes.Product
@@ -88,6 +89,7 @@ namespace FourfoldEchoes.Product
         private ProductionCombatRunState runState = ProductionCombatRunState.Title;
         private ProductionCombatSliceProgressSnapshot lastSavedProgress;
         private LocalSaveService localSaveService;
+        private FourfoldProofAudio proofAudio;
         private string lastEvent = "Production slice ready";
         private string saveStatus = LocalSaveReadyStatus;
 
@@ -107,6 +109,7 @@ namespace FourfoldEchoes.Product
 
         private void Awake()
         {
+            proofAudio = GetComponent<FourfoldProofAudio>();
             CacheStarts();
             ResetSliceCore();
             LoadProgressIfEnabled();
@@ -170,6 +173,7 @@ namespace FourfoldEchoes.Product
             ResetSliceCore();
             LoadProgressIfEnabled();
             SetRunState(rewardClaimed ? ProductionCombatRunState.Completed : ProductionCombatRunState.Playing);
+            PlayAudioCue(FourfoldProofAudioCue.PhaseAccent, 0.18f);
         }
 
         public void RetryRun()
@@ -178,6 +182,7 @@ namespace FourfoldEchoes.Product
             LoadProgressIfEnabled();
             SetRunState(rewardClaimed ? ProductionCombatRunState.Completed : ProductionCombatRunState.Playing);
             lastEvent = rewardClaimed ? "Saved reward already claimed" : "Retry started";
+            PlayAudioCue(FourfoldProofAudioCue.PhaseAccent, 0.16f);
         }
 
         public void ReturnToTitle()
@@ -185,6 +190,7 @@ namespace FourfoldEchoes.Product
             ResetSliceCore();
             SetRunState(ProductionCombatRunState.Title);
             LoadProgressIfEnabled();
+            PlayAudioCue(FourfoldProofAudioCue.PhaseAccent, 0.12f);
         }
 
         public void SetPaused(bool paused)
@@ -193,11 +199,13 @@ namespace FourfoldEchoes.Product
             {
                 SetRunState(ProductionCombatRunState.Paused);
                 lastEvent = "Paused";
+                PlayAudioCue(FourfoldProofAudioCue.PhaseAccent, 0.12f);
             }
             else if (!paused && runState == ProductionCombatRunState.Paused)
             {
                 SetRunState(ProductionCombatRunState.Playing);
                 lastEvent = "Resumed";
+                PlayAudioCue(FourfoldProofAudioCue.PhaseAccent, 0.14f);
             }
         }
 
@@ -287,6 +295,7 @@ namespace FourfoldEchoes.Product
             rewardClaimed = true;
             lastEvent = "Reward claimed";
             SetRunState(ProductionCombatRunState.Completed);
+            PlayAudioCue(FourfoldProofAudioCue.Reward, 0.42f);
             SaveProgressIfChanged();
             ApplyPresentation(999f);
             return true;
@@ -377,6 +386,7 @@ namespace FourfoldEchoes.Product
         private void ResolvePlayerAttack()
         {
             attackCooldown = AttackCooldownSeconds;
+            PlayAudioCue(FourfoldProofAudioCue.Attack, 0.24f);
             var targetIndex = FindAttackTarget();
             if (targetIndex < 0)
             {
@@ -399,6 +409,7 @@ namespace FourfoldEchoes.Product
             lastEvent = health[targetIndex] <= 0f
                 ? (IsBossIndex(targetIndex) ? "Boss core broken" : "Warden down")
                 : (IsBossIndex(targetIndex) ? "Boss staggered" : "Warden hit");
+            PlayAudioCue(FourfoldProofAudioCue.Hit, IsBossIndex(targetIndex) ? 0.34f : 0.28f);
         }
 
         private int FindAttackTarget()
@@ -499,10 +510,14 @@ namespace FourfoldEchoes.Product
             {
                 lastEvent = "Hit taken";
             }
+
+            PlayAudioCue(FourfoldProofAudioCue.PlayerHit, 0.32f);
         }
 
         private void UpdateProgressState()
         {
+            var wasBossUnlocked = bossUnlocked;
+            var wasGateOpen = gateOpen;
             var minorCleared = true;
             var enemyCount = enemies == null ? 0 : enemies.Length;
             for (var index = 0; index < enemyCount; index++)
@@ -523,6 +538,15 @@ namespace FourfoldEchoes.Product
 
             var bossIndex = enemyCount;
             gateOpen = boss == null || (bossUnlocked && !IsAlive(bossIndex));
+            if (!wasBossUnlocked && bossUnlocked)
+            {
+                PlayAudioCue(FourfoldProofAudioCue.RoomClear, 0.28f);
+            }
+
+            if (!wasGateOpen && gateOpen)
+            {
+                PlayAudioCue(FourfoldProofAudioCue.GateOpen, 0.38f);
+            }
         }
 
         private void HandleRewardClaim()
@@ -786,6 +810,16 @@ namespace FourfoldEchoes.Product
             }
 
             ui.controller = this;
+        }
+
+        private void PlayAudioCue(FourfoldProofAudioCue cue, float volume)
+        {
+            if (proofAudio == null)
+            {
+                proofAudio = GetComponent<FourfoldProofAudio>();
+            }
+
+            proofAudio?.Play(cue, volume);
         }
 
         private void OnGUI()
