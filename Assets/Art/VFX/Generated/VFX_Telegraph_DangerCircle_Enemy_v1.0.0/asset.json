@@ -1,0 +1,89 @@
+{
+  "name": "VFX_Telegraph_DangerCircle_Enemy_v1.0.0",
+  "version": "1.0.0",
+  "category": "Telegraph",
+  "subject": "DangerCircle",
+  "variant": "Enemy",
+  "generated_at": "2026-06-27",
+  "asset_request": {
+    "path": "asset_request.yaml",
+    "status": "missing_in_repository",
+    "fallback_brief": "Enemy telegraph circle generated from VFX Technical Art Session requirements."
+  },
+  "render_pipeline": "Built-in Render Pipeline",
+  "style_ref": [
+    "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+    "docs/Tech/PERFORMANCE_BUDGET.md"
+  ],
+  "hero_color_rules": {
+    "enemy_hostile": "red-orange primary with dark contrast rim",
+    "friendly_tool_reserved": "blue-gold/ivory, not used by this hostile VFX",
+    "readability": "danger color remains distinct without audio cues"
+  },
+  "duration_seconds": {
+    "full": 0.72,
+    "mobile_fallback": 0.60
+  },
+  "performance_tier": {
+    "full": "PC/SteamDeck baseline",
+    "mobile_fallback": "low-spec/mobile fallback"
+  },
+  "target_platforms": ["Windows", "macOS", "SteamDeck", "mobile_fallback"],
+  "paths": {
+    "library": "Assets/Art/VFX/Generated/VFX_Telegraph_DangerCircle_Enemy_v1.0.0",
+    "prefab": "Assets/Art/VFX/Generated/VFX_Telegraph_DangerCircle_Enemy_v1.0.0/Prefabs/PFB_Telegraph_DangerCircle_Enemy_v1.0.0.prefab",
+    "mobile_prefab": "Assets/Art/VFX/Generated/VFX_Telegraph_DangerCircle_Enemy_v1.0.0/Prefabs/PFB_Telegraph_DangerCircle_EnemyMobile_v1.0.0.prefab",
+    "material": "Assets/Art/VFX/Generated/VFX_Telegraph_DangerCircle_Enemy_v1.0.0/Materials/MAT_Danger_DangerCircle_Enemy_v1.0.0.mat",
+    "contrast_material": "Assets/Art/VFX/Generated/VFX_Telegraph_DangerCircle_Enemy_v1.0.0/Materials/MAT_Danger_DangerCircle_Contrast_v1.0.0.mat",
+    "mobile_material": "Assets/Art/VFX/Generated/VFX_Telegraph_DangerCircle_Enemy_v1.0.0/Materials/MAT_Danger_DangerCircle_EnemyMobile_v1.0.0.mat",
+    "texture_flipbook": "Assets/Art/VFX/Generated/VFX_Telegraph_DangerCircle_Enemy_v1.0.0/Textures/VFX_Telegraph_DangerCircle_Enemy_v1.0.0_flipbook.png",
+    "preview_png": "Assets/Art/VFX/Generated/VFX_Telegraph_DangerCircle_Enemy_v1.0.0/Preview/preview.png",
+    "sample_scene": "Assets/Scenes/VFX/VFX_Telegraph_DangerCircle_Enemy_v1.0.0_Preview.unity"
+  },
+  "prefab_structure": {
+    "PFB_Telegraph_DangerCircle_Enemy_v1.0.0": [
+      "VFX_Contrast_Silhouette",
+      "VFX_Readable_DangerRing",
+      "VFX_Final_Pulse"
+    ],
+    "PFB_Telegraph_DangerCircle_EnemyMobile_v1.0.0": [
+      "VFX_Mobile_Contrast",
+      "VFX_Mobile_DangerRing"
+    ]
+  },
+  "budgets": {
+    "particle_systems_full": 0,
+    "max_live_particles_full": 0,
+    "decal_layers_full": 3,
+    "particle_systems_mobile": 0,
+    "max_live_particles_mobile": 0,
+    "decal_layers_mobile": 2,
+    "texture_count": 1,
+    "texture_resolution": "512x512 transparent danger-ring texture",
+    "overdraw_note": "ground decal stack capped at 3 layers full / 2 layers mobile; no lights, trails, or GPU VFX graph dependency"
+  },
+  "shader_graph_or_vfx_graph_note": "Not required. Uses Built-in Unlit/Transparent ground decals only; flipbook source can be upgraded to Shader Graph/VFX Graph later if the render pipeline changes.",
+  "addressables_label_candidates": [
+    "vfx",
+    "vfx.telegraph",
+    "combat.enemy",
+    "danger-circle",
+    "mobile-fallback"
+  ],
+  "sample_scene_reproduction": {
+    "scene": "Assets/Scenes/VFX/VFX_Telegraph_DangerCircle_Enemy_v1.0.0_Preview.unity",
+    "full_prefab_position": [-1.9, 0.0, 0.0],
+    "mobile_prefab_position": [2.15, 0.0, 0.0],
+    "preview_times_seconds": { "full": 0.54, "mobile_fallback": 0.44 }
+  },
+  "qc_result": {
+    "status": "passed",
+    "checks": [
+      "0.2-1.0 second readability window",
+      "enemy red-orange color distinct from friendly/tool palette",
+      "mobile fallback prefab included",
+      "particle, overdraw, and texture counts capped",
+      "preview image and sample scene generated"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 43dfb52a6d7cc477697ed5bdb8f75429
+labels:
+- combat
+- danger-circle
+- enemy
+- telegraph
+- vfx
+PrefabImporter:
+  externalObjects: {}
+  userData:
+  assetBundleName:
+  assetBundleVariant:
