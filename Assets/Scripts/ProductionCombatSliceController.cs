@@ -516,17 +516,30 @@ namespace FourfoldEchoes.Product
 
             playerHealth = Mathf.Max(0f, playerHealth - damage);
             playerInvulnerableTimer = PlayerInvulnerableSeconds;
+            lastEvent = BuildDamageEventText(PlayerHealth01);
             if (playerHealth <= 0f)
             {
-                lastEvent = "Hero down - choose Retry";
                 SetRunState(ProductionCombatRunState.PlayerDown);
-            }
-            else
-            {
-                lastEvent = "Hit taken";
             }
 
             PlayAudioCue(FourfoldProofAudioCue.PlayerHit, 0.32f);
+        }
+
+        public static string BuildDamageEventText(float playerHealth01)
+        {
+            if (playerHealth01 <= 0f)
+            {
+                return "Hero down - choose Retry";
+            }
+
+            if (ProductionCombatLowHealthWarning.IsCriticalHealth(playerHealth01))
+            {
+                return "Critical hit - dodge now";
+            }
+
+            return ProductionCombatLowHealthWarning.IsWarningHealth(playerHealth01)
+                ? "Hit taken - create space"
+                : "Hit taken - dodge next tell";
         }
 
         private void UpdateProgressState()
