@@ -23,6 +23,7 @@ namespace FourfoldEchoes.Product
         public bool showTelegraphGroundMarker = true;
         public GameObject telegraphGroundMarkerPrefab;
         public Color telegraphGroundMarkerColor = new Color(1f, 0.22f, 0.08f, 0.72f);
+        public Color telegraphGroundMarkerAttackColor = new Color(1f, 0.05f, 0.02f, 0.92f);
         public float telegraphGroundMarkerHeight = 0.035f;
         [Min(0.05f)]
         public float telegraphGroundMarkerPrefabSourceDiameter = 1f;
@@ -549,8 +550,11 @@ namespace FourfoldEchoes.Product
                 }
 
                 targetRenderer.GetPropertyBlock(telegraphGroundMarkerBlock);
-                telegraphGroundMarkerBlock.SetColor(BaseColorProperty, telegraphGroundMarkerColor);
-                telegraphGroundMarkerBlock.SetColor(ColorProperty, telegraphGroundMarkerColor);
+                var markerColor = currentState == EnemyState.Attack
+                    ? telegraphGroundMarkerAttackColor
+                    : telegraphGroundMarkerColor;
+                telegraphGroundMarkerBlock.SetColor(BaseColorProperty, markerColor);
+                telegraphGroundMarkerBlock.SetColor(ColorProperty, markerColor);
                 targetRenderer.SetPropertyBlock(telegraphGroundMarkerBlock);
             }
         }
