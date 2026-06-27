@@ -44,7 +44,7 @@ namespace FourfoldEchoes.Editor
             var libraryYard = new GameObject("PCS Production Asset Yard");
             libraryYard.transform.SetParent(root.transform);
 
-            CreateBlockField(field.transform, library);
+            CreateBlockField(field.transform, library, materials);
             var player = Place(library.Hero, combatants.transform, "PCS Player Hero - FE_CHAR_PLAYER_Hero_01", new Vector3(-4.15f, 0.12f, -3.1f), Quaternion.Euler(0f, 42f, 0f), Vector3.one);
             var enemy = Place(library.MeleeEnemy, combatants.transform, "PCS Melee Enemy - FE_ENEMY_MELEE_Shardling", new Vector3(0.55f, 0.12f, 0.65f), Quaternion.Euler(0f, 218f, 0f), Vector3.one);
             var rangedEnemy = Place(library.RangedEnemy, combatants.transform, "PCS Ranged Enemy - FE_ENEMY_RANGED_BloomSpitter", new Vector3(2.85f, 0.12f, 1.95f), Quaternion.Euler(0f, 226f, 0f), Vector3.one);
@@ -91,6 +91,8 @@ namespace FourfoldEchoes.Editor
             RequirePrefab("PCS Reward Chest - FE_PROP_COMMON_RelicChest_01", "FE_PROP_COMMON_RelicChest_01");
             RequirePrefab("PCS Exploration Tool Read - FE_PROP_COMMON_ExplorationTool_01", "FE_PROP_COMMON_ExplorationTool_01");
             RequirePrefab("PCS Revealed Shortcut Bridge - FE_ENV_R01_ShortcutBridge_01", "FE_ENV_R01_ShortcutBridge_01");
+            Require("PCS Tool Route Inlay A");
+            Require("PCS Reward Route Inlay B");
 
             var controller = RequireComponent<ProductionCombatSliceController>("PCS Runtime Hook");
             var tool = RequireComponent<ExplorationTool>("PCS Exploration Tool Runtime");
@@ -232,7 +234,7 @@ namespace FourfoldEchoes.Editor
             return camera;
         }
 
-        private static void CreateBlockField(Transform parent, PrefabLibrary library)
+        private static void CreateBlockField(Transform parent, PrefabLibrary library, SliceMaterials materials)
         {
             var floorPrefabs = new[] { library.GrassFloor, library.GrassFloorLong, library.HubFloor, library.HubCrackedFloor };
             for (var x = -3; x <= 3; x++)
@@ -258,6 +260,38 @@ namespace FourfoldEchoes.Editor
             Place(library.WoodBridge, parent, "PCS Wood Bridge Reward Route", new Vector3(3.15f, 0.06f, 2.9f), Quaternion.Euler(0f, 72f, 0f), Vector3.one);
             Place(library.WaterEdge, parent, "PCS Water Edge Read", new Vector3(-1.85f, 0.04f, 4.65f), Quaternion.identity, Vector3.one);
             Place(library.HazardFloor, parent, "PCS Hazard Floor Read", new Vector3(0.7f, 0.035f, 2.65f), Quaternion.identity, Vector3.one);
+            CreateReadabilityInlays(parent, materials);
+        }
+
+        private static void CreateReadabilityInlays(Transform parent, SliceMaterials materials)
+        {
+            CreateRouteInlay(parent, "PCS Tool Route Inlay A", materials.routeHint, new Vector3(-3.62f, 0.055f, -2.58f), new Vector3(1.5f, 0.035f, 0.18f), Quaternion.Euler(0f, 34f, 0f));
+            CreateRouteInlay(parent, "PCS Tool Route Inlay B", materials.routeHint, new Vector3(-2.62f, 0.055f, -1.76f), new Vector3(1.25f, 0.035f, 0.16f), Quaternion.Euler(0f, 42f, 0f));
+            CreateRouteInlay(parent, "PCS Gate Route Inlay", materials.routeHint, new Vector3(2.55f, 0.055f, -0.48f), new Vector3(1.35f, 0.035f, 0.16f), Quaternion.Euler(0f, 18f, 0f));
+            CreateRouteInlay(parent, "PCS Reward Route Inlay A", materials.routeReward, new Vector3(3.75f, 0.06f, 1.55f), new Vector3(1.4f, 0.035f, 0.18f), Quaternion.Euler(0f, 54f, 0f));
+            CreateRouteInlay(parent, "PCS Reward Route Inlay B", materials.routeReward, new Vector3(4.55f, 0.06f, 2.45f), new Vector3(1.2f, 0.035f, 0.18f), Quaternion.Euler(0f, 34f, 0f));
+        }
+
+        private static void CreateRouteInlay(Transform parent, string name, Material material, Vector3 position, Vector3 scale, Quaternion rotation)
+        {
+            var inlay = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            inlay.name = name;
+            inlay.transform.SetParent(parent);
+            inlay.transform.position = position;
+            inlay.transform.rotation = rotation;
+            inlay.transform.localScale = scale;
+            inlay.isStatic = true;
+
+            var collider = inlay.GetComponent<Collider>();
+            if (collider != null)
+            {
+                UnityEngine.Object.DestroyImmediate(collider);
+            }
+
+            var renderer = inlay.GetComponent<Renderer>();
+            renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
         }
 
         private static ExplorationNode CreateExplorationProof(Transform parent, PrefabLibrary library, Transform player)
@@ -413,7 +447,9 @@ namespace FourfoldEchoes.Editor
                 altar = CreateMaterial("PCS_Altar", new Color(0.93f, 0.68f, 0.26f), 0.04f, 0.46f, new Color(0.36f, 0.16f, 0.02f)),
                 gateClosed = CreateMaterial("PCS_GateClosed", new Color(0.24f, 0.20f, 0.18f), 0.08f, 0.38f, null),
                 gateOpen = CreateMaterial("PCS_GateOpen", new Color(0.20f, 0.58f, 1.0f), 0.02f, 0.55f, new Color(0.03f, 0.2f, 0.54f)),
-                gateReady = CreateMaterial("PCS_GateReady", new Color(1.0f, 0.82f, 0.28f), 0.02f, 0.56f, new Color(0.54f, 0.32f, 0.03f))
+                gateReady = CreateMaterial("PCS_GateReady", new Color(1.0f, 0.82f, 0.28f), 0.02f, 0.56f, new Color(0.54f, 0.32f, 0.03f)),
+                routeHint = CreateMaterial("PCS_RouteHint", new Color(0.98f, 0.74f, 0.18f), 0.02f, 0.54f, new Color(0.42f, 0.20f, 0.02f)),
+                routeReward = CreateMaterial("PCS_RouteReward", new Color(0.24f, 0.68f, 1.0f), 0.02f, 0.58f, new Color(0.02f, 0.22f, 0.54f))
             };
         }
 
@@ -612,6 +648,8 @@ namespace FourfoldEchoes.Editor
             public Material gateClosed;
             public Material gateOpen;
             public Material gateReady;
+            public Material routeHint;
+            public Material routeReward;
         }
     }
 }
