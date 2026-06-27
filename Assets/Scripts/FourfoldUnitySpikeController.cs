@@ -12,6 +12,8 @@ namespace FourfoldEchoes.Spike
 
     public sealed class FourfoldUnitySpikeController : MonoBehaviour
     {
+        public const string ControlPromptText = "Move LS/WASD | Attack A/X/J | Dodge B/Space | Altar/Claim Y/E | Phase LB/RB | Reset Start/R";
+
         [Header("Scene")]
         public Transform player;
         public Transform enemy;
@@ -1062,7 +1064,7 @@ namespace FourfoldEchoes.Spike
             {
                 GUI.Label(new Rect(24, 226, 720, 32), "Downed - press R to reset the room", style);
             }
-            GUI.Label(new Rect(24, Screen.height - 42, Screen.width - 48, 32), "Move WASD/Arrows/Stick | Attack J/Click/Pad | Dodge Space/Pad | Altar K/Pad | Claim E/Right/Pad | Reset R/Start", controlStyle);
+            GUI.Label(new Rect(24, Screen.height - 42, Screen.width - 48, 32), ControlPromptText, controlStyle);
         }
 
         private string ObjectiveText()
