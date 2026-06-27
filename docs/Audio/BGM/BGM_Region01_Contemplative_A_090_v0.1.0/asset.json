@@ -1,0 +1,112 @@
+{
+  "asset_id": "audio.music.bgm_region01",
+  "title": "First Fold Underleaf",
+  "scene": "Region01",
+  "scene_type": "field exploration",
+  "mood": "Contemplative",
+  "variant": "A",
+  "bpm": 90,
+  "version": "0.1.0",
+  "status": "generated_pilot",
+  "source_strategy": "repository-authored deterministic procedural synthesis",
+  "license": "repository-authored",
+  "target_platforms": [
+    "Steam PC",
+    "future console portable"
+  ],
+  "library_root_relative": "Runtime/Audio/BGM/BGM_Region01_Contemplative_A_090_v0.1.0",
+  "paths": {
+    "master_wav": "BGM_Region01_Contemplative_A_090_v0.1.0.wav",
+    "runtime_intro_ogg": "Assets/Audio/Generated/BGM_Region01_Contemplative_AIntro_090_v0.1.0.ogg",
+    "runtime_loop_ogg": "Assets/Audio/Generated/BGM_Region01_Contemplative_ALoop_090_v0.1.0.ogg",
+    "cue_sheet": "cue_sheet.csv",
+    "asset_request": "asset_request.yaml",
+    "qc_result": "qc_result.json",
+    "stems": {
+      "rhythm": "Stems/BGM_Region01_Contemplative_ARhythm_090_v0.1.0.wav",
+      "harmony": "Stems/BGM_Region01_Contemplative_AHarmony_090_v0.1.0.wav",
+      "lead": "Stems/BGM_Region01_Contemplative_ALead_090_v0.1.0.wav",
+      "percussion": "Stems/BGM_Region01_Contemplative_APercussion_090_v0.1.0.wav"
+    }
+  },
+  "loop": {
+    "full_master_start_sample": 470400,
+    "full_master_end_sample": 2352000,
+    "full_master_start_seconds": 10.666666666666666,
+    "full_master_end_seconds": 53.333333333333336,
+    "loop_clip_start_sample": 0,
+    "loop_clip_end_sample": 1881600,
+    "loop_clip_length_seconds": 42.666666666666664,
+    "intro_bars": 4,
+    "loop_bars": 16,
+    "playback_instruction": "Play runtime_intro_ogg once, then loop runtime_loop_ogg from sample 0."
+  },
+  "mix_notes": {
+    "loudness_note": "Peak -7.86 dBFS, RMS -24.00 dBFS.",
+    "fade_note": "No baked loop fade. Optional engine fade-in 250-500 ms on area entry; avoid fade at loop wrap.",
+    "sfx_space_note": "Sparse weak-beat pulses and quiet percussion leave enemy tells, tool hits, and UI confirmation room.",
+    "low_end_note": "No kick/sub layer; harmony roots are restrained and mostly above heavy sub range.",
+    "melody_note": "Lead motif appears only in three short phrases over 16 loop bars."
+  },
+  "stems": [
+    {
+      "name": "rhythm",
+      "file": "Stems/BGM_Region01_Contemplative_ARhythm_090_v0.1.0.wav",
+      "peak_dbfs": -18.992148931548623,
+      "rms_dbfs": -38.81052511402442
+    },
+    {
+      "name": "harmony",
+      "file": "Stems/BGM_Region01_Contemplative_AHarmony_090_v0.1.0.wav",
+      "peak_dbfs": -9.53727608974561,
+      "rms_dbfs": -24.288994688920994
+    },
+    {
+      "name": "lead",
+      "file": "Stems/BGM_Region01_Contemplative_ALead_090_v0.1.0.wav",
+      "peak_dbfs": -13.367241729250223,
+      "rms_dbfs": -39.72933551258099
+    },
+    {
+      "name": "percussion",
+      "file": "Stems/BGM_Region01_Contemplative_APercussion_090_v0.1.0.wav",
+      "peak_dbfs": -17.904796880695187,
+      "rms_dbfs": -50.64828234193005
+    }
+  ],
+  "planned_companion_cues": [
+    {
+      "structure": "title",
+      "status": "planned"
+    },
+    {
+      "structure": "field exploration",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_region01"
+    },
+    {
+      "structure": "battle",
+      "status": "planned"
+    },
+    {
+      "structure": "boss phase1",
+      "status": "planned"
+    },
+    {
+      "structure": "boss phase2",
+      "status": "planned"
+    },
+    {
+      "structure": "rest room",
+      "status": "planned"
+    },
+    {
+      "structure": "victory stinger",
+      "status": "planned"
+    },
+    {
+      "structure": "defeat stinger",
+      "status": "planned"
+    }
+  ]
+}
