@@ -125,7 +125,7 @@ namespace FourfoldEchoes.Product
 
             if (runState == ProductionCombatRunState.PlayerDown || runState == ProductionCombatRunState.Completed)
             {
-                if (Input.GetKeyDown(KeyCode.R))
+                if (RetryPressed())
                 {
                     RetryRun();
                     return;
@@ -138,7 +138,7 @@ namespace FourfoldEchoes.Product
             attackCooldown = Mathf.Max(0f, attackCooldown - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
 
-            if (Input.GetKeyDown(KeyCode.R))
+            if (RetryPressed())
             {
                 RetryRun();
                 return;
@@ -628,6 +628,17 @@ namespace FourfoldEchoes.Product
             return Input.GetKeyDown(KeyCode.J)
                 || Input.GetMouseButtonDown(0)
                 || Input.GetKeyDown(KeyCode.JoystickButton0);
+        }
+
+        public static bool IsRetryKey(KeyCode key)
+        {
+            return key == KeyCode.R || key == KeyCode.JoystickButton7;
+        }
+
+        public static bool RetryPressed()
+        {
+            return Input.GetKeyDown(KeyCode.R)
+                || Input.GetKeyDown(KeyCode.JoystickButton7);
         }
 
         private static void ApplyFirstRendererMaterial(Transform root, Material material)

@@ -368,7 +368,7 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            if (controller.State == ProductionCombatRunState.PlayerDown && Input.GetKeyDown(KeyCode.R))
+            if (controller.State == ProductionCombatRunState.PlayerDown && ProductionCombatSliceController.RetryPressed())
             {
                 controller.RetryRun();
                 return;

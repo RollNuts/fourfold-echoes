@@ -102,7 +102,7 @@ namespace FourfoldEchoes.Product
                 new Rect(rect.x + 16f, rect.y + 38f, rect.width - 32f, 64f),
                 "Move: Left Stick / WASD    Attack: South Button / J / Mouse\n"
                 + "Echo Tool / Claim: E / Right Mouse    Pause: Menu / Esc / P\n"
-                + "Retry after defeat: R",
+                + "Retry after defeat: Menu / R",
                 bodyStyle);
 
             GUI.color = previousColor;
