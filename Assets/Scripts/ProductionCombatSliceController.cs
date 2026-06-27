@@ -16,6 +16,10 @@ namespace FourfoldEchoes.Product
 
     public sealed class ProductionCombatSliceController : MonoBehaviour
     {
+        public const KeyCode RewardClaimKeyboardKey = KeyCode.E;
+        public const KeyCode RewardClaimControllerButton = KeyCode.JoystickButton3;
+        public const int RewardClaimMouseButton = 1;
+
         public static Func<LocalSaveService> SaveServiceFactory { get; set; } = LocalSaveService.CreateDefault;
 
         [Header("Scene")]
@@ -665,11 +669,16 @@ namespace FourfoldEchoes.Product
                 || Input.GetKeyDown(KeyCode.JoystickButton0);
         }
 
+        public static bool IsRewardClaimKey(KeyCode keyCode)
+        {
+            return keyCode == RewardClaimKeyboardKey || keyCode == RewardClaimControllerButton;
+        }
+
         private static bool InteractPressed()
         {
-            return Input.GetKeyDown(KeyCode.E)
-                || Input.GetMouseButtonDown(1)
-                || Input.GetKeyDown(KeyCode.JoystickButton3);
+            return Input.GetKeyDown(RewardClaimKeyboardKey)
+                || Input.GetMouseButtonDown(RewardClaimMouseButton)
+                || Input.GetKeyDown(RewardClaimControllerButton);
         }
 
         private static void ApplyFirstRendererMaterial(Transform root, Material material)
