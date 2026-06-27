@@ -8,6 +8,7 @@ namespace FourfoldEchoes.Product
         public D020PlayerController player;
         public ExplorationTool tool;
         public ExplorationNode node;
+        public ExplorationNode[] nodes;
         public D020RelicReward reward;
         public D020ProgressSave progressSave;
 
@@ -112,7 +113,7 @@ namespace FourfoldEchoes.Product
 
         private string BuildPromptRead()
         {
-            if (node != null && !node.IsSolved)
+            if (HasUnsolvedNode())
             {
                 return "Use tool: E / North";
             }
@@ -128,6 +129,30 @@ namespace FourfoldEchoes.Product
             }
 
             return reward.IsUnlocked ? "Claim relic: E / North" : "Defeat the enemy";
+        }
+
+        private bool HasUnsolvedNode()
+        {
+            if (node != null && !node.IsSolved)
+            {
+                return true;
+            }
+
+            if (nodes == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < nodes.Length; i++)
+            {
+                var target = nodes[i];
+                if (target != null && !target.IsSolved)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void UpdateSaveFeedback(float deltaTime)

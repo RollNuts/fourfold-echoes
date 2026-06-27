@@ -9,6 +9,7 @@ namespace FourfoldEchoes.Product
         public bool autoCollectOnTouch = true;
         public Transform player;
         public ExplorationNode requiredNode;
+        public ExplorationNode[] requiredNodes;
         public D020EnemyDummy requiredEnemy;
         public GameObject idleRead;
         public GameObject collectedRead;
@@ -20,7 +21,7 @@ namespace FourfoldEchoes.Product
         private AudioSource audioSource;
 
         public bool IsCollected => collected;
-        public bool IsUnlocked => (requiredNode == null || requiredNode.IsSolved) &&
+        public bool IsUnlocked => AreRequiredNodesSolved() &&
                                   (requiredEnemy == null || requiredEnemy.IsDefeated);
         public int CollectCount { get; private set; }
 
@@ -107,6 +108,30 @@ namespace FourfoldEchoes.Product
             {
                 audioSource.PlayOneShot(pickupClip);
             }
+        }
+
+        private bool AreRequiredNodesSolved()
+        {
+            if (requiredNode != null && !requiredNode.IsSolved)
+            {
+                return false;
+            }
+
+            if (requiredNodes == null)
+            {
+                return true;
+            }
+
+            for (var i = 0; i < requiredNodes.Length; i++)
+            {
+                var node = requiredNodes[i];
+                if (node != null && !node.IsSolved)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private void EnsureAudioSource()

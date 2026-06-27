@@ -43,10 +43,11 @@ namespace FourfoldEchoes.Editor
             var player = CreatePlayer(root.transform, assets);
             var enemy = CreateEnemy(root.transform, assets, player.transform);
             var reward = CreateChest(root.transform, assets, player.transform);
-            var node = CreateExplorationToolProof(root.transform, assets);
+            var nodes = CreateExplorationToolProof(root.transform, assets);
             reward.requiredEnemy = enemy;
-            reward.requiredNode = node;
-            CreateRuntimeHook(player.transform, node, reward, assets);
+            reward.requiredNode = nodes[0];
+            reward.requiredNodes = new[] { nodes[1] };
+            CreateRuntimeHook(player.transform, nodes, reward, assets);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[]
@@ -70,10 +71,13 @@ namespace FourfoldEchoes.Editor
             Require("D020 Enemy Read Target");
             Require("D020 Relic Chest");
             Require("D020 Exploration Tool Node");
+            Require("D020 Reward Lens Node");
             Require("D020 Shortcut Route");
+            Require("D020 Reward Lens Response");
             Require("D020 Top Down Camera");
             RequireComponent<ExplorationTool>("D020 Runtime Hook");
             RequireComponent<ExplorationNode>("D020 Exploration Tool Node");
+            RequireComponent<ExplorationNode>("D020 Reward Lens Node");
             RequireComponent<D020PlayerController>("D020 Player");
             RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
             RequireComponent<D020RelicReward>("D020 Relic Chest");
@@ -290,7 +294,7 @@ namespace FourfoldEchoes.Editor
             return reward;
         }
 
-        private static ExplorationNode CreateExplorationToolProof(Transform root, GeneratedAssets assets)
+        private static ExplorationNode[] CreateExplorationToolProof(Transform root, GeneratedAssets assets)
         {
             var proof = new GameObject("D020 One Tool Proof");
             proof.transform.SetParent(root);
@@ -323,10 +327,38 @@ namespace FourfoldEchoes.Editor
             node.activeRead = activeRead;
             node.highlightRenderers = response.GetComponentsInChildren<Renderer>(true);
             node.ResetNode();
-            return node;
+
+            var rewardResponse = new GameObject("D020 Reward Lens Response");
+            rewardResponse.transform.SetParent(proof.transform);
+            rewardResponse.transform.position = Vector3.zero;
+            CreatePrimitive(rewardResponse.transform, PrimitiveType.Cylinder, "D020 Reward Lens Open Ring", assets.relic, new Vector3(3.05f, 0.072f, -1.55f), new Vector3(1.22f, 0.032f, 1.22f));
+            CreateBlock(rewardResponse.transform, "D020 Reward Lens Beam A", assets.tool, new Vector3(2.54f, 0.13f, -0.78f), new Vector3(0.08f, 0.05f, 1.18f), Quaternion.Euler(0f, -34f, 0f));
+            CreateBlock(rewardResponse.transform, "D020 Reward Lens Beam B", assets.tool, new Vector3(3.08f, 0.14f, -0.98f), new Vector3(0.08f, 0.05f, 1.24f), Quaternion.Euler(0f, 18f, 0f));
+            CreateBlock(rewardResponse.transform, "D020 Reward Lens Beam C", assets.tool, new Vector3(3.45f, 0.15f, -1.35f), new Vector3(0.08f, 0.05f, 0.82f), Quaternion.Euler(0f, 52f, 0f));
+            CreatePrimitive(rewardResponse.transform, PrimitiveType.Sphere, "D020 Reward Lens Spark A", assets.relic, new Vector3(2.44f, 0.46f, -0.78f), new Vector3(0.18f, 0.18f, 0.18f));
+            CreatePrimitive(rewardResponse.transform, PrimitiveType.Sphere, "D020 Reward Lens Spark B", assets.tool, new Vector3(3.58f, 0.44f, -1.34f), new Vector3(0.16f, 0.16f, 0.16f));
+
+            var rewardNodeObject = new GameObject("D020 Reward Lens Node");
+            rewardNodeObject.transform.SetParent(proof.transform);
+            rewardNodeObject.transform.position = new Vector3(2.35f, 0.1f, -0.72f);
+            var rewardFootprint = CreatePrimitive(rewardNodeObject.transform, PrimitiveType.Cylinder, "D020 Reward Lens Footprint", assets.tool, Vector3.zero, new Vector3(0.58f, 0.026f, 0.58f));
+            CreateBlock(rewardNodeObject.transform, "D020 Reward Lens Pedestal", assets.floorDark, new Vector3(0f, 0.18f, 0f), new Vector3(0.42f, 0.32f, 0.42f));
+            CreateBlock(rewardNodeObject.transform, "D020 Reward Lens Signal", assets.relic, new Vector3(0f, 0.52f, 0.02f), new Vector3(0.12f, 0.38f, 0.08f), Quaternion.Euler(0f, 0f, -38f));
+            var rewardActiveRead = CreatePrimitive(rewardNodeObject.transform, PrimitiveType.Sphere, "D020 Reward Lens Active Read", assets.relic, new Vector3(0f, 0.78f, 0.02f), new Vector3(0.16f, 0.16f, 0.16f));
+            rewardActiveRead.SetActive(false);
+            rewardResponse.SetActive(false);
+
+            var rewardNode = rewardNodeObject.AddComponent<ExplorationNode>();
+            rewardNode.activationRadius = 2.25f;
+            rewardNode.responseTarget = rewardResponse;
+            rewardNode.idleRead = rewardFootprint;
+            rewardNode.activeRead = rewardActiveRead;
+            rewardNode.highlightRenderers = rewardResponse.GetComponentsInChildren<Renderer>(true);
+            rewardNode.ResetNode();
+            return new[] { node, rewardNode };
         }
 
-        private static void CreateRuntimeHook(Transform player, ExplorationNode node, D020RelicReward reward, GeneratedAssets assets)
+        private static void CreateRuntimeHook(Transform player, ExplorationNode[] nodes, D020RelicReward reward, GeneratedAssets assets)
         {
             var hookObject = new GameObject("D020 Runtime Hook");
             var audioSource = hookObject.AddComponent<AudioSource>();
@@ -335,16 +367,16 @@ namespace FourfoldEchoes.Editor
 
             var tool = hookObject.AddComponent<ExplorationTool>();
             tool.player = player;
-            tool.nodes = new[] { node };
+            tool.nodes = nodes;
             tool.range = 2.8f;
             tool.cooldownSeconds = 0.42f;
-            tool.pulseRead = node.idleRead;
+            tool.pulseRead = nodes[0].idleRead;
             tool.pulse = assets.toolPulse;
             tool.targetHit = assets.shortcutOpen;
 
             var progress = hookObject.AddComponent<D020ProgressSave>();
-            progress.nodes = new[] { node };
-            progress.nodeIds = new[] { "d020.region01.shortcut.01" };
+            progress.nodes = nodes;
+            progress.nodeIds = new[] { "d020.region01.shortcut.01", "d020.region01.reward_lens.01" };
             progress.rewards = new[] { reward };
             progress.rewardIds = new[] { "d020.region01.relic.01" };
             progress.saveFileName = "d020-region01-progress.json";
@@ -355,7 +387,8 @@ namespace FourfoldEchoes.Editor
             var hud = hudObject.AddComponent<D020HudController>();
             hud.player = player.GetComponent<D020PlayerController>();
             hud.tool = tool;
-            hud.node = node;
+            hud.node = nodes[0];
+            hud.nodes = nodes;
             hud.reward = reward;
             hud.progressSave = progress;
             hud.RefreshNow();
