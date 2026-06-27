@@ -70,6 +70,7 @@ namespace FourfoldEchoes.Product
         private const string ProgressRestoredStatus = "Progress restored";
         private const string ProgressSavedStatus = "Progress saved";
         private const string SaveFailedStatus = "Save failed - progress kept";
+        public const float RewardClaimRange = 1.65f;
 
         private float[] health;
         private float[] strikeCooldowns;
@@ -532,11 +533,15 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            var distance = Vector3.Distance(player.position, rewardChest.transform.position);
-            if (distance <= 1.65f && (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1)))
+            if (IsWithinRewardClaimRange(player.position, rewardChest.transform.position) && RewardClaimPressed())
             {
                 ClaimReward();
             }
+        }
+
+        public static bool IsWithinRewardClaimRange(Vector3 playerPosition, Vector3 rewardPosition)
+        {
+            return Vector3.Distance(playerPosition, rewardPosition) <= RewardClaimRange;
         }
 
         private void ApplyPresentation(float dt)
@@ -628,6 +633,13 @@ namespace FourfoldEchoes.Product
             return Input.GetKeyDown(KeyCode.J)
                 || Input.GetMouseButtonDown(0)
                 || Input.GetKeyDown(KeyCode.JoystickButton0);
+        }
+
+        private static bool RewardClaimPressed()
+        {
+            return Input.GetKeyDown(KeyCode.E)
+                || Input.GetMouseButtonDown(1)
+                || Input.GetKeyDown(KeyCode.JoystickButton3);
         }
 
         private static void ApplyFirstRendererMaterial(Transform root, Material material)
