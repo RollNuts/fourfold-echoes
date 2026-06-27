@@ -1,0 +1,81 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="UI_HUD_CombatFrame_LocalizationReady_v0.1.0" class="fe-screen-space-ui fe-safe-area">
+        <ui:VisualElement name="hud_primary_cluster" class="fe-hud-cluster fe-priority-primary">
+            <ui:VisualElement name="hud_identity_row" class="fe-hud-row">
+                <ui:VisualElement name="hud_tool_icon" class="fe-icon fe-icon-tool-ready" />
+                <ui:Label name="ui.hud.title" text="FOURFOLD ECHOES" class="fe-label fe-title" />
+            </ui:VisualElement>
+            <ui:Label name="ui.hud.objective" text="Echo Tool: reveal the shortcut, then break the boss gate." class="fe-label fe-body fe-wrap" />
+            <ui:VisualElement name="hud_meter_health" class="fe-meter fe-meter-health">
+                <ui:VisualElement name="health_label_row" class="fe-hud-row">
+                    <ui:VisualElement name="health_icon" class="fe-icon fe-icon-health" />
+                    <ui:Label name="ui.hud.health" text="Health" class="fe-label fe-kicker" />
+                </ui:VisualElement>
+                <ui:VisualElement name="health_track" class="fe-meter-track">
+                    <ui:VisualElement name="health_fill" class="fe-meter-fill fe-fill-health" />
+                    <ui:VisualElement name="health_notch_01" class="fe-meter-notch" />
+                    <ui:VisualElement name="health_notch_02" class="fe-meter-notch fe-meter-notch-mid" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="hud_meter_tool" class="fe-meter fe-meter-tool">
+                <ui:VisualElement name="tool_label_row" class="fe-hud-row">
+                    <ui:VisualElement name="tool_icon" class="fe-icon fe-icon-tool-ready" />
+                    <ui:Label name="ui.hud.tool_ready" text="Tool ready" class="fe-label fe-kicker" />
+                </ui:VisualElement>
+                <ui:VisualElement name="tool_track" class="fe-meter-track">
+                    <ui:VisualElement name="tool_fill" class="fe-meter-fill fe-fill-tool" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="hud_status_badges" class="fe-badge-row">
+                <ui:VisualElement name="badge_shortcut" class="fe-badge fe-badge-open">
+                    <ui:VisualElement name="shortcut_icon" class="fe-icon fe-icon-shortcut" />
+                    <ui:Label name="ui.badge.shortcut_open" text="Shortcut open" class="fe-label fe-badge-label" />
+                </ui:VisualElement>
+                <ui:VisualElement name="badge_gate" class="fe-badge fe-badge-locked">
+                    <ui:VisualElement name="gate_icon" class="fe-icon fe-icon-gate-sealed" />
+                    <ui:Label name="ui.badge.gate_sealed" text="Gate sealed" class="fe-label fe-badge-label" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="hud_input_prompt_cluster" class="fe-prompt-cluster fe-priority-secondary">
+            <ui:VisualElement name="prompt_gamepad" class="fe-prompt-row fe-input-gamepad">
+                <ui:VisualElement name="prompt_gamepad_south_icon" class="fe-icon fe-icon-gamepad-south" />
+                <ui:Label name="ui.prompt.tool.gamepad" text="Use Echo Tool" class="fe-label fe-prompt-label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="prompt_keyboard" class="fe-prompt-row fe-input-keyboard">
+                <ui:VisualElement name="prompt_keyboard_e_icon" class="fe-icon fe-icon-keyboard-e" />
+                <ui:Label name="ui.prompt.tool.keyboard" text="Use Echo Tool" class="fe-label fe-prompt-label" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="hud_boss_strip" class="fe-boss-strip fe-priority-primary">
+            <ui:VisualElement name="boss_icon" class="fe-icon fe-icon-warning" />
+            <ui:VisualElement name="boss_copy" class="fe-boss-copy">
+                <ui:Label name="ui.hud.boss_name" text="Root Warden" class="fe-label fe-kicker" />
+                <ui:VisualElement name="boss_track" class="fe-meter-track fe-boss-track">
+                    <ui:VisualElement name="boss_fill" class="fe-meter-fill fe-fill-boss" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="ui_modal_confirm" class="fe-modal fe-hidden">
+            <ui:VisualElement name="modal_panel" class="fe-modal-panel">
+                <ui:Label name="ui.modal.title" text="Return to title?" class="fe-label fe-modal-title fe-wrap" />
+                <ui:Label name="ui.modal.body" text="Unsaved room progress returns to the last checkpoint." class="fe-label fe-body fe-wrap" />
+                <ui:VisualElement name="modal_actions" class="fe-action-row">
+                    <ui:Button name="ui.action.cancel" text="Cancel" class="fe-button fe-button-secondary" />
+                    <ui:Button name="ui.action.confirm" text="Confirm" class="fe-button fe-button-primary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="ui_title_menu" class="fe-menu-panel fe-hidden">
+            <ui:Label name="ui.title.name" text="FOURFOLD ECHOES" class="fe-label fe-menu-title fe-wrap" />
+            <ui:Button name="ui.menu.start" text="Start" class="fe-button fe-button-primary" />
+            <ui:Button name="ui.menu.continue" text="Continue" class="fe-button fe-button-secondary" />
+            <ui:Button name="ui.menu.settings" text="Settings" class="fe-button fe-button-secondary" />
+            <ui:Button name="ui.menu.quit" text="Quit" class="fe-button fe-button-secondary" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
