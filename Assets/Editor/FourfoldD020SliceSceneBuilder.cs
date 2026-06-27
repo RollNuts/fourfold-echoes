@@ -41,10 +41,12 @@ namespace FourfoldEchoes.Editor
             var root = new GameObject("D020 Slice World");
             CreateRoom(root.transform, assets);
             var player = CreatePlayer(root.transform, assets);
-            CreateEnemy(root.transform, assets, player.transform);
-            CreateChest(root.transform, assets);
+            var enemy = CreateEnemy(root.transform, assets, player.transform);
+            var reward = CreateChest(root.transform, assets, player.transform);
             var node = CreateExplorationToolProof(root.transform, assets);
-            CreateRuntimeHook(player.transform, node, assets);
+            reward.requiredEnemy = enemy;
+            reward.requiredNode = node;
+            CreateRuntimeHook(player.transform, node, reward, assets);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[]
@@ -74,6 +76,8 @@ namespace FourfoldEchoes.Editor
             RequireComponent<ExplorationNode>("D020 Exploration Tool Node");
             RequireComponent<D020PlayerController>("D020 Player");
             RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
+            RequireComponent<D020RelicReward>("D020 Relic Chest");
+            RequireComponent<D020ProgressSave>("D020 Runtime Hook");
 
             if (Camera.main == null)
             {
@@ -109,7 +113,10 @@ namespace FourfoldEchoes.Editor
                 enemyTell = CreateMaterial("D020_EnemyTell", new Color(0.94f, 0.16f, 0.08f), 0f, 0.5f, new Color(0.65f, 0.06f, 0.02f)),
                 chest = CreateMaterial("D020_ChestWood", new Color(0.42f, 0.24f, 0.12f), 0f, 0.42f, null),
                 relic = CreateMaterial("D020_RelicBlue", new Color(0.20f, 0.68f, 0.94f), 0f, 0.5f, new Color(0.05f, 0.26f, 0.52f)),
-                tool = CreateMaterial("D020_ToolSignal", new Color(0.86f, 0.92f, 0.52f), 0f, 0.56f, new Color(0.54f, 0.45f, 0.08f))
+                tool = CreateMaterial("D020_ToolSignal", new Color(0.86f, 0.92f, 0.52f), 0f, 0.56f, new Color(0.54f, 0.45f, 0.08f)),
+                toolPulse = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Generated/tool_pulse.wav"),
+                shortcutOpen = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Generated/shortcut_open.wav"),
+                relicPickup = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/Generated/relic_pickup.wav")
             };
         }
 
@@ -233,7 +240,7 @@ namespace FourfoldEchoes.Editor
             return player;
         }
 
-        private static void CreateEnemy(Transform root, GeneratedAssets assets, Transform player)
+        private static D020EnemyDummy CreateEnemy(Transform root, GeneratedAssets assets, Transform player)
         {
             var enemy = new GameObject("D020 Enemy Read Target");
             enemy.transform.SetParent(root);
@@ -254,9 +261,10 @@ namespace FourfoldEchoes.Editor
             dummy.defeatedRead = defeatedRead;
             dummy.maxHealth = 3;
             dummy.slowChaseSpeed = 0.45f;
+            return dummy;
         }
 
-        private static void CreateChest(Transform root, GeneratedAssets assets)
+        private static D020RelicReward CreateChest(Transform root, GeneratedAssets assets, Transform player)
         {
             var chest = new GameObject("D020 Relic Chest");
             chest.transform.SetParent(root);
@@ -265,8 +273,20 @@ namespace FourfoldEchoes.Editor
 
             CreateBlock(chest.transform, "D020 Chest Base", assets.chest, Vector3.zero, new Vector3(0.78f, 0.42f, 0.58f));
             CreateBlock(chest.transform, "D020 Chest Lid", assets.route, new Vector3(0f, 0.33f, 0f), new Vector3(0.82f, 0.15f, 0.62f));
-            CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Visible Relic", assets.relic, new Vector3(0f, 0.72f, 0f), new Vector3(0.26f, 0.36f, 0.26f));
+            var visibleRelic = CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Visible Relic", assets.relic, new Vector3(0f, 0.72f, 0f), new Vector3(0.26f, 0.36f, 0.26f));
             CreatePrimitive(chest.transform, PrimitiveType.Cylinder, "D020 Reward Footprint", assets.relic, new Vector3(0f, 0.03f, 0f), new Vector3(0.92f, 0.026f, 0.92f));
+            var collectedRead = CreatePrimitive(chest.transform, PrimitiveType.Sphere, "D020 Reward Collected Read", assets.tool, new Vector3(0f, 1.02f, 0f), new Vector3(0.18f, 0.18f, 0.18f));
+            collectedRead.SetActive(false);
+
+            var reward = chest.AddComponent<D020RelicReward>();
+            reward.rewardId = "d020.region01.relic.01";
+            reward.pickupRadius = 1.15f;
+            reward.player = player;
+            reward.idleRead = visibleRelic;
+            reward.collectedRead = collectedRead;
+            reward.pickupClip = assets.relicPickup;
+            reward.ResetReward();
+            return reward;
         }
 
         private static ExplorationNode CreateExplorationToolProof(Transform root, GeneratedAssets assets)
@@ -305,7 +325,7 @@ namespace FourfoldEchoes.Editor
             return node;
         }
 
-        private static void CreateRuntimeHook(Transform player, ExplorationNode node, GeneratedAssets assets)
+        private static void CreateRuntimeHook(Transform player, ExplorationNode node, D020RelicReward reward, GeneratedAssets assets)
         {
             var hookObject = new GameObject("D020 Runtime Hook");
             var audioSource = hookObject.AddComponent<AudioSource>();
@@ -318,6 +338,17 @@ namespace FourfoldEchoes.Editor
             tool.range = 2.8f;
             tool.cooldownSeconds = 0.42f;
             tool.pulseRead = node.idleRead;
+            tool.pulse = assets.toolPulse;
+            tool.targetHit = assets.shortcutOpen;
+
+            var progress = hookObject.AddComponent<D020ProgressSave>();
+            progress.nodes = new[] { node };
+            progress.nodeIds = new[] { "d020.region01.shortcut.01" };
+            progress.rewards = new[] { reward };
+            progress.rewardIds = new[] { "d020.region01.relic.01" };
+            progress.saveFileName = "d020-region01-progress.json";
+            progress.loadOnAwake = true;
+            progress.saveOnProgressChanged = true;
         }
 
         private static GameObject CreateBlock(Transform parent, string name, Material material, Vector3 localPosition, Vector3 localScale)
@@ -411,6 +442,9 @@ namespace FourfoldEchoes.Editor
             public Material chest;
             public Material relic;
             public Material tool;
+            public AudioClip toolPulse;
+            public AudioClip shortcutOpen;
+            public AudioClip relicPickup;
         }
     }
 }
