@@ -204,6 +204,7 @@ namespace FourfoldEchoes.Product
             var panel = BuildOverlayPanel();
             panel.Add(MakeLabel("Paused", 34, FontStyle.Bold));
             panel.Add(MakeBodyLabel("The run is held without advancing combat or exploration tool input."));
+            panel.Add(MakeBodyLabel("Choose with D-pad or Left Stick, confirm with South Button, or press Menu / Esc / P to resume."));
             AddButton(panel, pauseButtons, "Resume", () => controller?.SetPaused(false));
             AddButton(panel, pauseButtons, "Retry", () => controller?.RetryRun());
             AddButton(panel, pauseButtons, "Title", () => controller?.ReturnToTitle());
@@ -218,6 +219,7 @@ namespace FourfoldEchoes.Product
             var panel = BuildOverlayPanel();
             panel.Add(MakeLabel("Hero Down", 34, FontStyle.Bold));
             panel.Add(MakeBodyLabel("Restart the room from its initial state."));
+            panel.Add(MakeBodyLabel("Choose Retry or Title with controller or keyboard before the room restarts."));
             AddButton(panel, retryButtons, "Retry", () => controller?.RetryRun());
             AddButton(panel, retryButtons, "Title", () => controller?.ReturnToTitle());
             WireButtons(retryButtons);
@@ -231,6 +233,7 @@ namespace FourfoldEchoes.Product
             var panel = BuildOverlayPanel();
             panel.Add(MakeLabel("Reward Claimed", 34, FontStyle.Bold));
             panel.Add(MakeBodyLabel("The slice route is complete."));
+            panel.Add(MakeBodyLabel("Retry the route or return to Title without needing mouse input."));
             AddButton(panel, completeButtons, "Retry", () => controller?.RetryRun());
             AddButton(panel, completeButtons, "Title", () => controller?.ReturnToTitle());
             WireButtons(completeButtons);
