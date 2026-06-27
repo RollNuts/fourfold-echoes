@@ -309,7 +309,9 @@ namespace FourfoldEchoes.Editor
             var tool = RequireComponent<ExplorationTool>(hook, "D020 Runtime Hook");
             ValidateRequiredReferences(controller, tool);
             PrepareControllerForCombat(controller);
+            InvokePrivate(controller, "EnsureExplorationReferences");
             VerifyRelicIdentityEffects(controller);
+            VerifyBossToolOpening(controller, tool);
 
             for (var i = 0; i < controller.enemies.Length; i++)
             {
@@ -331,7 +333,7 @@ namespace FourfoldEchoes.Editor
                 throw new InvalidOperationException("D-020 combat verifier failed: rewards were not ready after combat defeat and first tool-node solve.");
             }
 
-            Debug.Log("FOURFOLD D-020 combat verifier passed: basic attacks defeat melee, ranged, elite, and boss enemies, relic effects are distinct, and reward readiness unlocks.");
+            Debug.Log("FOURFOLD D-020 combat verifier passed: basic attacks defeat melee, ranged, elite, and boss enemies, relic effects are distinct, the exploration tool exposes a boss opening, and reward readiness unlocks.");
         }
 
         public static void VerifyExistingSceneDeathRetryAndTitlePath()
@@ -551,6 +553,7 @@ namespace FourfoldEchoes.Editor
             var enemyAimDirections = new Vector3[enemyCount];
             var enemyAttackModes = new int[enemyCount];
             var bossEnraged = new bool[enemyCount];
+            var bossOpeningTimer = new float[enemyCount];
             var initialEnemyPositions = new Vector3[enemyCount];
             var initialEnemyRotations = new Quaternion[enemyCount];
             var initialEnemyScales = new Vector3[enemyCount];
@@ -575,6 +578,7 @@ namespace FourfoldEchoes.Editor
             SetPrivate(controller, "enemyAttackAimDirections", enemyAimDirections);
             SetPrivate(controller, "enemyAttackModes", enemyAttackModes);
             SetPrivate(controller, "bossEnraged", bossEnraged);
+            SetPrivate(controller, "bossOpeningTimer", bossOpeningTimer);
             SetPrivate(controller, "initialEnemyPositions", initialEnemyPositions);
             SetPrivate(controller, "initialEnemyRotations", initialEnemyRotations);
             SetPrivate(controller, "initialEnemyScales", initialEnemyScales);
@@ -655,6 +659,69 @@ namespace FourfoldEchoes.Editor
             SetPrivate(controller, "secondRewardClaimedThisRun", false);
         }
 
+        private static void VerifyBossToolOpening(D020SliceController controller, ExplorationTool tool)
+        {
+            var bossIndex = FindEnemyIndex(controller, "Boss");
+            if (bossIndex < 0)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: boss enemy is missing.");
+            }
+
+            var boss = controller.enemies[bossIndex];
+            var openingTimers = GetPrivate<float[]>(controller, "bossOpeningTimer");
+            if (openingTimers == null || bossIndex >= openingTimers.Length)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: boss opening timer array is missing.");
+            }
+
+            if (controller.requiredToolNode != null)
+            {
+                controller.requiredToolNode.SetSolved(true);
+            }
+
+            if (controller.secondToolNode != null)
+            {
+                controller.secondToolNode.SetSolved(true);
+            }
+
+            var originalPosition = tool.player.position;
+            var originalInputEnabled = tool.inputEnabled;
+            var originalCooldown = tool.cooldownSeconds;
+            var originalBossOpening = openingTimers[bossIndex];
+
+            try
+            {
+                openingTimers[bossIndex] = 0f;
+                var baseAttack = InvokePrivateFloat(controller, "CurrentAttackDamage", bossIndex);
+                tool.player.position = boss.position - Vector3.right * 1.2f;
+                tool.inputEnabled = true;
+                tool.cooldownSeconds = 0f;
+
+                if (!tool.TryUse())
+                {
+                    throw new InvalidOperationException("D-020 combat verifier failed: exploration tool did not trigger a boss opening fallback.");
+                }
+
+                if (openingTimers[bossIndex] <= 0f)
+                {
+                    throw new InvalidOperationException("D-020 combat verifier failed: boss opening timer did not start after tool use.");
+                }
+
+                var openingAttack = InvokePrivateFloat(controller, "CurrentAttackDamage", bossIndex);
+                if (openingAttack <= baseAttack)
+                {
+                    throw new InvalidOperationException("D-020 combat verifier failed: boss opening did not increase player attack damage against the boss.");
+                }
+            }
+            finally
+            {
+                tool.player.position = originalPosition;
+                tool.inputEnabled = originalInputEnabled;
+                tool.cooldownSeconds = originalCooldown;
+                openingTimers[bossIndex] = originalBossOpening;
+            }
+        }
+
         private static void ForceAllEnemiesDefeated(D020SliceController controller)
         {
             var enemyHealth = GetPrivate<float[]>(controller, "enemyHealth");
@@ -701,6 +768,24 @@ namespace FourfoldEchoes.Editor
         {
             var enemy = controller.enemies != null && enemyIndex < controller.enemies.Length ? controller.enemies[enemyIndex] : null;
             return enemy != null && enemy.name.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private static int FindEnemyIndex(D020SliceController controller, string text)
+        {
+            if (controller.enemies == null)
+            {
+                return -1;
+            }
+
+            for (var i = 0; i < controller.enemies.Length; i++)
+            {
+                if (EnemyNameContains(controller, i, text))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         private static void MovePlayerTo(ExplorationTool tool, Transform target)

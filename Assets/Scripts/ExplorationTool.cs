@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace FourfoldEchoes.Product
@@ -27,6 +28,7 @@ namespace FourfoldEchoes.Product
 
         public bool IsReady => cooldownTimer <= 0f;
         public float Cooldown01 => cooldownSeconds <= 0f ? 0f : Mathf.Clamp01(cooldownTimer / cooldownSeconds);
+        public Func<bool> TryResolveFallback { get; set; }
 
         private void Awake()
         {
@@ -96,6 +98,12 @@ namespace FourfoldEchoes.Product
 
             var node = FindBestNode();
             if (node != null && node.TryActivate(player, range))
+            {
+                Play(targetHit);
+                return true;
+            }
+
+            if (TryResolveFallback != null && TryResolveFallback())
             {
                 Play(targetHit);
                 return true;

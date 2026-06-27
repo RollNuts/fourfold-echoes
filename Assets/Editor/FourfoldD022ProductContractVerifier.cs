@@ -185,6 +185,8 @@ namespace FourfoldEchoes.Editor
             RequireContains(regionCopy, "use the tool to open the shortcut seal", "Region shortcut cause/effect");
             RequireContains(regionCopy, "BOSS HP", "Region boss HP UI");
             RequireContains(regionCopy, "BOSS DOWN", "Region boss defeat beat");
+            RequireContains(regionCopy, "BOSS OPENING", "Region boss tool-opening beat");
+            RequireContains(regionCopy, "Tool opening active. Attack now.", "Region boss opening HUD hint");
             RequireContains(regionCopy, "AT RISK: hub return saves", "Region reward risk UI");
             RequireContains(regionCopy, "ATTEMPT FAILED", "Region failure result UI");
             RequireContains(regionCopy, "Lumen Link", "Region combined reward-skill synergy");

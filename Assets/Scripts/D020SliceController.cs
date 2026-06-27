@@ -89,6 +89,9 @@ namespace FourfoldEchoes.Product
         private const float InvulnerableAfterHit = 0.65f;
         private const float RewardRange = 1.8f;
         private const float LumenLinkHitRecovery = 4f;
+        private const float BossToolOpeningDuration = 2.4f;
+        private const float BossToolOpeningRange = 3.5f;
+        private const float BossToolOpeningDamageBonus = 18f;
         private const string SaveKeyCleared = "fourfold.d020.slice.cleared";
         private const string SaveKeyShortcutOpened = "fourfold.d020.slice.shortcut_opened";
         private const string SaveKeyRewardClaimed = "fourfold.d020.slice.reward_claimed";
@@ -133,6 +136,7 @@ namespace FourfoldEchoes.Product
         private Vector3[] enemyAttackAimDirections;
         private int[] enemyAttackModes;
         private bool[] bossEnraged;
+        private float[] bossOpeningTimer;
         private GameObject[] enemyAttackReads;
         private Vector3 initialPlayerPosition;
         private Quaternion initialPlayerRotation;
@@ -268,6 +272,7 @@ namespace FourfoldEchoes.Product
             enemyAttackAimDirections = new Vector3[enemyHealth.Length];
             enemyAttackModes = new int[enemyHealth.Length];
             bossEnraged = new bool[enemyHealth.Length];
+            bossOpeningTimer = new float[enemyHealth.Length];
             enemyAttackReads = new GameObject[enemyHealth.Length];
             initialEnemyPositions = new Vector3[enemyHealth.Length];
             initialEnemyRotations = new Quaternion[enemyHealth.Length];
@@ -384,6 +389,7 @@ namespace FourfoldEchoes.Product
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
             rewardNoticeTimer = Mathf.Max(0f, rewardNoticeTimer - dt);
             bossDefeatTimer = Mathf.Max(0f, bossDefeatTimer - dt);
+            UpdateBossOpenings(dt);
             if (!runFailed && !returnedToHubThisRun)
             {
                 runTimerSeconds += dt;
@@ -563,6 +569,13 @@ namespace FourfoldEchoes.Product
                 var attackRange = EnemyAttackRangeFor(i);
                 var attackWindup = EnemyAttackWindupFor(i);
                 var attackCooldown = EnemyAttackCooldownFor(i);
+
+                if (BossOpeningActive(i))
+                {
+                    enemyWindupTimer[i] = 0f;
+                    enemyAttackTimer[i] = Mathf.Max(enemyAttackTimer[i], 0.18f);
+                    continue;
+                }
 
                 if (distance <= attackRange && enemyAttackTimer[i] <= 0f)
                 {
@@ -975,6 +988,10 @@ namespace FourfoldEchoes.Product
             rewardNoticeBody = string.Empty;
             bestClearTimeImproved = false;
             bossDefeatedThisRun = false;
+            if (bossOpeningTimer != null)
+            {
+                Array.Clear(bossOpeningTimer, 0, bossOpeningTimer.Length);
+            }
             attackTimer = 0f;
             attackReadTimer = 0f;
             dodgeTimer = 0f;
@@ -1422,7 +1439,13 @@ namespace FourfoldEchoes.Product
         private float CurrentAttackDamage(int enemyIndex)
         {
             var baseDamage = IsBossEnemy(enemyIndex) ? 30f : IsEliteEnemy(enemyIndex) ? 36f : enemyIndex == 0 ? 34f : 42f;
-            return LumenEdgeActive() ? baseDamage + 12f : baseDamage;
+            var damage = LumenEdgeActive() ? baseDamage + 12f : baseDamage;
+            if (IsBossEnemy(enemyIndex) && BossOpeningActive(enemyIndex))
+            {
+                damage += BossToolOpeningDamageBonus;
+            }
+
+            return damage;
         }
 
         private float InitialEnemyHealth(int index)
@@ -1564,6 +1587,71 @@ namespace FourfoldEchoes.Product
         private bool BossEnraged(int index)
         {
             return bossEnraged != null && index >= 0 && index < bossEnraged.Length && bossEnraged[index];
+        }
+
+        private bool BossOpeningActive(int index)
+        {
+            return bossOpeningTimer != null && index >= 0 && index < bossOpeningTimer.Length && bossOpeningTimer[index] > 0f;
+        }
+
+        private void UpdateBossOpenings(float deltaTime)
+        {
+            if (bossOpeningTimer == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < bossOpeningTimer.Length; i++)
+            {
+                bossOpeningTimer[i] = Mathf.Max(0f, bossOpeningTimer[i] - deltaTime);
+            }
+        }
+
+        private bool TryOpenBossWithTool()
+        {
+            var index = NearestOpenableBossIndex();
+            if (index < 0)
+            {
+                return false;
+            }
+
+            bossOpeningTimer[index] = BossToolOpeningDuration;
+            enemyWindupTimer[index] = 0f;
+            enemyAttackTimer[index] = Mathf.Max(enemyAttackTimer[index], BossToolOpeningDuration * 0.45f);
+            enemies[index].localScale = EnemyHitScale(index, false);
+            ShowRewardNotice(
+                FourfoldLanguage.T(progressData, "BOSS OPENING", "ボスに隙"),
+                FourfoldLanguage.T(progressData, "Tool pulse exposed the boss. Attack now for bonus damage.", "ツールでボスに隙を作った。今は攻撃ダメージが上がる。"));
+            PlayCue(rewardReadyClip, 0.70f);
+            return true;
+        }
+
+        private int NearestOpenableBossIndex()
+        {
+            if (enemies == null || enemyHealth == null || player == null)
+            {
+                return -1;
+            }
+
+            var range = explorationTool == null ? BossToolOpeningRange : Mathf.Max(BossToolOpeningRange, explorationTool.range + 0.8f);
+            var bestIndex = -1;
+            var bestDistance = float.PositiveInfinity;
+            for (var i = 0; i < enemies.Length && i < enemyHealth.Length; i++)
+            {
+                if (!IsBossEnemy(i) || enemies[i] == null || enemyHealth[i] <= 0f)
+                {
+                    continue;
+                }
+
+                var distance = Vector3.Distance(player.position, enemies[i].position);
+                if (distance <= range && distance < bestDistance)
+                {
+                    bestIndex = i;
+                    bestDistance = distance;
+                }
+            }
+
+            return bestIndex;
         }
 
         private void AdvanceEnemyAttackMode(int index)
@@ -2291,6 +2379,7 @@ namespace FourfoldEchoes.Product
             {
                 explorationTool.useKey = KeyCode.Q;
                 explorationTool.alternateUseKey = KeyCode.JoystickButton2;
+                explorationTool.TryResolveFallback = TryOpenBossWithTool;
             }
 
             if (requiredToolNode == null && explorationTool != null && explorationTool.nodes != null && explorationTool.nodes.Length > 0)
@@ -2651,25 +2740,29 @@ namespace FourfoldEchoes.Product
 
         private void DrawBossHud(GUIStyle body, GUIStyle mutedStyle)
         {
-            if (!TryGetBossHud(out var label, out var health01, out var enraged))
+            if (!TryGetBossHud(out var label, out var health01, out var enraged, out var bossIndex))
             {
                 return;
             }
 
+            var opening = BossOpeningActive(bossIndex);
             var rect = BossHudRect(Screen.width);
             FourfoldRuntimeUi.DrawPanel(new Rect(rect.x - 6f, rect.y - 6f, rect.width + 12f, 76f));
-            FourfoldRuntimeUi.DrawBar(rect, health01, enraged ? new Color(1.0f, 0.28f, 0.18f) : new Color(0.82f, 0.32f, 1.0f), label, body);
-            var hint = enraged
+            FourfoldRuntimeUi.DrawBar(rect, health01, opening ? new Color(1.0f, 0.72f, 0.24f) : enraged ? new Color(1.0f, 0.28f, 0.18f) : new Color(0.82f, 0.32f, 1.0f), label, body);
+            var hint = opening
+                ? FourfoldLanguage.T(progressData, "Tool opening active. Attack now.", "ツールで隙あり。今すぐ攻撃。")
+                : enraged
                 ? FourfoldLanguage.T(progressData, "Pattern changed. Watch the line attack.", "行動変化。直線攻撃に注意。")
                 : FourfoldLanguage.T(progressData, "Boss pressure active. Keep position and read the tell.", "ボス戦中。位置取りと予兆を読む。");
             GUI.Label(new Rect(rect.x + 10f, rect.y + 34f, rect.width - 20f, 26f), hint, mutedStyle);
         }
 
-        private bool TryGetBossHud(out string label, out float health01, out bool enraged)
+        private bool TryGetBossHud(out string label, out float health01, out bool enraged, out int bossIndex)
         {
             label = string.Empty;
             health01 = 0f;
             enraged = false;
+            bossIndex = -1;
 
             if (enemies == null || enemyHealth == null)
             {
@@ -2686,11 +2779,13 @@ namespace FourfoldEchoes.Product
                 var maxHealth = Mathf.Max(1f, InitialEnemyHealth(i));
                 var currentHealth = Mathf.CeilToInt(enemyHealth[i]);
                 enraged = BossEnraged(i);
+                var opening = BossOpeningActive(i);
                 health01 = enemyHealth[i] / maxHealth;
+                bossIndex = i;
                 label = FourfoldLanguage.T(
                     progressData,
-                    $"BOSS HP {currentHealth} / {Mathf.CeilToInt(maxHealth)}{(enraged ? "  ENRAGED" : string.Empty)}",
-                    $"ボスHP {currentHealth} / {Mathf.CeilToInt(maxHealth)}{(enraged ? "  激化" : string.Empty)}");
+                    $"BOSS HP {currentHealth} / {Mathf.CeilToInt(maxHealth)}{(opening ? "  OPEN" : enraged ? "  ENRAGED" : string.Empty)}",
+                    $"ボスHP {currentHealth} / {Mathf.CeilToInt(maxHealth)}{(opening ? "  隙あり" : enraged ? "  激化" : string.Empty)}");
                 return true;
             }
 
