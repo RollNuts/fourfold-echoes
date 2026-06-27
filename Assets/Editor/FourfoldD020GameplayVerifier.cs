@@ -633,9 +633,22 @@ namespace FourfoldEchoes.Editor
             SetPrivate(controller, "secondRewardClaimedThisRun", true);
             var wardIncoming = InvokePrivateFloat(controller, "EnemyDamageFor", 0);
             var bothText = InvokePrivateString(controller, "RelicStateText");
-            if (wardIncoming >= baseIncoming || bothText.IndexOf("Ward", StringComparison.Ordinal) < 0 || bothText.IndexOf("-DMG", StringComparison.Ordinal) < 0)
+            var linkRecovery = InvokePrivateFloat(controller, "LumenLinkRecoveryAmount");
+            if (wardIncoming >= baseIncoming
+                || bothText.IndexOf("Lumen Link", StringComparison.Ordinal) < 0
+                || bothText.IndexOf("-DMG", StringComparison.Ordinal) < 0
+                || bothText.IndexOf("+HP", StringComparison.Ordinal) < 0
+                || linkRecovery <= 0f)
             {
-                throw new InvalidOperationException("D-020 combat verifier failed: second relic does not expose a distinct Lumen Ward defense role.");
+                throw new InvalidOperationException("D-020 combat verifier failed: combined relic loadout does not expose Lumen Link defense and hit-recovery synergy.");
+            }
+
+            SetPrivate(controller, "playerHealth", 50f);
+            InvokePrivate(controller, "ApplyLumenLinkRecovery");
+            var recoveredHealth = GetPrivate<float>(controller, "playerHealth");
+            if (recoveredHealth <= 50f)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: Lumen Link did not restore health on hit.");
             }
 
             SetPrivate(controller, "firstRewardClaimedThisRun", false);
@@ -747,6 +760,24 @@ namespace FourfoldEchoes.Editor
             try
             {
                 return (float)method.Invoke(target, new object[] { argument });
+            }
+            catch (TargetInvocationException exception) when (exception.InnerException != null)
+            {
+                throw new InvalidOperationException($"D-020 verifier failed inside {methodName}: {exception.InnerException.Message}", exception.InnerException);
+            }
+        }
+
+        private static float InvokePrivateFloat(object target, string methodName)
+        {
+            var method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+            if (method == null || method.ReturnType != typeof(float))
+            {
+                throw new InvalidOperationException($"D-020 verifier failed: missing private float method {methodName} on {target.GetType().Name}.");
+            }
+
+            try
+            {
+                return (float)method.Invoke(target, Array.Empty<object>());
             }
             catch (TargetInvocationException exception) when (exception.InnerException != null)
             {

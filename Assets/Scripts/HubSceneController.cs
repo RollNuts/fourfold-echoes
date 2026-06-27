@@ -975,7 +975,7 @@ namespace FourfoldEchoes.Product
 
             if (data.d020EdgeEquipped && data.d020WardEquipped)
             {
-                return FourfoldLanguage.T(data, "stronger attacks, reduced damage taken", "攻撃強化、被ダメージ軽減");
+                return FourfoldLanguage.T(data, "Lumen Link: stronger attacks, reduced damage taken, hit recovery", "Lumen Link: 攻撃強化、被ダメージ軽減、命中回復");
             }
 
             if (data.d020EdgeEquipped)

@@ -88,6 +88,7 @@ namespace FourfoldEchoes.Product
         private const float BossEnemyDamage = 34f;
         private const float InvulnerableAfterHit = 0.65f;
         private const float RewardRange = 1.8f;
+        private const float LumenLinkHitRecovery = 4f;
         private const string SaveKeyCleared = "fourfold.d020.slice.cleared";
         private const string SaveKeyShortcutOpened = "fourfold.d020.slice.shortcut_opened";
         private const string SaveKeyRewardClaimed = "fourfold.d020.slice.reward_claimed";
@@ -518,6 +519,7 @@ namespace FourfoldEchoes.Product
 
             if (hitAny)
             {
+                ApplyLumenLinkRecovery();
                 PlayCue(hitClip, 0.86f);
             }
 
@@ -1651,6 +1653,27 @@ namespace FourfoldEchoes.Product
             return secondRewardClaimedThisRun || (previousSecondRewardLoaded && progressData != null && progressData.d020WardEquipped);
         }
 
+        private bool LumenLinkActive()
+        {
+            return LumenEdgeActive() && LumenWardActive();
+        }
+
+        private float LumenLinkRecoveryAmount()
+        {
+            return LumenLinkActive() ? LumenLinkHitRecovery : 0f;
+        }
+
+        private void ApplyLumenLinkRecovery()
+        {
+            var recovery = LumenLinkRecoveryAmount();
+            if (recovery <= 0f || playerHealth >= PlayerMaxHealth)
+            {
+                return;
+            }
+
+            playerHealth = Mathf.Min(PlayerMaxHealth, playerHealth + recovery);
+        }
+
         private void ShowRewardNotice(string title, string body)
         {
             rewardNoticeTitle = title;
@@ -1705,8 +1728,8 @@ namespace FourfoldEchoes.Product
             {
                 return FourfoldLanguage.T(
                     progressData,
-                    $"Lumen Edge +DMG / Ward -DMG  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
-                    $"Lumen Edge +攻撃 / Ward -被弾  保存{returned}/2 装備{equipped}/2 今回{run}/2");
+                    $"Lumen Link +DMG -DMG +HP  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
+                    $"Lumen Link +攻撃 -被弾 +回復  保存{returned}/2 装備{equipped}/2 今回{run}/2");
             }
 
             if (LumenEdgeActive())

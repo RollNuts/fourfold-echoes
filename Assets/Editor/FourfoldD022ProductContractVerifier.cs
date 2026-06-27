@@ -187,6 +187,7 @@ namespace FourfoldEchoes.Editor
             RequireContains(regionCopy, "BOSS DOWN", "Region boss defeat beat");
             RequireContains(regionCopy, "AT RISK: hub return saves", "Region reward risk UI");
             RequireContains(regionCopy, "ATTEMPT FAILED", "Region failure result UI");
+            RequireContains(regionCopy, "Lumen Link", "Region combined reward-skill synergy");
 
             RequireContains(inputPrompts, "PreferGamepad", "Input prompt mode split");
             RequireContains(inputPrompts, "Move: D-pad/Left Stick", "Title controller prompt");

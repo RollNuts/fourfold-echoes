@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-26T21:27:05.1666370Z",
+  "generatedAtUtc": "2026-06-27T00:14:45.3523210Z",
   "metrics": {
     "sceneObjects": 533,
     "sceneRenderers": 508,
@@ -21,7 +21,7 @@
     {"severity": "info", "code": "d022.contract", "message": "D022 product contract validated: current top-down adventure MVP pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, and stale player-facing copy is blocked."},
     {"severity": "info", "code": "render.pipeline", "message": "Built-in render pipeline is active."},
     {"severity": "info", "code": "save.service", "message": "Versioned local save validated with settings defaults, language preference, UI scale/control-hint preferences, settings preservation across reset, roundtrip persistence, backup recovery, and corrupt-save fallback."},
-    {"severity": "info", "code": "r01.verdant_steps", "message": "R01 Verdant Steps evidence path generated and validated with one exploration tool, sealed-route and shortcut interactions, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX, objective marker, progression rail, dodge state HUD, reward-effect notice UX, confirmation before abandoning unsaved rewards, two distinct saved reward skills, return gate, required SFX, two BGM clips, and hub-return reward persistence."},
+    {"severity": "info", "code": "r01.verdant_steps", "message": "R01 Verdant Steps evidence path generated and validated with one exploration tool, sealed-route and shortcut interactions, two normal enemy types, elite guard, boss, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX, objective marker, progression rail, dodge state HUD, reward-effect notice UX, confirmation before abandoning unsaved rewards, two distinct saved reward skills, Lumen Link combined-skill recovery, return gate, required SFX, two BGM clips, and hub-return reward persistence."},
     {"severity": "info", "code": "art.production_p3", "message": "Production P3 model pack imported and validated with 28 prefabs, renderer/mesh/material references, and sane bounds."},
     {"severity": "info", "code": "hub.crossroads", "message": "Hub Crossroads generated and validated as the playable hub with an R01 region gate, mission briefing/start confirmation, returned-run summary/replay UX, objective marker, progress initialization, pause/settings/language UX, reset confirmation, and return-to-title persistence."},
     {"severity": "info", "code": "title.entry", "message": "Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, Quit request, and Build Settings order Title -> HubCrossroads -> R01."},
