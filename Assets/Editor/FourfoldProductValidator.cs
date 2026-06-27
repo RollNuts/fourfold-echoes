@@ -24,7 +24,7 @@ namespace FourfoldEchoes.Editor
             try
             {
                 FourfoldD022ProductContractVerifier.VerifyD022Contract();
-                findings.Add(Finding.Info("d022.contract", "D022 product contract validated: current top-down adventure MVP pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, Title/Hub/Region menu SFX hooks are present, and stale player-facing copy is blocked."));
+                findings.Add(Finding.Info("d022.contract", "D022 product contract validated: current top-down adventure MVP pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, Title/Hub/Region menu SFX hooks are present, Region tool target-state HUD is present, and stale player-facing copy is blocked."));
             }
             catch (Exception exception)
             {
@@ -57,7 +57,7 @@ namespace FourfoldEchoes.Editor
                 FourfoldD020GameplayVerifier.VerifyExistingSceneDeathRetryAndTitlePath();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFullProgressionLoop();
                 FourfoldD020GameplayVerifier.VerifyExistingSceneFailureLoop();
-                findings.Add(Finding.Info("r01.verdant_steps", "R01 Verdant Steps evidence path generated and validated with one exploration tool, sealed-route and shortcut interactions, two normal enemy types, elite guard, boss, boss tool-opening attack window, combat feedback text, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX with menu SFX, objective marker, progression rail, build-slot HUD, dodge state HUD, reward-effect notice UX, confirmation before abandoning unsaved rewards, two distinct saved reward skills, Lumen Link combined-skill recovery, return gate, required SFX, two BGM clips, and hub-return reward persistence."));
+                findings.Add(Finding.Info("r01.verdant_steps", "R01 Verdant Steps evidence path generated and validated with one exploration tool, sealed-route and shortcut interactions, explicit tool target/no-target/cooldown feedback, two normal enemy types, elite guard, boss, boss tool-opening attack window, combat feedback text, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX with menu SFX, objective marker, progression rail, build-slot HUD, dodge state HUD, reward-effect notice UX, confirmation before abandoning unsaved rewards, two distinct saved reward skills, Lumen Link combined-skill recovery, return gate, required SFX, two BGM clips, and hub-return reward persistence."));
             }
             catch (Exception exception)
             {

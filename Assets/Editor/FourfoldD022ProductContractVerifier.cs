@@ -218,6 +218,11 @@ namespace FourfoldEchoes.Editor
             RequireContains(regionCopy, "ATTEMPT FAILED", "Region failure result UI");
             RequireContains(regionCopy, "Lumen Link", "Region combined reward-skill synergy");
             RequireContains(regionCopy, "BUILD SLOTS", "Region reward-skill build slot HUD");
+            RequireContains(regionCopy, "Tool READY: target", "Region tool target-ready HUD");
+            RequireContains(regionCopy, "Tool READY: no target", "Region tool no-target HUD");
+            RequireContains(regionCopy, "Tool MISS: no target", "Region tool miss feedback HUD");
+            RequireContains(regionCopy, "Tool HIT: target solved", "Region tool solved feedback HUD");
+            RequireContains(regionCopy, "Tool HIT: boss exposed", "Region tool boss feedback HUD");
             RequireContains(regionCopy, "FourfoldUiAudio.PlaySelect", "Region menu select SFX");
             RequireContains(regionCopy, "FourfoldUiAudio.PlayConfirm", "Region menu confirm SFX");
             RequireContains(regionCopy, "FourfoldUiAudio.PlayBack", "Region menu back SFX");
@@ -233,6 +238,11 @@ namespace FourfoldEchoes.Editor
             RequireContains(inputPrompts, "Tool X", "Region controller tool prompt");
             RequireContains(inputPrompts, "Boss close: press X", "Region controller boss tool prompt");
             RequireContains(inputPrompts, "Boss close: press Q", "Region keyboard boss tool prompt");
+            RequireContains(inputPrompts, "Tool target ready: press X", "Region controller tool target prompt");
+            RequireContains(inputPrompts, "Tool target ready: press Q", "Region keyboard tool target prompt");
+            RequireContains(inputPrompts, "No tool target", "Region no-target tool prompt");
+            RequireContains(inputPrompts, "Tool cooling down", "Region tool cooldown prompt");
+            RequireContains(inputPrompts, "Tool routes solved", "Region tool solved prompt");
             RequireContains(inputPrompts, "Press Start, A, or Y", "Region controller retry prompt");
             RequireContains(inputPrompts, "HubStartReady", "Hub start prompt helper");
         }

@@ -3,6 +3,16 @@ using UnityEngine;
 
 namespace FourfoldEchoes.Product
 {
+    public enum ExplorationToolUseResult
+    {
+        None,
+        Disabled,
+        Cooldown,
+        NodeActivated,
+        BossFallback,
+        NoTarget
+    }
+
     public sealed class ExplorationTool : MonoBehaviour
     {
         [Header("Input")]
@@ -10,6 +20,7 @@ namespace FourfoldEchoes.Product
         public KeyCode alternateUseKey = KeyCode.JoystickButton2;
         public float range = 2.7f;
         public float cooldownSeconds = 0.45f;
+        public float feedbackSeconds = 1.10f;
         public bool inputEnabled = true;
 
         [Header("Scene References")]
@@ -25,9 +36,17 @@ namespace FourfoldEchoes.Product
         private AudioSource audioSource;
         private float cooldownTimer;
         private float pulseTimer;
+        private float feedbackTimer;
+        private ExplorationToolUseResult lastUseResult = ExplorationToolUseResult.None;
+        private ExplorationNode lastTarget;
 
         public bool IsReady => cooldownTimer <= 0f;
         public float Cooldown01 => cooldownSeconds <= 0f ? 0f : Mathf.Clamp01(cooldownTimer / cooldownSeconds);
+        public ExplorationToolUseResult LastUseResult => lastUseResult;
+        public ExplorationNode LastTarget => lastTarget;
+        public bool HasRecentFeedback => feedbackTimer > 0f;
+        public bool HasReadyTarget => IsReady && FindBestNode() != null;
+        public bool AllTargetsSolved => nodes == null || AllNodesSolved();
         public Func<bool> TryResolveFallback { get; set; }
 
         private void Awake()
@@ -74,6 +93,16 @@ namespace FourfoldEchoes.Product
                 pulseRead.SetActive(false);
             }
 
+            if (feedbackTimer > 0f)
+            {
+                feedbackTimer = Mathf.Max(0f, feedbackTimer - Time.deltaTime);
+                if (feedbackTimer <= 0f)
+                {
+                    lastUseResult = ExplorationToolUseResult.None;
+                    lastTarget = null;
+                }
+            }
+
             if (inputEnabled && (Input.GetKeyDown(useKey) || Input.GetKeyDown(alternateUseKey)))
             {
                 TryUse();
@@ -84,11 +113,13 @@ namespace FourfoldEchoes.Product
         {
             if (!inputEnabled)
             {
+                RecordResult(ExplorationToolUseResult.Disabled, null);
                 return false;
             }
 
             if (!IsReady)
             {
+                RecordResult(ExplorationToolUseResult.Cooldown, null);
                 return false;
             }
 
@@ -99,18 +130,34 @@ namespace FourfoldEchoes.Product
             var node = FindBestNode();
             if (node != null && node.TryActivate(player, range))
             {
+                RecordResult(ExplorationToolUseResult.NodeActivated, node);
                 Play(targetHit);
                 return true;
             }
 
             if (TryResolveFallback != null && TryResolveFallback())
             {
+                RecordResult(ExplorationToolUseResult.BossFallback, null);
                 Play(targetHit);
                 return true;
             }
 
+            RecordResult(ExplorationToolUseResult.NoTarget, null);
             Play(fail);
             return false;
+        }
+
+        public void ClearRuntimeState()
+        {
+            cooldownTimer = 0f;
+            pulseTimer = 0f;
+            feedbackTimer = 0f;
+            lastUseResult = ExplorationToolUseResult.None;
+            lastTarget = null;
+            if (pulseRead != null)
+            {
+                pulseRead.SetActive(false);
+            }
         }
 
         private ExplorationNode FindBestNode()
@@ -139,6 +186,27 @@ namespace FourfoldEchoes.Product
             }
 
             return best;
+        }
+
+        private bool AllNodesSolved()
+        {
+            for (var i = 0; i < nodes.Length; i++)
+            {
+                var node = nodes[i];
+                if (node != null && !node.IsSolved)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void RecordResult(ExplorationToolUseResult result, ExplorationNode target)
+        {
+            lastUseResult = result;
+            lastTarget = target;
+            feedbackTimer = Mathf.Max(0.1f, feedbackSeconds);
         }
 
         private void Play(AudioClip clip)

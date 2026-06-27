@@ -53,6 +53,7 @@ namespace FourfoldEchoes.Editor
             var originalPlayerPosition = tool.player.position;
             var originalInputEnabled = tool.inputEnabled;
             var originalCooldownSeconds = tool.cooldownSeconds;
+            var originalFeedbackSeconds = tool.feedbackSeconds;
             var nodeSnapshots = new[]
             {
                 new NodeSnapshot(nodes[0]),
@@ -61,15 +62,20 @@ namespace FourfoldEchoes.Editor
 
             try
             {
+                VerifyToolNoTarget(tool);
+                VerifyReadyTarget(tool, nodes[0], 0);
+                VerifyCooldownReject(tool, nodes[0]);
                 VerifyNodeUse(tool, nodes[0], 0);
                 VerifyNodeUse(tool, nodes[1], 1);
-                Debug.Log("FOURFOLD D-020 gameplay verifier passed: existing scene tool loop activates both nodes.");
+                Debug.Log("FOURFOLD D-020 gameplay verifier passed: existing scene tool loop reports no-target, target-ready, cooldown, and activates both nodes.");
             }
             finally
             {
                 tool.player.position = originalPlayerPosition;
                 tool.inputEnabled = originalInputEnabled;
                 tool.cooldownSeconds = originalCooldownSeconds;
+                tool.feedbackSeconds = originalFeedbackSeconds;
+                tool.ClearRuntimeState();
 
                 for (var i = 0; i < nodeSnapshots.Length; i++)
                 {
@@ -523,6 +529,7 @@ namespace FourfoldEchoes.Editor
             tool.player.position = node.transform.position;
             tool.inputEnabled = true;
             tool.cooldownSeconds = 0f;
+            tool.ClearRuntimeState();
             node.ResetNode();
 
             if (!tool.TryUse())
@@ -535,10 +542,80 @@ namespace FourfoldEchoes.Editor
                 throw new InvalidOperationException($"D-020 gameplay verifier failed: node {index} ({node.name}) was not solved after TryUse.");
             }
 
+            if (tool.LastUseResult != ExplorationToolUseResult.NodeActivated || tool.LastTarget != node || !tool.HasRecentFeedback)
+            {
+                throw new InvalidOperationException($"D-020 gameplay verifier failed: tool feedback did not report node activation for node {index} ({node.name}).");
+            }
+
             if (node.responseTarget != null && !node.responseTarget.activeInHierarchy)
             {
                 throw new InvalidOperationException($"D-020 gameplay verifier failed: node {index} ({node.name}) response target is not active after TryUse: {node.responseTarget.name}.");
             }
+        }
+
+        private static void VerifyReadyTarget(ExplorationTool tool, ExplorationNode node, int index)
+        {
+            tool.player.position = node.transform.position;
+            tool.inputEnabled = true;
+            tool.cooldownSeconds = 0f;
+            tool.ClearRuntimeState();
+            node.ResetNode();
+
+            if (!tool.IsReady || !tool.HasReadyTarget)
+            {
+                throw new InvalidOperationException($"D-020 gameplay verifier failed: tool did not report a ready target for node {index} ({node.name}).");
+            }
+        }
+
+        private static void VerifyToolNoTarget(ExplorationTool tool)
+        {
+            tool.player.position = new Vector3(999f, 0f, 999f);
+            tool.inputEnabled = true;
+            tool.cooldownSeconds = 0f;
+            tool.ClearRuntimeState();
+
+            if (tool.HasReadyTarget)
+            {
+                throw new InvalidOperationException("D-020 gameplay verifier failed: tool reported a ready target while the player was far from all targets.");
+            }
+
+            if (tool.TryUse())
+            {
+                throw new InvalidOperationException("D-020 gameplay verifier failed: tool succeeded while the player was far from all targets.");
+            }
+
+            if (tool.LastUseResult != ExplorationToolUseResult.NoTarget || !tool.HasRecentFeedback)
+            {
+                throw new InvalidOperationException("D-020 gameplay verifier failed: tool did not report no-target feedback after a far miss.");
+            }
+        }
+
+        private static void VerifyCooldownReject(ExplorationTool tool, ExplorationNode node)
+        {
+            tool.player.position = node.transform.position;
+            tool.inputEnabled = true;
+            tool.cooldownSeconds = 1f;
+            tool.feedbackSeconds = 1f;
+            tool.ClearRuntimeState();
+            node.ResetNode();
+
+            if (!tool.TryUse())
+            {
+                throw new InvalidOperationException("D-020 gameplay verifier failed: setup use did not activate a node before cooldown check.");
+            }
+
+            if (tool.TryUse())
+            {
+                throw new InvalidOperationException("D-020 gameplay verifier failed: tool allowed a second use during cooldown.");
+            }
+
+            if (tool.LastUseResult != ExplorationToolUseResult.Cooldown || !tool.HasRecentFeedback)
+            {
+                throw new InvalidOperationException("D-020 gameplay verifier failed: tool did not report cooldown feedback after blocked reuse.");
+            }
+
+            tool.ClearRuntimeState();
+            node.ResetNode();
         }
 
         private static void PrepareControllerForFullLoop(D020SliceController controller)

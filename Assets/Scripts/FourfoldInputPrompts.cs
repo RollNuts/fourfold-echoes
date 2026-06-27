@@ -81,7 +81,7 @@ namespace FourfoldEchoes.Product
         {
             return PreferGamepad()
                 ? FourfoldLanguage.T(data, "Left/Right changes value. A, Y, B, or Select returns.", "左右で変更。A、Y、B、Selectで戻る。")
-                : FourfoldLanguage.T(data, "Left/Right changes value. E or Enter or Backspace returns.", "左右で変更。E または Enter または Backspace で戻る。");
+                : FourfoldLanguage.T(data, "Left/Right changes value. E, Enter, Esc, or Backspace returns.", "左右で変更。E、Enter、Esc、Backspaceで戻る。");
         }
 
         public static string RegionControls(FourfoldProgressData data)
@@ -103,6 +103,34 @@ namespace FourfoldEchoes.Product
             return PreferGamepad()
                 ? FourfoldLanguage.T(data, "Boss open: attack with A before the window closes.", "ボスに隙あり: 閉じる前にAで攻撃。")
                 : FourfoldLanguage.T(data, "Boss open: attack with Space before the window closes.", "ボスに隙あり: 閉じる前にSpaceで攻撃。");
+        }
+
+        public static string RegionToolTargetReady(FourfoldProgressData data)
+        {
+            return PreferGamepad()
+                ? FourfoldLanguage.T(data, "Tool target ready: press X to open the route.", "ツール対象あり: Xで道を開く。")
+                : FourfoldLanguage.T(data, "Tool target ready: press Q to open the route.", "ツール対象あり: Qで道を開く。");
+        }
+
+        public static string RegionToolNoTarget(FourfoldProgressData data)
+        {
+            return PreferGamepad()
+                ? FourfoldLanguage.T(data, "No tool target: move closer to a glowing target or boss.", "ツール対象なし: 光る対象かボスへ近づく。")
+                : FourfoldLanguage.T(data, "No tool target: move closer to a glowing target or boss.", "ツール対象なし: 光る対象かボスへ近づく。");
+        }
+
+        public static string RegionToolCooldown(FourfoldProgressData data)
+        {
+            return PreferGamepad()
+                ? FourfoldLanguage.T(data, "Tool cooling down: keep moving and read enemy tells.", "ツール待機中: 動き続けて敵の予兆を読む。")
+                : FourfoldLanguage.T(data, "Tool cooling down: keep moving and read enemy tells.", "ツール待機中: 動き続けて敵の予兆を読む。");
+        }
+
+        public static string RegionToolSolved(FourfoldProgressData data)
+        {
+            return PreferGamepad()
+                ? FourfoldLanguage.T(data, "Tool routes solved: push toward the boss or reward.", "ツール対象解決済み: ボスか報酬へ進む。")
+                : FourfoldLanguage.T(data, "Tool routes solved: push toward the boss or reward.", "ツール対象解決済み: ボスか報酬へ進む。");
         }
 
         public static string RegionFailure(FourfoldProgressData data)

@@ -2040,6 +2040,106 @@ namespace FourfoldEchoes.Product
                 $"報酬  保存{returned}/2 装備{equipped}/2 今回{run}/2");
         }
 
+        private string ToolStateText()
+        {
+            if (explorationTool == null)
+            {
+                return FourfoldLanguage.T(progressData, "Tool --", "ツール --");
+            }
+
+            if (AnyBossOpeningActive())
+            {
+                return FourfoldLanguage.T(progressData, "Boss OPEN", "ボス 隙あり");
+            }
+
+            if (explorationTool.HasRecentFeedback)
+            {
+                switch (explorationTool.LastUseResult)
+                {
+                    case ExplorationToolUseResult.NodeActivated:
+                        return FourfoldLanguage.T(progressData, "Tool HIT: target solved", "ツール 命中: 対象解決");
+                    case ExplorationToolUseResult.BossFallback:
+                        return FourfoldLanguage.T(progressData, "Tool HIT: boss exposed", "ツール 命中: ボスに隙");
+                    case ExplorationToolUseResult.NoTarget:
+                        return FourfoldLanguage.T(progressData, "Tool MISS: no target", "ツール 空振り: 対象なし");
+                    case ExplorationToolUseResult.Cooldown:
+                        return FourfoldLanguage.T(progressData, "Tool cooling", "ツール 待機中");
+                    case ExplorationToolUseResult.Disabled:
+                        return FourfoldLanguage.T(progressData, "Tool locked", "ツール 使用不可");
+                }
+            }
+
+            if (!explorationTool.IsReady)
+            {
+                return FourfoldLanguage.T(
+                    progressData,
+                    $"Tool CD {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%",
+                    $"ツール 待機 {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%");
+            }
+
+            if (NearestOpenableBossIndex() >= 0)
+            {
+                return FourfoldLanguage.T(progressData, "Tool READY: boss target", "ツール 準備OK: ボス対象");
+            }
+
+            if (explorationTool.HasReadyTarget)
+            {
+                return FourfoldLanguage.T(progressData, "Tool READY: target", "ツール 準備OK: 対象あり");
+            }
+
+            if (explorationTool.AllTargetsSolved)
+            {
+                return FourfoldLanguage.T(progressData, "Tool solved", "ツール 解決済み");
+            }
+
+            return FourfoldLanguage.T(progressData, "Tool READY: no target", "ツール 準備OK: 対象なし");
+        }
+
+        private Color ToolStateColor()
+        {
+            if (explorationTool == null)
+            {
+                return new Color(0.45f, 0.50f, 0.58f);
+            }
+
+            if (AnyBossOpeningActive())
+            {
+                return new Color(1.0f, 0.72f, 0.24f);
+            }
+
+            if (explorationTool.HasRecentFeedback)
+            {
+                switch (explorationTool.LastUseResult)
+                {
+                    case ExplorationToolUseResult.NodeActivated:
+                    case ExplorationToolUseResult.BossFallback:
+                        return new Color(0.34f, 0.90f, 0.52f);
+                    case ExplorationToolUseResult.NoTarget:
+                    case ExplorationToolUseResult.Disabled:
+                        return new Color(1.0f, 0.46f, 0.22f);
+                    case ExplorationToolUseResult.Cooldown:
+                        return new Color(0.45f, 0.50f, 0.58f);
+                }
+            }
+
+            if (!explorationTool.IsReady)
+            {
+                return new Color(0.45f, 0.50f, 0.58f);
+            }
+
+            if (NearestOpenableBossIndex() >= 0 || explorationTool.HasReadyTarget)
+            {
+                return new Color(0.25f, 0.70f, 1.0f);
+            }
+
+            if (explorationTool.AllTargetsSolved)
+            {
+                return new Color(0.82f, 0.44f, 1.0f);
+            }
+
+            return new Color(1.0f, 0.46f, 0.22f);
+        }
+
         private string DodgeStateText()
         {
             if (dodgeTimer > 0f)
@@ -2708,15 +2808,7 @@ namespace FourfoldEchoes.Product
                         ? FourfoldInputPrompts.RegionClaimWardObjective(progressData)
                         : FourfoldLanguage.T(progressData, "Step 6/6: return to hub to save this clear.", "手順6/6: ハブへ帰還して今回のクリアを保存。");
 
-            var toolState = explorationTool == null
-                ? FourfoldLanguage.T(progressData, "Tool --", "ツール --")
-                : AnyBossOpeningActive()
-                    ? FourfoldLanguage.T(progressData, "Boss OPEN", "ボス 隙あり")
-                : explorationTool.IsReady && NearestOpenableBossIndex() >= 0
-                    ? FourfoldLanguage.T(progressData, "Tool READY: boss opening", "ツール 準備OK: ボスに隙")
-                    : explorationTool.IsReady
-                    ? FourfoldLanguage.T(progressData, "Tool READY", "ツール 準備OK")
-                    : FourfoldLanguage.T(progressData, $"Tool CD {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%", $"ツール 待機 {Mathf.CeilToInt(explorationTool.Cooldown01 * 100f)}%");
+            var toolState = ToolStateText();
             var relicState = RelicStateText();
             var resultState = clearCount > 0
                 ? FourfoldLanguage.T(progressData, $"Saved clears {clearCount}", $"保存クリア {clearCount}")
@@ -2741,7 +2833,7 @@ namespace FourfoldEchoes.Product
             var toolChipWidth = chipArea * 0.27f;
             var dodgeChipWidth = chipArea * 0.25f;
             var relicChipWidth = chipArea - toolChipWidth - dodgeChipWidth - 12f;
-            FourfoldRuntimeUi.DrawChip(new Rect(30f, 64f, toolChipWidth, 30f), toolState, new Color(0.25f, 0.70f, 1.0f), mutedStyle);
+            FourfoldRuntimeUi.DrawChip(new Rect(30f, 64f, toolChipWidth, 30f), toolState, ToolStateColor(), mutedStyle);
             FourfoldRuntimeUi.DrawChip(new Rect(36f + toolChipWidth, 64f, dodgeChipWidth, 30f), DodgeStateText(), new Color(0.34f, 0.90f, 0.52f), mutedStyle);
             FourfoldRuntimeUi.DrawChip(new Rect(42f + toolChipWidth + dodgeChipWidth, 64f, relicChipWidth, 30f), relicState, new Color(1.0f, 0.72f, 0.24f), mutedStyle);
             GUI.Label(new Rect(30f, 104f, width - 56f, 50f), objective, style);
@@ -3105,9 +3197,25 @@ namespace FourfoldEchoes.Product
             {
                 hint = FourfoldInputPrompts.RegionBossOpeningActive(progressData);
             }
-            else if (explorationTool != null && explorationTool.IsReady && NearestOpenableBossIndex() >= 0)
+            else if (explorationTool != null && !explorationTool.IsReady)
+            {
+                hint = FourfoldInputPrompts.RegionToolCooldown(progressData);
+            }
+            else if (explorationTool != null && NearestOpenableBossIndex() >= 0)
             {
                 hint = FourfoldInputPrompts.RegionBossToolReady(progressData);
+            }
+            else if (explorationTool != null && explorationTool.HasReadyTarget)
+            {
+                hint = FourfoldInputPrompts.RegionToolTargetReady(progressData);
+            }
+            else if (explorationTool != null && explorationTool.AllTargetsSolved)
+            {
+                hint = FourfoldInputPrompts.RegionToolSolved(progressData);
+            }
+            else if (explorationTool != null)
+            {
+                hint = FourfoldInputPrompts.RegionToolNoTarget(progressData);
             }
 
             GUI.Label(BottomHintRect(Screen.width, Screen.height), hint, style);
