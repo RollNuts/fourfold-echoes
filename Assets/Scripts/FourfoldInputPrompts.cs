@@ -91,6 +91,13 @@ namespace FourfoldEchoes.Product
                 : FourfoldLanguage.T(data, "Move WASD or arrows   Attack Space   Dodge Shift   Tool Q   Interact E   Pause Esc", "移動 WASD または 矢印   攻撃 Space   回避 Shift   ツール Q   調べる E   ポーズ Esc");
         }
 
+        public static string RegionLowHealth(FourfoldProgressData data)
+        {
+            return PreferGamepad()
+                ? FourfoldLanguage.T(data, "LOW HP: dodge with B, create space, then strike.", "HP低下: Bで回避して距離を作り、反撃。")
+                : FourfoldLanguage.T(data, "LOW HP: dodge with Shift, create space, then strike.", "HP低下: Shiftで回避して距離を作り、反撃。");
+        }
+
         public static string RegionBossToolReady(FourfoldProgressData data)
         {
             return PreferGamepad()

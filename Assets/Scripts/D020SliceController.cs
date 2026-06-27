@@ -82,6 +82,8 @@ namespace FourfoldEchoes.Product
         private const int AttackModeCircle = 0;
         private const int AttackModeLine = 1;
         private const float PlayerMaxHealth = 100f;
+        private const float LowHealthThreshold01 = 0.35f;
+        private const float CriticalHealthThreshold01 = 0.18f;
         private const float RewardNoticeDuration = 3.4f;
         private const float MeleeEnemyDamage = 26f;
         private const float RangedEnemyDamage = 18f;
@@ -2827,7 +2829,7 @@ namespace FourfoldEchoes.Product
                 timeState += FourfoldLanguage.T(progressData, $"  Best {FormatRunTime(bestClearTimeSeconds)}", $"  最速 {FormatRunTime(bestClearTimeSeconds)}");
             }
 
-            FourfoldRuntimeUi.DrawBar(new Rect(30f, 30f, width - 56f, 26f), playerHealth / PlayerMaxHealth, new Color(0.35f, 0.92f, 0.52f), $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}", hpStyle);
+            FourfoldRuntimeUi.DrawBar(new Rect(30f, 30f, width - 56f, 26f), playerHealth / PlayerMaxHealth, PlayerHealthColor(), PlayerHealthLabel(), hpStyle);
             DrawBossHud(hpStyle, mutedStyle);
             var chipArea = width - 70f;
             var toolChipWidth = chipArea * 0.27f;
@@ -3193,7 +3195,11 @@ namespace FourfoldEchoes.Product
             }
 
             var hint = FourfoldInputPrompts.RegionControls(progressData);
-            if (AnyBossOpeningActive())
+            if (LowHealthActive())
+            {
+                hint = FourfoldInputPrompts.RegionLowHealth(progressData);
+            }
+            else if (AnyBossOpeningActive())
             {
                 hint = FourfoldInputPrompts.RegionBossOpeningActive(progressData);
             }
@@ -3219,6 +3225,50 @@ namespace FourfoldEchoes.Product
             }
 
             GUI.Label(BottomHintRect(Screen.width, Screen.height), hint, style);
+        }
+
+        private string PlayerHealthLabel()
+        {
+            var healthText = $"HP {Mathf.CeilToInt(playerHealth)} / {Mathf.CeilToInt(PlayerMaxHealth)}";
+            if (playerHealth <= 0f)
+            {
+                return healthText;
+            }
+
+            var health01 = playerHealth / PlayerMaxHealth;
+            if (health01 <= CriticalHealthThreshold01)
+            {
+                return healthText + FourfoldLanguage.T(progressData, "  DANGER", "  危険");
+            }
+
+            if (health01 <= LowHealthThreshold01)
+            {
+                return healthText + FourfoldLanguage.T(progressData, "  LOW", "  低下");
+            }
+
+            return healthText;
+        }
+
+        private Color PlayerHealthColor()
+        {
+            var health01 = playerHealth / PlayerMaxHealth;
+            if (health01 <= CriticalHealthThreshold01 && playerHealth > 0f)
+            {
+                var pulse = Mathf.PingPong(Time.unscaledTime * 3.4f, 1f);
+                return Color.Lerp(new Color(1.0f, 0.22f, 0.16f), new Color(1.0f, 0.68f, 0.22f), pulse);
+            }
+
+            if (health01 <= LowHealthThreshold01 && playerHealth > 0f)
+            {
+                return new Color(1.0f, 0.62f, 0.20f);
+            }
+
+            return new Color(0.35f, 0.92f, 0.52f);
+        }
+
+        private bool LowHealthActive()
+        {
+            return !runCleared && playerHealth > 0f && playerHealth / PlayerMaxHealth <= LowHealthThreshold01;
         }
 
         private void DrawCombatTexts(GUIStyle baseStyle)
