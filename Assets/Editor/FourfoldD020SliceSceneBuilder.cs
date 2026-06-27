@@ -78,6 +78,7 @@ namespace FourfoldEchoes.Editor
             RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
             RequireComponent<D020RelicReward>("D020 Relic Chest");
             RequireComponent<D020ProgressSave>("D020 Runtime Hook");
+            RequireComponent<D020HudController>("D020 HUD");
 
             if (Camera.main == null)
             {
@@ -349,6 +350,15 @@ namespace FourfoldEchoes.Editor
             progress.saveFileName = "d020-region01-progress.json";
             progress.loadOnAwake = true;
             progress.saveOnProgressChanged = true;
+
+            var hudObject = new GameObject("D020 HUD");
+            var hud = hudObject.AddComponent<D020HudController>();
+            hud.player = player.GetComponent<D020PlayerController>();
+            hud.tool = tool;
+            hud.node = node;
+            hud.reward = reward;
+            hud.progressSave = progress;
+            hud.RefreshNow();
         }
 
         private static GameObject CreateBlock(Transform parent, string name, Material material, Vector3 localPosition, Vector3 localScale)
