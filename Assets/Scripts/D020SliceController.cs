@@ -2751,7 +2751,8 @@ namespace FourfoldEchoes.Product
                 ? new Color(1.0f, 0.46f, 0.22f)
                 : new Color(0.34f, 0.90f, 0.52f);
             FourfoldRuntimeUi.DrawChip(new Rect(30f, 206f, width - 56f, 34f), RunRiskStateText(), riskColor, mutedStyle);
-            GUI.Label(new Rect(30f, 246f, width - 56f, 26f), $"{resultState}  {timeState}", mutedStyle);
+            DrawBuildSlots(new Rect(30f, 248f, width - 56f, 34f), mutedStyle);
+            GUI.Label(new Rect(30f, 288f, width - 56f, 26f), $"{resultState}  {timeState}", mutedStyle);
             DrawObjectiveMarker(style);
             DrawRewardNotice(style, mutedStyle);
             DrawCombatTexts(style);
@@ -2881,6 +2882,72 @@ namespace FourfoldEchoes.Product
             FourfoldRuntimeUi.DrawPanel(panelRect);
             GUI.Label(new Rect(panelRect.x + 22f, panelRect.y + 16f, panelWidth - 44f, 28f), rewardNoticeTitle, style);
             GUI.Label(new Rect(panelRect.x + 22f, panelRect.y + 50f, panelWidth - 44f, 42f), rewardNoticeBody, mutedStyle);
+        }
+
+        private void DrawBuildSlots(Rect rect, GUIStyle style)
+        {
+            var gap = 6f;
+            var slotWidth = (rect.width - gap) * 0.5f;
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x, rect.y, slotWidth, rect.height), BuildSlotText(true), BuildSlotColor(true), style);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + slotWidth + gap, rect.y, slotWidth, rect.height), BuildSlotText(false), BuildSlotColor(false), style);
+        }
+
+        private string BuildSlotText(bool edgeSlot)
+        {
+            if (edgeSlot)
+            {
+                if (firstRewardClaimedThisRun)
+                {
+                    return FourfoldLanguage.T(progressData, "BUILD SLOTS: Edge RUN +DMG", "ビルド枠: Edge 今回 +攻撃");
+                }
+
+                if (previousRewardLoaded && progressData != null && progressData.d020EdgeEquipped)
+                {
+                    return FourfoldLanguage.T(progressData, "BUILD SLOTS: Edge ON +DMG", "ビルド枠: Edge ON +攻撃");
+                }
+
+                if (previousRewardLoaded)
+                {
+                    return FourfoldLanguage.T(progressData, "BUILD SLOTS: Edge OFF", "ビルド枠: Edge OFF");
+                }
+
+                return FourfoldLanguage.T(progressData, "BUILD SLOTS: Edge locked", "ビルド枠: Edge 未取得");
+            }
+
+            if (secondRewardClaimedThisRun)
+            {
+                return FourfoldLanguage.T(progressData, "Ward RUN -DMG", "Ward 今回 -被弾");
+            }
+
+            if (previousSecondRewardLoaded && progressData != null && progressData.d020WardEquipped)
+            {
+                return LumenLinkActive()
+                    ? FourfoldLanguage.T(progressData, "Ward ON -DMG  LINK +HP", "Ward ON -被弾  LINK +回復")
+                    : FourfoldLanguage.T(progressData, "Ward ON -DMG", "Ward ON -被弾");
+            }
+
+            if (previousSecondRewardLoaded)
+            {
+                return FourfoldLanguage.T(progressData, "Ward OFF", "Ward OFF");
+            }
+
+            return FourfoldLanguage.T(progressData, "Ward locked", "Ward 未取得");
+        }
+
+        private Color BuildSlotColor(bool edgeSlot)
+        {
+            var active = edgeSlot ? LumenEdgeActive() : LumenWardActive();
+            if (LumenLinkActive())
+            {
+                return new Color(0.82f, 0.44f, 1.0f);
+            }
+
+            if (active)
+            {
+                return edgeSlot ? new Color(1.0f, 0.72f, 0.24f) : new Color(0.30f, 0.70f, 1.0f);
+            }
+
+            return new Color(0.45f, 0.50f, 0.58f);
         }
 
         private void DrawRunProgressRail(Rect rect, GUIStyle style)
@@ -3140,7 +3207,7 @@ namespace FourfoldEchoes.Product
 
         private static Rect PrimaryHudRect(int screenWidth)
         {
-            return new Rect(16f, 16f, Mathf.Min(600f, screenWidth - 32f), 282f);
+            return new Rect(16f, 16f, Mathf.Min(600f, screenWidth - 32f), 326f);
         }
 
         private static Rect BossHudRect(int screenWidth)
