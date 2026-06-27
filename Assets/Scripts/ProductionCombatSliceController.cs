@@ -59,6 +59,10 @@ namespace FourfoldEchoes.Product
 
         private const float PlayerMaxHealth = 100f;
         private const float AttackCooldownSeconds = 0.22f;
+        private const float DodgeDurationSeconds = 0.18f;
+        private const float DodgeCooldownSeconds = 0.55f;
+        private const float DodgeInvulnerableSeconds = 0.28f;
+        private const float DodgeSpeedMultiplier = 2.45f;
         private const float HostileAttackCooldownSeconds = 1.05f;
         private const float PlayerInvulnerableSeconds = 0.4f;
         private const float RoomMinX = -6.35f;
@@ -79,8 +83,11 @@ namespace FourfoldEchoes.Product
         private Quaternion gateRightClosedRotation;
         private Vector3 playerStartPosition;
         private Vector3 facing = Vector3.right;
+        private Vector3 dodgeDirection = Vector3.right;
         private float playerHealth = PlayerMaxHealth;
         private float attackCooldown;
+        private float dodgeTimer;
+        private float dodgeCooldown;
         private float playerInvulnerableTimer;
         private bool bossUnlocked;
         private bool gateOpen;
@@ -136,6 +143,8 @@ namespace FourfoldEchoes.Product
             }
 
             attackCooldown = Mathf.Max(0f, attackCooldown - dt);
+            dodgeTimer = Mathf.Max(0f, dodgeTimer - dt);
+            dodgeCooldown = Mathf.Max(0f, dodgeCooldown - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
 
             if (RetryPressed())
@@ -146,8 +155,14 @@ namespace FourfoldEchoes.Product
 
             if (playerHealth > 0f)
             {
-                MovePlayer(dt);
-                if (AttackPressed() && attackCooldown <= 0f)
+                var moveInput = ReadMoveInput();
+                if (DodgePressed() && dodgeCooldown <= 0f)
+                {
+                    StartDodge(moveInput);
+                }
+
+                MovePlayer(dt, moveInput);
+                if (dodgeTimer <= 0f && AttackPressed() && attackCooldown <= 0f)
                 {
                     ResolvePlayerAttack();
                 }
@@ -325,6 +340,9 @@ namespace FourfoldEchoes.Product
 
             playerHealth = PlayerMaxHealth;
             attackCooldown = 0f;
+            dodgeTimer = 0f;
+            dodgeCooldown = 0f;
+            dodgeDirection = Vector3.right;
             playerInvulnerableTimer = 0f;
             bossUnlocked = false;
             gateOpen = false;
@@ -352,19 +370,19 @@ namespace FourfoldEchoes.Product
             gateRightClosedRotation = gateRight != null ? gateRight.rotation : Quaternion.identity;
         }
 
-        private void MovePlayer(float dt)
+        private void MovePlayer(float dt, Vector3 moveInput)
         {
             if (player == null)
             {
                 return;
             }
 
-            var input = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
-            input = Vector3.ClampMagnitude(input, 1f);
+            var input = dodgeTimer > 0f ? dodgeDirection : moveInput;
             if (input.sqrMagnitude > 0.001f)
             {
                 facing = input.normalized;
-                player.position += input * moveSpeed * dt;
+                var speed = dodgeTimer > 0f ? moveSpeed * DodgeSpeedMultiplier : moveSpeed;
+                player.position += input * speed * dt;
                 player.rotation = Quaternion.Slerp(player.rotation, Quaternion.LookRotation(facing, Vector3.up), dt * 14f);
             }
 
@@ -372,6 +390,27 @@ namespace FourfoldEchoes.Product
                 Mathf.Clamp(player.position.x, RoomMinX, RoomMaxX),
                 player.position.y,
                 Mathf.Clamp(player.position.z, RoomMinZ, RoomMaxZ));
+        }
+
+        private void StartDodge(Vector3 moveInput)
+        {
+            var direction = moveInput.sqrMagnitude > 0.001f ? moveInput.normalized : facing;
+            if (direction.sqrMagnitude <= 0.001f)
+            {
+                direction = Vector3.right;
+            }
+
+            dodgeDirection = direction;
+            dodgeTimer = DodgeDurationSeconds;
+            dodgeCooldown = DodgeCooldownSeconds;
+            playerInvulnerableTimer = Mathf.Max(playerInvulnerableTimer, DodgeInvulnerableSeconds);
+            lastEvent = "Dodged";
+        }
+
+        private static Vector3 ReadMoveInput()
+        {
+            var input = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
+            return Vector3.ClampMagnitude(input, 1f);
         }
 
         private void ResolvePlayerAttack()
@@ -630,6 +669,11 @@ namespace FourfoldEchoes.Product
                 || Input.GetKeyDown(KeyCode.JoystickButton0);
         }
 
+        public static bool IsDodgeKey(KeyCode key)
+        {
+            return key == KeyCode.Space || key == KeyCode.JoystickButton1;
+        }
+
         public static bool IsRetryKey(KeyCode key)
         {
             return key == KeyCode.R || key == KeyCode.JoystickButton7;
@@ -651,6 +695,12 @@ namespace FourfoldEchoes.Product
             return Input.GetKeyDown(KeyCode.E)
                 || Input.GetMouseButtonDown(1)
                 || Input.GetKeyDown(KeyCode.JoystickButton3);
+        }
+
+        private static bool DodgePressed()
+        {
+            return Input.GetKeyDown(KeyCode.Space)
+                || Input.GetKeyDown(KeyCode.JoystickButton1);
         }
 
         private static void ApplyFirstRendererMaterial(Transform root, Material material)

@@ -215,13 +215,13 @@ namespace FourfoldEchoes.Product
             if (bossUnlocked)
             {
                 return bossHealth01 > 0.001f
-                    ? "South Button / J: Attack boss"
+                    ? "South Button / J: Attack boss | East Button / Space: Dodge"
                     : "Move through the open gate";
             }
 
             if (wardensHealth01 > 0.001f)
             {
-                return "South Button / J: Attack";
+                return "South Button / J: Attack | East Button / Space: Dodge";
             }
 
             if (!shortcutOpen)

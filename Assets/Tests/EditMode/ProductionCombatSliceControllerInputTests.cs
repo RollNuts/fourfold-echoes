@@ -16,6 +16,15 @@ namespace FourfoldEchoes.Tests.EditMode
         }
 
         [Test]
+        public void UI_ProductionCombatDodge_AcceptsKeyboardAndGamepadEastButton()
+        {
+            Assert.That(ProductionCombatSliceController.IsDodgeKey(KeyCode.Space), Is.True);
+            Assert.That(ProductionCombatSliceController.IsDodgeKey(KeyCode.JoystickButton1), Is.True);
+            Assert.That(ProductionCombatSliceController.IsDodgeKey(KeyCode.JoystickButton0), Is.False);
+            Assert.That(ProductionCombatSliceController.IsDodgeKey(KeyCode.R), Is.False);
+        }
+
+        [Test]
         public void UI_ProductionCombatClaimReward_AcceptsKeyboardAndGamepadNorthButton()
         {
             Assert.That(ProductionCombatSliceController.IsClaimRewardKey(KeyCode.E), Is.True);
