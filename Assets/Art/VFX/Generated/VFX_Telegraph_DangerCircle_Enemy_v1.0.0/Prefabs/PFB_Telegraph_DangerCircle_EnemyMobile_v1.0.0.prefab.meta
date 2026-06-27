@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 4129f97940aed489d8b3213a6c0f6d2d
+labels:
+- combat
+- enemy
+- mobile-fallback
+- telegraph
+- vfx
+PrefabImporter:
+  externalObjects: {}
+  userData:
+  assetBundleName:
+  assetBundleVariant:
