@@ -100,11 +100,13 @@ namespace FourfoldEchoes.Product
             GUI.DrawTexture(new Rect(0f, 0f, edge, Screen.height), warningTexture);
             GUI.DrawTexture(new Rect(Screen.width - edge, 0f, edge, Screen.height), warningTexture);
 
-            if (IsCriticalHealth(health))
+            var warningLabel = HealthWarningLabel(health);
+            if (!string.IsNullOrEmpty(warningLabel))
             {
-                GUI.color = new Color(1f, 1f, 1f, Mathf.Clamp01(alpha + 0.22f));
+                var labelAlpha = IsCriticalHealth(health) ? Mathf.Clamp01(alpha + 0.22f) : Mathf.Clamp01(alpha + 0.08f);
+                GUI.color = new Color(1f, 1f, 1f, labelAlpha);
                 var rect = new Rect(0f, Screen.height - 126f, Screen.width, 30f);
-                GUI.Label(rect, "Critical health", labelStyle);
+                GUI.Label(rect, warningLabel, labelStyle);
             }
 
             GUI.color = previousColor;
@@ -112,12 +114,22 @@ namespace FourfoldEchoes.Product
 
         public static bool IsWarningHealth(float health01)
         {
-            return health01 <= WarningThreshold;
+            return health01 > 0f && health01 <= WarningThreshold;
         }
 
         public static bool IsCriticalHealth(float health01)
         {
-            return health01 <= CriticalThreshold;
+            return health01 > 0f && health01 <= CriticalThreshold;
+        }
+
+        public static string HealthWarningLabel(float health01)
+        {
+            if (IsCriticalHealth(health01))
+            {
+                return "Critical health - dodge now";
+            }
+
+            return IsWarningHealth(health01) ? "Low health - create space" : string.Empty;
         }
 
         private void RefreshControllerIfNeeded()
