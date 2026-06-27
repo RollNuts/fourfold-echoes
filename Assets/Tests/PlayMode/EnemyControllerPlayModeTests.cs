@@ -189,6 +189,41 @@ namespace FourfoldEchoes.Tests
         }
 
         [UnityTest]
+        public IEnumerator EnemyController_UsesAssignedTelegraphMarkerPrefabDuringTell()
+        {
+            var definition = CreateDefinition("test_vfx");
+            definition.attackRange = 0.85f;
+            definition.attackRadius = 0.35f;
+            definition.telegraphTime = 0.12f;
+            definition.activeTime = 0.04f;
+            definition.recoveryTime = 0.08f;
+            definition.retreatAfterAttack = false;
+
+            var target = CreateTarget(new Vector3(0.65f, 0f, 0f), 100f);
+            var controller = CreateEnemy(Vector3.zero, definition, target.transform, CreateTelegraphPrefab());
+
+            controller.Tick(0.02f);
+            controller.Tick(0.02f);
+
+            Assert.AreEqual(EnemyState.Telegraph, controller.CurrentState);
+            var marker = controller.TelegraphGroundMarkerInstance;
+            Assert.IsNotNull(marker);
+            Assert.IsTrue(marker.activeSelf);
+            Assert.That(marker.GetComponentsInChildren<Renderer>().Length, Is.EqualTo(1));
+            Assert.That(marker.transform.localScale.x, Is.EqualTo(definition.attackRadius * 2f).Within(0.01f));
+
+            for (var index = 0; index < 12 && controller.CurrentState != EnemyState.Recover; index++)
+            {
+                controller.Tick(0.05f);
+            }
+
+            Assert.AreEqual(EnemyState.Recover, controller.CurrentState);
+            Assert.IsFalse(marker.activeSelf);
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator EnemyController_LineOfSightBlocksSearchThroughWall()
         {
             var definition = CreateDefinition("test_los");
@@ -242,7 +277,12 @@ namespace FourfoldEchoes.Tests
             yield return null;
         }
 
-        private EnemyController CreateEnemy(Vector3 position, EnemyDefinition definition, Transform target)
+        private EnemyController CreateEnemy(
+            Vector3 position,
+            EnemyDefinition definition,
+            Transform target,
+            GameObject telegraphPrefab = null,
+            float telegraphPrefabSourceDiameter = 1f)
         {
             var enemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             cleanup.Add(enemy);
@@ -251,6 +291,12 @@ namespace FourfoldEchoes.Tests
             enemy.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
 
             var controller = enemy.AddComponent<EnemyController>();
+            if (telegraphPrefab != null)
+            {
+                controller.telegraphGroundMarkerPrefab = telegraphPrefab;
+                controller.telegraphGroundMarkerPrefabSourceDiameter = telegraphPrefabSourceDiameter;
+            }
+
             controller.autoStart = false;
             controller.definition = definition;
             controller.ResetAi(target);
@@ -267,6 +313,15 @@ namespace FourfoldEchoes.Tests
             var damageable = target.AddComponent<Damageable>();
             damageable.ConfigureMaxHealth(health, true);
             return target;
+        }
+
+        private GameObject CreateTelegraphPrefab()
+        {
+            var prefab = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            cleanup.Add(prefab);
+            prefab.name = "AI Test Enemy Telegraph VFX Prefab";
+            prefab.SetActive(false);
+            return prefab;
         }
 
         private EnemyDefinition CreateDefinition(string id)

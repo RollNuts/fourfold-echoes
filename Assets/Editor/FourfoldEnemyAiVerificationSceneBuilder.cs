@@ -14,6 +14,8 @@ namespace FourfoldEchoes.Editor
         public const string ScenePath = "Assets/Scenes/AI_EnemyController_Verification.unity";
         private const string DefinitionFolder = "Assets/Generated/AI/Definitions";
         private const string MaterialFolder = "Assets/Generated/AI/Materials";
+        private const string TelegraphVfxPrefabPath = "Assets/Art/VFX/Generated/VFX_Telegraph_DangerCircle_Enemy_v1.0.0/Prefabs/PFB_Telegraph_DangerCircle_Enemy_v1.0.0.prefab";
+        private const float TelegraphVfxPrefabSourceDiameter = 3.55f;
         private const string RootName = "AI EnemyController Verification";
 
         [MenuItem("FOURFOLD/AI/Build EnemyController Verification Scene")]
@@ -27,6 +29,7 @@ namespace FourfoldEchoes.Editor
         public static void RunStateTransitionValidation()
         {
             RunValidationCase(ValidateCombatLoopAndDeath);
+            RunValidationCase(ValidateTelegraphVfxBinding);
             RunValidationCase(ValidateLeashReturn);
             RunValidationCase(ValidateLineOfSightWall);
             RunValidationCase(ValidateObstacleBlocking);
@@ -123,6 +126,14 @@ namespace FourfoldEchoes.Editor
                 RequireComponent<EnemySensor>(controller.gameObject);
                 RequireComponent<EnemyMotor>(controller.gameObject);
                 RequireComponent<EnemyAttackDriver>(controller.gameObject);
+                if (controller.telegraphGroundMarkerPrefab == null)
+                {
+                    throw new InvalidOperationException($"Enemy AI controller has no telegraph VFX prefab: {controller.name}");
+                }
+                if (controller.telegraphGroundMarkerPrefabSourceDiameter <= 0f)
+                {
+                    throw new InvalidOperationException($"Enemy AI controller has invalid telegraph VFX source diameter: {controller.name}");
+                }
                 RequireComponent<Damageable>(controller.gameObject);
             }
 
@@ -308,6 +319,19 @@ namespace FourfoldEchoes.Editor
             controller.definition = definition;
             controller.targetOverride = target;
             controller.autoStart = true;
+            controller.telegraphGroundMarkerPrefab = LoadTelegraphVfxPrefab();
+            controller.telegraphGroundMarkerPrefabSourceDiameter = TelegraphVfxPrefabSourceDiameter;
+        }
+
+        private static GameObject LoadTelegraphVfxPrefab()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(TelegraphVfxPrefabPath);
+            if (prefab == null)
+            {
+                throw new FileNotFoundException($"Enemy telegraph VFX prefab is missing: {TelegraphVfxPrefabPath}");
+            }
+
+            return prefab;
         }
 
         private static SceneMaterials CreateMaterials()
@@ -377,6 +401,38 @@ namespace FourfoldEchoes.Editor
 
             Expect(controller.CurrentState == EnemyState.Search, "enemy did not return to Search after leash break.");
             Expect(Vector3.Distance(controller.transform.position, controller.HomePosition) <= definition.stoppingDistance + 0.15f, "enemy did not return close enough to home.");
+        }
+
+        private static void ValidateTelegraphVfxBinding(List<UnityEngine.Object> cleanup)
+        {
+            var definition = CreateValidationDefinition("editor_telegraph_vfx", cleanup);
+            definition.attackRange = 0.85f;
+            definition.attackRadius = 0.35f;
+            definition.telegraphTime = 0.12f;
+            definition.activeTime = 0.04f;
+            definition.recoveryTime = 0.08f;
+            definition.retreatAfterAttack = false;
+
+            var target = CreateValidationTarget(new Vector3(0.65f, 0f, 0f), 100f, cleanup);
+            var controller = CreateValidationEnemy(Vector3.zero, definition, target.transform, cleanup, LoadTelegraphVfxPrefab());
+
+            TickValidation(controller, 0.02f);
+            TickValidation(controller, 0.02f);
+            Expect(controller.CurrentState == EnemyState.Telegraph, $"enemy did not enter Telegraph for VFX validation: {controller.CurrentState}");
+            var marker = controller.TelegraphGroundMarkerInstance;
+            Expect(marker != null, "enemy telegraph VFX marker did not instantiate.");
+            Expect(marker.activeSelf, "enemy telegraph VFX marker did not become visible during Telegraph.");
+            Expect(marker.GetComponentsInChildren<Renderer>().Length >= 2, "enemy telegraph VFX marker is not using the authored multi-layer prefab.");
+            var expectedScale = definition.attackRadius * 2f / TelegraphVfxPrefabSourceDiameter;
+            Expect(Mathf.Abs(marker.transform.localScale.x - expectedScale) <= 0.01f, $"enemy telegraph VFX marker scale was invalid: {marker.transform.localScale.x:0.000}");
+
+            for (var index = 0; index < 12 && controller.CurrentState != EnemyState.Recover; index++)
+            {
+                TickValidation(controller, 0.05f);
+            }
+
+            Expect(controller.CurrentState == EnemyState.Recover, $"enemy did not reach Recover for VFX hide validation: {controller.CurrentState}");
+            Expect(!marker.activeSelf, "enemy telegraph VFX stayed visible after the impact frame.");
         }
 
         private static void ValidateLineOfSightWall(List<UnityEngine.Object> cleanup)
@@ -464,7 +520,12 @@ namespace FourfoldEchoes.Editor
             return target;
         }
 
-        private static EnemyController CreateValidationEnemy(Vector3 position, EnemyDefinition definition, Transform target, List<UnityEngine.Object> cleanup)
+        private static EnemyController CreateValidationEnemy(
+            Vector3 position,
+            EnemyDefinition definition,
+            Transform target,
+            List<UnityEngine.Object> cleanup,
+            GameObject telegraphPrefab = null)
         {
             var enemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             cleanup.Add(enemy);
@@ -472,6 +533,11 @@ namespace FourfoldEchoes.Editor
             enemy.transform.position = position;
             enemy.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
             var controller = enemy.AddComponent<EnemyController>();
+            if (telegraphPrefab != null)
+            {
+                controller.telegraphGroundMarkerPrefab = telegraphPrefab;
+                controller.telegraphGroundMarkerPrefabSourceDiameter = TelegraphVfxPrefabSourceDiameter;
+            }
             controller.autoStart = false;
             controller.definition = definition;
             controller.ResetAi(target);
@@ -552,12 +618,15 @@ namespace FourfoldEchoes.Editor
             }
         }
 
-        private static void RequireComponent<T>(GameObject gameObject) where T : Component
+        private static T RequireComponent<T>(GameObject gameObject) where T : Component
         {
-            if (gameObject.GetComponent<T>() == null)
+            var component = gameObject.GetComponent<T>();
+            if (component == null)
             {
                 throw new InvalidOperationException($"Required component {typeof(T).Name} missing on {gameObject.name}");
             }
+
+            return component;
         }
 
         private sealed class SceneMaterials

@@ -24,6 +24,8 @@ namespace FourfoldEchoes.Product
         public GameObject telegraphGroundMarkerPrefab;
         public Color telegraphGroundMarkerColor = new Color(1f, 0.22f, 0.08f, 0.72f);
         public float telegraphGroundMarkerHeight = 0.035f;
+        [Min(0.05f)]
+        public float telegraphGroundMarkerPrefabSourceDiameter = 1f;
 
         [Header("Debug")]
         [SerializeField]
@@ -514,7 +516,15 @@ namespace FourfoldEchoes.Product
 
             telegraphGroundMarkerInstance.transform.position = markerPosition;
             telegraphGroundMarkerInstance.transform.rotation = Quaternion.identity;
-            telegraphGroundMarkerInstance.transform.localScale = new Vector3(markerDiameter, 0.02f, markerDiameter);
+            if (telegraphGroundMarkerPrefab != null)
+            {
+                var prefabScale = markerDiameter / Mathf.Max(0.05f, telegraphGroundMarkerPrefabSourceDiameter);
+                telegraphGroundMarkerInstance.transform.localScale = Vector3.one * prefabScale;
+            }
+            else
+            {
+                telegraphGroundMarkerInstance.transform.localScale = new Vector3(markerDiameter, 0.02f, markerDiameter);
+            }
             ApplyTelegraphGroundMarkerColor();
         }
 
