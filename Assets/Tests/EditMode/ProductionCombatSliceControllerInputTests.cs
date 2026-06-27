@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using FourfoldEchoes.Product;
 using NUnit.Framework;
 using UnityEngine;
@@ -31,6 +33,76 @@ namespace FourfoldEchoes.Tests.EditMode
             Assert.That(ProductionCombatSliceController.IsClaimRewardKey(KeyCode.JoystickButton3), Is.True);
             Assert.That(ProductionCombatSliceController.IsClaimRewardKey(KeyCode.JoystickButton0), Is.False);
             Assert.That(ProductionCombatSliceController.IsClaimRewardKey(KeyCode.R), Is.False);
+        }
+
+        [Test]
+        public void UI_ProductionCombatTitleFlow_ContinueIsSafeWhenSaveIsMissing()
+        {
+            var tempDirectory = CreateTempDirectory();
+            var savePath = Path.Combine(tempDirectory, LocalSaveService.DefaultFileName);
+            var controllerObject = new GameObject("Title Flow Controller");
+            ProductionCombatSliceController.SaveServiceFactory = () => new LocalSaveService(savePath);
+
+            try
+            {
+                var controller = controllerObject.AddComponent<ProductionCombatSliceController>();
+
+                Assert.That(controller.HasContinueSave(), Is.False);
+
+                controller.ContinueRun();
+
+                Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Title));
+                Assert.That(controller.LastEvent, Is.EqualTo("No local save found"));
+            }
+            finally
+            {
+                ProductionCombatSliceController.SaveServiceFactory = LocalSaveService.CreateDefault;
+                UnityEngine.Object.DestroyImmediate(controllerObject);
+                Directory.Delete(tempDirectory, true);
+            }
+        }
+
+        [Test]
+        public void UI_ProductionCombatTitleFlow_NewGameClearsPriorSliceProgress()
+        {
+            var tempDirectory = CreateTempDirectory();
+            var savePath = Path.Combine(tempDirectory, LocalSaveService.DefaultFileName);
+            var service = new LocalSaveService(savePath);
+            var oldData = FourfoldSaveData.CreateNewGame();
+            ProductionCombatSliceProgress.Write(oldData, new ProductionCombatSliceProgressSnapshot(true, true, true));
+            service.Save(oldData);
+
+            var controllerObject = new GameObject("New Game Controller");
+            ProductionCombatSliceController.SaveServiceFactory = () => new LocalSaveService(savePath);
+
+            try
+            {
+                var controller = controllerObject.AddComponent<ProductionCombatSliceController>();
+
+                Assert.That(controller.HasContinueSave(), Is.True);
+
+                controller.StartNewGame();
+
+                Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Playing));
+                Assert.That(service.TryLoad(out var newData), Is.True);
+                var snapshot = ProductionCombatSliceProgress.Read(newData);
+                Assert.That(snapshot.ShortcutOpen, Is.False);
+                Assert.That(snapshot.BossDefeated, Is.False);
+                Assert.That(snapshot.RewardClaimed, Is.False);
+            }
+            finally
+            {
+                ProductionCombatSliceController.SaveServiceFactory = LocalSaveService.CreateDefault;
+                UnityEngine.Object.DestroyImmediate(controllerObject);
+                Directory.Delete(tempDirectory, true);
+            }
+        }
+
+        private static string CreateTempDirectory()
+        {
+            var tempDirectory = Path.Combine(Path.GetTempPath(), "fourfold-title-flow-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(tempDirectory);
+            return tempDirectory;
         }
     }
 }

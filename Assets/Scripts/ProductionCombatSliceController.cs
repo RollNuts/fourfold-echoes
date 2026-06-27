@@ -187,6 +187,43 @@ namespace FourfoldEchoes.Product
             SetRunState(rewardClaimed ? ProductionCombatRunState.Completed : ProductionCombatRunState.Playing);
         }
 
+        public void StartNewGame()
+        {
+            ResetSliceCore();
+            var saved = true;
+            if (useLocalSave)
+            {
+                saved = SaveNewGameProgress();
+            }
+
+            SetRunState(ProductionCombatRunState.Playing);
+            if (saved)
+            {
+                lastEvent = "New game started";
+            }
+        }
+
+        public void ContinueRun()
+        {
+            if (!HasContinueSave())
+            {
+                lastEvent = "No local save found";
+                saveStatus = useLocalSave ? LocalSaveReadyStatus : AutosaveOffStatus;
+                SetRunState(ProductionCombatRunState.Title);
+                return;
+            }
+
+            ResetSliceCore();
+            LoadProgressIfEnabled();
+            SetRunState(rewardClaimed ? ProductionCombatRunState.Completed : ProductionCombatRunState.Playing);
+            lastEvent = rewardClaimed ? "Continue loaded - reward claimed" : "Continue loaded";
+        }
+
+        public bool HasContinueSave()
+        {
+            return useLocalSave && GetSaveService().TryLoad(out _);
+        }
+
         public void RetryRun()
         {
             ResetSliceCore();
@@ -753,6 +790,37 @@ namespace FourfoldEchoes.Product
 
             lastSavedProgress = snapshot;
             saveStatus = ProgressSavedStatus;
+        }
+
+        private bool SaveNewGameProgress()
+        {
+            try
+            {
+                var data = FourfoldSaveData.CreateNewGame();
+                ProductionCombatSliceProgress.Write(data, CaptureProgressSnapshot());
+                GetSaveService().Save(data);
+                lastSavedProgress = CaptureProgressSnapshot();
+                saveStatus = ProgressSavedStatus;
+                return true;
+            }
+            catch (IOException)
+            {
+                lastEvent = "Save failed - new game kept in memory";
+                saveStatus = SaveFailedStatus;
+                return false;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                lastEvent = "Save failed - new game kept in memory";
+                saveStatus = SaveFailedStatus;
+                return false;
+            }
+            catch (ArgumentException)
+            {
+                lastEvent = "Save failed - new game kept in memory";
+                saveStatus = SaveFailedStatus;
+                return false;
+            }
         }
 
         private bool TrySaveProgress(ProductionCombatSliceProgressSnapshot snapshot)

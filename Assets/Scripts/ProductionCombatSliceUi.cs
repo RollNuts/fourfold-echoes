@@ -50,6 +50,7 @@ namespace FourfoldEchoes.Product
         private Label statusLabel;
         private Label toolLabel;
         private Label saveLabel;
+        private Button titleContinueButton;
         private readonly List<Button> titleButtons = new List<Button>();
         private readonly List<Button> pauseButtons = new List<Button>();
         private readonly List<Button> retryButtons = new List<Button>();
@@ -197,7 +198,8 @@ namespace FourfoldEchoes.Product
             panel.Add(MakeBodyLabel("Production Combat Slice"));
             panel.Add(MakeBodyLabel("Clear two wardens, open the shortcut with the Echo Tool, break the boss gate, and claim the reward."));
             panel.Add(MakeBodyLabel("Controller: Left Stick, South Button, East Button, North Button, Menu. Keyboard: WASD, J / Mouse, Space, E / Right Mouse, Esc or P."));
-            AddButton(panel, titleButtons, "Start Game", () => controller?.BeginRun());
+            AddButton(panel, titleButtons, "New Game", () => controller?.StartNewGame());
+            titleContinueButton = AddButton(panel, titleButtons, "Continue", () => controller?.ContinueRun());
             AddButton(panel, titleButtons, "Quit", Application.Quit);
             WireButtons(titleButtons);
             overlay.Add(panel);
@@ -321,7 +323,7 @@ namespace FourfoldEchoes.Product
             return fill;
         }
 
-        private void AddButton(VisualElement parent, List<Button> targetList, string text, Action clicked)
+        private Button AddButton(VisualElement parent, List<Button> targetList, string text, Action clicked)
         {
             var button = new Button(clicked) { text = text };
             button.focusable = true;
@@ -336,6 +338,7 @@ namespace FourfoldEchoes.Product
             parent.Add(button);
             targetList.Add(button);
             buttonActions[button] = clicked;
+            return button;
         }
 
         private void WireButtons(List<Button> buttons)
@@ -424,6 +427,13 @@ namespace FourfoldEchoes.Product
                 saveLabel.style.color = controller.SaveStatus.StartsWith("Save failed", StringComparison.Ordinal)
                     ? WarningColor
                     : MutedTextColor;
+            }
+
+            if (titleContinueButton != null && controller.State == ProductionCombatRunState.Title)
+            {
+                var hasContinue = controller.HasContinueSave();
+                titleContinueButton.text = hasContinue ? "Continue" : "Continue (No Save)";
+                titleContinueButton.style.color = hasContinue ? TextColor : MutedTextColor;
             }
         }
 
