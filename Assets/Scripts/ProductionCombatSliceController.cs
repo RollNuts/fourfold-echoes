@@ -71,6 +71,8 @@ namespace FourfoldEchoes.Product
         private const string ProgressRestoredStatus = "Progress restored";
         private const string ProgressSavedStatus = "Progress saved";
         private const string SaveFailedStatus = "Save failed - progress kept";
+        private const string SavedProgressRestoredEvent = "Saved progress restored";
+        private const string SavedRewardRestoredEvent = "Saved reward restored";
 
         private float[] health;
         private float[] strikeCooldowns;
@@ -228,9 +230,18 @@ namespace FourfoldEchoes.Product
 
         public void ApplySavedProgress(FourfoldSaveData data)
         {
-            ApplyProgressSnapshot(ProductionCombatSliceProgress.Read(data));
+            var snapshot = ProductionCombatSliceProgress.Read(data);
+            ApplyProgressSnapshot(snapshot);
             lastSavedProgress = CaptureProgressSnapshot();
-            saveStatus = HasAnyProgress(lastSavedProgress) ? ProgressRestoredStatus : LocalSaveReadyStatus;
+            if (HasAnyProgress(lastSavedProgress))
+            {
+                saveStatus = ProgressRestoredStatus;
+                lastEvent = lastSavedProgress.RewardClaimed ? SavedRewardRestoredEvent : SavedProgressRestoredEvent;
+            }
+            else
+            {
+                saveStatus = LocalSaveReadyStatus;
+            }
         }
 
         public void WriteSavedProgress(FourfoldSaveData data)
@@ -557,7 +568,7 @@ namespace FourfoldEchoes.Product
             }
 
             var distance = Vector3.Distance(player.position, rewardChest.transform.position);
-            if (distance <= 1.65f && (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1)))
+            if (distance <= 1.65f && InteractPressed())
             {
                 ClaimReward();
             }
@@ -652,6 +663,13 @@ namespace FourfoldEchoes.Product
             return Input.GetKeyDown(KeyCode.J)
                 || Input.GetMouseButtonDown(0)
                 || Input.GetKeyDown(KeyCode.JoystickButton0);
+        }
+
+        private static bool InteractPressed()
+        {
+            return Input.GetKeyDown(KeyCode.E)
+                || Input.GetMouseButtonDown(1)
+                || Input.GetKeyDown(KeyCode.JoystickButton3);
         }
 
         private static void ApplyFirstRendererMaterial(Transform root, Material material)

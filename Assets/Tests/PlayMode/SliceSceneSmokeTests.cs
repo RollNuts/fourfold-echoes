@@ -119,6 +119,7 @@ namespace FourfoldEchoes.Tests.PlayMode
 
             Assert.That(controller.SaveStatus, Is.EqualTo("Progress restored"));
             Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Completed));
+            Assert.That(controller.LastEvent, Is.EqualTo("Saved reward restored"));
             Assert.That(controller.ShortcutOpen, Is.True);
             Assert.That(controller.BossUnlocked, Is.True);
             Assert.That(controller.GateOpen, Is.True);
@@ -212,6 +213,7 @@ namespace FourfoldEchoes.Tests.PlayMode
 
             Assert.That(restoredController.State, Is.EqualTo(ProductionCombatRunState.Completed));
             Assert.That(restoredController.SaveStatus, Is.EqualTo("Progress restored"));
+            Assert.That(restoredController.LastEvent, Is.EqualTo("Saved reward restored"));
             Assert.That(restoredController.ShortcutOpen, Is.True);
             Assert.That(restoredController.BossUnlocked, Is.True);
             Assert.That(restoredController.GateOpen, Is.True);
@@ -261,6 +263,7 @@ namespace FourfoldEchoes.Tests.PlayMode
 
             Assert.That(restoredController.State, Is.EqualTo(ProductionCombatRunState.Completed));
             Assert.That(restoredController.SaveStatus, Is.EqualTo("Progress restored"));
+            Assert.That(restoredController.LastEvent, Is.EqualTo("Saved reward restored"));
             Assert.That(restoredController.ShortcutOpen, Is.True);
             Assert.That(restoredController.BossUnlocked, Is.True);
             Assert.That(restoredController.GateOpen, Is.True);

@@ -24,16 +24,15 @@ FourfoldEchoes.Editor.Mediator.FourfoldForgeMediator.Run
 Current playable build entry:
 
 ```text
-tools/unity_build_gate_a.sh
-  -> FourfoldEchoes.Editor.FourfoldUnityBuild.BuildGateA
-  -> FourfoldUnitySpikeBuilder.BuildAndValidate
-  -> Build/GateA/
+FourfoldEchoes.Editor.FourfoldUnityBuild.BuildProductionCombatSlice
+  -> FourfoldProductionCombatSliceSceneBuilder.ValidateGeneratedScene
+  -> Build/ProductionCombatSlice/
 ```
 
 The historical Gate A wrapper still supports macOS and Windows when the
 matching Unity standalone module is available. Current commercial slice build
-automation should prefer Windows because Steam Windows is the first shipping
-target.
+automation should use `BuildProductionCombatSlice` and prefer Windows because
+Steam Windows is the first shipping target.
 
 ## Acceleration Layer
 

@@ -10,10 +10,13 @@ namespace FourfoldEchoes.Editor
     {
         private const string GateAScenePath = "Assets/Scenes/AshenThresholdSpike.unity";
         private const string D020SliceScenePath = FourfoldD020SliceSceneBuilder.ScenePath;
+        private const string ProductionCombatSliceScenePath = FourfoldProductionCombatSliceSceneBuilder.ScenePath;
         private const string DefaultBuildRoot = "Build/GateA";
         private const string DefaultD020SliceBuildRoot = "Build/D020Slice";
+        private const string DefaultProductionCombatSliceBuildRoot = "Build/ProductionCombatSlice";
         private const string ProductName = "FourfoldEchoesGateA";
         private const string D020SliceProductName = "FourfoldEchoesD020Slice";
+        private const string ProductionCombatSliceProductName = "FourfoldEchoesProductionCombatSlice";
         private const string CompanyName = "RollNuts";
 
         public static void BuildCurrentD020Slice()
@@ -30,6 +33,22 @@ namespace FourfoldEchoes.Editor
 
             FourfoldD020SliceSceneBuilder.BuildAndValidate();
             BuildScene(target, artifactPath, D020SliceScenePath, D020SliceProductName, "D-020 vertical slice");
+        }
+
+        public static void BuildProductionCombatSlice()
+        {
+            var target = GetRequestedTarget("windows");
+            var buildRoot = GetRequestedBuildRoot(DefaultProductionCombatSliceBuildRoot);
+            var artifactPath = GetArtifactPath(buildRoot, target, ProductionCombatSliceProductName);
+
+            if (!BuildPipeline.IsBuildTargetSupported(BuildTargetGroup.Standalone, target))
+            {
+                throw new InvalidOperationException(
+                    $"Unity standalone build target is not installed or supported in this editor: {target}");
+            }
+
+            FourfoldProductionCombatSliceSceneBuilder.ValidateGeneratedScene();
+            BuildScene(target, artifactPath, ProductionCombatSliceScenePath, ProductionCombatSliceProductName, "production combat slice");
         }
 
         public static void BuildGateA()
