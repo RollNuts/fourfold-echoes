@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -92,6 +93,8 @@ namespace FourfoldEchoes.Product
         private const float BossToolOpeningDuration = 2.4f;
         private const float BossToolOpeningRange = 3.5f;
         private const float BossToolOpeningDamageBonus = 18f;
+        private const float CombatTextDuration = 0.90f;
+        private const int MaxCombatTexts = 10;
         private const string SaveKeyCleared = "fourfold.d020.slice.cleared";
         private const string SaveKeyShortcutOpened = "fourfold.d020.slice.shortcut_opened";
         private const string SaveKeyRewardClaimed = "fourfold.d020.slice.reward_claimed";
@@ -189,6 +192,15 @@ namespace FourfoldEchoes.Product
         private int selectedFailureIndex;
         private int selectedSettingIndex;
         private float axisRepeatTimer;
+        private readonly List<CombatText> combatTexts = new List<CombatText>(MaxCombatTexts);
+
+        private struct CombatText
+        {
+            public Vector3 worldPosition;
+            public string text;
+            public Color color;
+            public float timer;
+        }
 
         public static bool LayoutFitsResolution(int screenWidth, int screenHeight, bool pauseOpen, out string reason)
         {
@@ -389,6 +401,7 @@ namespace FourfoldEchoes.Product
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
             rewardNoticeTimer = Mathf.Max(0f, rewardNoticeTimer - dt);
             bossDefeatTimer = Mathf.Max(0f, bossDefeatTimer - dt);
+            UpdateCombatTexts(dt);
             UpdateBossOpenings(dt);
             if (!runFailed && !returnedToHubThisRun)
             {
@@ -504,12 +517,15 @@ namespace FourfoldEchoes.Product
                 }
 
                 hitAny = true;
-                enemyHealth[i] -= CurrentAttackDamage(i);
+                var damage = CurrentAttackDamage(i);
+                enemyHealth[i] -= damage;
+                AddCombatText(enemy.position, $"-{Mathf.CeilToInt(damage)}", BossOpeningActive(i) ? new Color(1.0f, 0.72f, 0.24f) : new Color(1.0f, 0.94f, 0.62f));
                 enemy.position = ResolveBlockedMove(enemy.position, enemy.position + toEnemy.normalized * (IsBossEnemy(i) ? 0.16f : 0.34f));
                 enemy.localScale = EnemyHitScale(i, enemyHealth[i] <= 0f);
                 TryTriggerBossEnrage(i, enemy);
                 if (enemyHealth[i] <= 0f)
                 {
+                    AddCombatText(enemy.position, FourfoldLanguage.T(progressData, "DOWN", "撃破"), new Color(0.82f, 0.32f, 1.0f));
                     if (IsBossEnemy(i))
                     {
                         RegisterBossDefeat();
@@ -627,7 +643,9 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            playerHealth = Mathf.Max(0f, playerHealth - EnemyDamageFor(index));
+            var damage = EnemyDamageFor(index);
+            playerHealth = Mathf.Max(0f, playerHealth - damage);
+            AddCombatText(player.position, $"-{Mathf.CeilToInt(damage)}", new Color(1.0f, 0.28f, 0.18f));
             playerInvulnerableTimer = InvulnerableAfterHit;
             var knockback = (player.position - enemy.position);
             knockback.y = 0f;
@@ -1637,6 +1655,7 @@ namespace FourfoldEchoes.Product
             enemyWindupTimer[index] = 0f;
             enemyAttackTimer[index] = Mathf.Max(enemyAttackTimer[index], BossToolOpeningDuration * 0.45f);
             enemies[index].localScale = EnemyHitScale(index, false);
+            AddCombatText(enemies[index].position, FourfoldLanguage.T(progressData, "OPEN", "隙あり"), new Color(1.0f, 0.72f, 0.24f));
             ShowRewardNotice(
                 FourfoldLanguage.T(progressData, "BOSS OPENING", "ボスに隙"),
                 FourfoldLanguage.T(progressData, "Tool pulse exposed the boss. Attack now for bonus damage.", "ツールでボスに隙を作った。今は攻撃ダメージが上がる。"));
@@ -1777,7 +1796,13 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            var before = playerHealth;
             playerHealth = Mathf.Min(PlayerMaxHealth, playerHealth + recovery);
+            var recovered = playerHealth - before;
+            if (recovered > 0f)
+            {
+                AddCombatText(player.position, $"+{Mathf.CeilToInt(recovered)}", new Color(0.35f, 0.92f, 0.52f));
+            }
         }
 
         private void ShowRewardNotice(string title, string body)
@@ -1785,6 +1810,48 @@ namespace FourfoldEchoes.Product
             rewardNoticeTitle = title;
             rewardNoticeBody = body;
             rewardNoticeTimer = RewardNoticeDuration;
+        }
+
+        private void AddCombatText(Vector3 worldPosition, string text, Color color)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            if (combatTexts.Count >= MaxCombatTexts)
+            {
+                combatTexts.RemoveAt(0);
+            }
+
+            combatTexts.Add(new CombatText
+            {
+                worldPosition = worldPosition + Vector3.up * 0.55f,
+                text = text,
+                color = color,
+                timer = CombatTextDuration
+            });
+        }
+
+        private int CombatTextCount()
+        {
+            return combatTexts.Count;
+        }
+
+        private void UpdateCombatTexts(float deltaTime)
+        {
+            for (var i = combatTexts.Count - 1; i >= 0; i--)
+            {
+                var entry = combatTexts[i];
+                entry.timer -= deltaTime;
+                if (entry.timer <= 0f)
+                {
+                    combatTexts.RemoveAt(i);
+                    continue;
+                }
+
+                combatTexts[i] = entry;
+            }
         }
 
         private bool AnyRelicActive()
@@ -2569,6 +2636,7 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(30f, 246f, width - 56f, 26f), $"{resultState}  {timeState}", mutedStyle);
             DrawObjectiveMarker(style);
             DrawRewardNotice(style, mutedStyle);
+            DrawCombatTexts(style);
             if (progressData == null || progressData.showControlHints)
             {
                 DrawControlHint(style);
@@ -2857,6 +2925,42 @@ namespace FourfoldEchoes.Product
             }
 
             GUI.Label(BottomHintRect(Screen.width, Screen.height), hint, style);
+        }
+
+        private void DrawCombatTexts(GUIStyle baseStyle)
+        {
+            if (combatTexts.Count == 0)
+            {
+                return;
+            }
+
+            var camera = fixedCamera != null ? fixedCamera : Camera.main;
+            if (camera == null)
+            {
+                return;
+            }
+
+            var style = new GUIStyle(baseStyle)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold
+            };
+
+            for (var i = 0; i < combatTexts.Count; i++)
+            {
+                var entry = combatTexts[i];
+                var age01 = Mathf.Clamp01(1f - entry.timer / CombatTextDuration);
+                var screen = camera.WorldToScreenPoint(entry.worldPosition + Vector3.up * (age01 * 0.55f));
+                if (screen.z <= 0f)
+                {
+                    continue;
+                }
+
+                var color = entry.color;
+                color.a = Mathf.Clamp01(entry.timer / CombatTextDuration);
+                style.normal.textColor = color;
+                GUI.Label(new Rect(screen.x - 70f, Screen.height - screen.y - 14f, 140f, 28f), entry.text, style);
+            }
         }
 
         private void DrawObjectiveMarker(GUIStyle style)

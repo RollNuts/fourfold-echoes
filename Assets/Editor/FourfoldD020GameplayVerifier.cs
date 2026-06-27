@@ -693,6 +693,7 @@ namespace FourfoldEchoes.Editor
             {
                 openingTimers[bossIndex] = 0f;
                 var baseAttack = InvokePrivateFloat(controller, "CurrentAttackDamage", bossIndex);
+                var baseCombatTextCount = InvokePrivateInt(controller, "CombatTextCount");
                 tool.player.position = boss.position - Vector3.right * 1.2f;
                 tool.inputEnabled = true;
                 tool.cooldownSeconds = 0f;
@@ -710,6 +711,11 @@ namespace FourfoldEchoes.Editor
                 if (!InvokePrivateBool(controller, "AnyBossOpeningActive"))
                 {
                     throw new InvalidOperationException("D-020 combat verifier failed: boss opening HUD state did not become active after tool use.");
+                }
+
+                if (InvokePrivateInt(controller, "CombatTextCount") <= baseCombatTextCount)
+                {
+                    throw new InvalidOperationException("D-020 combat verifier failed: boss opening did not create readable combat feedback text.");
                 }
 
                 var openingAttack = InvokePrivateFloat(controller, "CurrentAttackDamage", bossIndex);
@@ -754,6 +760,7 @@ namespace FourfoldEchoes.Editor
             }
 
             var guard = 0;
+            var baseCombatTextCount = InvokePrivateInt(controller, "CombatTextCount");
             while (GetPrivate<float[]>(controller, "enemyHealth")[enemyIndex] > 0f && guard++ < 24)
             {
                 var attackDirection = Vector3.right;
@@ -766,6 +773,12 @@ namespace FourfoldEchoes.Editor
             if (GetPrivate<float[]>(controller, "enemyHealth")[enemyIndex] > 0f || enemy.gameObject.activeSelf)
             {
                 throw new InvalidOperationException($"D-020 combat verifier failed: basic attacks did not defeat {enemy.name}.");
+            }
+
+            var combatTextCount = InvokePrivateInt(controller, "CombatTextCount");
+            if (combatTextCount <= 0 || (baseCombatTextCount < 10 && combatTextCount <= baseCombatTextCount))
+            {
+                throw new InvalidOperationException($"D-020 combat verifier failed: defeating {enemy.name} did not create readable hit feedback text.");
             }
         }
 
@@ -868,6 +881,24 @@ namespace FourfoldEchoes.Editor
             try
             {
                 return (float)method.Invoke(target, Array.Empty<object>());
+            }
+            catch (TargetInvocationException exception) when (exception.InnerException != null)
+            {
+                throw new InvalidOperationException($"D-020 verifier failed inside {methodName}: {exception.InnerException.Message}", exception.InnerException);
+            }
+        }
+
+        private static int InvokePrivateInt(object target, string methodName)
+        {
+            var method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+            if (method == null || method.ReturnType != typeof(int))
+            {
+                throw new InvalidOperationException($"D-020 verifier failed: missing private int method {methodName} on {target.GetType().Name}.");
+            }
+
+            try
+            {
+                return (int)method.Invoke(target, Array.Empty<object>());
             }
             catch (TargetInvocationException exception) when (exception.InnerException != null)
             {
