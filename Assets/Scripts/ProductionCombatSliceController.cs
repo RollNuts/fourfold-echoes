@@ -533,7 +533,7 @@ namespace FourfoldEchoes.Product
             }
 
             var distance = Vector3.Distance(player.position, rewardChest.transform.position);
-            if (distance <= 1.65f && (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1)))
+            if (distance <= 1.65f && ClaimRewardPressed())
             {
                 ClaimReward();
             }
@@ -635,10 +635,22 @@ namespace FourfoldEchoes.Product
             return key == KeyCode.R || key == KeyCode.JoystickButton7;
         }
 
+        public static bool IsClaimRewardKey(KeyCode key)
+        {
+            return key == KeyCode.E || key == KeyCode.JoystickButton3;
+        }
+
         public static bool RetryPressed()
         {
             return Input.GetKeyDown(KeyCode.R)
                 || Input.GetKeyDown(KeyCode.JoystickButton7);
+        }
+
+        private static bool ClaimRewardPressed()
+        {
+            return Input.GetKeyDown(KeyCode.E)
+                || Input.GetMouseButtonDown(1)
+                || Input.GetKeyDown(KeyCode.JoystickButton3);
         }
 
         private static void ApplyFirstRendererMaterial(Transform root, Material material)

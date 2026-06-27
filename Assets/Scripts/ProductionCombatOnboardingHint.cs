@@ -8,7 +8,7 @@ namespace FourfoldEchoes.Product
         private const string TargetSceneName = "ProductionCombatSlice";
         private const float FullOpacitySeconds = 6.5f;
         private const float FadeSeconds = 1.5f;
-        private const int PanelHeight = 112;
+        private const int PanelHeight = 124;
         private const int PanelMargin = 18;
 
         private static ProductionCombatOnboardingHint instance;
@@ -99,9 +99,9 @@ namespace FourfoldEchoes.Product
             GUI.Box(rect, GUIContent.none, panelStyle);
             GUI.Label(new Rect(rect.x + 16f, rect.y + 12f, rect.width - 32f, 22f), "Controls", titleStyle);
             GUI.Label(
-                new Rect(rect.x + 16f, rect.y + 38f, rect.width - 32f, 64f),
+                new Rect(rect.x + 16f, rect.y + 38f, rect.width - 32f, 76f),
                 "Move: Left Stick / WASD    Attack: South Button / J / Mouse\n"
-                + "Echo Tool / Claim: E / Right Mouse    Pause: Menu / Esc / P\n"
+                + "Echo Tool / Claim: North Button / E / Right Mouse    Pause: Menu / Esc / P\n"
                 + "Retry after defeat: Menu / R",
                 bodyStyle);
 

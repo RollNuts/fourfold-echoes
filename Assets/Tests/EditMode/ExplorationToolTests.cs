@@ -81,6 +81,15 @@ namespace FourfoldEchoes.Tests.EditMode
             Assert.That(node.IsSolved, Is.False);
         }
 
+        [Test]
+        public void CORE_EXPLORATION_TOOL_Input_AcceptsConfiguredKeyAndGamepadNorthButton()
+        {
+            Assert.That(ExplorationTool.IsUseKey(KeyCode.E, KeyCode.E), Is.True);
+            Assert.That(ExplorationTool.IsUseKey(KeyCode.E, KeyCode.JoystickButton3), Is.True);
+            Assert.That(ExplorationTool.IsUseKey(KeyCode.K, KeyCode.K), Is.True);
+            Assert.That(ExplorationTool.IsUseKey(KeyCode.E, KeyCode.JoystickButton0), Is.False);
+        }
+
         private ExplorationNode CreateNode(string name, Vector3 position)
         {
             var nodeObject = CreateObject(name);

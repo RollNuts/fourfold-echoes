@@ -63,10 +63,22 @@ namespace FourfoldEchoes.Product
                 pulseRead.SetActive(false);
             }
 
-            if (Input.GetKeyDown(useKey))
+            if (UsePressed(useKey))
             {
                 TryUse();
             }
+        }
+
+        public static bool IsUseKey(KeyCode configuredKey, KeyCode key)
+        {
+            return key == configuredKey || key == KeyCode.JoystickButton3;
+        }
+
+        private static bool UsePressed(KeyCode configuredKey)
+        {
+            return Input.GetKeyDown(configuredKey)
+                || Input.GetMouseButtonDown(1)
+                || Input.GetKeyDown(KeyCode.JoystickButton3);
         }
 
         public bool TryUse()
