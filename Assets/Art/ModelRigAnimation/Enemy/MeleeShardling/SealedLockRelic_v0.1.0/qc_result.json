@@ -1,0 +1,109 @@
+{
+  "generated_at": "2026-06-27T07:25:00Z",
+  "status": "unity_import_pass_art_approval_pending",
+  "missing_files": [],
+  "triangle_count_lod0": 538,
+  "triangle_budget_lod0": 6000,
+  "triangle_budget_status": "pass",
+  "material_count": 4,
+  "material_budget": 4,
+  "material_budget_status": "pass",
+  "root_motion": "Off. ROOT stays at world origin with no translation keys; gameplay movement is controller-driven in Unity. Locomotion clips are in-place compression/rocking cycles for a mechanical crawling relic.",
+  "root_origin_locked": "pass",
+  "unity_origin_drift": "pass",
+  "preview_turntable_frames": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Previews/preview_frames",
+  "preview_gif_status": "pass",
+  "loop_seam_zero_by_construction": [
+    "Idle",
+    "Walk",
+    "Run",
+    "AttackLoop",
+    "ChannelLoop"
+  ],
+  "foot_sliding": "not_applicable_no_feet_mechanical_base_contact_used",
+  "start_end_pose_consistency": {
+    "Idle": {
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "status": "pass"
+    },
+    "Walk": {
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "status": "pass"
+    },
+    "Run": {
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "status": "pass"
+    },
+    "AttackStart": {
+      "start_pose": "neutral",
+      "end_pose": "attack_extended",
+      "status": "pass"
+    },
+    "AttackLoop": {
+      "start_pose": "attack_extended",
+      "end_pose": "attack_extended",
+      "status": "pass"
+    },
+    "AttackEnd": {
+      "start_pose": "attack_extended",
+      "end_pose": "neutral",
+      "status": "pass"
+    },
+    "HitFront": {
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "status": "pass"
+    },
+    "HitBack": {
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "status": "pass"
+    },
+    "Knockdown": {
+      "start_pose": "neutral",
+      "end_pose": "knockdown",
+      "status": "pass"
+    },
+    "Death": {
+      "start_pose": "neutral",
+      "end_pose": "dead",
+      "status": "pass"
+    },
+    "CastStart": {
+      "start_pose": "neutral",
+      "end_pose": "charged",
+      "status": "pass"
+    },
+    "ChannelLoop": {
+      "start_pose": "charged",
+      "end_pose": "charged",
+      "status": "pass"
+    },
+    "CastRelease": {
+      "start_pose": "charged",
+      "end_pose": "neutral",
+      "status": "pass"
+    },
+    "Interact": {
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "status": "pass"
+    }
+  },
+  "known_limitations": [
+    "No approved asset_request.yaml was present in the repository; this pack derives its request from the existing hold/rework modeling brief.",
+    "Concept art approval remains pending because the source brief explicitly says hold/rework before final production modeling."
+  ],
+  "unity_import_qc": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/unity_import_qc.json",
+  "unity_import_status": "pass",
+  "unity_model_importer_animation_type": "Generic",
+  "unity_rig_style": "mechanical_transform_hierarchy_with_generated_animation_clips",
+  "unity_import_root_motion": "off_root_locked_controller_driven_transform_clips",
+  "unity_animation_clip_count": 14,
+  "unity_animation_errors": [],
+  "unity_animation_warnings": [],
+  "animation_clip_curves_verified": "pass"
+}
