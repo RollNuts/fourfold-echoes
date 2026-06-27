@@ -114,7 +114,7 @@ namespace FourfoldEchoes.Product
         {
             if (node != null && !node.IsSolved)
             {
-                return "Use tool on sigil";
+                return "Use tool: E / North";
             }
 
             if (reward == null)
@@ -127,7 +127,7 @@ namespace FourfoldEchoes.Product
                 return "Relic secured";
             }
 
-            return reward.IsUnlocked ? "Claim the relic" : "Defeat the enemy";
+            return reward.IsUnlocked ? "Claim relic: E / North" : "Defeat the enemy";
         }
 
         private void UpdateSaveFeedback(float deltaTime)

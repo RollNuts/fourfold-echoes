@@ -42,7 +42,7 @@ namespace FourfoldEchoes.Editor
             hud.RefreshNow();
             Require(hud.ToolRead == "Tool Ready", "HUD did not expose initial tool readiness.");
             Require(hud.RewardRead == "Relic Locked", "HUD did not expose initial reward lock state.");
-            Require(hud.PromptRead == "Use tool on sigil", "HUD did not expose the initial one-tool prompt.");
+            Require(hud.PromptRead == "Use tool: E / North", "HUD did not expose the initial one-tool controller prompt.");
 
             var start = player.transform.position;
             player.Tick(new Vector2(1f, 1f), false, false, 0.5f);
@@ -77,6 +77,8 @@ namespace FourfoldEchoes.Editor
 
             reward.ResetReward();
             player.ResetForSmoke(reward.transform.position + new Vector3(0f, 0f, -0.55f));
+            hud.RefreshNow();
+            Require(hud.PromptRead == "Claim relic: E / North", "HUD did not expose the controller reward claim prompt.");
             Require(reward.TryCollect(player.transform), "Reward pickup did not collect in range.");
             Require(reward.IsCollected, "Reward did not stay collected after pickup.");
             Require(reward.idleRead == null || !reward.idleRead.activeSelf, "Reward idle read stayed visible after pickup.");
