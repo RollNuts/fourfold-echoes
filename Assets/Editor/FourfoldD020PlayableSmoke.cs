@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using FourfoldEchoes.Product;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -16,7 +17,8 @@ namespace FourfoldEchoes.Editor
             var enemy = UnityEngine.Object.FindFirstObjectByType<D020EnemyDummy>();
             var tool = UnityEngine.Object.FindFirstObjectByType<ExplorationTool>();
             var node = UnityEngine.Object.FindFirstObjectByType<ExplorationNode>();
-            var reward = FindSceneObject("D020 Relic Chest");
+            var reward = UnityEngine.Object.FindFirstObjectByType<D020RelicReward>();
+            var progressSave = UnityEngine.Object.FindFirstObjectByType<D020ProgressSave>();
             var shortcut = FindSceneObject("D020 Shortcut Route");
             var camera = Camera.main;
 
@@ -24,7 +26,8 @@ namespace FourfoldEchoes.Editor
             Require(enemy != null, "D-020 smoke requires a D020EnemyDummy.");
             Require(tool != null, "D-020 smoke requires an ExplorationTool.");
             Require(node != null, "D-020 smoke requires an ExplorationNode.");
-            Require(reward != null, "D-020 smoke requires one visible reward chest.");
+            Require(reward != null, "D-020 smoke requires one collectible reward.");
+            Require(progressSave != null, "D-020 smoke requires a progress save component.");
             Require(shortcut != null, "D-020 smoke requires one shortcut response object.");
             Require(camera != null && camera.orthographic, "D-020 smoke requires a fixed orthographic top-down camera.");
             Require(reward.GetComponentsInChildren<Renderer>(true).Length > 0, "D-020 reward has no readable renderer.");
@@ -59,7 +62,26 @@ namespace FourfoldEchoes.Editor
             Require(node.responseTarget != null && node.responseTarget.activeSelf, "Exploration tool did not reveal the shortcut response.");
             Require(node.activeRead != null && node.activeRead.activeSelf, "Exploration tool did not reveal the node active read.");
 
-            Debug.Log("FOURFOLD D-020 playable smoke passed: movement, fixed camera, dodge, normal attack, enemy defeat, one-tool shortcut response, reward presence, and core SFX assets.");
+            reward.ResetReward();
+            player.ResetForSmoke(reward.transform.position + new Vector3(0f, 0f, -0.55f));
+            Require(reward.TryCollect(player.transform), "Reward pickup did not collect in range.");
+            Require(reward.IsCollected, "Reward did not stay collected after pickup.");
+            Require(reward.idleRead == null || !reward.idleRead.activeSelf, "Reward idle read stayed visible after pickup.");
+            Require(reward.collectedRead == null || reward.collectedRead.activeSelf, "Reward collected read did not activate after pickup.");
+
+            var smokeSavePath = Path.Combine(Path.GetTempPath(), "fourfold-d020-progress-smoke.json");
+            TryDeleteSmokeSave(smokeSavePath);
+            progressSave.overrideFilePath = smokeSavePath;
+            Require(progressSave.SaveNow(), "Progress save did not write solved shortcut and collected reward state.");
+            node.ResetNode();
+            reward.ResetReward();
+            Require(!node.IsSolved && !reward.IsCollected, "Progress reset setup failed before load.");
+            Require(progressSave.LoadNow(), "Progress save did not load the saved state.");
+            Require(node.IsSolved, "Progress save did not restore the shortcut flag.");
+            Require(reward.IsCollected, "Progress save did not restore the collected reward flag.");
+            Require(progressSave.ClearSave(false), "Progress save cleanup failed.");
+
+            Debug.Log("FOURFOLD D-020 playable smoke passed: movement, fixed camera, dodge, normal attack, enemy defeat, one-tool shortcut response, reward pickup, local progress save/load, and core SFX assets.");
         }
 
         private static void RequireCoreSfx()
@@ -98,6 +120,16 @@ namespace FourfoldEchoes.Editor
             {
                 throw new InvalidOperationException(message);
             }
+        }
+
+        private static void TryDeleteSmokeSave(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return;
+            }
+
+            File.Delete(path);
         }
     }
 }
