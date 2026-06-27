@@ -34,6 +34,7 @@ namespace FourfoldEchoes.Product
         private static readonly Color BorderColor = new Color(0.26f, 0.29f, 0.28f, 1f);
 
         private const float NavigationRepeatSeconds = 0.18f;
+        private const string ToolInputHint = "South Button / E / Right Mouse";
         private UIDocument document;
         private PanelSettings panelSettings;
         private VisualElement root;
@@ -170,7 +171,7 @@ namespace FourfoldEchoes.Product
             bossFill = AddMeter(panel, "Boss", BossColor);
             toolFill = AddMeter(panel, "Tool", AccentColor);
 
-            toolLabel = MakeLabel("Tool ready", 13, FontStyle.Normal);
+            toolLabel = MakeLabel($"Echo Tool ready | {ToolInputHint}", 13, FontStyle.Normal);
             toolLabel.style.color = MutedTextColor;
             toolLabel.style.marginTop = 8f;
             panel.Add(toolLabel);
@@ -407,7 +408,9 @@ namespace FourfoldEchoes.Product
 
             if (toolLabel != null)
             {
-                toolLabel.text = controller.ToolReady01 >= 0.99f ? "Tool ready" : "Tool recovering";
+                toolLabel.text = controller.ToolReady01 >= 0.99f
+                    ? $"Echo Tool ready | {ToolInputHint}"
+                    : $"Echo Tool recovering | {ToolInputHint}";
             }
 
             if (statusLabel != null)
