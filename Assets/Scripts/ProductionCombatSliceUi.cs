@@ -52,6 +52,7 @@ namespace FourfoldEchoes.Product
         private Label statusLabel;
         private Label toolLabel;
         private Label saveLabel;
+        private Label completeSaveLabel;
         private Button startButton;
         private readonly List<Button> titleButtons = new List<Button>();
         private readonly List<Button> pauseButtons = new List<Button>();
@@ -249,6 +250,8 @@ namespace FourfoldEchoes.Product
             var panel = BuildOverlayPanel();
             panel.Add(MakeLabel("Reward Claimed", 34, FontStyle.Bold));
             panel.Add(MakeBodyLabel("The slice route is complete."));
+            completeSaveLabel = MakeSaveResumeLabel("Progress saved. Returning later will restore the cleared reward.");
+            panel.Add(completeSaveLabel);
             AddButton(panel, completeButtons, "Retry", () => controller?.RetryRun());
             AddButton(panel, completeButtons, "Title", () => controller?.ReturnToTitle());
             WireButtons(completeButtons);
@@ -307,9 +310,9 @@ namespace FourfoldEchoes.Product
             return label;
         }
 
-        private static Label MakeSaveResumeLabel()
+        private static Label MakeSaveResumeLabel(string text = "No saved slice progress yet.")
         {
-            var label = MakeLabel("No saved slice progress yet.", 14, FontStyle.Bold);
+            var label = MakeLabel(text, 14, FontStyle.Bold);
             label.style.color = MutedTextColor;
             label.style.marginTop = 2f;
             label.style.marginBottom = 12f;
@@ -469,6 +472,15 @@ namespace FourfoldEchoes.Product
             {
                 startButton.text = BuildStartButtonText(controller.ShortcutOpen, controller.GateOpen, controller.RewardClaimed);
             }
+
+            if (completeSaveLabel != null)
+            {
+                completeSaveLabel.text = BuildCompleteSaveLine(controller.SaveStatus);
+                completeSaveLabel.style.color = controller.SaveStatus.StartsWith("Save failed", StringComparison.Ordinal)
+                    || controller.SaveStatus == "Autosave off"
+                        ? WarningColor
+                        : ConfirmColor;
+            }
         }
 
         public static string BuildTitleSaveLine(bool shortcutOpen, bool gateOpen, bool rewardClaimed, string saveStatus)
@@ -501,6 +513,26 @@ namespace FourfoldEchoes.Product
             return HasSavedSliceProgress(shortcutOpen, gateOpen, rewardClaimed)
                 ? "Continue Saved Slice"
                 : "Start Game";
+        }
+
+        public static string BuildCompleteSaveLine(string saveStatus)
+        {
+            if (!string.IsNullOrEmpty(saveStatus) && saveStatus.StartsWith("Save failed", StringComparison.Ordinal))
+            {
+                return "Clear state is held in memory only; local save did not finish.";
+            }
+
+            if (saveStatus == "Autosave off")
+            {
+                return "Autosave is off; this clear state is not written to disk.";
+            }
+
+            if (saveStatus == "Progress restored")
+            {
+                return "Saved clear restored. This reward state is already on disk.";
+            }
+
+            return "Progress saved. Returning later will restore the cleared reward.";
         }
 
         public static ThemeStyleSheet CreateRuntimeThemeStyleSheet(string name)

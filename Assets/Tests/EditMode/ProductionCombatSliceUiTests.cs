@@ -48,6 +48,28 @@ namespace FourfoldEchoes.Tests.EditMode
         }
 
         [Test]
+        public void UI_CompleteSaveLine_DescribesPersistedAndRestoredClear()
+        {
+            Assert.That(
+                ProductionCombatSliceUi.BuildCompleteSaveLine("Progress saved"),
+                Is.EqualTo("Progress saved. Returning later will restore the cleared reward."));
+            Assert.That(
+                ProductionCombatSliceUi.BuildCompleteSaveLine("Progress restored"),
+                Is.EqualTo("Saved clear restored. This reward state is already on disk."));
+        }
+
+        [Test]
+        public void UI_CompleteSaveLine_WarnsWhenClearCannotPersist()
+        {
+            Assert.That(
+                ProductionCombatSliceUi.BuildCompleteSaveLine("Save failed - progress kept"),
+                Is.EqualTo("Clear state is held in memory only; local save did not finish."));
+            Assert.That(
+                ProductionCombatSliceUi.BuildCompleteSaveLine("Autosave off"),
+                Is.EqualTo("Autosave is off; this clear state is not written to disk."));
+        }
+
+        [Test]
         public void UI_RuntimeThemeFallback_CreatesNonSavedThemeStyleSheet()
         {
             var theme = ProductionCombatSliceUi.CreateRuntimeThemeStyleSheet(string.Empty);
