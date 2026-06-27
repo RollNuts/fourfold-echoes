@@ -24,7 +24,7 @@ evidence, but it does not assume those changes are merged or accepted.
 | Combat slice controller | `Assets/Scripts/ProductionCombatSliceController.cs` | Present; narrow deterministic progression hooks added, still input-coupled for live play |
 | Exploration tool | `Assets/Scripts/ExplorationTool.cs`, `Assets/Scripts/ExplorationNode.cs` | Present, basic test coverage exists |
 | Enemy framework | `Assets/Scripts/Enemies/*`, `Assets/Scripts/Combat/Damageable.cs`, `reports/ai-EnemyController.md` | Present, integration maturity unclear |
-| Local save | `Assets/Scripts/Save/*`, `Assets/Tests/EditMode/LocalSaveServiceTests.cs`, `Assets/Tests/EditMode/ProductionCombatSliceProgressTests.cs`, `Assets/Tests/PlayMode/SliceSceneSmokeTests.cs` | Present, service and slice flag conversion have focused coverage; live route and scene reload restore assertions pass |
+| Local save | `Assets/Scripts/Save/*`, `Assets/Tests/EditMode/LocalSaveServiceTests.cs`, `Assets/Tests/EditMode/ProductionCombatSliceProgressTests.cs`, `Assets/Tests/PlayMode/SliceSceneSmokeTests.cs` | Present, service and slice flag conversion have focused coverage; live route and scene reload restore assertions pass; fresh-start-equivalent restore test added and awaiting Unity rerun |
 | Build target | `Assets/Editor/FourfoldUnityBuild.cs`, `.github/workflows/build.yml`, `reports/commercial-mvp-progress-2026-06-27.md` | Windows-first intent present, build artifact missing |
 | QA automation | `Assets/Tests/EditMode/*`, `Assets/Tests/PlayMode/*`, `reports/qa-gap-analysis.md` | EditMode and PlayMode test assemblies pass in serialized Unity batchmode against a temporary project copy |
 | Art/audio evidence | Production assets and generated audio exist under `Assets/Art` / `Assets/Audio` | Quality/readiness not proven |
@@ -40,7 +40,7 @@ evidence, but it does not assume those changes are merged or accepted.
 | Title -> Game -> Pause -> Retry -> Clear works | Runtime UI/controller states exist; deterministic PlayMode smoke route covers state transitions and saved reward flags | Passed in Unity PlayMode; controller input remains static Legacy Input |
 | One exploration tool is the product hook | Tool/node exists and opens a shortcut | Needs two-room mastery proof and trailer-readable presentation |
 | Combat, boss, room, shortcut, reward loop works | Combat slice has enemies, boss, gate, reward; deterministic completion hooks and PlayMode route pass | Manual controller-device proof still pending |
-| Local save/load viable | Save service, flags, production slice progress conversion tests, live route save assertions, and scene reload restore proof pass | Full app restart/save-load proof still pending |
+| Local save/load viable | Save service, flags, production slice progress conversion tests, live route save assertions, and scene reload restore proof pass; fresh-start-equivalent proof is implemented | Updated PlayMode suite rerun still pending |
 | No placeholder art/audio in claimed validation footage | Production assets exist | Market-readiness and audio replacement not proven |
 | NullReference / missing reference blockers absent | Static reports found no obvious missing script/prefab pattern; EditMode and PlayMode assemblies pass | Dedicated scene-builder validation still pending |
 | Steam demo/store/release checklist green or risk-managed | Release docs exist | No final readiness report and no current store/demo gate result |
@@ -48,7 +48,7 @@ evidence, but it does not assume those changes are merged or accepted.
 ## Risk-Ordered Backlog
 
 1. **Windows build smoke**: produce a current Windows artifact or record why the editor module is unavailable.
-2. **Fresh app-start save proof**: verify the same shortcut, boss, and reward flags after a fresh application start.
+2. **Updated PlayMode rerun**: rerun the suite with the new fresh-start-equivalent save restoration test.
 3. **Controller-first input proof**: current Legacy Input path exists, but controller completion through UI/combat/tool/reward is not proven by device input.
 4. **Production scene-builder validation**: run the dedicated slice verifier when available and record exit code/results.
 5. **Hub/region structure**: canonical product requires one hub and three regions; current evidence is still slice-scene centered.
@@ -58,5 +58,5 @@ evidence, but it does not assume those changes are merged or accepted.
 
 ## Next Smallest Useful Task
 
-Add a fresh app-start save proof for `ProductionCombatSlice`, then run a
-Windows build smoke.
+Run the updated PlayMode suite with the fresh-start-equivalent save proof, then
+run a Windows build smoke.

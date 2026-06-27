@@ -221,6 +221,55 @@ namespace FourfoldEchoes.Tests.PlayMode
             Assert.That(restoredController.rewardPad.activeSelf, Is.True);
         }
 
+        [UnityTest]
+        public IEnumerator SLICE_PRODUCTION_FreshAppStartRestoresSavedRewardFromDisk()
+        {
+            SceneManager.LoadScene("ProductionCombatSlice", LoadSceneMode.Single);
+            yield return null;
+
+            var controller = FindRequired<ProductionCombatSliceController>();
+            var tool = FindRequired<ExplorationTool>();
+
+            controller.BeginRun();
+            Assert.That(tool.TryUse(), Is.True);
+            Assert.That(controller.ClearMinorWardens(), Is.True);
+            Assert.That(controller.ClearBossGate(), Is.True);
+            Assert.That(controller.ClaimReward(), Is.True);
+            yield return null;
+
+            Assert.That(controller.SaveStatus, Is.EqualTo("Progress saved"));
+            Assert.That(File.Exists(temporarySavePath), Is.True);
+
+            SceneManager.LoadScene("D020VerticalSlice", LoadSceneMode.Single);
+            yield return null;
+
+            var oldControllers = UnityEngine.Object.FindObjectsByType<ProductionCombatSliceController>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            Assert.That(oldControllers, Is.Empty);
+
+            ProductionCombatSliceController.SaveServiceFactory = () => new LocalSaveService(temporarySavePath);
+
+            SceneManager.LoadScene("ProductionCombatSlice", LoadSceneMode.Single);
+            yield return null;
+
+            var restoredController = FindRequired<ProductionCombatSliceController>();
+            var restoredNode = FindRequired<ExplorationNode>();
+
+            restoredController.BeginRun();
+            yield return null;
+
+            Assert.That(restoredController.State, Is.EqualTo(ProductionCombatRunState.Completed));
+            Assert.That(restoredController.SaveStatus, Is.EqualTo("Progress restored"));
+            Assert.That(restoredController.ShortcutOpen, Is.True);
+            Assert.That(restoredController.BossUnlocked, Is.True);
+            Assert.That(restoredController.GateOpen, Is.True);
+            Assert.That(restoredController.RewardClaimed, Is.True);
+            Assert.That(restoredNode.IsSolved, Is.True);
+            Assert.That(restoredController.rewardPad, Is.Not.Null);
+            Assert.That(restoredController.rewardPad.activeSelf, Is.True);
+        }
+
         private static T FindRequired<T>() where T : UnityEngine.Object
         {
             var matches = UnityEngine.Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);

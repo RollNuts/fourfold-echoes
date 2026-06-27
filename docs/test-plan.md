@@ -19,10 +19,11 @@ cover feel, readability, art, and audio.
 | EditMode | `Assets/Tests/EditMode/LocalSaveServiceTests.cs` | New-game defaults, progress flag roundtrip, settings normalization, missing/corrupt save fallback | `CORE_SAVE`, `MVP` local progress |
 | EditMode | `Assets/Tests/EditMode/ProductionCombatSliceProgressTests.cs` | Production slice shortcut, boss, and reward flags map to save data and cascade safely on read/write | `CORE_SAVE`, `SLICE_PRODUCTION` |
 | EditMode | `Assets/Tests/EditMode/ProductionCombatLowHealthWarningTests.cs` | Production slice low-health and critical-health warning thresholds stay stable for damage feedback readability | `SLICE_PRODUCTION`, `UI` HUD feedback |
+| EditMode | `Assets/Tests/EditMode/ProductionCombatSliceUiTests.cs` | Production title screen copy and CTA distinguish no save, restored shortcut, restored gate, restored reward, and save failure states | `CORE_SAVE`, `UI` title flow |
 | EditMode | `Assets/Tests/EditMode/BuildSettingsScopeTests.cs` | Build settings stay on current slice scenes and exclude retired Gate A/ProductReviewSandbox paths | `MVP_SCOPE` |
 | PlayMode | `Assets/Tests/PlayMode/SliceSceneSmokeTests.cs` | D-020 scene loads, has one tool node, opens shortcut, keeps readable camera/renderers | `SLICE_D020` |
 | PlayMode | `Assets/Tests/PlayMode/SliceSceneSmokeTests.cs` | Production combat slice loads with player, two enemies, boss, reward, gate, and exploration shortcut wiring | `SLICE_PRODUCTION` |
-| PlayMode | `Assets/Tests/PlayMode/SliceSceneSmokeTests.cs` | Production slice title -> play -> pause -> retry -> clear route, saved reward flags, and scene reload restoration | `SLICE_PRODUCTION`, `CORE_SAVE`, `D-030` |
+| PlayMode | `Assets/Tests/PlayMode/SliceSceneSmokeTests.cs` | Production slice title -> play -> pause -> retry -> clear route, saved reward flags, scene reload restoration, and fresh-start save restoration | `SLICE_PRODUCTION`, `CORE_SAVE`, `D-030` |
 
 ## Run Commands
 

@@ -46,10 +46,12 @@ namespace FourfoldEchoes.Product
         private VisualElement wardensFill;
         private VisualElement bossFill;
         private VisualElement toolFill;
+        private Label titleSaveLabel;
         private Label eventLabel;
         private Label statusLabel;
         private Label toolLabel;
         private Label saveLabel;
+        private Button startButton;
         private readonly List<Button> titleButtons = new List<Button>();
         private readonly List<Button> pauseButtons = new List<Button>();
         private readonly List<Button> retryButtons = new List<Button>();
@@ -196,8 +198,10 @@ namespace FourfoldEchoes.Product
             panel.Add(MakeLabel("FOURFOLD ECHOES", 42, FontStyle.Bold));
             panel.Add(MakeBodyLabel("Production Combat Slice"));
             panel.Add(MakeBodyLabel("Clear two wardens, open the shortcut with the Echo Tool, break the boss gate, and claim the reward."));
-            panel.Add(MakeBodyLabel("Controller: Left Stick, South Button, Menu. Keyboard: WASD, J / Mouse, E / Right Mouse, Esc or P."));
-            AddButton(panel, titleButtons, "Start Game", () => controller?.BeginRun());
+            panel.Add(MakeBodyLabel("Controller: Left Stick, South Button attack, North Button tool/claim, Menu pause. Keyboard: WASD, J / Mouse, E / Right Mouse, Esc or P."));
+            titleSaveLabel = MakeSaveResumeLabel();
+            panel.Add(titleSaveLabel);
+            startButton = AddButton(panel, titleButtons, "Start Game", () => controller?.BeginRun());
             AddButton(panel, titleButtons, "Quit", Application.Quit);
             WireButtons(titleButtons);
             overlay.Add(panel);
@@ -295,6 +299,21 @@ namespace FourfoldEchoes.Product
             return label;
         }
 
+        private static Label MakeSaveResumeLabel()
+        {
+            var label = MakeLabel("No saved slice progress yet.", 14, FontStyle.Bold);
+            label.style.color = MutedTextColor;
+            label.style.marginTop = 2f;
+            label.style.marginBottom = 12f;
+            label.style.paddingLeft = 12f;
+            label.style.paddingRight = 12f;
+            label.style.paddingTop = 8f;
+            label.style.paddingBottom = 8f;
+            label.style.backgroundColor = new Color(0.08f, 0.09f, 0.08f, 0.78f);
+            SetBorder(label, BorderColor, 1f, 6f);
+            return label;
+        }
+
         private static VisualElement AddMeter(VisualElement parent, string labelText, Color fillColor)
         {
             var row = new VisualElement();
@@ -321,7 +340,7 @@ namespace FourfoldEchoes.Product
             return fill;
         }
 
-        private void AddButton(VisualElement parent, List<Button> targetList, string text, Action clicked)
+        private Button AddButton(VisualElement parent, List<Button> targetList, string text, Action clicked)
         {
             var button = new Button(clicked) { text = text };
             button.focusable = true;
@@ -336,6 +355,7 @@ namespace FourfoldEchoes.Product
             parent.Add(button);
             targetList.Add(button);
             buttonActions[button] = clicked;
+            return button;
         }
 
         private void WireButtons(List<Button> buttons)
@@ -425,6 +445,59 @@ namespace FourfoldEchoes.Product
                     ? WarningColor
                     : MutedTextColor;
             }
+
+            if (titleSaveLabel != null)
+            {
+                var hasProgress = HasSavedSliceProgress(controller.ShortcutOpen, controller.GateOpen, controller.RewardClaimed);
+                titleSaveLabel.text = BuildTitleSaveLine(controller.ShortcutOpen, controller.GateOpen, controller.RewardClaimed, controller.SaveStatus);
+                titleSaveLabel.style.color = controller.SaveStatus.StartsWith("Save failed", StringComparison.Ordinal)
+                    ? WarningColor
+                    : hasProgress
+                        ? ConfirmColor
+                        : MutedTextColor;
+            }
+
+            if (startButton != null)
+            {
+                startButton.text = BuildStartButtonText(controller.ShortcutOpen, controller.GateOpen, controller.RewardClaimed);
+            }
+        }
+
+        public static string BuildTitleSaveLine(bool shortcutOpen, bool gateOpen, bool rewardClaimed, string saveStatus)
+        {
+            if (!string.IsNullOrEmpty(saveStatus) && saveStatus.StartsWith("Save failed", StringComparison.Ordinal))
+            {
+                return "Local save is unavailable; progress will stay in memory for this run.";
+            }
+
+            if (rewardClaimed)
+            {
+                return "Saved reward claimed. Continue to review the completed slice.";
+            }
+
+            if (gateOpen)
+            {
+                return "Saved boss gate is open. Continue from the reward route.";
+            }
+
+            if (shortcutOpen)
+            {
+                return "Saved shortcut is open. Continue toward the wardens and boss gate.";
+            }
+
+            return "No saved slice progress yet.";
+        }
+
+        public static string BuildStartButtonText(bool shortcutOpen, bool gateOpen, bool rewardClaimed)
+        {
+            return HasSavedSliceProgress(shortcutOpen, gateOpen, rewardClaimed)
+                ? "Continue Saved Slice"
+                : "Start Game";
+        }
+
+        private static bool HasSavedSliceProgress(bool shortcutOpen, bool gateOpen, bool rewardClaimed)
+        {
+            return shortcutOpen || gateOpen || rewardClaimed;
         }
 
         private void SetActiveScreen(ScreenState screen)
