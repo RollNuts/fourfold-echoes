@@ -1,0 +1,26 @@
+key,screen_type,element,priority,max_ja_chars,ja-JP,en-US,pseudo,notes
+ui.hud.title,HUD,title,primary,18,FOURFOLD ECHOES,FOURFOLD ECHOES,[!! FOURFOLD ECHOES !!],Brand string; do not abbreviate.
+ui.hud.objective,HUD,objective,secondary,42,エコーツールで近道を開き、ボスゲートを破壊する,Echo Tool: reveal the shortcut, then break the boss gate.,[!! Echo Tooool: reveeeal the shooortcut, then breeeak the boooss gaaate. !!],Wraps to two lines in HUD cluster.
+ui.hud.health,HUD,meter,primary,8,体力,Health,[!! Heealth !!],Meter label; icon carries shape cue.
+ui.hud.tool_ready,HUD,meter,primary,14,ツール準備完了,Tool ready,[!! Tooool reeeady !!],Ready state must pair color with ready glyph.
+ui.hud.tool_recovering,HUD,meter,primary,18,ツール再充填中,Tool recovering,[!! Tooool reeecoveeering !!],Recovering state must pair color with hourglass/notch glyph.
+ui.hud.boss_name,HUD,boss,primary,18,根の番人,Root Warden,[!! Roooot Waaarden !!],Boss strip supports 18 Japanese chars before wrap.
+ui.badge.shortcut_open,status_badges,badge,secondary,16,近道 開通,Shortcut open,[!! Shooortcut ooopen !!],Uses open bridge icon; not color-only.
+ui.badge.gate_sealed,status_badges,badge,secondary,16,門 封印中,Gate sealed,[!! Gaaate seeealed !!],Uses blocked gate icon; not color-only.
+ui.badge.reward_waiting,status_badges,badge,secondary,18,報酬 未回収,Reward waiting,[!! Reeewaaard waaaiting !!],For post-room state row.
+ui.prompt.tool.gamepad,input_prompt_atlas,prompt,primary,24,エコーツールを使う,Use Echo Tool,[!! Uuuse Echo Tooool !!],Shown with gamepad South glyph.
+ui.prompt.tool.keyboard,input_prompt_atlas,prompt,primary,24,エコーツールを使う,Use Echo Tool,[!! Uuuse Echo Tooool !!],Shown with keyboard E glyph.
+ui.prompt.pause.gamepad,input_prompt_atlas,prompt,secondary,18,メニューを開く,Open menu,[!! Ooopen meeenüüü !!],Shown with gamepad menu glyph.
+ui.prompt.pause.keyboard,input_prompt_atlas,prompt,secondary,18,メニューを開く,Open menu,[!! Ooopen meeenüüü !!],Shown with Esc glyph.
+ui.world.tool_node,tooltip_modal,world_prompt,primary,14,エコーツール,Echo Tool,[!! Echo Tooool !!],World-space prompt; keep 1-2 short words.
+ui.world.save_point,map_markers,world_prompt,secondary,14,セーブ地点,Save point,[!! Saaave poooint !!],World marker label.
+ui.modal.title,tooltip_modal,modal,primary,22,タイトルへ戻りますか,Return to title?,[!! Reetuuurn tooo tiiitle? !!],Modal heading wraps.
+ui.modal.body,tooltip_modal,modal,secondary,48,未保存の部屋進行は最後のチェックポイントへ戻ります,Unsaved room progress returns to the last checkpoint.,[!! Uuunsaaaved roooom prooogreeess reeetuuurns tooo the laaast cheeckpoooint. !!],Designed for two lines in modal.
+ui.action.cancel,tooltip_modal,button,secondary,10,キャンセル,Cancel,[!! Caaancel !!],Button minimum width handles Japanese.
+ui.action.confirm,tooltip_modal,button,primary,10,決定,Confirm,[!! Cooonfirm !!],Button minimum width handles Japanese.
+ui.title.name,title_menu,title,primary,18,FOURFOLD ECHOES,FOURFOLD ECHOES,[!! FOURFOLD ECHOES !!],Title/menu brand.
+ui.menu.start,title_menu,button,primary,12,はじめる,Start,[!! Staaart !!],Menu action.
+ui.menu.continue,title_menu,button,secondary,12,つづきから,Continue,[!! Cooontinueee !!],Menu action.
+ui.menu.settings,title_menu,button,secondary,12,設定,Settings,[!! Seeettings !!],Settings is basic only.
+ui.menu.quit,title_menu,button,secondary,12,終了,Quit,[!! Quiiit !!],Desktop build only.
+ui.inventory.deferred,inventory,boundary,tertiary,34,インベントリはMVP対象外です,Inventory is out of MVP scope.,[!! Iiinveeentooory iiis ooout ooof MVP scooope. !!],No runtime inventory prefab generated; recorded to protect scope.

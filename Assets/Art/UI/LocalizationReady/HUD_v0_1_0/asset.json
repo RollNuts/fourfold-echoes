@@ -1,0 +1,504 @@
+{
+  "schema_version": 1,
+  "name": "UI_HUD_CombatFrame_LocalizationReady_v0.1.0",
+  "version": "0.1.0",
+  "status": "unity_validated_preview_ready",
+  "lane": "ui-localization-ready-hud-prompt",
+  "base_branch": "origin/codex/production-combat-slice-scene-readability",
+  "asset_request": {
+    "asset_request_yaml": "not_found_in_checkout",
+    "screen_type": [
+      "HUD",
+      "tooltip/modal",
+      "status badges",
+      "input prompt atlas",
+      "map markers",
+      "title/menu",
+      "dialog panel"
+    ],
+    "inventory": "MVP out of scope; localization boundary recorded only",
+    "information_priority": [
+      "health and boss danger",
+      "tool readiness and current objective",
+      "input prompt",
+      "persistent status badges"
+    ],
+    "input_mode": [
+      "gamepad",
+      "keyboard"
+    ],
+    "localization_languages": [
+      "ja-JP",
+      "en-US",
+      "pseudo"
+    ],
+    "safe_area_rules": {
+      "desktop_16_9": "32 px inset",
+      "steam_deck_16_10": "18 px inset minimum",
+      "boss_strip": "top center and narrow",
+      "combat_view": "HUD cluster max 44 percent width"
+    },
+    "style_ref": [
+      "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+      "docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md"
+    ]
+  },
+  "deliverables": {
+    "screen_space_uxml": "Assets/Prefabs/UI/LocalizationReady/UI_HUD_CombatFrame_LocalizationReady_v0.1.0.uxml",
+    "world_space_uxml": "Assets/Prefabs/UI/LocalizationReady/UI_HUD_WorldPrompt_LocalizationReady_v0.1.0.uxml",
+    "uss": "Assets/Prefabs/UI/LocalizationReady/UI_HUD_CombatFrame_LocalizationReady_v0.1.0.uss",
+    "sprite_atlas_png": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/UI_HUD_InputStatusAtlas_LocalizationReady_v0.1.0.png",
+    "icon_directory": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons",
+    "localization_csv": "Assets/Localization/UI_LocalizationReady/localization.csv",
+    "preview": "artifacts/Previews/UI_HUD_CombatFrame_LocalizationReady_v0.1.0_preview.png",
+    "report": "reports/ui-localization-ready-hud-prompt-2026-06-27.md"
+  },
+  "screen_space_ui": [
+    "HUD primary cluster",
+    "boss health strip",
+    "input prompt cluster",
+    "title/menu shell",
+    "modal/dialog shell"
+  ],
+  "world_space_ui": [
+    "tool node prompt",
+    "save point prompt",
+    "shortcut marker",
+    "sealed gate marker"
+  ],
+  "atlas_proposal": [
+    {
+      "atlas": "HUD/Input/Status",
+      "contents": [
+        "health",
+        "tool",
+        "gate",
+        "input prompts"
+      ],
+      "reason": "always resident during gameplay"
+    },
+    {
+      "atlas": "Map/World Markers",
+      "contents": [
+        "save point",
+        "shortcut",
+        "sealed gate"
+      ],
+      "reason": "shared between map marker and world-space prompt"
+    },
+    {
+      "atlas": "Menu/Dialog",
+      "contents": [
+        "warning",
+        "confirm/cancel support icons"
+      ],
+      "reason": "can load with overlay UI instead of combat HUD"
+    }
+  ],
+  "variable_text_limits": {
+    "hud_objective_ja": {
+      "max_chars": 42,
+      "wrap_lines": 2
+    },
+    "modal_body_ja": {
+      "max_chars": 48,
+      "wrap_lines": 2
+    },
+    "button_ja": {
+      "max_chars": 12,
+      "min_height_px": 44
+    },
+    "world_prompt_ja": {
+      "max_chars": 14,
+      "wrap_lines": 2
+    },
+    "badge_ja": {
+      "max_chars": 18,
+      "wrap_lines": 1
+    }
+  },
+  "icons": [
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Status_Health_Critical_v0.1.0.png",
+      "category": "Status",
+      "name": "Health_Critical",
+      "semantic": "Critical health",
+      "status_cue": "broken heart plus diagonal slash; red is secondary",
+      "atlas_rect": {
+        "name": "ICON_Status_Health_Critical_v0.1.0.png",
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.214,
+          "edge_density": 0.23,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.194,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Status_ToolReady_Default_v0.1.0.png",
+      "category": "Status",
+      "name": "ToolReady_Default",
+      "semantic": "Tool ready",
+      "status_cue": "complete diamond and lit center thread",
+      "atlas_rect": {
+        "name": "ICON_Status_ToolReady_Default_v0.1.0.png",
+        "x": 128,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.203,
+          "edge_density": 0.232,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.183,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Status_ToolRecovering_Default_v0.1.0.png",
+      "category": "Status",
+      "name": "ToolRecovering_Default",
+      "semantic": "Tool recovering",
+      "status_cue": "segmented ring and hourglass notch",
+      "atlas_rect": {
+        "name": "ICON_Status_ToolRecovering_Default_v0.1.0.png",
+        "x": 256,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.248,
+          "edge_density": 0.234,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.232,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Status_BossGate_Sealed_v0.1.0.png",
+      "category": "Status",
+      "name": "BossGate_Sealed",
+      "semantic": "Boss gate sealed",
+      "status_cue": "closed arch with crossbar and lock notch",
+      "atlas_rect": {
+        "name": "ICON_Status_BossGate_Sealed_v0.1.0.png",
+        "x": 384,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.22,
+          "edge_density": 0.244,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.199,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Status_BossGate_Open_v0.1.0.png",
+      "category": "Status",
+      "name": "BossGate_Open",
+      "semantic": "Boss gate open",
+      "status_cue": "split arch with center gap and forward arrow",
+      "atlas_rect": {
+        "name": "ICON_Status_BossGate_Open_v0.1.0.png",
+        "x": 0,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.251,
+          "edge_density": 0.236,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.22,
+          "edge_density": 0.304,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Input_GamepadSouth_Default_v0.1.0.png",
+      "category": "Input",
+      "name": "GamepadSouth_Default",
+      "semantic": "Gamepad south button",
+      "status_cue": "controller plate with filled south button",
+      "atlas_rect": {
+        "name": "ICON_Input_GamepadSouth_Default_v0.1.0.png",
+        "x": 128,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.234,
+          "edge_density": 0.25,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.203,
+          "edge_density": 0.333,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Input_GamepadMenu_Default_v0.1.0.png",
+      "category": "Input",
+      "name": "GamepadMenu_Default",
+      "semantic": "Gamepad menu button",
+      "status_cue": "controller plate with stacked menu bars",
+      "atlas_rect": {
+        "name": "ICON_Input_GamepadMenu_Default_v0.1.0.png",
+        "x": 256,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.232,
+          "edge_density": 0.23,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.197,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Input_KeyboardE_Default_v0.1.0.png",
+      "category": "Input",
+      "name": "KeyboardE_Default",
+      "semantic": "Keyboard E key",
+      "status_cue": "keycap silhouette with E letter",
+      "atlas_rect": {
+        "name": "ICON_Input_KeyboardE_Default_v0.1.0.png",
+        "x": 384,
+        "y": 128,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.23,
+          "edge_density": 0.23,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.198,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Input_KeyboardEsc_Default_v0.1.0.png",
+      "category": "Input",
+      "name": "KeyboardEsc_Default",
+      "semantic": "Keyboard Esc key",
+      "status_cue": "wide keycap silhouette with ESC letters",
+      "atlas_rect": {
+        "name": "ICON_Input_KeyboardEsc_Default_v0.1.0.png",
+        "x": 0,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.23,
+          "edge_density": 0.23,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.198,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Map_SavePoint_Default_v0.1.0.png",
+      "category": "Map",
+      "name": "SavePoint_Default",
+      "semantic": "Save point marker",
+      "status_cue": "plinth diamond with central save notch",
+      "atlas_rect": {
+        "name": "ICON_Map_SavePoint_Default_v0.1.0.png",
+        "x": 128,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.196,
+          "edge_density": 0.232,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.186,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Map_Shortcut_Open_v0.1.0.png",
+      "category": "Map",
+      "name": "Shortcut_Open",
+      "semantic": "Shortcut open marker",
+      "status_cue": "two bridge blocks connected by arrow",
+      "atlas_rect": {
+        "name": "ICON_Map_Shortcut_Open_v0.1.0.png",
+        "x": 256,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.206,
+          "edge_density": 0.23,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.184,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    },
+    {
+      "file": "Assets/Art/UI/LocalizationReady/HUD_v0_1_0/Icons/ICON_Dialog_Warning_Default_v0.1.0.png",
+      "category": "Dialog",
+      "name": "Warning_Default",
+      "semantic": "Warning dialog",
+      "status_cue": "triangle and exclamation cut",
+      "atlas_rect": {
+        "name": "ICON_Dialog_Warning_Default_v0.1.0.png",
+        "x": 384,
+        "y": 256,
+        "w": 128,
+        "h": 128
+      },
+      "qc": {
+        "px32": {
+          "size_px": 32,
+          "alpha_coverage": 0.65,
+          "luminance_contrast": 0.157,
+          "edge_density": 0.246,
+          "pass": true
+        },
+        "px24": {
+          "size_px": 24,
+          "alpha_coverage": 0.681,
+          "luminance_contrast": 0.141,
+          "edge_density": 0.306,
+          "pass": true
+        }
+      }
+    }
+  ],
+  "qc": {
+    "icon_count": 12,
+    "icon_sizes_checked_px": [
+      24,
+      32,
+      128
+    ],
+    "icon_static_qc_passed": true,
+    "color_only_state_differences": false,
+    "combat_visibility": "HUD cluster is edge-anchored; boss strip is narrow; prompt cluster sits bottom-right outside core play space.",
+    "not_visual_inspection": "Preview generated, but no Unity or browser visual inspection has been claimed by this manifest."
+    ,
+    "unity_batchmode": {
+      "method": "FourfoldProductValidator.RunAll",
+      "exit_code": 0,
+      "warnings": [
+        "Prefab assets exist but none include LODGroup components.",
+        "Active scene has no LODGroup components."
+      ],
+      "warning_handling": "Existing production-art/readiness warnings; not blockers for this UI localization-ready asset pack."
+    }
+  }
+}
