@@ -128,8 +128,8 @@ namespace FourfoldEchoes.Product
                     var titleController = VerifyTitleScene();
                     var summary = titleController.ContinueSummary();
                     if (summary.IndexOf("Hub", StringComparison.Ordinal) < 0
-                        || summary.IndexOf("Saved reward skills 2/2", StringComparison.Ordinal) < 0
-                        || summary.IndexOf("equipped 2/2", StringComparison.Ordinal) < 0)
+                        || summary.IndexOf("Saved skills: Lumen Edge + Lumen Ward", StringComparison.Ordinal) < 0
+                        || summary.IndexOf("Equipped: Lumen Link", StringComparison.Ordinal) < 0)
                     {
                         throw new InvalidOperationException("title continue summary does not expose banked Hub progress and equipped reward skills");
                     }
