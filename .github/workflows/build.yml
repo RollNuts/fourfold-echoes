@@ -1,0 +1,87 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  unity-build:
+    name: Unity D-020 Windows slice
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          lfs: true
+
+      - name: Check Unity serial secret
+        id: unity-license
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        run: |
+          if [[ -n "${UNITY_SERIAL:-}" ]]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::UNITY_SERIAL secret is not configured; skipping Unity build."
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare build folders
+        if: steps.unity-license.outputs.available == 'true'
+        run: |
+          mkdir -p artifacts/unity-build
+          mkdir -p Build/CI/D020Slice
+
+      - name: Restore Unity Library cache
+        if: steps.unity-license.outputs.available == 'true'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: Library
+          key: unity-library-${{ runner.os }}-build-${{ hashFiles('ProjectSettings/ProjectVersion.txt', 'Packages/manifest.json', 'Packages/packages-lock.json', 'ProjectSettings/ProjectSettings.asset', 'ProjectSettings/EditorBuildSettings.asset') }}
+          restore-keys: |
+            unity-library-${{ runner.os }}-build-
+            unity-library-${{ runner.os }}-
+
+      - name: Build D-020 Windows slice
+        if: steps.unity-license.outputs.available == 'true'
+        id: unity-build
+        uses: game-ci/unity-builder@1d4ee0697f193f54668e98961d79907911f4b4f2
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          projectPath: .
+          unityVersion: auto
+          targetPlatform: StandaloneWindows64
+          buildName: FourfoldEchoesD020Slice
+          buildsPath: Build/CI
+          buildMethod: FourfoldEchoes.Editor.FourfoldUnityBuild.BuildCurrentD020Slice
+          customParameters: -logFile /github/workspace/artifacts/unity-build/unity-build.log --fourfoldBuildTarget windows --fourfoldBuildDir /github/workspace/Build/CI/D020Slice
+          runAsHostUser: true
+
+      - name: Upload Unity build logs and artifact
+        if: always() && steps.unity-license.outputs.available == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: unity-d020-windows-build-${{ github.run_number }}-${{ github.run_attempt }}
+          path: |
+            artifacts/unity-build
+            Build/CI
+          if-no-files-found: warn
+          retention-days: 14
