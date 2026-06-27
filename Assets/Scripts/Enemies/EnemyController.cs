@@ -14,15 +14,26 @@ namespace FourfoldEchoes.Product
         public Transform targetOverride;
         public bool autoStart = true;
 
+        [Header("Readability")]
+        public bool applyStateReadabilityTint = true;
+        public Renderer[] readabilityRenderers;
+        public Color telegraphTint = new Color(1f, 0.72f, 0.18f, 1f);
+        public Color attackTint = new Color(1f, 0.2f, 0.12f, 1f);
+        public Color recoverTint = new Color(0.55f, 0.62f, 0.7f, 1f);
+
         [Header("Debug")]
         [SerializeField]
         private EnemyState currentState = EnemyState.Search;
+
+        private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
+        private static readonly int ColorProperty = Shader.PropertyToID("_Color");
 
         private EnemyMotor motor;
         private EnemySensor sensor;
         private EnemyAnimatorBridge animatorBridge;
         private EnemyAttackDriver attackDriver;
         private Damageable damageable;
+        private MaterialPropertyBlock readabilityBlock;
         private Vector3 homePosition;
         private Vector3 lastKnownTargetPosition;
         private float stateTimer;
@@ -68,6 +79,7 @@ namespace FourfoldEchoes.Product
                 damageable.Damaged -= HandleDamaged;
                 damageable.Died -= HandleDied;
             }
+            ClearReadabilityTint();
         }
 
         private void Update()
@@ -102,6 +114,7 @@ namespace FourfoldEchoes.Product
             attackDriver.Configure(definition);
             damageable.ConfigureMaxHealth(definition.maxHealth, true);
             ChangeState(EnemyState.Search);
+            ApplyReadabilityTint(currentState);
         }
 
         public void Tick(float dt)
@@ -335,6 +348,7 @@ namespace FourfoldEchoes.Product
                 animatorBridge.TriggerDeath();
             }
 
+            ApplyReadabilityTint(next);
             StateChanged?.Invoke(previous, next);
         }
 
@@ -349,6 +363,85 @@ namespace FourfoldEchoes.Product
             }
             attackDriver = attackDriver != null ? attackDriver : GetComponent<EnemyAttackDriver>();
             damageable = damageable != null ? damageable : GetComponent<Damageable>();
+            CacheReadabilityRenderers();
+        }
+
+        private void CacheReadabilityRenderers()
+        {
+            if (readabilityRenderers != null && readabilityRenderers.Length > 0)
+            {
+                return;
+            }
+
+            readabilityRenderers = GetComponentsInChildren<Renderer>();
+        }
+
+        private void ApplyReadabilityTint(EnemyState state)
+        {
+            if (!applyStateReadabilityTint)
+            {
+                ClearReadabilityTint();
+                return;
+            }
+
+            switch (state)
+            {
+                case EnemyState.Telegraph:
+                    SetReadabilityTint(telegraphTint);
+                    break;
+                case EnemyState.Attack:
+                    SetReadabilityTint(attackTint);
+                    break;
+                case EnemyState.Recover:
+                    SetReadabilityTint(recoverTint);
+                    break;
+                default:
+                    ClearReadabilityTint();
+                    break;
+            }
+        }
+
+        private void SetReadabilityTint(Color color)
+        {
+            CacheReadabilityRenderers();
+            if (readabilityRenderers == null || readabilityRenderers.Length == 0)
+            {
+                return;
+            }
+
+            if (readabilityBlock == null)
+            {
+                readabilityBlock = new MaterialPropertyBlock();
+            }
+            for (var index = 0; index < readabilityRenderers.Length; index++)
+            {
+                var targetRenderer = readabilityRenderers[index];
+                if (targetRenderer == null)
+                {
+                    continue;
+                }
+
+                targetRenderer.GetPropertyBlock(readabilityBlock);
+                readabilityBlock.SetColor(BaseColorProperty, color);
+                readabilityBlock.SetColor(ColorProperty, color);
+                targetRenderer.SetPropertyBlock(readabilityBlock);
+            }
+        }
+
+        private void ClearReadabilityTint()
+        {
+            if (readabilityRenderers == null)
+            {
+                return;
+            }
+
+            for (var index = 0; index < readabilityRenderers.Length; index++)
+            {
+                if (readabilityRenderers[index] != null)
+                {
+                    readabilityRenderers[index].SetPropertyBlock(null);
+                }
+            }
         }
 
         private void HandleDamaged(Damageable target, DamageInfo info)
