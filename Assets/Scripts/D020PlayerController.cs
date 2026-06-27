@@ -6,7 +6,10 @@ namespace FourfoldEchoes.Product
     {
         [Header("Input")]
         public KeyCode attackKey = KeyCode.J;
+        public KeyCode controllerAttackKey = KeyCode.JoystickButton0;
         public KeyCode dodgeKey = KeyCode.Space;
+        public KeyCode controllerDodgeKey = KeyCode.JoystickButton1;
+        public bool useControllerAxes = true;
 
         [Header("Movement")]
         public float moveSpeed = 3.2f;
@@ -42,7 +45,7 @@ namespace FourfoldEchoes.Product
 
         private void Update()
         {
-            Tick(ReadMoveInput(), IsAttackPressed(), Input.GetKeyDown(dodgeKey), Time.deltaTime);
+            Tick(ReadMoveInput(), IsAttackPressed(), IsDodgePressed(), Time.deltaTime);
         }
 
         public void Tick(Vector2 move, bool attackPressed, bool dodgePressed, float deltaTime)
@@ -192,12 +195,27 @@ namespace FourfoldEchoes.Product
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) x += 1f;
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) y -= 1f;
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) y += 1f;
+
+            if (useControllerAxes)
+            {
+                x += Input.GetAxisRaw("Horizontal");
+                y += Input.GetAxisRaw("Vertical");
+            }
+
             return new Vector2(x, y);
         }
 
         private bool IsAttackPressed()
         {
-            return Input.GetKeyDown(attackKey) || Input.GetMouseButtonDown(0);
+            return Input.GetKeyDown(attackKey)
+                || Input.GetMouseButtonDown(0)
+                || Input.GetKeyDown(controllerAttackKey);
+        }
+
+        private bool IsDodgePressed()
+        {
+            return Input.GetKeyDown(dodgeKey)
+                || Input.GetKeyDown(controllerDodgeKey);
         }
     }
 }

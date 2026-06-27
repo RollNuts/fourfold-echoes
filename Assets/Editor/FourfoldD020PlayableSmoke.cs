@@ -33,6 +33,10 @@ namespace FourfoldEchoes.Editor
             Require(shortcut != null, "D-020 smoke requires one shortcut response object.");
             Require(camera != null && camera.orthographic, "D-020 smoke requires a fixed orthographic top-down camera.");
             Require(reward.GetComponentsInChildren<Renderer>(true).Length > 0, "D-020 reward has no readable renderer.");
+            Require(player.useControllerAxes, "D-020 player movement must read controller axes.");
+            Require(player.controllerAttackKey == KeyCode.JoystickButton0, "D-020 player attack must expose controller South Button input.");
+            Require(player.controllerDodgeKey == KeyCode.JoystickButton1, "D-020 player dodge must expose controller East Button input.");
+            Require(tool.controllerUseKey == KeyCode.JoystickButton3, "D-020 exploration tool must expose controller North Button input.");
             RequireCoreSfx();
 
             hud.RefreshNow();
