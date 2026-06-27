@@ -34,7 +34,7 @@ namespace FourfoldEchoes.Product
         private static readonly Color BorderColor = new Color(0.26f, 0.29f, 0.28f, 1f);
 
         private const float NavigationRepeatSeconds = 0.18f;
-        private const string ToolInputHint = "South Button / E / Right Mouse";
+        private const string ToolInputHint = "North Button / E / Right Mouse";
         private UIDocument document;
         private PanelSettings panelSettings;
         private VisualElement root;
@@ -197,7 +197,7 @@ namespace FourfoldEchoes.Product
             panel.Add(MakeLabel("FOURFOLD ECHOES", 42, FontStyle.Bold));
             panel.Add(MakeBodyLabel("Production Combat Slice"));
             panel.Add(MakeBodyLabel("Clear two wardens, open the shortcut with the Echo Tool, break the boss gate, and claim the reward."));
-            panel.Add(MakeBodyLabel("Controller: Left Stick, South Button, Menu. Keyboard: WASD, J / Mouse, E / Right Mouse, Esc or P."));
+            panel.Add(MakeBodyLabel("Controller: Left Stick, South Button attack/confirm, North Button Echo Tool/claim, Menu pause."));
             AddButton(panel, titleButtons, "Start Game", () => controller?.BeginRun());
             AddButton(panel, titleButtons, "Quit", Application.Quit);
             WireButtons(titleButtons);

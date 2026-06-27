@@ -24,6 +24,17 @@ namespace FourfoldEchoes.Tests.EditMode
         }
 
         [Test]
+        public void CORE_EXPLORATION_TOOL_DefaultLiveInputIncludesControllerAndMouseUse()
+        {
+            var toolObject = CreateObject("Exploration Tool");
+            var tool = toolObject.AddComponent<ExplorationTool>();
+
+            Assert.That(tool.useKey, Is.EqualTo(KeyCode.E));
+            Assert.That(tool.controllerUseKey, Is.EqualTo(KeyCode.JoystickButton3));
+            Assert.That(tool.mouseUseButton, Is.EqualTo(1));
+        }
+
+        [Test]
         public void CORE_EXPLORATION_TOOL_TryUse_HandlesMissingNodesWithoutCooldownWhenDisabled()
         {
             var toolObject = CreateObject("Exploration Tool");
