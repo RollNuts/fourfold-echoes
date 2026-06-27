@@ -1,0 +1,113 @@
+{
+  "asset_id": "audio.music.bgm_normal_combat",
+  "title": "Threadline Clash",
+  "scene": "Battle",
+  "scene_type": "battle",
+  "mood": "Tense",
+  "variant": "A",
+  "bpm": 112,
+  "version": "0.1.0",
+  "status": "generated_pilot",
+  "source_strategy": "repository-authored deterministic procedural synthesis",
+  "license": "repository-authored",
+  "target_platforms": [
+    "Steam PC",
+    "future console portable"
+  ],
+  "library_root_relative": "Runtime/Audio/BGM/BGM_Battle_Tense_A_112_v0.1.0",
+  "paths": {
+    "master_wav": "BGM_Battle_Tense_A_112_v0.1.0.wav",
+    "runtime_intro_ogg": "Assets/Audio/Generated/BGM_Battle_Tense_AIntro_112_v0.1.0.ogg",
+    "runtime_loop_ogg": "Assets/Audio/Generated/BGM_Battle_Tense_ALoop_112_v0.1.0.ogg",
+    "cue_sheet": "cue_sheet.csv",
+    "asset_request": "asset_request.yaml",
+    "qc_result": "qc_result.json",
+    "stems": {
+      "rhythm": "Stems/BGM_Battle_Tense_ARhythm_112_v0.1.0.wav",
+      "harmony": "Stems/BGM_Battle_Tense_AHarmony_112_v0.1.0.wav",
+      "lead": "Stems/BGM_Battle_Tense_ALead_112_v0.1.0.wav",
+      "percussion": "Stems/BGM_Battle_Tense_APercussion_112_v0.1.0.wav"
+    }
+  },
+  "loop": {
+    "full_master_start_sample": 189000,
+    "full_master_end_sample": 1701000,
+    "full_master_start_seconds": 4.285714285714286,
+    "full_master_end_seconds": 38.57142857142857,
+    "loop_clip_start_sample": 0,
+    "loop_clip_end_sample": 1512000,
+    "loop_clip_length_seconds": 34.285714285714285,
+    "intro_bars": 2,
+    "loop_bars": 16,
+    "playback_instruction": "Play runtime_intro_ogg once for combat start, then loop runtime_loop_ogg from sample 0."
+  },
+  "mix_notes": {
+    "loudness_note": "Peak -6.92 dBFS, RMS -23.50 dBFS.",
+    "fade_note": "No baked loop fade. Optional engine crossfade 120-250 ms when entering combat.",
+    "sfx_space_note": "Weak-beat ostinato and high soft ticks leave attack, dodge, hit, and enemy tell transients exposed.",
+    "low_end_note": "No kick/sub layer; roots are short and gain-limited.",
+    "melody_note": "Lead appears in four short callouts over the 16-bar loop."
+  },
+  "stems": [
+    {
+      "name": "rhythm",
+      "file": "Stems/BGM_Battle_Tense_ARhythm_112_v0.1.0.wav",
+      "peak_dbfs": -11.287744589946666,
+      "rms_dbfs": -33.15869743068486
+    },
+    {
+      "name": "harmony",
+      "file": "Stems/BGM_Battle_Tense_AHarmony_112_v0.1.0.wav",
+      "peak_dbfs": -7.699169109554411,
+      "rms_dbfs": -24.116480070280616
+    },
+    {
+      "name": "lead",
+      "file": "Stems/BGM_Battle_Tense_ALead_112_v0.1.0.wav",
+      "peak_dbfs": -12.342098740794516,
+      "rms_dbfs": -40.6965453441629
+    },
+    {
+      "name": "percussion",
+      "file": "Stems/BGM_Battle_Tense_APercussion_112_v0.1.0.wav",
+      "peak_dbfs": -15.323589817277487,
+      "rms_dbfs": -49.52828991246414
+    }
+  ],
+  "planned_companion_cues": [
+    {
+      "structure": "title",
+      "status": "planned"
+    },
+    {
+      "structure": "field exploration",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_region01"
+    },
+    {
+      "structure": "battle",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_normal_combat"
+    },
+    {
+      "structure": "boss phase1",
+      "status": "planned"
+    },
+    {
+      "structure": "boss phase2",
+      "status": "planned"
+    },
+    {
+      "structure": "rest room",
+      "status": "planned"
+    },
+    {
+      "structure": "victory stinger",
+      "status": "planned"
+    },
+    {
+      "structure": "defeat stinger",
+      "status": "planned"
+    }
+  ]
+}
