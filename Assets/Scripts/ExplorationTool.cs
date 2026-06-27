@@ -6,6 +6,8 @@ namespace FourfoldEchoes.Product
     {
         [Header("Input")]
         public KeyCode useKey = KeyCode.E;
+        public KeyCode controllerUseKey = KeyCode.JoystickButton3;
+        public int mouseUseButton = 1;
         public float range = 2.7f;
         public float cooldownSeconds = 0.45f;
 
@@ -63,7 +65,7 @@ namespace FourfoldEchoes.Product
                 pulseRead.SetActive(false);
             }
 
-            if (Input.GetKeyDown(useKey))
+            if (UsePressed())
             {
                 TryUse();
             }
@@ -117,6 +119,13 @@ namespace FourfoldEchoes.Product
             }
 
             return best;
+        }
+
+        private bool UsePressed()
+        {
+            return Input.GetKeyDown(useKey)
+                || (mouseUseButton >= 0 && Input.GetMouseButtonDown(mouseUseButton))
+                || (controllerUseKey != KeyCode.None && Input.GetKeyDown(controllerUseKey));
         }
 
         private void Play(AudioClip clip)
