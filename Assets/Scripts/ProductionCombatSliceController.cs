@@ -70,6 +70,7 @@ namespace FourfoldEchoes.Product
         private const string ProgressRestoredStatus = "Progress restored";
         private const string ProgressSavedStatus = "Progress saved";
         private const string SaveFailedStatus = "Save failed - progress kept";
+        private const string SavedRewardRestoredEvent = "Saved reward restored";
         public const float RewardClaimRange = 1.65f;
 
         private float[] health;
@@ -770,7 +771,7 @@ namespace FourfoldEchoes.Product
             if (snapshot.ShortcutOpen || snapshot.BossDefeated || snapshot.RewardClaimed)
             {
                 lastEvent = snapshot.RewardClaimed
-                    ? "Reward already claimed"
+                    ? SavedRewardRestoredEvent
                     : snapshot.BossDefeated
                         ? "Boss gate already open"
                         : "Shortcut already open";
