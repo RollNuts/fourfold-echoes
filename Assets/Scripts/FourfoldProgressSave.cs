@@ -28,6 +28,7 @@ namespace FourfoldEchoes.Product
         public int d020ClearCount;
         public int d020AcknowledgedClearCount;
         public int d020FailureCount;
+        public int d020AcknowledgedFailureCount;
         public float d020BestClearTimeSeconds;
         public bool settingsInitialized;
         public float masterVolume = 1f;
@@ -182,6 +183,7 @@ namespace FourfoldEchoes.Product
             data.d020ClearCount = Mathf.Max(0, data.d020ClearCount);
             data.d020AcknowledgedClearCount = Mathf.Clamp(data.d020AcknowledgedClearCount, 0, data.d020ClearCount);
             data.d020FailureCount = Mathf.Max(0, data.d020FailureCount);
+            data.d020AcknowledgedFailureCount = Mathf.Clamp(data.d020AcknowledgedFailureCount, 0, data.d020FailureCount);
             if (float.IsNaN(data.d020BestClearTimeSeconds) || float.IsInfinity(data.d020BestClearTimeSeconds))
             {
                 data.d020BestClearTimeSeconds = 0f;

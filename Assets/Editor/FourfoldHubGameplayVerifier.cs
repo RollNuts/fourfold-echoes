@@ -76,6 +76,11 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Hub gameplay verifier failed: returned D-020 progress did not open the banked run summary.");
                 }
 
+                if (controller.IsFailureSummaryOpen())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: clear summary and failure summary opened at the same time.");
+                }
+
                 controller.DismissRunSummary();
                 var acknowledgedProgress = FourfoldProgressSave.Load();
                 if (acknowledgedProgress.d020AcknowledgedClearCount != acknowledgedProgress.d020ClearCount || controller.IsRunSummaryOpen())
@@ -102,6 +107,33 @@ namespace FourfoldEchoes.Editor
                 if (!controller.ToggleLumenEdgeLoadout())
                 {
                     throw new InvalidOperationException("Hub gameplay verifier failed: saved Lumen Edge could not be re-equipped from loadout.");
+                }
+
+                var failedReturnProgress = FourfoldProgressSave.Load();
+                failedReturnProgress.currentScene = FourfoldGameIds.SceneHubCrossroads;
+                failedReturnProgress.d020Cleared = false;
+                failedReturnProgress.regionD020Cleared = false;
+                failedReturnProgress.d020ReturnedToHub = false;
+                failedReturnProgress.d020FailureCount = 2;
+                failedReturnProgress.d020AcknowledgedFailureCount = 1;
+                FourfoldProgressSave.Save(failedReturnProgress);
+                controller.InitializeHubProgress();
+                if (!controller.IsFailureSummaryOpen() || controller.IsRunSummaryOpen())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: failed-return progress did not open the failure summary by itself.");
+                }
+
+                controller.DismissFailureSummary();
+                var acknowledgedFailureProgress = FourfoldProgressSave.Load();
+                if (acknowledgedFailureProgress.d020AcknowledgedFailureCount != acknowledgedFailureProgress.d020FailureCount || controller.IsFailureSummaryOpen())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: dismissing failure summary did not acknowledge the latest failed return.");
+                }
+
+                controller.InitializeHubProgress();
+                if (controller.IsFailureSummaryOpen())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: acknowledged failed return summary reopened.");
                 }
 
                 controller.player.position = controller.d020RegionGate.position;

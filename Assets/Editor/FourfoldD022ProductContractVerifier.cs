@@ -161,7 +161,8 @@ namespace FourfoldEchoes.Editor
             RequireContains(titleCopy, "Hub prep -> Region 01 run -> rewards -> hub result", "Title loop summary");
             RequireContains(titleCopy, "New run: prepare in the hub, clear Region 01", "Title new-save summary");
             RequireContains(titleCopy, "REGION ATTEMPT IN PROGRESS", "Title in-progress run choice");
-            RequireContains(titleCopy, "equipped", "Title equipped reward summary");
+            RequireContains(titleCopy, "Saved skills:", "Title saved reward skill summary");
+            RequireContains(titleCopy, "Equipped:", "Title equipped build summary");
 
             var hubCopy = Read("Assets/Scripts/HubSceneController.cs");
             RequireContains(hubCopy, "HUB: Crossroads", "Hub identity");
@@ -173,6 +174,8 @@ namespace FourfoldEchoes.Editor
             RequireContains(hubCopy, "Current synergy: Lumen Link = Edge + Ward", "Hub reward-skill synergy briefing");
             RequireContains(hubCopy, "Loss risk: new R01 rewards save on hub return; fail or leave before return loses them.", "Hub R01 reward-loss risk briefing");
             RequireContains(hubCopy, "REGION CLEARED", "Hub result summary");
+            RequireContains(hubCopy, "ATTEMPT LOST", "Hub failed-return summary");
+            RequireContains(hubCopy, "Hub-saved skills remain safe", "Hub failed-return saved skill safety copy");
             RequireContains(hubCopy, "RESET SAVE?", "Hub reset confirmation");
 
             var regionCopy = Read("Assets/Scripts/D020SliceController.cs");
@@ -191,7 +194,8 @@ namespace FourfoldEchoes.Editor
             RequireContains(regionCopy, "BOSS OPEN", "Region boss opening objective");
             RequireContains(regionCopy, "BOSS OPENING", "Region boss tool-opening beat");
             RequireContains(regionCopy, "Tool opening active. Attack now.", "Region boss opening HUD hint");
-            RequireContains(regionCopy, "AT RISK: hub return saves", "Region reward risk UI");
+            RequireContains(regionCopy, "AT RISK: return to hub to save", "Region reward risk UI");
+            RequireContains(regionCopy, "Failed before hub return:", "Region failed-return reward loss UI");
             RequireContains(regionCopy, "ATTEMPT FAILED", "Region failure result UI");
             RequireContains(regionCopy, "Lumen Link", "Region combined reward-skill synergy");
 
