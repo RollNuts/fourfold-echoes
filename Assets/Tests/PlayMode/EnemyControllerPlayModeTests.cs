@@ -93,6 +93,46 @@ namespace FourfoldEchoes.Tests
         }
 
         [UnityTest]
+        public IEnumerator EnemyController_ShowsGroundMarkerForIncomingAttack()
+        {
+            var definition = CreateDefinition("test_ground_marker");
+            definition.attackRange = 1.4f;
+            definition.attackRadius = 0.45f;
+            definition.telegraphTime = 0.12f;
+            definition.activeTime = 0.08f;
+            definition.recoveryTime = 0.12f;
+            definition.retreatAfterAttack = false;
+
+            var target = CreateTarget(new Vector3(0.9f, 0f, 0f), 100f);
+            var controller = CreateEnemy(Vector3.zero, definition, target.transform);
+
+            controller.Tick(0.01f);
+            controller.Tick(0.01f);
+            Assert.AreEqual(EnemyState.Telegraph, controller.CurrentState);
+
+            var marker = controller.TelegraphGroundMarkerInstance;
+            Assert.IsNotNull(marker);
+            Assert.IsTrue(marker.activeSelf);
+            Assert.That(marker.transform.position.x, Is.EqualTo(definition.attackRange).Within(0.05f));
+            Assert.That(marker.transform.localScale.x, Is.EqualTo(definition.attackRadius * 2f).Within(0.01f));
+
+            var markerCollider = marker.GetComponentInChildren<Collider>();
+            Assert.IsNotNull(markerCollider);
+            Assert.IsFalse(markerCollider.enabled);
+            AssertColorApproximately(controller.telegraphGroundMarkerColor, ReadTint(marker.GetComponentInChildren<Renderer>()));
+
+            controller.Tick(definition.telegraphTime + 0.01f);
+            Assert.AreEqual(EnemyState.Attack, controller.CurrentState);
+            Assert.IsTrue(marker.activeSelf);
+
+            controller.Tick(definition.activeTime + 0.01f);
+            Assert.AreEqual(EnemyState.Recover, controller.CurrentState);
+            Assert.IsFalse(marker.activeSelf);
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator EnemyController_ReturnsHomeWhenTargetBreaksLeash()
         {
             var definition = CreateDefinition("test_leash");

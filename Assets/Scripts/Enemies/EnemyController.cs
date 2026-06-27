@@ -20,6 +20,10 @@ namespace FourfoldEchoes.Product
         public Color telegraphTint = new Color(1f, 0.72f, 0.18f, 1f);
         public Color attackTint = new Color(1f, 0.2f, 0.12f, 1f);
         public Color recoverTint = new Color(0.55f, 0.62f, 0.7f, 1f);
+        public bool showTelegraphGroundMarker = true;
+        public GameObject telegraphGroundMarkerPrefab;
+        public Color telegraphGroundMarkerColor = new Color(1f, 0.22f, 0.08f, 0.72f);
+        public float telegraphGroundMarkerHeight = 0.035f;
 
         [Header("Debug")]
         [SerializeField]
@@ -34,6 +38,9 @@ namespace FourfoldEchoes.Product
         private EnemyAttackDriver attackDriver;
         private Damageable damageable;
         private MaterialPropertyBlock readabilityBlock;
+        private GameObject telegraphGroundMarkerInstance;
+        private Renderer[] telegraphGroundMarkerRenderers;
+        private MaterialPropertyBlock telegraphGroundMarkerBlock;
         private Vector3 homePosition;
         private Vector3 lastKnownTargetPosition;
         private float stateTimer;
@@ -47,6 +54,7 @@ namespace FourfoldEchoes.Product
         public EnemyState CurrentState => currentState;
         public Vector3 HomePosition => homePosition;
         public Damageable Damageable => damageable;
+        public GameObject TelegraphGroundMarkerInstance => telegraphGroundMarkerInstance;
 
         private void Awake()
         {
@@ -80,6 +88,7 @@ namespace FourfoldEchoes.Product
                 damageable.Died -= HandleDied;
             }
             ClearReadabilityTint();
+            SetTelegraphGroundMarkerVisible(false);
         }
 
         private void Update()
@@ -115,6 +124,7 @@ namespace FourfoldEchoes.Product
             damageable.ConfigureMaxHealth(definition.maxHealth, true);
             ChangeState(EnemyState.Search);
             ApplyReadabilityTint(currentState);
+            ApplyTelegraphGroundMarker(currentState);
         }
 
         public void Tick(float dt)
@@ -172,6 +182,7 @@ namespace FourfoldEchoes.Product
                     break;
             }
 
+            RefreshTelegraphGroundMarker();
             motor.TickSpeed(definition, dt);
             animatorBridge.SetSpeed(motor.NormalizedSpeed);
         }
@@ -349,6 +360,7 @@ namespace FourfoldEchoes.Product
             }
 
             ApplyReadabilityTint(next);
+            ApplyTelegraphGroundMarker(next);
             StateChanged?.Invoke(previous, next);
         }
 
@@ -441,6 +453,103 @@ namespace FourfoldEchoes.Product
                 {
                     readabilityRenderers[index].SetPropertyBlock(null);
                 }
+            }
+        }
+
+        private void ApplyTelegraphGroundMarker(EnemyState state)
+        {
+            var shouldShow = showTelegraphGroundMarker && definition != null && (state == EnemyState.Telegraph || state == EnemyState.Attack);
+            if (!shouldShow)
+            {
+                SetTelegraphGroundMarkerVisible(false);
+                return;
+            }
+
+            EnsureTelegraphGroundMarker();
+            RefreshTelegraphGroundMarker();
+            SetTelegraphGroundMarkerVisible(true);
+        }
+
+        private void EnsureTelegraphGroundMarker()
+        {
+            if (telegraphGroundMarkerInstance != null)
+            {
+                return;
+            }
+
+            telegraphGroundMarkerInstance = telegraphGroundMarkerPrefab != null
+                ? Instantiate(telegraphGroundMarkerPrefab, transform)
+                : GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            telegraphGroundMarkerInstance.name = "Enemy Telegraph Ground Marker";
+            telegraphGroundMarkerInstance.transform.SetParent(transform, true);
+            DisableMarkerColliders(telegraphGroundMarkerInstance);
+            telegraphGroundMarkerRenderers = telegraphGroundMarkerInstance.GetComponentsInChildren<Renderer>();
+            ApplyTelegraphGroundMarkerColor();
+            telegraphGroundMarkerInstance.SetActive(false);
+        }
+
+        private static void DisableMarkerColliders(GameObject marker)
+        {
+            var colliders = marker.GetComponentsInChildren<Collider>();
+            for (var index = 0; index < colliders.Length; index++)
+            {
+                colliders[index].enabled = false;
+            }
+        }
+
+        private void RefreshTelegraphGroundMarker()
+        {
+            if (telegraphGroundMarkerInstance == null || definition == null)
+            {
+                return;
+            }
+
+            var forward = transform.forward;
+            forward.y = 0f;
+            forward = forward.sqrMagnitude <= 0.0001f ? Vector3.forward : forward.normalized;
+
+            var markerPosition = transform.position + forward * Mathf.Max(0f, definition.attackRange);
+            markerPosition.y = transform.position.y + Mathf.Max(0.005f, telegraphGroundMarkerHeight);
+            var markerDiameter = Mathf.Max(0.15f, definition.attackRadius * 2f);
+
+            telegraphGroundMarkerInstance.transform.position = markerPosition;
+            telegraphGroundMarkerInstance.transform.rotation = Quaternion.identity;
+            telegraphGroundMarkerInstance.transform.localScale = new Vector3(markerDiameter, 0.02f, markerDiameter);
+            ApplyTelegraphGroundMarkerColor();
+        }
+
+        private void ApplyTelegraphGroundMarkerColor()
+        {
+            if (telegraphGroundMarkerRenderers == null || telegraphGroundMarkerRenderers.Length == 0)
+            {
+                return;
+            }
+
+            if (telegraphGroundMarkerBlock == null)
+            {
+                telegraphGroundMarkerBlock = new MaterialPropertyBlock();
+            }
+
+            for (var index = 0; index < telegraphGroundMarkerRenderers.Length; index++)
+            {
+                var targetRenderer = telegraphGroundMarkerRenderers[index];
+                if (targetRenderer == null)
+                {
+                    continue;
+                }
+
+                targetRenderer.GetPropertyBlock(telegraphGroundMarkerBlock);
+                telegraphGroundMarkerBlock.SetColor(BaseColorProperty, telegraphGroundMarkerColor);
+                telegraphGroundMarkerBlock.SetColor(ColorProperty, telegraphGroundMarkerColor);
+                targetRenderer.SetPropertyBlock(telegraphGroundMarkerBlock);
+            }
+        }
+
+        private void SetTelegraphGroundMarkerVisible(bool visible)
+        {
+            if (telegraphGroundMarkerInstance != null)
+            {
+                telegraphGroundMarkerInstance.SetActive(visible);
             }
         }
 
