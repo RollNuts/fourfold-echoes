@@ -1,0 +1,28 @@
+asset_id: audio.music.bgm_boss
+title: Root Warden Coil
+scene_type: boss phase1
+mood: ominous
+bpm_target: 104
+loop_requirement:
+  intro_bars: 2
+  loop_bars: 16
+  seamless_loop: true
+  full_master_loop_start_sample: 203536
+  full_master_loop_end_sample: 1831824
+  runtime_intro_clip: Assets/Audio/Generated/BGM_BossPhase1_Ominous_AIntro_104_v0.1.0.ogg
+  runtime_loop_clip: Assets/Audio/Generated/BGM_BossPhase1_Ominous_ALoop_104_v0.1.0.ogg
+stems_requirement:
+  - rhythm
+  - harmony
+  - lead
+  - percussion
+target_platforms:
+  - Steam PC
+  - future console portable
+source_strategy: repository-authored deterministic procedural synthesis
+license: repository-authored
+status: generated_pilot
+notes:
+  - Boss tell and impact SFX outrank this music.
+  - Use the intro for deliberate boss phase entry, then loop the runtime loop clip.
+  - Keep phase transitions in code simple: stop or crossfade phase1, play phase2 intro once, then phase2 loop.

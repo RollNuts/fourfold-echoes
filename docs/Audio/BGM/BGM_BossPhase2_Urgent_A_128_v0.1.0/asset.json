@@ -1,0 +1,114 @@
+{
+  "asset_id": "audio.music.bgm_boss_phase2",
+  "title": "Root Warden Break",
+  "scene": "BossPhase2",
+  "scene_type": "boss phase2",
+  "mood": "Urgent",
+  "variant": "A",
+  "bpm": 128,
+  "version": "0.1.0",
+  "status": "generated_pilot",
+  "source_strategy": "repository-authored deterministic procedural synthesis",
+  "license": "repository-authored",
+  "target_platforms": [
+    "Steam PC",
+    "future console portable"
+  ],
+  "library_root_relative": "Runtime/Audio/BGM/BGM_BossPhase2_Urgent_A_128_v0.1.0",
+  "paths": {
+    "master_wav": "BGM_BossPhase2_Urgent_A_128_v0.1.0.wav",
+    "runtime_intro_ogg": "Assets/Audio/Generated/BGM_BossPhase2_Urgent_AIntro_128_v0.1.0.ogg",
+    "runtime_loop_ogg": "Assets/Audio/Generated/BGM_BossPhase2_Urgent_ALoop_128_v0.1.0.ogg",
+    "cue_sheet": "cue_sheet.csv",
+    "asset_request": "asset_request.yaml",
+    "qc_result": "qc_result.json",
+    "stems": {
+      "rhythm": "Stems/BGM_BossPhase2_Urgent_ARhythm_128_v0.1.0.wav",
+      "harmony": "Stems/BGM_BossPhase2_Urgent_AHarmony_128_v0.1.0.wav",
+      "lead": "Stems/BGM_BossPhase2_Urgent_ALead_128_v0.1.0.wav",
+      "percussion": "Stems/BGM_BossPhase2_Urgent_APercussion_128_v0.1.0.wav"
+    }
+  },
+  "loop": {
+    "full_master_start_sample": 82684,
+    "full_master_end_sample": 1405628,
+    "full_master_start_seconds": 1.8749206349206349,
+    "full_master_end_seconds": 31.873650793650793,
+    "loop_clip_start_sample": 0,
+    "loop_clip_end_sample": 1322944,
+    "loop_clip_length_seconds": 29.998730158730158,
+    "intro_bars": 1,
+    "loop_bars": 16,
+    "playback_instruction": "Play runtime_intro_ogg once for phase entry, then loop runtime_loop_ogg from sample 0."
+  },
+  "mix_notes": {
+    "loudness_note": "Peak -5.40 dBFS, RMS -24.09 dBFS.",
+    "fade_note": "No baked loop fade. Optional engine crossfade 150-300 ms on phase transition.",
+    "sfx_space_note": "Music avoids heavy impacts so boss tells, impacts, shield breaks, and transition SFX stay in front.",
+    "low_end_note": "No sub/kick layer; roots are short and gain-limited.",
+    "melody_note": "Lead is limited to short warning callouts."
+  },
+  "stems": [
+    {
+      "name": "rhythm",
+      "file": "Stems/BGM_BossPhase2_Urgent_ARhythm_128_v0.1.0.wav",
+      "peak_dbfs": -8.840493982822125,
+      "rms_dbfs": -31.142382192357466
+    },
+    {
+      "name": "harmony",
+      "file": "Stems/BGM_BossPhase2_Urgent_AHarmony_128_v0.1.0.wav",
+      "peak_dbfs": -7.521572178613706,
+      "rms_dbfs": -25.279876865377943
+    },
+    {
+      "name": "lead",
+      "file": "Stems/BGM_BossPhase2_Urgent_ALead_128_v0.1.0.wav",
+      "peak_dbfs": -9.264416311163618,
+      "rms_dbfs": -38.23166327743667
+    },
+    {
+      "name": "percussion",
+      "file": "Stems/BGM_BossPhase2_Urgent_APercussion_128_v0.1.0.wav",
+      "peak_dbfs": -12.488887260454572,
+      "rms_dbfs": -50.2065897393399
+    }
+  ],
+  "planned_companion_cues": [
+    {
+      "structure": "title",
+      "status": "planned"
+    },
+    {
+      "structure": "field exploration",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_region01"
+    },
+    {
+      "structure": "battle",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_normal_combat"
+    },
+    {
+      "structure": "boss phase1",
+      "status": "planned"
+    },
+    {
+      "structure": "boss phase2",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_boss_phase2"
+    },
+    {
+      "structure": "rest room",
+      "status": "planned"
+    },
+    {
+      "structure": "victory stinger",
+      "status": "planned"
+    },
+    {
+      "structure": "defeat stinger",
+      "status": "planned"
+    }
+  ]
+}
