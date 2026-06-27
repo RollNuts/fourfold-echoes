@@ -1,0 +1,28 @@
+asset_id: audio.music.bgm_region01
+title: First Fold Underleaf
+scene_type: field exploration
+mood: contemplative
+bpm_target: 90
+loop_requirement:
+  intro_bars: 4
+  loop_bars: 16
+  seamless_loop: true
+  full_master_loop_start_sample: 470400
+  full_master_loop_end_sample: 2352000
+  runtime_intro_clip: Assets/Audio/Generated/BGM_Region01_Contemplative_AIntro_090_v0.1.0.ogg
+  runtime_loop_clip: Assets/Audio/Generated/BGM_Region01_Contemplative_ALoop_090_v0.1.0.ogg
+stems_requirement:
+  - rhythm
+  - harmony
+  - lead
+  - percussion
+target_platforms:
+  - Steam PC
+  - future console portable
+source_strategy: repository-authored deterministic procedural synthesis
+license: repository-authored
+status: generated_pilot
+notes:
+  - Keep final runtime playback simple: play intro once, then loop the loop clip.
+  - Stems are for mix/edit review, not a complex MVP dynamic music system.
+  - Avoid heavy sub bass, dense 1-4 kHz lead content, and constant percussion transients.
