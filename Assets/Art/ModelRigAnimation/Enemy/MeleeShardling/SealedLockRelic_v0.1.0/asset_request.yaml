@@ -1,0 +1,48 @@
+schema: model_rig_animation_request_v1
+generated_at: 2026-06-27T07:25:00Z
+input_status: derived_from_existing_repo_brief
+family: Enemy
+subject: MeleeShardling
+variant: SealedLockRelic
+semver: 0.1.0
+source_brief: artifacts/Concepts/FoldedReliquary/FE_ENEMY_MELEE_Shardling_ModelingBrief.md
+concept_art:
+  primary: artifacts/Concepts/FoldedReliquary/IndividualCandidates_20260627/FE_CONCEPT_CANDIDATE_MeleeShardling_SealedLockRelic_v001.png
+  approval_status: hold_rework_reference_not_final_approval
+body_proportion_guide:
+  scale_m: 1.2
+  footprint_m: {x: 1.05, z: 0.88}
+  pivot: bottom_center
+  front_direction: Unity +Z after Blender FBX export
+state_list:
+  - Idle
+  - Walk
+  - Run
+  - AttackStart
+  - AttackLoop
+  - AttackEnd
+  - HitFront
+  - HitBack
+  - Knockdown
+  - Death
+  - CastStart
+  - ChannelLoop
+  - CastRelease
+  - Interact
+socket_rules:
+  - SOCKET_Ground
+  - SOCKET_ChestCore
+  - SOCKET_WeakPoint
+  - SOCKET_Back
+  - SOCKET_AttackOrigin
+  - SOCKET_ForwardHit
+  - SOCKET_RedSeamVFX
+  - SOCKET_Cast
+  - SOCKET_HitVfx
+root_motion: off_controller_driven
+poly_budget:
+  steam_pc_lod0_tris: 6000
+  steam_deck_lod0_tris: 4500
+  proposed_lod1_tris: 3000
+  proposed_lod2_tris: 1000
+material_budget: 4

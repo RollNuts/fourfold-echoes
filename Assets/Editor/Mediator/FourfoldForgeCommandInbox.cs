@@ -139,6 +139,10 @@ namespace FourfoldEchoes.Editor.Mediator
                     FourfoldProductValidator.RunAll();
                     break;
 
+                case "model_rig_animation.verify_melee_shardling":
+                    FourfoldModelRigAnimationPackVerifier.VerifyMeleeShardlingPack();
+                    break;
+
                 default:
                     throw new InvalidOperationException($"Unsupported command action: {command.action}");
             }

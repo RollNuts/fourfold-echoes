@@ -1,0 +1,702 @@
+{
+  "schema": "model_rig_animation_asset_v1",
+  "generated_at": "2026-06-27T07:25:00Z",
+  "asset_id": "modelrig.enemy.meleeshardling.sealedlockrelic.v0_1_0",
+  "family": "Enemy",
+  "subject": "MeleeShardling",
+  "variant": "SealedLockRelic",
+  "semver": "0.1.0",
+  "source_inputs": {
+    "asset_request": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/asset_request.yaml",
+    "concept_art": "artifacts/Concepts/FoldedReliquary/IndividualCandidates_20260627/FE_CONCEPT_CANDIDATE_MeleeShardling_SealedLockRelic_v001.png",
+    "concept_approval_status": "hold_rework_reference_not_final_approval",
+    "modeling_brief": "artifacts/Concepts/FoldedReliquary/FE_ENEMY_MELEE_Shardling_ModelingBrief.md",
+    "schema_contract": "artifacts/AssetPipeline/schema_v1/art_enemy_melee_01.json"
+  },
+  "deliverables": {
+    "model_fbx": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Models/MDL_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.fbx",
+    "animation_fbx": [
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Idle_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Walk_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Run_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_AttackStart_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_AttackLoop_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_AttackEnd_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_HitFront_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_HitBack_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Knockdown_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Death_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_CastStart_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_ChannelLoop_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_CastRelease_SealedLockRelic_v0.1.0.fbx",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Interact_SealedLockRelic_v0.1.0.fbx"
+    ],
+    "animation_clips": [
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Idle_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Walk_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Run_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_AttackStart_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_AttackLoop_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_AttackEnd_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_HitFront_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_HitBack_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Knockdown_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Death_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_CastStart_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_ChannelLoop_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_CastRelease_SealedLockRelic_v0.1.0.anim",
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Interact_SealedLockRelic_v0.1.0.anim"
+    ],
+    "avatar_rig_memo": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Docs/avatar_rig_memo.md",
+    "preview_gif": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Previews/preview.gif",
+    "asset_json": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/asset.json",
+    "qc_result": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/qc_result.json",
+    "unity_import_qc": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/unity_import_qc.json"
+  },
+  "rig": {
+    "unity_animation_type": "mechanical_transform_hierarchy",
+    "rig_style": "mechanical_transform_hierarchy",
+    "avatar": "No Humanoid Avatar; generated Unity AnimationClips drive named transforms",
+    "root_motion": "Off. ROOT stays at world origin with no translation keys; gameplay movement is controller-driven in Unity. Locomotion clips are in-place compression/rocking cycles for a mechanical crawling relic.",
+    "scale": "1 unit = 1 meter",
+    "axis": "Blender Z-up, exported FBX axis_forward=-Z axis_up=Y for Unity Y-up/+Z-forward",
+    "root": "ROOT",
+    "controls": [
+      "CTRL_Base",
+      "CTRL_Body",
+      "CTRL_FrontWedge",
+      "CTRL_TopPlate_L",
+      "CTRL_TopPlate_R",
+      "CTRL_RedSeam",
+      "CTRL_LeftLock",
+      "CTRL_RightLock"
+    ]
+  },
+  "sockets": [
+    {
+      "name": "SOCKET_Ground",
+      "local_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "purpose": "ground pivot and spawn point",
+      "parent": "ROOT"
+    },
+    {
+      "name": "SOCKET_ChestCore",
+      "local_position": {
+        "x": 0.0,
+        "y": -0.02,
+        "z": 0.54
+      },
+      "purpose": "central red seam and cast charge core",
+      "parent": "CTRL_Body"
+    },
+    {
+      "name": "SOCKET_WeakPoint",
+      "local_position": {
+        "x": 0.0,
+        "y": -0.18,
+        "z": 0.65
+      },
+      "purpose": "targetable pressure seam",
+      "parent": "CTRL_Body"
+    },
+    {
+      "name": "SOCKET_Back",
+      "local_position": {
+        "x": 0.0,
+        "y": 0.48,
+        "z": 0.42
+      },
+      "purpose": "rear impact/VFX attachment",
+      "parent": "CTRL_Base"
+    },
+    {
+      "name": "SOCKET_AttackOrigin",
+      "local_position": {
+        "x": 0.0,
+        "y": -0.82,
+        "z": 0.33
+      },
+      "purpose": "forward wedge attack origin",
+      "parent": "CTRL_FrontWedge"
+    },
+    {
+      "name": "SOCKET_ForwardHit",
+      "local_position": {
+        "x": 0.0,
+        "y": -0.96,
+        "z": 0.3
+      },
+      "purpose": "forward hitbox center",
+      "parent": "CTRL_FrontWedge"
+    },
+    {
+      "name": "SOCKET_RedSeamVFX",
+      "local_position": {
+        "x": 0.0,
+        "y": -0.18,
+        "z": 0.67
+      },
+      "purpose": "red seam VFX emission point",
+      "parent": "CTRL_RedSeam"
+    },
+    {
+      "name": "SOCKET_Cast",
+      "local_position": {
+        "x": 0.0,
+        "y": -0.34,
+        "z": 0.72
+      },
+      "purpose": "cast charge/release origin",
+      "parent": "CTRL_RedSeam"
+    },
+    {
+      "name": "SOCKET_HitVfx",
+      "local_position": {
+        "x": 0.0,
+        "y": -0.08,
+        "z": 0.45
+      },
+      "purpose": "main impact VFX center",
+      "parent": "CTRL_Body"
+    }
+  ],
+  "animations": [
+    {
+      "action": "Idle",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Idle_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 61,
+        "sample_rate": 30
+      },
+      "wrap_mode": "loop",
+      "loop": true,
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "contact_frames": [
+        1,
+        31,
+        61
+      ],
+      "event_frames": [],
+      "root_motion": "off"
+    },
+    {
+      "action": "Walk",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Walk_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 31,
+        "sample_rate": 30
+      },
+      "wrap_mode": "loop",
+      "loop": true,
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "contact_frames": [
+        1,
+        16,
+        31
+      ],
+      "event_frames": [
+        {
+          "frame": 1,
+          "event": "base_contact_left"
+        },
+        {
+          "frame": 16,
+          "event": "base_contact_right"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "Run",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Run_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 25,
+        "sample_rate": 30
+      },
+      "wrap_mode": "loop",
+      "loop": true,
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "contact_frames": [
+        1,
+        13,
+        25
+      ],
+      "event_frames": [
+        {
+          "frame": 1,
+          "event": "base_contact_left"
+        },
+        {
+          "frame": 13,
+          "event": "base_contact_right"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "AttackStart",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_AttackStart_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 19,
+        "sample_rate": 30
+      },
+      "wrap_mode": "oneshot",
+      "loop": false,
+      "start_pose": "neutral",
+      "end_pose": "attack_extended",
+      "contact_frames": [
+        14
+      ],
+      "event_frames": [
+        {
+          "frame": 8,
+          "event": "attack_windup"
+        },
+        {
+          "frame": 10,
+          "event": "hit_active_start"
+        },
+        {
+          "frame": 14,
+          "event": "hit_peak"
+        },
+        {
+          "frame": 17,
+          "event": "hit_active_end"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "AttackLoop",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_AttackLoop_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 25,
+        "sample_rate": 30
+      },
+      "wrap_mode": "loop",
+      "loop": true,
+      "start_pose": "attack_extended",
+      "end_pose": "attack_extended",
+      "contact_frames": [
+        1,
+        13,
+        25
+      ],
+      "event_frames": [
+        {
+          "frame": 6,
+          "event": "loop_pressure_pulse"
+        },
+        {
+          "frame": 18,
+          "event": "loop_pressure_pulse"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "AttackEnd",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_AttackEnd_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 15,
+        "sample_rate": 30
+      },
+      "wrap_mode": "oneshot",
+      "loop": false,
+      "start_pose": "attack_extended",
+      "end_pose": "neutral",
+      "contact_frames": [
+        15
+      ],
+      "event_frames": [
+        {
+          "frame": 8,
+          "event": "recover"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "HitFront",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_HitFront_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 13,
+        "sample_rate": 30
+      },
+      "wrap_mode": "oneshot",
+      "loop": false,
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "contact_frames": [
+        1,
+        13
+      ],
+      "event_frames": [
+        {
+          "frame": 2,
+          "event": "hit_vfx"
+        },
+        {
+          "frame": 7,
+          "event": "armor_clack"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "HitBack",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_HitBack_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 13,
+        "sample_rate": 30
+      },
+      "wrap_mode": "oneshot",
+      "loop": false,
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "contact_frames": [
+        1,
+        13
+      ],
+      "event_frames": [
+        {
+          "frame": 2,
+          "event": "hit_vfx"
+        },
+        {
+          "frame": 7,
+          "event": "armor_clack"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "Knockdown",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Knockdown_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 31,
+        "sample_rate": 30
+      },
+      "wrap_mode": "oneshot",
+      "loop": false,
+      "start_pose": "neutral",
+      "end_pose": "knockdown",
+      "contact_frames": [
+        18,
+        31
+      ],
+      "event_frames": [
+        {
+          "frame": 18,
+          "event": "ground_contact"
+        },
+        {
+          "frame": 26,
+          "event": "stun_open"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "Death",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Death_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 45,
+        "sample_rate": 30
+      },
+      "wrap_mode": "oneshot",
+      "loop": false,
+      "start_pose": "neutral",
+      "end_pose": "dead",
+      "contact_frames": [
+        24,
+        45
+      ],
+      "event_frames": [
+        {
+          "frame": 8,
+          "event": "death_start"
+        },
+        {
+          "frame": 28,
+          "event": "death_vfx"
+        },
+        {
+          "frame": 44,
+          "event": "hide_allowed"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "CastStart",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_CastStart_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 21,
+        "sample_rate": 30
+      },
+      "wrap_mode": "oneshot",
+      "loop": false,
+      "start_pose": "neutral",
+      "end_pose": "charged",
+      "contact_frames": [
+        21
+      ],
+      "event_frames": [
+        {
+          "frame": 8,
+          "event": "cast_charge"
+        },
+        {
+          "frame": 18,
+          "event": "cast_ready"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "ChannelLoop",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_ChannelLoop_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 37,
+        "sample_rate": 30
+      },
+      "wrap_mode": "loop",
+      "loop": true,
+      "start_pose": "charged",
+      "end_pose": "charged",
+      "contact_frames": [
+        1,
+        19,
+        37
+      ],
+      "event_frames": [
+        {
+          "frame": 10,
+          "event": "channel_pulse"
+        },
+        {
+          "frame": 28,
+          "event": "channel_pulse"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "CastRelease",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_CastRelease_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 19,
+        "sample_rate": 30
+      },
+      "wrap_mode": "oneshot",
+      "loop": false,
+      "start_pose": "charged",
+      "end_pose": "neutral",
+      "contact_frames": [
+        19
+      ],
+      "event_frames": [
+        {
+          "frame": 12,
+          "event": "projectile_release"
+        },
+        {
+          "frame": 16,
+          "event": "cast_recover"
+        }
+      ],
+      "root_motion": "off"
+    },
+    {
+      "action": "Interact",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Animations/ANM_Enemy_MeleeShardling_Interact_SealedLockRelic_v0.1.0.fbx",
+      "frames": {
+        "start": 1,
+        "end": 25,
+        "sample_rate": 30
+      },
+      "wrap_mode": "oneshot",
+      "loop": false,
+      "start_pose": "neutral",
+      "end_pose": "neutral",
+      "contact_frames": [
+        12,
+        25
+      ],
+      "event_frames": [
+        {
+          "frame": 12,
+          "event": "interact_contact"
+        },
+        {
+          "frame": 18,
+          "event": "interact_vfx"
+        }
+      ],
+      "root_motion": "off"
+    }
+  ],
+  "optimization": {
+    "triangle_count_lod0": 538,
+    "poly_budget": {
+      "steam_pc_lod0_tris": 6000,
+      "steam_deck_lod0_tris": 4500,
+      "proposed_lod1_tris": 3000,
+      "proposed_lod2_tris": 1000
+    },
+    "material_count": 4,
+    "material_budget": 4,
+    "lod_recommendation": "LOD0 only is acceptable for this small technical pack; add LOD1/LOD2 if art detail increases.",
+    "materials": [
+      "MAT_Base_DarkTealBlack",
+      "MAT_Hardware_AgedBrass",
+      "MAT_Seam_DullRedEmissive",
+      "MAT_ShellStone_WarmIvory"
+    ]
+  },
+  "prefab_integration": {
+    "collider": "BoxCollider or convex hull on prefab root plus trigger hitbox at SOCKET_ForwardHit",
+    "vfx_sockets": [
+      "SOCKET_RedSeamVFX",
+      "SOCKET_Cast",
+      "SOCKET_HitVfx"
+    ],
+    "hit_sockets": [
+      "SOCKET_AttackOrigin",
+      "SOCKET_ForwardHit",
+      "SOCKET_WeakPoint"
+    ],
+    "sample_scene_setup": "Animator + simple collider + forward trigger hitbox + VFX anchors; all root transforms start at origin."
+  },
+  "qc": {
+    "generated_at": "2026-06-27T07:25:00Z",
+    "status": "unity_import_pass_art_approval_pending",
+    "missing_files": [],
+    "triangle_count_lod0": 538,
+    "triangle_budget_lod0": 6000,
+    "triangle_budget_status": "pass",
+    "material_count": 4,
+    "material_budget": 4,
+    "material_budget_status": "pass",
+    "root_motion": "Off. ROOT stays at world origin with no translation keys; gameplay movement is controller-driven in Unity. Locomotion clips are in-place compression/rocking cycles for a mechanical crawling relic.",
+    "root_origin_locked": "pass",
+    "unity_origin_drift": "pass",
+    "preview_turntable_frames": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Previews/preview_frames",
+    "preview_gif_status": "pending_external_assembly",
+    "loop_seam_zero_by_construction": [
+      "Idle",
+      "Walk",
+      "Run",
+      "AttackLoop",
+      "ChannelLoop"
+    ],
+    "foot_sliding": "not_applicable_no_feet_mechanical_base_contact_used",
+    "start_end_pose_consistency": {
+      "Idle": {
+        "start_pose": "neutral",
+        "end_pose": "neutral",
+        "status": "pass"
+      },
+      "Walk": {
+        "start_pose": "neutral",
+        "end_pose": "neutral",
+        "status": "pass"
+      },
+      "Run": {
+        "start_pose": "neutral",
+        "end_pose": "neutral",
+        "status": "pass"
+      },
+      "AttackStart": {
+        "start_pose": "neutral",
+        "end_pose": "attack_extended",
+        "status": "pass"
+      },
+      "AttackLoop": {
+        "start_pose": "attack_extended",
+        "end_pose": "attack_extended",
+        "status": "pass"
+      },
+      "AttackEnd": {
+        "start_pose": "attack_extended",
+        "end_pose": "neutral",
+        "status": "pass"
+      },
+      "HitFront": {
+        "start_pose": "neutral",
+        "end_pose": "neutral",
+        "status": "pass"
+      },
+      "HitBack": {
+        "start_pose": "neutral",
+        "end_pose": "neutral",
+        "status": "pass"
+      },
+      "Knockdown": {
+        "start_pose": "neutral",
+        "end_pose": "knockdown",
+        "status": "pass"
+      },
+      "Death": {
+        "start_pose": "neutral",
+        "end_pose": "dead",
+        "status": "pass"
+      },
+      "CastStart": {
+        "start_pose": "neutral",
+        "end_pose": "charged",
+        "status": "pass"
+      },
+      "ChannelLoop": {
+        "start_pose": "charged",
+        "end_pose": "charged",
+        "status": "pass"
+      },
+      "CastRelease": {
+        "start_pose": "charged",
+        "end_pose": "neutral",
+        "status": "pass"
+      },
+      "Interact": {
+        "start_pose": "neutral",
+        "end_pose": "neutral",
+        "status": "pass"
+      }
+    },
+    "known_limitations": [
+      "No approved asset_request.yaml was present in the repository; this pack derives its request from the existing hold/rework modeling brief.",
+      "Concept art approval remains pending because the source brief explicitly says hold/rework before final production modeling."
+    ],
+    "unity_import_qc": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/unity_import_qc.json",
+    "unity_import_status": "pass",
+    "unity_model_importer_animation_type": "None",
+    "unity_rig_style": "mechanical_transform_hierarchy_with_generated_animation_clips",
+    "unity_import_root_motion": "off_root_locked_controller_driven_transform_clips",
+    "unity_animation_clip_count": 14,
+    "unity_animation_errors": [],
+    "unity_animation_warnings": [],
+    "animation_clip_curves_verified": "pass"
+  }
+}
