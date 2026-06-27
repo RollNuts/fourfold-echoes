@@ -174,6 +174,8 @@ namespace FourfoldEchoes.Editor
             RequireContains(hubCopy, "Current synergy: Lumen Link = Edge + Ward", "Hub reward-skill synergy briefing");
             RequireContains(hubCopy, "Loss risk: new R01 rewards save on hub return; fail or leave before return loses them.", "Hub R01 reward-loss risk briefing");
             RequireContains(hubCopy, "REGION CLEARED", "Hub result summary");
+            RequireContains(hubCopy, "Last clear", "Hub last-clear result timing");
+            RequireContains(hubCopy, "NEW BEST", "Hub new-best result timing");
             RequireContains(hubCopy, "ATTEMPT LOST", "Hub failed-return summary");
             RequireContains(hubCopy, "Hub-saved skills remain safe", "Hub failed-return saved skill safety copy");
             RequireContains(hubCopy, "RESET SAVE?", "Hub reset confirmation");

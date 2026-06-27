@@ -69,6 +69,8 @@ namespace FourfoldEchoes.Editor
                 returnedProgress.d020ClearCount = 1;
                 returnedProgress.d020AcknowledgedClearCount = 0;
                 returnedProgress.d020BestClearTimeSeconds = 91f;
+                returnedProgress.d020LastClearTimeSeconds = 91f;
+                returnedProgress.d020LastClearWasBest = true;
                 FourfoldProgressSave.Save(returnedProgress);
                 controller.InitializeHubProgress();
                 if (!controller.IsRunSummaryOpen())

@@ -2402,6 +2402,11 @@ namespace FourfoldEchoes.Product
             progressData.d020ClearCount = Mathf.Max(0, clearCount);
             progressData.d020FailureCount = Mathf.Max(0, failureCount);
             progressData.d020BestClearTimeSeconds = Mathf.Max(0f, bestClearTimeSeconds);
+            if (returnedToHubThisRun && lastReturnTimeSeconds > 0f)
+            {
+                progressData.d020LastClearTimeSeconds = Mathf.Max(0f, lastReturnTimeSeconds);
+                progressData.d020LastClearWasBest = bestClearTimeImproved;
+            }
             FourfoldProgressSave.Save(progressData);
             MirrorLegacyPlayerPrefs();
         }

@@ -30,6 +30,8 @@ namespace FourfoldEchoes.Product
         public int d020FailureCount;
         public int d020AcknowledgedFailureCount;
         public float d020BestClearTimeSeconds;
+        public float d020LastClearTimeSeconds;
+        public bool d020LastClearWasBest;
         public bool settingsInitialized;
         public float masterVolume = 1f;
         public float musicVolume = 1f;
@@ -190,6 +192,13 @@ namespace FourfoldEchoes.Product
             }
 
             data.d020BestClearTimeSeconds = Mathf.Max(0f, data.d020BestClearTimeSeconds);
+            if (float.IsNaN(data.d020LastClearTimeSeconds) || float.IsInfinity(data.d020LastClearTimeSeconds))
+            {
+                data.d020LastClearTimeSeconds = 0f;
+            }
+
+            data.d020LastClearTimeSeconds = Mathf.Max(0f, data.d020LastClearTimeSeconds);
+            data.d020LastClearWasBest = data.d020LastClearTimeSeconds > 0f && data.d020LastClearWasBest;
             if (!data.d020LoadoutInitialized)
             {
                 data.d020EdgeEquipped = data.d020RewardClaimed;

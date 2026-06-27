@@ -60,6 +60,9 @@ namespace FourfoldEchoes.Editor
                     d020WardEquipped = false,
                     d020FailureCount = 3,
                     d020AcknowledgedFailureCount = 2,
+                    d020BestClearTimeSeconds = 87f,
+                    d020LastClearTimeSeconds = 91f,
+                    d020LastClearWasBest = true,
                     settingsInitialized = true,
                     masterVolume = 0.7f,
                     musicVolume = 0.5f,
@@ -83,6 +86,9 @@ namespace FourfoldEchoes.Editor
                     || roundtrip.d020WardEquipped
                     || roundtrip.d020FailureCount != 3
                     || roundtrip.d020AcknowledgedFailureCount != 2
+                    || !Approximately(roundtrip.d020BestClearTimeSeconds, 87f)
+                    || !Approximately(roundtrip.d020LastClearTimeSeconds, 91f)
+                    || !roundtrip.d020LastClearWasBest
                     || !Approximately(roundtrip.masterVolume, 0.7f)
                     || !Approximately(roundtrip.musicVolume, 0.5f)
                     || !Approximately(roundtrip.sfxVolume, 0.9f)
@@ -113,7 +119,11 @@ namespace FourfoldEchoes.Editor
 
                 File.WriteAllText(savePath, "{ not valid json");
                 var recovered = FourfoldProgressSave.Load();
-                if (recovered.currentScene != FourfoldGameIds.SceneD020VerticalSlice || recovered.d020FailureCount != 3 || recovered.d020AcknowledgedFailureCount != 2)
+                if (recovered.currentScene != FourfoldGameIds.SceneD020VerticalSlice
+                    || recovered.d020FailureCount != 3
+                    || recovered.d020AcknowledgedFailureCount != 2
+                    || !Approximately(recovered.d020LastClearTimeSeconds, 91f)
+                    || !recovered.d020LastClearWasBest)
                 {
                     throw new InvalidOperationException("Save verifier failed: corrupt primary save did not recover from backup.");
                 }

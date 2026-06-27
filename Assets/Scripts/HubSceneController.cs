@@ -1278,7 +1278,13 @@ namespace FourfoldEchoes.Product
             var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, FourfoldRuntimeUi.SafeUiScale(progressData));
             var bestTime = progressData == null || progressData.d020BestClearTimeSeconds <= 0f
                 ? "--"
-                : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
+                : FormatRunTime(progressData.d020BestClearTimeSeconds);
+            var lastClearTime = progressData == null || progressData.d020LastClearTimeSeconds <= 0f
+                ? "--"
+                : FormatRunTime(progressData.d020LastClearTimeSeconds);
+            var lastClearLabel = progressData != null && progressData.d020LastClearWasBest
+                ? FourfoldLanguage.T(progressData, $"Last clear {lastClearTime}   NEW BEST", $"直近 {lastClearTime}   新記録")
+                : FourfoldLanguage.T(progressData, $"Last clear {lastClearTime}", $"直近 {lastClearTime}");
             var clearCount = progressData == null ? 0 : progressData.d020ClearCount;
             var failures = progressData == null ? 0 : progressData.d020FailureCount;
             var rewards = progressData == null ? 0 : (progressData.d020RewardClaimed ? 1 : 0) + (progressData.d020SecondRewardClaimed ? 1 : 0);
@@ -1286,8 +1292,9 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(rect.x + 26f, rect.y + 18f, rect.width - 52f, 34f), FourfoldLanguage.T(progressData, "REGION CLEARED", "地域クリア"), header);
             GUI.Label(new Rect(rect.x + 26f, rect.y + 58f, rect.width - 52f, 50f), FourfoldLanguage.T(progressData, "Region 01 is complete. The hub received the result, and reward skills are saved for future attempts.", "地域01完了。ハブが結果を受け取り、報酬スキルは次回以降のため保存された。"), body);
             FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 116f, (rect.width - 64f) * 0.50f, 36f), FourfoldLanguage.T(progressData, $"Rewards active {rewards}/2", $"有効報酬 {rewards}/2"), new Color(0.22f, 0.70f, 1.0f), muted);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 38f + (rect.width - 64f) * 0.50f, rect.y + 116f, (rect.width - 64f) * 0.50f, 36f), FourfoldLanguage.T(progressData, $"Clears {clearCount}   Best {bestTime}", $"クリア {clearCount}   最速 {bestTime}"), new Color(1.0f, 0.72f, 0.24f), muted);
-            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 162f, rect.width - 52f, 36f), FourfoldLanguage.T(progressData, $"Failed attempts {failures}. Saved rewards remain active.", $"失敗 {failures}。保存済みの報酬は有効なまま。"), new Color(1.0f, 0.46f, 0.22f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 38f + (rect.width - 64f) * 0.50f, rect.y + 116f, (rect.width - 64f) * 0.50f, 36f), lastClearLabel, new Color(1.0f, 0.72f, 0.24f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 26f, rect.y + 162f, (rect.width - 64f) * 0.50f, 36f), FourfoldLanguage.T(progressData, $"Clears {clearCount}   Best {bestTime}", $"クリア {clearCount}   最速 {bestTime}"), new Color(0.62f, 0.44f, 1.0f), muted);
+            FourfoldRuntimeUi.DrawChip(new Rect(rect.x + 38f + (rect.width - 64f) * 0.50f, rect.y + 162f, (rect.width - 64f) * 0.50f, 36f), FourfoldLanguage.T(progressData, $"Failures {failures}. Rewards safe.", $"失敗 {failures}。報酬は安全。"), new Color(1.0f, 0.46f, 0.22f), muted);
             FourfoldRuntimeUi.DrawDivider(rect.x + 26f, rect.y + 214f, rect.width - 52f);
 
             var labels = new[]
@@ -1302,6 +1309,19 @@ namespace FourfoldEchoes.Product
             }
 
             GUI.Label(new Rect(rect.x + 34f, rect.y + rect.height - 48f, rect.width - 68f, 30f), FourfoldInputPrompts.HubPanel(progressData), muted);
+        }
+
+        private static string FormatRunTime(float seconds)
+        {
+            if (seconds <= 0f)
+            {
+                return "--";
+            }
+
+            var wholeSeconds = Mathf.CeilToInt(seconds);
+            var minutes = wholeSeconds / 60;
+            var remainder = wholeSeconds % 60;
+            return minutes > 0 ? $"{minutes}:{remainder:00}" : $"{remainder}s";
         }
 
         private void DrawFailureReturnSummary(GUIStyle body, GUIStyle muted)
