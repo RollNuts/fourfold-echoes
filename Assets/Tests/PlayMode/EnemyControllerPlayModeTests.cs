@@ -162,6 +162,34 @@ namespace FourfoldEchoes.Tests
         }
 
         [UnityTest]
+        public IEnumerator Damageable_UsesDefeatFlashForLethalDamage()
+        {
+            var target = CreateTarget(Vector3.zero, 20f);
+            var damageable = target.GetComponent<Damageable>();
+            damageable.hitFlashDuration = 0.03f;
+            damageable.defeatFlashDuration = 0.12f;
+            damageable.hitFlashScale = 0.4f;
+            damageable.defeatFlashScaleMultiplier = 1.5f;
+            damageable.defeatFlashColor = new Color(1f, 0.18f, 0.08f, 1f);
+
+            Assert.IsTrue(damageable.ApplyDamage(25f, null, new Vector3(0.2f, 0f, 0f)));
+
+            var flash = damageable.HitFlashInstance;
+            Assert.IsNotNull(flash);
+            Assert.IsFalse(damageable.IsAlive);
+            Assert.IsTrue(flash.activeSelf);
+            Assert.That(flash.transform.position.x, Is.EqualTo(0.2f).Within(0.01f));
+            Assert.That(flash.transform.localScale.x, Is.EqualTo(0.6f).Within(0.01f));
+            AssertColorApproximately(damageable.defeatFlashColor, ReadTint(flash.GetComponentInChildren<Renderer>()));
+
+            yield return new WaitForSeconds(0.06f);
+            Assert.IsTrue(flash.activeSelf);
+
+            yield return new WaitForSeconds(0.08f);
+            Assert.IsFalse(flash.activeSelf);
+        }
+
+        [UnityTest]
         public IEnumerator EnemyController_ReturnsHomeWhenTargetBreaksLeash()
         {
             var definition = CreateDefinition("test_leash");
