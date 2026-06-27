@@ -1,6 +1,6 @@
 # Final Status Report
 
-Generated UTC: `2026-06-25T19:03:53.937Z`
+Generated UTC: `2026-06-27T07:54:12.988Z`
 
 ## Final Product Definition
 
@@ -18,13 +18,14 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 | D-020 tool screenshot | `artifacts/Previews/d020-tool-node-read.png` |
 | D-020 reward screenshot | `artifacts/Previews/d020-reward-read.png` |
 | D-020 playable attack screenshot | `artifacts/Previews/d020-playable-attack-read.png` |
-| Visual evidence shots | 4 generated |
+| D-020 HUD reward/save screenshot | `artifacts/Previews/d020-hud-reward-save.png` |
+| Visual evidence shots | 5 generated |
 | Performance snapshot | `artifacts/Reports/performance-snapshot.json` |
 | Audio inventory | `artifacts/Reports/audio-inventory.json` |
 | D-020 tool runtime | `Assets/Scripts/ExplorationTool.cs` |
 | D-020 player runtime | `Assets/Scripts/D020PlayerController.cs` |
 | D-020 enemy runtime | `Assets/Scripts/D020EnemyDummy.cs` |
-| Build artifact | `Build/D020Slice/macos/FourfoldEchoesD020Slice.app` |
+| Build artifact | `missing` |
 
 ## Market Ready Status
 

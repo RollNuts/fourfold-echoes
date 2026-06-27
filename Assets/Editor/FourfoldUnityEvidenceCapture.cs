@@ -36,6 +36,9 @@ namespace FourfoldEchoes.Editor
             var shortcutRoute = FindSceneObject("D020 Shortcut Route");
             var player = UnityEngine.Object.FindFirstObjectByType<D020PlayerController>();
             var enemy = UnityEngine.Object.FindFirstObjectByType<D020EnemyDummy>();
+            var reward = UnityEngine.Object.FindFirstObjectByType<D020RelicReward>();
+            var progressSave = UnityEngine.Object.FindFirstObjectByType<D020ProgressSave>();
+            var hud = UnityEngine.Object.FindFirstObjectByType<D020HudController>();
 
             var outputPath = Path.Combine(outputDirectory, "d020-slice-camera.png");
             if (shortcutNode != null)
@@ -74,11 +77,20 @@ namespace FourfoldEchoes.Editor
                 player.TryAttack();
                 CaptureCameraFromPose(
                     camera,
-                    Path.Combine(outputDirectory, "d020-playable-attack-read.png"),
+                Path.Combine(outputDirectory, "d020-playable-attack-read.png"),
                     new Vector3(4.9f, 6.25f, -4.55f),
                     new Vector3(1.0f, 0.45f, -0.05f),
                     3.25f);
             }
+            CaptureHudRewardSaveMoment(
+                camera,
+                Path.Combine(outputDirectory, "d020-hud-reward-save.png"),
+                shortcutNode,
+                shortcutRoute,
+                reward,
+                enemy,
+                progressSave,
+                hud);
 
             Debug.Log($"FOURFOLD D-020 vertical slice camera evidence captured: {outputPath}");
         }
@@ -145,7 +157,69 @@ namespace FourfoldEchoes.Editor
             return Path.Combine(Path.GetTempPath(), "fourfold-echoes-evidence");
         }
 
+        private static void CaptureHudRewardSaveMoment(
+            Camera camera,
+            string outputPath,
+            ExplorationNode shortcutNode,
+            GameObject shortcutRoute,
+            D020RelicReward reward,
+            D020EnemyDummy enemy,
+            D020ProgressSave progressSave,
+            D020HudController hud)
+        {
+            if (enemy != null)
+            {
+                enemy.ResetEnemy();
+                while (!enemy.IsDefeated)
+                {
+                    enemy.TakeHit(1);
+                }
+            }
+
+            if (shortcutNode != null)
+            {
+                shortcutNode.SetSolved(true);
+            }
+            else if (shortcutRoute != null)
+            {
+                shortcutRoute.SetActive(true);
+            }
+
+            if (reward != null)
+            {
+                reward.SetCollected(true);
+            }
+
+            if (progressSave != null)
+            {
+                progressSave.overrideFilePath = Path.Combine(Path.GetTempPath(), "fourfold-d020-capture-progress.json");
+                if (!progressSave.SaveNow())
+                {
+                    throw new InvalidOperationException("D-020 HUD reward/save capture could not write progress state.");
+                }
+            }
+
+            if (hud != null)
+            {
+                hud.showHud = true;
+                hud.RefreshNow();
+            }
+
+            CaptureCameraFromPose(
+                camera,
+                outputPath,
+                new Vector3(5.85f, 6.75f, -4.95f),
+                new Vector3(2.2f, 0.55f, -1.05f),
+                3.9f,
+                hud);
+        }
+
         private static void CaptureCamera(Camera camera, string outputPath)
+        {
+            CaptureCamera(camera, outputPath, null);
+        }
+
+        private static void CaptureCamera(Camera camera, string outputPath, D020HudController hudOverlay)
         {
             var previousTarget = camera.targetTexture;
             var previousActive = RenderTexture.active;
@@ -159,6 +233,11 @@ namespace FourfoldEchoes.Editor
                 camera.Render();
                 texture.ReadPixels(new Rect(0, 0, CaptureWidth, CaptureHeight), 0, 0);
                 texture.Apply();
+                if (hudOverlay != null)
+                {
+                    DrawHudOverlay(texture, hudOverlay);
+                }
+
                 File.WriteAllBytes(outputPath, texture.EncodeToPNG());
             }
             finally
@@ -172,6 +251,11 @@ namespace FourfoldEchoes.Editor
 
         private static void CaptureCameraFromPose(Camera camera, string outputPath, Vector3 position, Vector3 target, float orthographicSize)
         {
+            CaptureCameraFromPose(camera, outputPath, position, target, orthographicSize, null);
+        }
+
+        private static void CaptureCameraFromPose(Camera camera, string outputPath, Vector3 position, Vector3 target, float orthographicSize, D020HudController hudOverlay)
+        {
             var previousPosition = camera.transform.position;
             var previousRotation = camera.transform.rotation;
             var previousOrthographicSize = camera.orthographicSize;
@@ -184,7 +268,7 @@ namespace FourfoldEchoes.Editor
                 {
                     camera.orthographicSize = orthographicSize;
                 }
-                CaptureCamera(camera, outputPath);
+                CaptureCamera(camera, outputPath, hudOverlay);
             }
             finally
             {
@@ -192,6 +276,114 @@ namespace FourfoldEchoes.Editor
                 camera.transform.rotation = previousRotation;
                 camera.orthographicSize = previousOrthographicSize;
             }
+        }
+
+        private static void DrawHudOverlay(Texture2D texture, D020HudController hud)
+        {
+            hud.RefreshNow();
+            FillRect(texture, 18, 18, 302, 132, new Color32(10, 14, 20, 224));
+            DrawRect(texture, 18, 18, 302, 132, new Color32(230, 204, 124, 255));
+            DrawText(texture, 34, 32, "D-020 ROOM", new Color32(240, 214, 132, 255), 3);
+            DrawText(texture, 34, 62, hud.ToolRead, new Color32(234, 240, 248, 255), 2);
+            DrawText(texture, 34, 84, hud.RewardRead, new Color32(234, 240, 248, 255), 2);
+            DrawText(texture, 34, 106, hud.ProgressRead, new Color32(234, 240, 248, 255), 2);
+            DrawText(texture, 34, 128, hud.PromptRead, new Color32(176, 224, 255, 255), 2);
+            texture.Apply();
+        }
+
+        private static void FillRect(Texture2D texture, int x, int yTop, int width, int height, Color32 color)
+        {
+            for (var y = 0; y < height; y++)
+            {
+                for (var xOffset = 0; xOffset < width; xOffset++)
+                {
+                    SetPixelTopLeft(texture, x + xOffset, yTop + y, color);
+                }
+            }
+        }
+
+        private static void DrawRect(Texture2D texture, int x, int yTop, int width, int height, Color32 color)
+        {
+            for (var xOffset = 0; xOffset < width; xOffset++)
+            {
+                SetPixelTopLeft(texture, x + xOffset, yTop, color);
+                SetPixelTopLeft(texture, x + xOffset, yTop + height - 1, color);
+            }
+
+            for (var y = 0; y < height; y++)
+            {
+                SetPixelTopLeft(texture, x, yTop + y, color);
+                SetPixelTopLeft(texture, x + width - 1, yTop + y, color);
+            }
+        }
+
+        private static void DrawText(Texture2D texture, int x, int yTop, string text, Color32 color, int scale)
+        {
+            var cursor = x;
+            var upper = (text ?? string.Empty).ToUpperInvariant();
+            for (var index = 0; index < upper.Length; index++)
+            {
+                var glyph = GetGlyph(upper[index]);
+                if (glyph == null)
+                {
+                    cursor += 4 * scale;
+                    continue;
+                }
+
+                for (var row = 0; row < glyph.Length; row++)
+                {
+                    for (var column = 0; column < glyph[row].Length; column++)
+                    {
+                        if (glyph[row][column] != '1')
+                        {
+                            continue;
+                        }
+
+                        FillRect(texture, cursor + column * scale, yTop + row * scale, scale, scale, color);
+                    }
+                }
+
+                cursor += (glyph[0].Length + 1) * scale;
+            }
+        }
+
+        private static string[] GetGlyph(char character)
+        {
+            switch (character)
+            {
+                case 'A': return new[] { "010", "101", "101", "111", "101" };
+                case 'C': return new[] { "111", "100", "100", "100", "111" };
+                case 'D': return new[] { "110", "101", "101", "101", "110" };
+                case 'E': return new[] { "111", "100", "110", "100", "111" };
+                case 'G': return new[] { "111", "100", "101", "101", "111" };
+                case 'I': return new[] { "111", "010", "010", "010", "111" };
+                case 'L': return new[] { "100", "100", "100", "100", "111" };
+                case 'M': return new[] { "101", "111", "111", "101", "101" };
+                case 'O': return new[] { "111", "101", "101", "101", "111" };
+                case 'P': return new[] { "110", "101", "110", "100", "100" };
+                case 'R': return new[] { "110", "101", "110", "101", "101" };
+                case 'S': return new[] { "111", "100", "111", "001", "111" };
+                case 'T': return new[] { "111", "010", "010", "010", "010" };
+                case 'U': return new[] { "101", "101", "101", "101", "111" };
+                case 'Y': return new[] { "101", "101", "010", "010", "010" };
+                case '0': return new[] { "111", "101", "101", "101", "111" };
+                case '1': return new[] { "010", "110", "010", "010", "111" };
+                case '2': return new[] { "111", "001", "111", "100", "111" };
+                case '-': return new[] { "000", "000", "111", "000", "000" };
+                case '%': return new[] { "101", "001", "010", "100", "101" };
+                case ' ': return new[] { "000", "000", "000", "000", "000" };
+                default: return null;
+            }
+        }
+
+        private static void SetPixelTopLeft(Texture2D texture, int x, int yTop, Color32 color)
+        {
+            if (x < 0 || x >= texture.width || yTop < 0 || yTop >= texture.height)
+            {
+                return;
+            }
+
+            texture.SetPixel(x, texture.height - 1 - yTop, color);
         }
     }
 }

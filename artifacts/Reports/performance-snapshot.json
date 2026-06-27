@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T19:03:53.937Z",
+  "generatedAtUtc": "2026-06-27T07:54:12.988Z",
   "scope": "D-020 vertical slice evidence snapshot",
   "caveat": "This is not a runtime profiler capture. It summarizes current scene, asset, and screenshot evidence until a real playthrough/profiler scenario exists.",
   "targets": {
@@ -28,7 +28,7 @@
     {
       "path": "artifacts/Previews/d020-slice-camera.png",
       "exists": true,
-      "sizeBytes": 196672,
+      "sizeBytes": 196658,
       "width": 1280,
       "height": 800
     },
@@ -52,12 +52,19 @@
       "sizeBytes": 390273,
       "width": 1280,
       "height": 800
+    },
+    {
+      "path": "artifacts/Previews/d020-hud-reward-save.png",
+      "exists": true,
+      "sizeBytes": 301927,
+      "width": 1280,
+      "height": 800
     }
   ],
   "d020Screenshot": {
     "path": "artifacts/Previews/d020-slice-camera.png",
     "exists": true,
-    "sizeBytes": 196672,
+    "sizeBytes": 196658,
     "width": 1280,
     "height": 800
   },
@@ -82,10 +89,17 @@
     "width": 1280,
     "height": 800
   },
+  "d020HudRewardSaveRead": {
+    "path": "artifacts/Previews/d020-hud-reward-save.png",
+    "exists": true,
+    "sizeBytes": 301927,
+    "width": 1280,
+    "height": 800
+  },
   "buildArtifact": {
     "path": "Build/D020Slice/macos/FourfoldEchoesD020Slice.app",
-    "exists": true,
-    "sizeBytes": 106566220
+    "exists": false,
+    "sizeBytes": 0
   },
   "d020Runtime": {
     "scenePath": "Assets/Scenes/D020VerticalSlice.unity",
