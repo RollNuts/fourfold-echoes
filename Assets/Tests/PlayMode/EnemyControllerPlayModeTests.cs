@@ -124,6 +124,8 @@ namespace FourfoldEchoes.Tests
             controller.Tick(definition.telegraphTime + 0.01f);
             Assert.AreEqual(EnemyState.Attack, controller.CurrentState);
             Assert.IsTrue(marker.activeSelf);
+            var attackMarkerRenderer = marker.GetComponentInChildren<Renderer>();
+            AssertColorApproximately(controller.telegraphGroundMarkerAttackColor, ReadTint(attackMarkerRenderer));
 
             controller.Tick(definition.activeTime + 0.01f);
             Assert.AreEqual(EnemyState.Recover, controller.CurrentState);
