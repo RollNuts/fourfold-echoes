@@ -97,18 +97,18 @@ namespace FourfoldEchoes.Editor
 
                 if (!controller.ToggleLumenEdgeLoadout())
                 {
-                    throw new InvalidOperationException("Hub gameplay verifier failed: saved Lumen Edge could not be toggled from loadout.");
+                    throw new InvalidOperationException("Hub gameplay verifier failed: saved Rare Edge could not be toggled from loadout.");
                 }
 
                 var edgeOffProgress = FourfoldProgressSave.Load();
                 if (edgeOffProgress.d020EdgeEquipped || !edgeOffProgress.d020WardEquipped)
                 {
-                    throw new InvalidOperationException("Hub gameplay verifier failed: loadout toggle did not persist Lumen Edge off while keeping Lumen Ward on.");
+                    throw new InvalidOperationException("Hub gameplay verifier failed: loadout toggle did not persist Rare Edge off while keeping Rare Ward on.");
                 }
 
                 if (!controller.ToggleLumenEdgeLoadout())
                 {
-                    throw new InvalidOperationException("Hub gameplay verifier failed: saved Lumen Edge could not be re-equipped from loadout.");
+                    throw new InvalidOperationException("Hub gameplay verifier failed: saved Rare Edge could not be re-equipped from loadout.");
                 }
 
                 var failedReturnProgress = FourfoldProgressSave.Load();

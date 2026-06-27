@@ -163,6 +163,9 @@ namespace FourfoldEchoes.Editor
             RequireContains(titleCopy, "REGION ATTEMPT IN PROGRESS", "Title in-progress run choice");
             RequireContains(titleCopy, "Saved skills:", "Title saved reward skill summary");
             RequireContains(titleCopy, "Equipped:", "Title equipped build summary");
+            RequireContains(titleCopy, "Rare Edge", "Title rare reward summary");
+            RequireContains(titleCopy, "Rare Ward", "Title rare second reward summary");
+            RequireContains(titleCopy, "Epic Link", "Title epic build summary");
             RequireContains(titleCopy, "FourfoldUiAudio.PlaySelect", "Title menu select SFX");
             RequireContains(titleCopy, "FourfoldUiAudio.PlayConfirm", "Title menu confirm SFX");
             RequireContains(titleCopy, "FourfoldUiAudio.PlayBack", "Title menu back SFX");
@@ -174,7 +177,7 @@ namespace FourfoldEchoes.Editor
             RequireContains(hubCopy, "Goal: use the exploration tool, defeat the boss, claim two reward skills, and return to the hub to save the result.", "Hub mission briefing");
             RequireContains(hubCopy, "LOADOUT", "Hub loadout panel");
             RequireContains(hubCopy, "Equipped reward skills", "Hub equipped reward HUD");
-            RequireContains(hubCopy, "Current synergy: Lumen Link = Edge + Ward", "Hub reward-skill synergy briefing");
+            RequireContains(hubCopy, "Epic synergy: Lumen Link = Rare Edge + Rare Ward", "Hub reward-skill rarity synergy briefing");
             RequireContains(hubCopy, "Loss risk: new R01 rewards save on hub return; fail or leave before return loses them.", "Hub R01 reward-loss risk briefing");
             RequireContains(hubCopy, "REGION CLEARED", "Hub result summary");
             RequireContains(hubCopy, "Last clear", "Hub last-clear result timing");
@@ -216,8 +219,10 @@ namespace FourfoldEchoes.Editor
             RequireContains(regionCopy, "AT RISK: return to hub to save", "Region reward risk UI");
             RequireContains(regionCopy, "Failed before hub return:", "Region failed-return reward loss UI");
             RequireContains(regionCopy, "ATTEMPT FAILED", "Region failure result UI");
-            RequireContains(regionCopy, "Lumen Link", "Region combined reward-skill synergy");
-            RequireContains(regionCopy, "BUILD SLOTS", "Region reward-skill build slot HUD");
+            RequireContains(regionCopy, "RARE SKILL: LUMEN EDGE", "Region first reward rarity");
+            RequireContains(regionCopy, "RARE SKILL: LUMEN WARD", "Region second reward rarity");
+            RequireContains(regionCopy, "Epic Link", "Region combined reward-skill rarity synergy");
+            RequireContains(regionCopy, "DrawBuildSlots", "Region reward-skill build slot HUD");
             RequireContains(regionCopy, "Tool READY: target", "Region tool target-ready HUD");
             RequireContains(regionCopy, "Tool READY: no target", "Region tool no-target HUD");
             RequireContains(regionCopy, "Tool MISS: no target", "Region tool miss feedback HUD");

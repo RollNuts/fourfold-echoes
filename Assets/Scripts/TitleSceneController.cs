@@ -300,17 +300,17 @@ namespace FourfoldEchoes.Product
             var ward = data != null && data.d020SecondRewardClaimed;
             if (edge && ward)
             {
-                return "Lumen Edge + Lumen Ward";
+                return "Rare Edge + Rare Ward";
             }
 
             if (edge)
             {
-                return "Lumen Edge";
+                return "Rare Edge";
             }
 
             if (ward)
             {
-                return "Lumen Ward";
+                return "Rare Ward";
             }
 
             return FourfoldLanguage.T(data, "none", "なし");
@@ -322,17 +322,17 @@ namespace FourfoldEchoes.Product
             var ward = data != null && data.d020SecondRewardClaimed && data.d020WardEquipped;
             if (edge && ward)
             {
-                return "Lumen Link";
+                return "Epic Link";
             }
 
             if (edge)
             {
-                return "Lumen Edge";
+                return "Rare Edge";
             }
 
             if (ward)
             {
-                return "Lumen Ward";
+                return "Rare Ward";
             }
 
             return FourfoldLanguage.T(data, "base build", "基礎ビルド");

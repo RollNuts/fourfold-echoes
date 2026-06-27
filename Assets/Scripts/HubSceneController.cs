@@ -1187,17 +1187,17 @@ namespace FourfoldEchoes.Product
             var ward = data != null && data.d020SecondRewardClaimed;
             if (edge && ward)
             {
-                return "Lumen Edge + Lumen Ward";
+                return "Rare Edge + Rare Ward";
             }
 
             if (edge)
             {
-                return "Lumen Edge";
+                return "Rare Edge";
             }
 
             if (ward)
             {
-                return "Lumen Ward";
+                return "Rare Ward";
             }
 
             return FourfoldLanguage.T(data, "none", "なし");
@@ -1212,7 +1212,7 @@ namespace FourfoldEchoes.Product
 
             if (data.d020EdgeEquipped && data.d020WardEquipped)
             {
-                return FourfoldLanguage.T(data, "Lumen Link: stronger attacks, reduced damage taken, hit recovery", "Lumen Link: 攻撃強化、被ダメージ軽減、命中回復");
+                return FourfoldLanguage.T(data, "Epic Link: stronger attacks, reduced damage, hit recovery", "Epic Link: 攻撃強化、被ダメージ軽減、命中回復");
             }
 
             if (data.d020EdgeEquipped)
@@ -1229,17 +1229,17 @@ namespace FourfoldEchoes.Product
             var wardActive = data != null && data.d020SecondRewardClaimed && data.d020WardEquipped;
             if (edgeActive && wardActive)
             {
-                return FourfoldLanguage.T(data, "Current synergy: Lumen Link = Edge + Ward, stronger attacks, less damage, hit recovery.", "現在のシナジー: Lumen Link = Edge + Ward。攻撃強化、被ダメージ軽減、命中回復。");
+                return FourfoldLanguage.T(data, "Epic synergy: Lumen Link = Rare Edge + Rare Ward, stronger attacks, less damage, hit recovery.", "Epicシナジー: Lumen Link = Rare Edge + Rare Ward。攻撃強化、被ダメージ軽減、命中回復。");
             }
 
             if (edgeActive)
             {
-                return FourfoldLanguage.T(data, "Current synergy: Edge only, stronger attacks; add Ward for Lumen Link recovery.", "現在のシナジー: Edgeのみで攻撃強化。Ward追加でLumen Link回復。");
+                return FourfoldLanguage.T(data, "Current synergy: Rare Edge only, stronger attacks; add Rare Ward for Epic Link recovery.", "現在のシナジー: Rare Edgeのみで攻撃強化。Rare Ward追加でEpic Link回復。");
             }
 
             if (wardActive)
             {
-                return FourfoldLanguage.T(data, "Current synergy: Ward only, less damage; add Edge for Lumen Link recovery.", "現在のシナジー: Wardのみで被ダメージ軽減。Edge追加でLumen Link回復。");
+                return FourfoldLanguage.T(data, "Current synergy: Rare Ward only, less damage; add Rare Edge for Epic Link recovery.", "現在のシナジー: Rare Wardのみで被ダメージ軽減。Rare Edge追加でEpic Link回復。");
             }
 
             if (SavedRewardCount(data) > 0)
@@ -1262,17 +1262,17 @@ namespace FourfoldEchoes.Product
                 case LoadoutEdge:
                     if (data != null && data.d020RewardClaimed)
                     {
-                        return FourfoldLanguage.T(data, $"[{(data.d020EdgeEquipped ? "ON" : "OFF")}] Lumen Edge - attacks hit harder", $"[{(data.d020EdgeEquipped ? "ON" : "OFF")}] Lumen Edge - 攻撃が強くなる");
+                        return FourfoldLanguage.T(data, $"[{(data.d020EdgeEquipped ? "ON" : "OFF")}] Rare Edge - attacks hit harder", $"[{(data.d020EdgeEquipped ? "ON" : "OFF")}] Rare Edge - 攻撃が強くなる");
                     }
 
-                    return FourfoldLanguage.T(data, "[LOCKED] Lumen Edge - clear reward 1", "[未取得] Lumen Edge - クリア報酬1");
+                    return FourfoldLanguage.T(data, "[LOCKED] Rare Edge - R01 reward skill 1", "[未取得] Rare Edge - R01報酬スキル1");
                 case LoadoutWard:
                     if (data != null && data.d020SecondRewardClaimed)
                     {
-                        return FourfoldLanguage.T(data, $"[{(data.d020WardEquipped ? "ON" : "OFF")}] Lumen Ward - damage taken drops", $"[{(data.d020WardEquipped ? "ON" : "OFF")}] Lumen Ward - 被ダメージを軽減");
+                        return FourfoldLanguage.T(data, $"[{(data.d020WardEquipped ? "ON" : "OFF")}] Rare Ward - damage taken drops", $"[{(data.d020WardEquipped ? "ON" : "OFF")}] Rare Ward - 被ダメージを軽減");
                     }
 
-                    return FourfoldLanguage.T(data, "[LOCKED] Lumen Ward - clear reward 2", "[未取得] Lumen Ward - クリア報酬2");
+                    return FourfoldLanguage.T(data, "[LOCKED] Rare Ward - R01 reward skill 2", "[未取得] Rare Ward - R01報酬スキル2");
                 default:
                     return FourfoldLanguage.T(data, "Back", "戻る");
             }

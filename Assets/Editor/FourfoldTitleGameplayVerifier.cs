@@ -104,9 +104,9 @@ namespace FourfoldEchoes.Editor
                 namedRewardProgress.d020BestClearTimeSeconds = 91f;
                 FourfoldProgressSave.Save(namedRewardProgress);
                 var namedRewardSummary = controller.ContinueSummary();
-                if (namedRewardSummary.IndexOf("Lumen Edge", StringComparison.Ordinal) < 0
-                    || namedRewardSummary.IndexOf("Lumen Ward", StringComparison.Ordinal) < 0
-                    || namedRewardSummary.IndexOf("Lumen Link", StringComparison.Ordinal) < 0)
+                if (namedRewardSummary.IndexOf("Rare Edge", StringComparison.Ordinal) < 0
+                    || namedRewardSummary.IndexOf("Rare Ward", StringComparison.Ordinal) < 0
+                    || namedRewardSummary.IndexOf("Epic Link", StringComparison.Ordinal) < 0)
                 {
                     throw new InvalidOperationException("Title gameplay verifier failed: continue summary does not name saved reward skills and equipped build.");
                 }

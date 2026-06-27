@@ -813,8 +813,8 @@ namespace FourfoldEchoes.Product
             previousShortcutLoaded = ToolGateSolved();
             runCleared = secondToolNode == null || secondRewardClaimPoint == null;
             ShowRewardNotice(
-                FourfoldLanguage.T(progressData, "LUMEN EDGE EARNED", "LUMEN EDGE 獲得"),
-                FourfoldLanguage.T(progressData, "Damage improves now; return to hub to save it.", "攻撃力が今すぐ上がる。ハブへ帰還すると保存される。"));
+                FourfoldLanguage.T(progressData, "RARE SKILL: LUMEN EDGE", "レアスキル: LUMEN EDGE"),
+                FourfoldLanguage.T(progressData, "Basic attacks hit harder now; return to hub to keep this skill.", "通常攻撃が今すぐ強化。ハブへ帰還するとこのスキルを保持。"));
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.92f);
             if (rewardReadyRead != null)
@@ -845,8 +845,8 @@ namespace FourfoldEchoes.Product
             runCleared = true;
             previousReturnedToHubLoaded = false;
             ShowRewardNotice(
-                FourfoldLanguage.T(progressData, "LUMEN WARD EARNED", "LUMEN WARD 獲得"),
-                FourfoldLanguage.T(progressData, "Damage taken drops now; return to hub to save both rewards.", "被ダメージが今すぐ下がる。ハブへ帰還すると両方の報酬が保存される。"));
+                FourfoldLanguage.T(progressData, "RARE SKILL: LUMEN WARD", "レアスキル: LUMEN WARD"),
+                FourfoldLanguage.T(progressData, "Damage taken drops now; return to hub to keep both skills.", "被ダメージが今すぐ低下。ハブへ帰還すると両方のスキルを保持。"));
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.86f);
             if (secondRewardReadyRead != null)
@@ -1984,17 +1984,17 @@ namespace FourfoldEchoes.Product
             var ward = (mask & RewardMaskWard) != 0;
             if (edge && ward)
             {
-                return FourfoldLanguage.T(progressData, "Lumen Edge + Lumen Ward (Lumen Link)", "Lumen Edge + Lumen Ward（Lumen Link）");
+                return FourfoldLanguage.T(progressData, "Rare Edge + Rare Ward (Epic Link)", "Rare Edge + Rare Ward（Epic Link）");
             }
 
             if (edge)
             {
-                return "Lumen Edge";
+                return FourfoldLanguage.T(progressData, "Rare Edge", "Rare Edge");
             }
 
             if (ward)
             {
-                return "Lumen Ward";
+                return FourfoldLanguage.T(progressData, "Rare Ward", "Rare Ward");
             }
 
             return FourfoldLanguage.T(progressData, "no rewards", "報酬なし");
@@ -2014,24 +2014,24 @@ namespace FourfoldEchoes.Product
             {
                 return FourfoldLanguage.T(
                     progressData,
-                    $"Lumen Link +DMG -DMG +HP  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
-                    $"Lumen Link +攻撃 -被弾 +回復  保存{returned}/2 装備{equipped}/2 今回{run}/2");
+                    $"Epic Link +DMG -DMG +HP  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
+                    $"Epic Link +攻撃 -被弾 +回復  保存{returned}/2 装備{equipped}/2 今回{run}/2");
             }
 
             if (LumenEdgeActive())
             {
                 return FourfoldLanguage.T(
                     progressData,
-                    $"Lumen Edge +DMG  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
-                    $"Lumen Edge +攻撃  保存{returned}/2 装備{equipped}/2 今回{run}/2");
+                    $"Rare Edge +DMG  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
+                    $"Rare Edge +攻撃  保存{returned}/2 装備{equipped}/2 今回{run}/2");
             }
 
             if (LumenWardActive())
             {
                 return FourfoldLanguage.T(
                     progressData,
-                    $"Ward -DMG  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
-                    $"Ward -被弾  保存{returned}/2 装備{equipped}/2 今回{run}/2");
+                    $"Rare Ward -DMG  Saved{returned}/2 Equipped{equipped}/2 Run{run}/2",
+                    $"Rare Ward -被弾  保存{returned}/2 装備{equipped}/2 今回{run}/2");
             }
 
             return FourfoldLanguage.T(
@@ -2896,11 +2896,11 @@ namespace FourfoldEchoes.Product
                 var edgeEquipped = previousRewardLoaded && progressData != null && progressData.d020EdgeEquipped;
                 var wardEquipped = previousSecondRewardLoaded && progressData != null && progressData.d020WardEquipped;
                 var progress = edgeEquipped && wardEquipped
-                    ? FourfoldLanguage.T(progressData, "Saved progress: Lumen Edge and Ward equipped from hub loadout.", "保存済み進行: ハブロードアウトのLumen EdgeとWardを装備中。")
+                    ? FourfoldLanguage.T(progressData, "Saved progress: Rare Edge and Rare Ward form Epic Link.", "保存済み進行: Rare EdgeとRare WardでEpic Link発動中。")
                     : edgeEquipped
-                        ? FourfoldLanguage.T(progressData, "Saved progress: Lumen Edge equipped from hub loadout.", "保存済み進行: ハブロードアウトのLumen Edgeを装備中。")
+                        ? FourfoldLanguage.T(progressData, "Saved progress: Rare Edge equipped from hub loadout.", "保存済み進行: ハブロードアウトのRare Edgeを装備中。")
                         : wardEquipped
-                            ? FourfoldLanguage.T(progressData, "Saved progress: Lumen Ward equipped from hub loadout.", "保存済み進行: ハブロードアウトのLumen Wardを装備中。")
+                            ? FourfoldLanguage.T(progressData, "Saved progress: Rare Ward equipped from hub loadout.", "保存済み進行: ハブロードアウトのRare Wardを装備中。")
                             : previousRewardLoaded || previousSecondRewardLoaded
                                 ? FourfoldLanguage.T(progressData, "Saved progress: reward skills are stored; equip them in the hub loadout.", "保存済み進行: 報酬スキルは保存済み。ハブロードアウトで装備できる。")
                                 : FourfoldLanguage.T(progressData, "Saved progress: this region was cleared before.", "保存済み進行: この地域はクリア済み。");
@@ -2990,40 +2990,40 @@ namespace FourfoldEchoes.Product
             {
                 if (firstRewardClaimedThisRun)
                 {
-                    return FourfoldLanguage.T(progressData, "BUILD SLOTS: Edge RUN +DMG", "ビルド枠: Edge 今回 +攻撃");
+                    return FourfoldLanguage.T(progressData, "Rare Edge RUN +DMG", "Rare Edge 今回 +攻撃");
                 }
 
                 if (previousRewardLoaded && progressData != null && progressData.d020EdgeEquipped)
                 {
-                    return FourfoldLanguage.T(progressData, "BUILD SLOTS: Edge ON +DMG", "ビルド枠: Edge ON +攻撃");
+                    return FourfoldLanguage.T(progressData, "Rare Edge ON +DMG", "Rare Edge ON +攻撃");
                 }
 
                 if (previousRewardLoaded)
                 {
-                    return FourfoldLanguage.T(progressData, "BUILD SLOTS: Edge OFF", "ビルド枠: Edge OFF");
+                    return FourfoldLanguage.T(progressData, "Rare Edge OFF", "Rare Edge OFF");
                 }
 
-                return FourfoldLanguage.T(progressData, "BUILD SLOTS: Edge locked", "ビルド枠: Edge 未取得");
+                return FourfoldLanguage.T(progressData, "Rare Edge locked", "Rare Edge 未取得");
             }
 
             if (secondRewardClaimedThisRun)
             {
-                return FourfoldLanguage.T(progressData, "Ward RUN -DMG", "Ward 今回 -被弾");
+                return FourfoldLanguage.T(progressData, "Rare Ward RUN -DMG", "Rare Ward 今回 -被弾");
             }
 
             if (previousSecondRewardLoaded && progressData != null && progressData.d020WardEquipped)
             {
                 return LumenLinkActive()
-                    ? FourfoldLanguage.T(progressData, "Ward ON -DMG  LINK +HP", "Ward ON -被弾  LINK +回復")
-                    : FourfoldLanguage.T(progressData, "Ward ON -DMG", "Ward ON -被弾");
+                    ? FourfoldLanguage.T(progressData, "Rare Ward ON  Link +HP", "Rare Ward ON  Link +回復")
+                    : FourfoldLanguage.T(progressData, "Rare Ward ON -DMG", "Rare Ward ON -被弾");
             }
 
             if (previousSecondRewardLoaded)
             {
-                return FourfoldLanguage.T(progressData, "Ward OFF", "Ward OFF");
+                return FourfoldLanguage.T(progressData, "Rare Ward OFF", "Rare Ward OFF");
             }
 
-            return FourfoldLanguage.T(progressData, "Ward locked", "Ward 未取得");
+            return FourfoldLanguage.T(progressData, "Rare Ward locked", "Rare Ward 未取得");
         }
 
         private Color BuildSlotColor(bool edgeSlot)
