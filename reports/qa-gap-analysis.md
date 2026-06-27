@@ -214,18 +214,9 @@ Veripsa status:
 - No current Core `Pause` entry targets this small production save/test lane, so
   no ACK was issued.
 
-Unity verification commands planned:
+Current verification results:
 
-```sh
-{UNITY_EDITOR} -batchmode -quit -projectPath {REPO_ROOT} -runTests -testPlatform PlayMode -logFile {TMP_LOG}
-```
-
-If the project is already open in Unity, batchmode must wait until the active
-editor releases the project lock.
-
-Verification results:
-
-- `git diff --check -- Assets/Scripts/ProductionCombatSliceController.cs Assets/Tests/PlayMode/SliceSceneSmokeTests.cs reports/qa-gap-analysis.md`
+- `git diff --check -- <changed exact paths>`
   - Result: passed.
 - `node Scripts/Validation/validate_repo.mjs`
   - Result: passed. Required reset files present: 57.
@@ -235,6 +226,8 @@ Verification results:
   - Result: passed. No personal local path, credential assignment, private key,
     credentialed URL, or database URL pattern found.
 - Unity batchmode
-  - Result: not run. `Temp/UnityLockfile` exists, so launching another Unity
-    instance for the same project would violate the serialized Unity validation
-    rule.
+  - Result: passed in a temporary isolated project copy because this checkout was
+    already open in Unity. EditMode: 7/7 passed, exit code 0. PlayMode: 6/6
+    passed, exit code 0.
+  - Notes: final run had non-failing UI Toolkit/audio listener and Unity shutdown
+    noise. No compile error or failing test remained in the final results.

@@ -129,16 +129,16 @@ namespace FourfoldEchoes.Tests.PlayMode
             Assert.That(controller.rewardPad.activeSelf, Is.True);
         }
 
-        private static T FindRequired<T>() where T : Object
+        private static T FindRequired<T>() where T : UnityEngine.Object
         {
-            var matches = Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var matches = UnityEngine.Object.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             Assert.That(matches, Is.Not.Empty, typeof(T).Name + " should exist in the loaded scene.");
             return matches[0];
         }
 
         private static int VisibleRendererCount()
         {
-            return Object.FindObjectsByType<Renderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length;
+            return UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length;
         }
     }
 }
