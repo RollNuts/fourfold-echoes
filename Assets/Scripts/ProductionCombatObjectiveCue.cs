@@ -16,6 +16,7 @@ namespace FourfoldEchoes.Product
         private GUIStyle panelStyle;
         private GUIStyle kickerStyle;
         private GUIStyle objectiveStyle;
+        private GUIStyle promptStyle;
         private Texture2D panelTexture;
         private Texture2D accentTexture;
         private string lastObjective;
@@ -102,6 +103,15 @@ namespace FourfoldEchoes.Product
                 controller.GateOpen,
                 controller.RewardClaimed,
                 controller.ToolReady01);
+            var actionPrompt = BuildActionPromptText(
+                controller.State,
+                controller.WardensHealth01,
+                controller.ShortcutOpen,
+                controller.BossUnlocked,
+                controller.BossHealth01,
+                controller.GateOpen,
+                controller.RewardClaimed,
+                controller.ToolReady01);
 
             if (string.IsNullOrEmpty(objective))
             {
@@ -133,7 +143,11 @@ namespace FourfoldEchoes.Product
 
             GUI.color = previousColor;
             GUI.Label(new Rect(rect.x + 26f, rect.y + 10f, rect.width - 42f, 18f), "Next", kickerStyle);
-            GUI.Label(new Rect(rect.x + 26f, rect.y + 30f, rect.width - 42f, rect.height - 40f), objective, objectiveStyle);
+            GUI.Label(new Rect(rect.x + 26f, rect.y + 29f, rect.width - 42f, 24f), objective, objectiveStyle);
+            if (!string.IsNullOrEmpty(actionPrompt))
+            {
+                GUI.Label(new Rect(rect.x + 26f, rect.y + 56f, rect.width - 42f, 22f), actionPrompt, promptStyle);
+            }
         }
 
         public static string BuildObjectiveText(
@@ -178,10 +192,52 @@ namespace FourfoldEchoes.Product
             return "Move through the shortcut route";
         }
 
+        public static string BuildActionPromptText(
+            ProductionCombatRunState state,
+            float wardensHealth01,
+            bool shortcutOpen,
+            bool bossUnlocked,
+            float bossHealth01,
+            bool gateOpen,
+            bool rewardClaimed,
+            float toolReady01)
+        {
+            if (state != ProductionCombatRunState.Playing || rewardClaimed)
+            {
+                return string.Empty;
+            }
+
+            if (gateOpen)
+            {
+                return "North Button / E: Claim reward";
+            }
+
+            if (bossUnlocked)
+            {
+                return bossHealth01 > 0.001f
+                    ? "South Button / J: Attack boss"
+                    : "Move through the open gate";
+            }
+
+            if (wardensHealth01 > 0.001f)
+            {
+                return "South Button / J: Attack";
+            }
+
+            if (!shortcutOpen)
+            {
+                return toolReady01 >= 0.99f
+                    ? "North Button / E: Echo Tool"
+                    : "Stay close until the tool is ready";
+            }
+
+            return "Left Stick / WASD: Follow the revealed route";
+        }
+
         public static Rect BuildPanelRect(float screenWidth, float screenHeight)
         {
             var width = Mathf.Min(520f, Mathf.Max(0f, screenWidth - 48f));
-            var height = 72f;
+            var height = 88f;
             var x = screenWidth >= DesktopBreakpoint ? screenWidth - width - 24f : 24f;
             var y = screenWidth >= DesktopBreakpoint ? 20f : Mathf.Min(190f, Mathf.Max(24f, screenHeight - height - 24f));
             return new Rect(x, y, width, height);
@@ -245,6 +301,15 @@ namespace FourfoldEchoes.Product
                 fontStyle = FontStyle.Bold,
                 wordWrap = true,
                 normal = { textColor = new Color(0.96f, 0.97f, 0.94f, 1f) }
+            };
+
+            promptStyle = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleLeft,
+                fontSize = 13,
+                fontStyle = FontStyle.Normal,
+                wordWrap = true,
+                normal = { textColor = new Color(0.72f, 0.80f, 0.78f, 1f) }
             };
         }
     }
