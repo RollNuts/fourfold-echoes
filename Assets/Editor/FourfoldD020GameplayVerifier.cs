@@ -164,6 +164,14 @@ namespace FourfoldEchoes.Editor
                         throw new InvalidOperationException("D-020 full-loop verifier failed: second reward did not mark the run clear.");
                     }
 
+                    var runRiskText = InvokePrivateString(controller, "RunRiskStateText");
+                    if (runRiskText.IndexOf("Lumen Edge", StringComparison.Ordinal) < 0
+                        || runRiskText.IndexOf("Lumen Ward", StringComparison.Ordinal) < 0
+                        || runRiskText.IndexOf("Lumen Link", StringComparison.Ordinal) < 0)
+                    {
+                        throw new InvalidOperationException("D-020 full-loop verifier failed: risk UI did not name the unbanked Lumen reward skills.");
+                    }
+
                     SetPrivate(controller, "runTimerSeconds", 91f);
                     MovePlayerTo(tool, controller.returnGatePoint);
                     if (!InvokePrivateBool(controller, "TryReturnToHub"))
@@ -268,6 +276,13 @@ namespace FourfoldEchoes.Editor
                 if (GetPrivateBool(controller, "firstRewardClaimedThisRun") || GetPrivateBool(controller, "secondRewardClaimedThisRun"))
                 {
                     throw new InvalidOperationException("D-020 failure verifier failed: unreturned run rewards were not cleared.");
+                }
+
+                var lostRelicMask = GetPrivate<int>(controller, "lastLostRelicMask");
+                var lostRelicText = InvokePrivateString(controller, "RewardMaskNames", lostRelicMask);
+                if (lostRelicMask == 0 || lostRelicText.IndexOf("Lumen Edge", StringComparison.Ordinal) < 0)
+                {
+                    throw new InvalidOperationException("D-020 failure verifier failed: failure result did not retain the name of the lost unbanked reward skill.");
                 }
 
                 var saved = FourfoldProgressSave.Load();
@@ -917,6 +932,24 @@ namespace FourfoldEchoes.Editor
             try
             {
                 return (string)method.Invoke(target, Array.Empty<object>());
+            }
+            catch (TargetInvocationException exception) when (exception.InnerException != null)
+            {
+                throw new InvalidOperationException($"D-020 verifier failed inside {methodName}: {exception.InnerException.Message}", exception.InnerException);
+            }
+        }
+
+        private static string InvokePrivateString(object target, string methodName, int argument)
+        {
+            var method = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(int) }, null);
+            if (method == null || method.ReturnType != typeof(string))
+            {
+                throw new InvalidOperationException($"D-020 verifier failed: missing private string method {methodName}(int) on {target.GetType().Name}.");
+            }
+
+            try
+            {
+                return (string)method.Invoke(target, new object[] { argument });
             }
             catch (TargetInvocationException exception) when (exception.InnerException != null)
             {
