@@ -6,11 +6,11 @@ audio.sfx.tool_pulse,Exploration Tool Pulse,SFX,tool use,P0,generated_pilot,Asse
 audio.sfx.shortcut_open,Shortcut Open,SFX,progress feedback,P0,generated_pilot,Assets/Audio/Generated/shortcut_open.wav,repository-authored,d020_pilot,Confirms route change without extra UI explanation.
 audio.sfx.relic_pickup,Relic Pickup,SFX,reward feedback,P0,generated_pilot,Assets/Audio/Generated/relic_pickup.wav,repository-authored,d020_pilot,Early D-020 reward cue; review or replace before Steam capture.
 audio.sfx.discovery_stinger,Discovery Stinger,SFX,secret/landmark feedback,P1,generated_pilot,Assets/Audio/Generated/discovery_stinger.wav,repository-authored,d020_pilot,Short discovery cue; review or replace before Steam capture.
-audio.sfx.ui_select,UI Select,SFX,UI select feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
-audio.sfx.ui_confirm,UI Confirm,SFX,UI confirm feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
-audio.sfx.ui_back,UI Back,SFX,UI back feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
-audio.sfx.ui_error,UI Error,SFX,UI error feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
-audio.sfx.ui_pause,UI Pause,SFX,pause menu feedback,P1,needed,TBD,TBD,not_started,Required UI cue from D-020.
+audio.sfx.ui_select,UI Select,SFX,UI select feedback,P1,generated_runtime,runtime-generated,repository-authored,title_hub_menu_pilot,Runtime code cue from FourfoldUiAudio; review or replace before Steam capture.
+audio.sfx.ui_confirm,UI Confirm,SFX,UI confirm feedback,P1,generated_runtime,runtime-generated,repository-authored,title_hub_menu_pilot,Runtime code cue from FourfoldUiAudio; review or replace before Steam capture.
+audio.sfx.ui_back,UI Back,SFX,UI back feedback,P1,generated_runtime,runtime-generated,repository-authored,title_hub_menu_pilot,Runtime code cue from FourfoldUiAudio; review or replace before Steam capture.
+audio.sfx.ui_error,UI Error,SFX,UI error feedback,P1,generated_runtime,runtime-generated,repository-authored,title_hub_menu_pilot,Runtime code cue from FourfoldUiAudio; review or replace before Steam capture.
+audio.sfx.ui_pause,UI Pause,SFX,pause menu feedback,P1,generated_runtime,runtime-generated,repository-authored,title_hub_menu_pilot,Runtime code cue from FourfoldUiAudio; review or replace before Steam capture.
 audio.sfx.footstep_common,Common Footstep,SFX,player movement readability,P1,needed,TBD,TBD,not_started,Required movement cue from D-020.
 audio.sfx.player_landing,Player Landing,SFX,player movement readability,P1,needed,TBD,TBD,not_started,Required movement cue from D-020.
 audio.sfx.armor_hit,Armor Hit,SFX,armored enemy contact confirm,P0,needed,TBD,TBD,not_started,Required combat cue from D-020.

@@ -24,7 +24,7 @@ namespace FourfoldEchoes.Editor
             try
             {
                 FourfoldD022ProductContractVerifier.VerifyD022Contract();
-                findings.Add(Finding.Info("d022.contract", "D022 product contract validated: current top-down adventure MVP pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, and stale player-facing copy is blocked."));
+                findings.Add(Finding.Info("d022.contract", "D022 product contract validated: current top-down adventure MVP pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, Title/Hub menu SFX hooks are present, and stale player-facing copy is blocked."));
             }
             catch (Exception exception)
             {
@@ -78,7 +78,7 @@ namespace FourfoldEchoes.Editor
             {
                 FourfoldHubSceneBuilder.BuildAndValidate();
                 FourfoldHubGameplayVerifier.VerifyHubEnterRegionProgress();
-                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with an R01 region gate, mission briefing/start confirmation, reward-skill synergy and loss-risk briefing, returned-run summary/replay UX with last-clear/new-best timing, failed-return summary UX, objective marker, progress initialization, pause/settings/language UX, reset confirmation, and return-to-title persistence."));
+                findings.Add(Finding.Info("hub.crossroads", "Hub Crossroads generated and validated as the playable hub with an R01 region gate, mission briefing/start confirmation, reward-skill synergy and loss-risk briefing, returned-run summary/replay UX with last-clear/new-best timing, failed-return summary UX, objective marker, progress initialization, pause/settings/language UX with menu SFX, reset confirmation, and return-to-title persistence."));
             }
             catch (Exception exception)
             {
@@ -89,7 +89,7 @@ namespace FourfoldEchoes.Editor
             {
                 FourfoldTitleSceneBuilder.BuildAndValidate();
                 FourfoldTitleGameplayVerifier.VerifyTitleEntryFlow();
-                findings.Add(Finding.Info("title.entry", "Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, Quit request, and Build Settings order Title -> HubCrossroads -> R01."));
+                findings.Add(Finding.Info("title.entry", "Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, menu SFX hooks, Quit request, and Build Settings order Title -> HubCrossroads -> R01."));
             }
             catch (Exception exception)
             {

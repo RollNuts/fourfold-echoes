@@ -1,8 +1,8 @@
 # Audio Inventory
 
-Generated UTC: `2026-06-25T18:49:38.552Z`
+Generated UTC: `2026-06-27T02:11:36.179Z`
 
-Imported AudioClip count from Unity validation: `7`
+Imported AudioClip count from Unity validation: `9`
 
 ## Registered Cues
 
@@ -15,19 +15,16 @@ Imported AudioClip count from Unity validation: `7`
 | `audio.sfx.tool_pulse` | SFX | generated_pilot | repository-authored | Assets/Audio/Generated/tool_pulse.wav | d020_pilot |
 | `audio.sfx.shortcut_open` | SFX | generated_pilot | repository-authored | Assets/Audio/Generated/shortcut_open.wav | d020_pilot |
 | `audio.sfx.discovery_stinger` | SFX | generated_pilot | repository-authored | Assets/Audio/Generated/discovery_stinger.wav | d020_pilot |
-| `audio.sfx.ui_select` | SFX | needed | TBD | TBD | not_started |
-| `audio.sfx.ui_confirm` | SFX | needed | TBD | TBD | not_started |
-| `audio.sfx.ui_back` | SFX | needed | TBD | TBD | not_started |
-| `audio.sfx.ui_error` | SFX | needed | TBD | TBD | not_started |
-| `audio.sfx.ui_pause` | SFX | needed | TBD | TBD | not_started |
+| `audio.sfx.ui_select` | SFX | generated_runtime | repository-authored | runtime-generated | title_hub_menu_pilot |
+| `audio.sfx.ui_confirm` | SFX | generated_runtime | repository-authored | runtime-generated | title_hub_menu_pilot |
+| `audio.sfx.ui_back` | SFX | generated_runtime | repository-authored | runtime-generated | title_hub_menu_pilot |
+| `audio.sfx.ui_error` | SFX | generated_runtime | repository-authored | runtime-generated | title_hub_menu_pilot |
+| `audio.sfx.ui_pause` | SFX | generated_runtime | repository-authored | runtime-generated | title_hub_menu_pilot |
 | `audio.sfx.footstep_common` | SFX | needed | TBD | TBD | not_started |
 | `audio.sfx.player_landing` | SFX | needed | TBD | TBD | not_started |
-| `audio.sfx.shield_armor_hit` | SFX | needed | TBD | TBD | not_started |
+| `audio.sfx.armor_hit` | SFX | needed | TBD | TBD | not_started |
 | `audio.sfx.player_damage` | SFX | needed | TBD | TBD | not_started |
 | `audio.sfx.enemy_death` | SFX | needed | TBD | TBD | not_started |
-| `audio.sfx.guard_start` | SFX | needed | TBD | TBD | not_started |
-| `audio.sfx.guard_hit` | SFX | needed | TBD | TBD | not_started |
-| `audio.sfx.parry_success` | SFX | needed | TBD | TBD | not_started |
 | `audio.sfx.enemy_notice` | SFX | needed | TBD | TBD | not_started |
 | `audio.sfx.tool_target_hit` | SFX | needed | TBD | TBD | not_started |
 | `audio.sfx.tool_fail` | SFX | needed | TBD | TBD | not_started |
@@ -51,16 +48,15 @@ Imported AudioClip count from Unity validation: `7`
 | `audio.sfx.system_load_continue` | SFX | needed | TBD | TBD | not_started |
 | `audio.sfx.settings_apply` | SFX | needed | TBD | TBD | not_started |
 | `audio.music.bgm_hub` | Music | needed | TBD | TBD | not_started |
-| `audio.music.bgm_region01` | Music | needed | TBD | TBD | not_started |
+| `audio.music.bgm_region01` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/d020_exploration_loop.wav | d020_pilot |
 | `audio.music.bgm_region02` | Music | needed | TBD | TBD | not_started |
 | `audio.music.bgm_region03` | Music | needed | TBD | TBD | not_started |
 | `audio.music.bgm_normal_combat` | Music | needed | TBD | TBD | not_started |
-| `audio.music.bgm_boss` | Music | needed | TBD | TBD | not_started |
-| `audio.music.bgm_discovery_reward` | Music | needed | TBD | TBD | not_started |
+| `audio.music.bgm_boss` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/d020_boss_loop.wav | d020_pilot |
 
 ## File Audit
 
-- Repository audio files: 7
+- Repository audio files: 9
 - Registered paths missing on disk: 0
 - Unregistered audio files: 0
 
@@ -74,12 +70,12 @@ Imported AudioClip count from Unity validation: `7`
 
 ## License Coverage
 
-- Registered cues: 49
-- Cues with known license: 7
-- Cues with Unity paths: 7
+- Registered cues: 45
+- Cues with known license: 14
+- Cues with Unity paths: 9
 - License document mentions audio: true
 
 ## Known Gaps
 
-- audio.sfx.ui_select, audio.sfx.ui_confirm, audio.sfx.ui_back, audio.sfx.ui_error, audio.sfx.ui_pause, audio.sfx.footstep_common, audio.sfx.player_landing, audio.sfx.shield_armor_hit, audio.sfx.player_damage, audio.sfx.enemy_death, audio.sfx.guard_start, audio.sfx.guard_hit, audio.sfx.parry_success, audio.sfx.enemy_notice, audio.sfx.tool_target_hit, audio.sfx.tool_fail, audio.sfx.enemy_tell, audio.sfx.enemy_attack, audio.sfx.enemy_damage, audio.sfx.boss_intro_hit, audio.sfx.boss_tell, audio.sfx.boss_impact, audio.sfx.boss_transition, audio.sfx.boss_defeat, audio.sfx.tool_equip_ready, audio.sfx.tool_near_response, audio.sfx.tool_cooldown_ready, audio.sfx.pedestal_wake, audio.sfx.mechanism_move, audio.sfx.chest_open, audio.sfx.relic_appear, audio.sfx.pickup, audio.sfx.system_save, audio.sfx.system_load_continue, audio.sfx.settings_apply, audio.music.bgm_hub, audio.music.bgm_region01, audio.music.bgm_region02, audio.music.bgm_region03, audio.music.bgm_normal_combat, audio.music.bgm_boss, audio.music.bgm_discovery_reward remain registered but not implemented.
+- audio.sfx.footstep_common, audio.sfx.player_landing, audio.sfx.armor_hit, audio.sfx.player_damage, audio.sfx.enemy_death, audio.sfx.enemy_notice, audio.sfx.tool_target_hit, audio.sfx.tool_fail, audio.sfx.enemy_tell, audio.sfx.enemy_attack, audio.sfx.enemy_damage, audio.sfx.boss_intro_hit, audio.sfx.boss_tell, audio.sfx.boss_impact, audio.sfx.boss_transition, audio.sfx.boss_defeat, audio.sfx.tool_equip_ready, audio.sfx.tool_near_response, audio.sfx.tool_cooldown_ready, audio.sfx.pedestal_wake, audio.sfx.mechanism_move, audio.sfx.chest_open, audio.sfx.relic_appear, audio.sfx.pickup, audio.sfx.system_save, audio.sfx.system_load_continue, audio.sfx.settings_apply, audio.music.bgm_hub, audio.music.bgm_region02, audio.music.bgm_region03, audio.music.bgm_normal_combat remain registered but not implemented.
 - Generated/prototype SFX are asset inventory evidence only until D-020 gameplay events or scene AudioSources wire them in.

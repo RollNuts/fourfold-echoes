@@ -163,6 +163,9 @@ namespace FourfoldEchoes.Editor
             RequireContains(titleCopy, "REGION ATTEMPT IN PROGRESS", "Title in-progress run choice");
             RequireContains(titleCopy, "Saved skills:", "Title saved reward skill summary");
             RequireContains(titleCopy, "Equipped:", "Title equipped build summary");
+            RequireContains(titleCopy, "FourfoldUiAudio.PlaySelect", "Title menu select SFX");
+            RequireContains(titleCopy, "FourfoldUiAudio.PlayConfirm", "Title menu confirm SFX");
+            RequireContains(titleCopy, "FourfoldUiAudio.PlayBack", "Title menu back SFX");
 
             var hubCopy = Read("Assets/Scripts/HubSceneController.cs");
             RequireContains(hubCopy, "HUB: Crossroads", "Hub identity");
@@ -179,6 +182,20 @@ namespace FourfoldEchoes.Editor
             RequireContains(hubCopy, "ATTEMPT LOST", "Hub failed-return summary");
             RequireContains(hubCopy, "Hub-saved skills remain safe", "Hub failed-return saved skill safety copy");
             RequireContains(hubCopy, "RESET SAVE?", "Hub reset confirmation");
+            RequireContains(hubCopy, "FourfoldUiAudio.PlaySelect", "Hub menu select SFX");
+            RequireContains(hubCopy, "FourfoldUiAudio.PlayConfirm", "Hub menu confirm SFX");
+            RequireContains(hubCopy, "FourfoldUiAudio.PlayBack", "Hub menu back SFX");
+            RequireContains(hubCopy, "FourfoldUiAudio.PlayError", "Hub locked-loadout error SFX");
+            RequireContains(hubCopy, "FourfoldUiAudio.PlayPause", "Hub pause SFX");
+
+            var uiAudio = Read("Assets/Scripts/FourfoldUiAudio.cs");
+            RequireContains(uiAudio, "PlaySelect", "UI select audio helper");
+            RequireContains(uiAudio, "PlayConfirm", "UI confirm audio helper");
+            RequireContains(uiAudio, "PlayBack", "UI back audio helper");
+            RequireContains(uiAudio, "PlayError", "UI error audio helper");
+            RequireContains(uiAudio, "PlayPause", "UI pause audio helper");
+            RequireContains(uiAudio, "masterVolume", "UI audio respects master volume");
+            RequireContains(uiAudio, "sfxVolume", "UI audio respects SFX volume");
 
             var regionCopy = Read("Assets/Scripts/D020SliceController.cs");
             var inputPrompts = Read(InputPromptFile);

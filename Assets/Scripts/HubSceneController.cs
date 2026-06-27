@@ -151,36 +151,42 @@ namespace FourfoldEchoes.Product
             {
                 if (settingsOpen)
                 {
+                    PlayUiBack();
                     CloseSettings();
                     return;
                 }
 
                 if (loadoutOpen)
                 {
+                    PlayUiBack();
                     CloseLoadout();
                     return;
                 }
 
                 if (resetConfirmOpen)
                 {
+                    PlayUiBack();
                     CloseResetConfirmation();
                     return;
                 }
 
                 if (missionBriefingOpen)
                 {
+                    PlayUiBack();
                     CloseMissionBriefing();
                     return;
                 }
 
                 if (runSummaryOpen)
                 {
+                    PlayUiBack();
                     DismissRunSummary();
                     return;
                 }
 
                 if (failureSummaryOpen)
                 {
+                    PlayUiBack();
                     DismissFailureSummary();
                     return;
                 }
@@ -188,6 +194,14 @@ namespace FourfoldEchoes.Product
                 paused = !paused;
                 selectedPauseIndex = 0;
                 resetHoldSeconds = 0f;
+                if (paused)
+                {
+                    PlayUiPause();
+                }
+                else
+                {
+                    PlayUiBack();
+                }
                 return;
             }
 
@@ -229,6 +243,7 @@ namespace FourfoldEchoes.Product
             {
                 if (CanEnterD020Region())
                 {
+                    PlayUiConfirm();
                     OpenMissionBriefing();
                 }
             }
@@ -591,6 +606,7 @@ namespace FourfoldEchoes.Product
                 resetHoldSeconds += deltaTime;
                 if (resetHoldSeconds >= ResetHoldDuration)
                 {
+                    PlayUiPause();
                     OpenResetConfirmation();
                 }
 
@@ -614,6 +630,7 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            var previousIndex = selectedPauseIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedPauseIndex = Wrap(selectedPauseIndex - 1, PauseMenuCount);
@@ -621,6 +638,11 @@ namespace FourfoldEchoes.Product
             else if (Pressed(KeyCode.DownArrow, KeyCode.S) || AxisPressed(-1f))
             {
                 selectedPauseIndex = Wrap(selectedPauseIndex + 1, PauseMenuCount);
+            }
+
+            if (previousIndex != selectedPauseIndex)
+            {
+                PlayUiSelect();
             }
 
             if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadConfirmKey))
@@ -643,6 +665,7 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            var previousIndex = selectedMissionIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedMissionIndex = Wrap(selectedMissionIndex - 1, MissionMenuCount);
@@ -652,8 +675,14 @@ namespace FourfoldEchoes.Product
                 selectedMissionIndex = Wrap(selectedMissionIndex + 1, MissionMenuCount);
             }
 
+            if (previousIndex != selectedMissionIndex)
+            {
+                PlayUiSelect();
+            }
+
             if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey, gamepadCancelKey))
             {
+                PlayUiBack();
                 CloseMissionBriefing();
                 return;
             }
@@ -666,6 +695,7 @@ namespace FourfoldEchoes.Product
 
         private void UpdateRunSummaryInput()
         {
+            var previousIndex = selectedSummaryIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedSummaryIndex = Wrap(selectedSummaryIndex - 1, SummaryMenuCount);
@@ -675,8 +705,14 @@ namespace FourfoldEchoes.Product
                 selectedSummaryIndex = Wrap(selectedSummaryIndex + 1, SummaryMenuCount);
             }
 
+            if (previousIndex != selectedSummaryIndex)
+            {
+                PlayUiSelect();
+            }
+
             if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey, gamepadCancelKey))
             {
+                PlayUiBack();
                 DismissRunSummary();
                 return;
             }
@@ -689,6 +725,7 @@ namespace FourfoldEchoes.Product
 
         private void UpdateFailureSummaryInput()
         {
+            var previousIndex = selectedSummaryIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedSummaryIndex = Wrap(selectedSummaryIndex - 1, SummaryMenuCount);
@@ -698,8 +735,14 @@ namespace FourfoldEchoes.Product
                 selectedSummaryIndex = Wrap(selectedSummaryIndex + 1, SummaryMenuCount);
             }
 
+            if (previousIndex != selectedSummaryIndex)
+            {
+                PlayUiSelect();
+            }
+
             if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey, gamepadCancelKey))
             {
+                PlayUiBack();
                 DismissFailureSummary();
                 return;
             }
@@ -712,6 +755,7 @@ namespace FourfoldEchoes.Product
 
         private void UpdateResetConfirmationInput()
         {
+            var previousIndex = selectedResetIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedResetIndex = Wrap(selectedResetIndex - 1, ResetConfirmMenuCount);
@@ -721,8 +765,14 @@ namespace FourfoldEchoes.Product
                 selectedResetIndex = Wrap(selectedResetIndex + 1, ResetConfirmMenuCount);
             }
 
+            if (previousIndex != selectedResetIndex)
+            {
+                PlayUiSelect();
+            }
+
             if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey, gamepadCancelKey))
             {
+                PlayUiBack();
                 CloseResetConfirmation();
                 return;
             }
@@ -735,6 +785,7 @@ namespace FourfoldEchoes.Product
 
         private void UpdateSettingsInput()
         {
+            var previousIndex = selectedSettingIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedSettingIndex = Wrap(selectedSettingIndex - 1, SettingsCount);
@@ -744,23 +795,37 @@ namespace FourfoldEchoes.Product
                 selectedSettingIndex = Wrap(selectedSettingIndex + 1, SettingsCount);
             }
 
+            if (previousIndex != selectedSettingIndex)
+            {
+                PlayUiSelect();
+            }
+
             if (Pressed(KeyCode.LeftArrow, KeyCode.A) || HorizontalAxisPressed(-1f))
             {
                 AdjustSelectedSetting(-1f);
+                PlayUiSelect();
             }
             else if (Pressed(KeyCode.RightArrow, KeyCode.D) || HorizontalAxisPressed(1f))
             {
                 AdjustSelectedSetting(1f);
+                PlayUiSelect();
             }
 
-            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadConfirmKey) || Pressed(resetKey, gamepadResetKey, gamepadCancelKey))
+            if (Pressed(resetKey, gamepadResetKey, gamepadCancelKey))
             {
+                PlayUiBack();
+                CloseSettings();
+            }
+            else if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadConfirmKey))
+            {
+                PlayUiConfirm();
                 CloseSettings();
             }
         }
 
         private void UpdateLoadoutInput()
         {
+            var previousIndex = selectedLoadoutIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedLoadoutIndex = Wrap(selectedLoadoutIndex - 1, LoadoutMenuCount);
@@ -770,8 +835,14 @@ namespace FourfoldEchoes.Product
                 selectedLoadoutIndex = Wrap(selectedLoadoutIndex + 1, LoadoutMenuCount);
             }
 
+            if (previousIndex != selectedLoadoutIndex)
+            {
+                PlayUiSelect();
+            }
+
             if (Pressed(resetKey, pauseKey, gamepadResetKey, gamepadPauseKey, gamepadCancelKey))
             {
+                PlayUiBack();
                 CloseLoadout();
                 return;
             }
@@ -787,17 +858,21 @@ namespace FourfoldEchoes.Product
             switch (selectedPauseIndex)
             {
                 case PauseResume:
+                    PlayUiConfirm();
                     paused = false;
                     settingsOpen = false;
                     loadoutOpen = false;
                     break;
                 case PauseLoadout:
+                    PlayUiConfirm();
                     OpenLoadout();
                     break;
                 case PauseSettings:
+                    PlayUiConfirm();
                     OpenSettings();
                     break;
                 case PauseTitle:
+                    PlayUiConfirm();
                     TryReturnToTitle();
                     break;
             }
@@ -808,9 +883,11 @@ namespace FourfoldEchoes.Product
             switch (selectedMissionIndex)
             {
                 case MissionStart:
+                    PlayUiConfirm();
                     TryEnterD020Region();
                     break;
                 case MissionLoadout:
+                    PlayUiConfirm();
                     progressData = FourfoldProgressSave.Load();
                     loadoutOpen = true;
                     loadoutOpenedFromMissionBriefing = true;
@@ -818,6 +895,7 @@ namespace FourfoldEchoes.Product
                     selectedLoadoutIndex = 0;
                     break;
                 case MissionSettings:
+                    PlayUiConfirm();
                     progressData = FourfoldProgressSave.Load();
                     settingsOpen = true;
                     settingsOpenedFromMissionBriefing = true;
@@ -825,6 +903,7 @@ namespace FourfoldEchoes.Product
                     selectedSettingIndex = 0;
                     break;
                 case MissionBack:
+                    PlayUiBack();
                     CloseMissionBriefing();
                     break;
             }
@@ -835,13 +914,16 @@ namespace FourfoldEchoes.Product
             switch (selectedSummaryIndex)
             {
                 case SummaryReplay:
+                    PlayUiConfirm();
                     DismissRunSummary();
                     StartD020Region();
                     break;
                 case SummaryContinue:
+                    PlayUiConfirm();
                     DismissRunSummary();
                     break;
                 case SummaryTitle:
+                    PlayUiConfirm();
                     DismissRunSummary();
                     TryReturnToTitle();
                     break;
@@ -853,13 +935,16 @@ namespace FourfoldEchoes.Product
             switch (selectedSummaryIndex)
             {
                 case SummaryReplay:
+                    PlayUiConfirm();
                     DismissFailureSummary();
                     StartD020Region();
                     break;
                 case SummaryContinue:
+                    PlayUiConfirm();
                     DismissFailureSummary();
                     break;
                 case SummaryTitle:
+                    PlayUiConfirm();
                     DismissFailureSummary();
                     TryReturnToTitle();
                     break;
@@ -870,10 +955,12 @@ namespace FourfoldEchoes.Product
         {
             if (selectedResetIndex == ResetConfirmReset)
             {
+                PlayUiConfirm();
                 ResetProgressForNewGame();
                 return;
             }
 
+            PlayUiBack();
             CloseResetConfirmation();
         }
 
@@ -883,15 +970,55 @@ namespace FourfoldEchoes.Product
             switch (selectedLoadoutIndex)
             {
                 case LoadoutEdge:
-                    ToggleLumenEdgeLoadout();
+                    if (ToggleLumenEdgeLoadout())
+                    {
+                        PlayUiConfirm();
+                    }
+                    else
+                    {
+                        PlayUiError();
+                    }
                     break;
                 case LoadoutWard:
-                    ToggleLumenWardLoadout();
+                    if (ToggleLumenWardLoadout())
+                    {
+                        PlayUiConfirm();
+                    }
+                    else
+                    {
+                        PlayUiError();
+                    }
                     break;
                 default:
+                    PlayUiBack();
                     CloseLoadout();
                     break;
             }
+        }
+
+        private void PlayUiSelect()
+        {
+            FourfoldUiAudio.PlaySelect(this, progressData);
+        }
+
+        private void PlayUiConfirm()
+        {
+            FourfoldUiAudio.PlayConfirm(this, progressData);
+        }
+
+        private void PlayUiBack()
+        {
+            FourfoldUiAudio.PlayBack(this, progressData);
+        }
+
+        private void PlayUiError()
+        {
+            FourfoldUiAudio.PlayError(this, progressData);
+        }
+
+        private void PlayUiPause()
+        {
+            FourfoldUiAudio.PlayPause(this, progressData);
         }
 
         private void SaveSettings()

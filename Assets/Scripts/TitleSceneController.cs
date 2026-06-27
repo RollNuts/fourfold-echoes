@@ -340,6 +340,7 @@ namespace FourfoldEchoes.Product
 
         private void UpdateMenuInput()
         {
+            var previousIndex = selectedIndex;
             if (Pressed(upKey) || AxisPressed(-1f))
             {
                 selectedIndex = Wrap(selectedIndex - 1, MenuCount);
@@ -347,6 +348,11 @@ namespace FourfoldEchoes.Product
             else if (Pressed(downKey) || AxisPressed(1f))
             {
                 selectedIndex = Wrap(selectedIndex + 1, MenuCount);
+            }
+
+            if (previousIndex != selectedIndex)
+            {
+                PlayUiSelect();
             }
 
             if (Pressed(confirmKey) || Pressed(alternateConfirmKey) || Pressed(gamepadConfirmKey))
@@ -357,6 +363,7 @@ namespace FourfoldEchoes.Product
 
         private void UpdateSettingsInput()
         {
+            var previousIndex = selectedSettingIndex;
             if (Pressed(upKey) || AxisPressed(-1f))
             {
                 selectedSettingIndex = Wrap(selectedSettingIndex - 1, SettingsCount);
@@ -366,23 +373,37 @@ namespace FourfoldEchoes.Product
                 selectedSettingIndex = Wrap(selectedSettingIndex + 1, SettingsCount);
             }
 
+            if (previousIndex != selectedSettingIndex)
+            {
+                PlayUiSelect();
+            }
+
             if (Pressed(leftKey) || HorizontalAxisPressed(-1f))
             {
                 AdjustSelectedSetting(-1f);
+                PlayUiSelect();
             }
             else if (Pressed(rightKey) || HorizontalAxisPressed(1f))
             {
                 AdjustSelectedSetting(1f);
+                PlayUiSelect();
             }
 
-            if (Pressed(cancelKey) || Pressed(gamepadCancelKey) || Pressed(confirmKey) || Pressed(gamepadConfirmKey))
+            if (Pressed(cancelKey) || Pressed(gamepadCancelKey))
             {
+                PlayUiBack();
+                CloseSettings();
+            }
+            else if (Pressed(confirmKey) || Pressed(gamepadConfirmKey))
+            {
+                PlayUiConfirm();
                 CloseSettings();
             }
         }
 
         private void UpdateNewGameConfirmInput()
         {
+            var previousIndex = selectedNewGameConfirmIndex;
             if (Pressed(upKey) || AxisPressed(-1f))
             {
                 selectedNewGameConfirmIndex = Wrap(selectedNewGameConfirmIndex - 1, NewGameConfirmCount);
@@ -392,8 +413,14 @@ namespace FourfoldEchoes.Product
                 selectedNewGameConfirmIndex = Wrap(selectedNewGameConfirmIndex + 1, NewGameConfirmCount);
             }
 
+            if (previousIndex != selectedNewGameConfirmIndex)
+            {
+                PlayUiSelect();
+            }
+
             if (Pressed(cancelKey) || Pressed(gamepadCancelKey))
             {
+                PlayUiBack();
                 CancelNewGameOverwrite();
                 return;
             }
@@ -402,10 +429,12 @@ namespace FourfoldEchoes.Product
             {
                 if (selectedNewGameConfirmIndex == NewGameConfirmStart)
                 {
+                    PlayUiConfirm();
                     ConfirmNewGameOverwrite();
                 }
                 else
                 {
+                    PlayUiBack();
                     CancelNewGameOverwrite();
                 }
             }
@@ -413,6 +442,7 @@ namespace FourfoldEchoes.Product
 
         private void UpdateContinueDecisionInput()
         {
+            var previousIndex = selectedContinueDecisionIndex;
             if (Pressed(upKey) || AxisPressed(-1f))
             {
                 selectedContinueDecisionIndex = Wrap(selectedContinueDecisionIndex - 1, ContinueDecisionCount);
@@ -422,8 +452,14 @@ namespace FourfoldEchoes.Product
                 selectedContinueDecisionIndex = Wrap(selectedContinueDecisionIndex + 1, ContinueDecisionCount);
             }
 
+            if (previousIndex != selectedContinueDecisionIndex)
+            {
+                PlayUiSelect();
+            }
+
             if (Pressed(cancelKey) || Pressed(gamepadCancelKey))
             {
+                PlayUiBack();
                 CancelContinueDecision();
                 return;
             }
@@ -436,12 +472,15 @@ namespace FourfoldEchoes.Product
             switch (selectedContinueDecisionIndex)
             {
                 case ContinueResumeRun:
+                    PlayUiConfirm();
                     ContinueRunFromTitleDecision();
                     break;
                 case ContinueReturnHub:
+                    PlayUiConfirm();
                     ReturnSavedRunToHub();
                     break;
                 default:
+                    PlayUiBack();
                     CancelContinueDecision();
                     break;
             }
@@ -449,6 +488,7 @@ namespace FourfoldEchoes.Product
 
         private void ActivateSelectedMenu()
         {
+            PlayUiConfirm();
             switch (selectedIndex)
             {
                 case MenuNewGame:
@@ -464,6 +504,21 @@ namespace FourfoldEchoes.Product
                     QuitGame();
                     break;
             }
+        }
+
+        private void PlayUiSelect()
+        {
+            FourfoldUiAudio.PlaySelect(this, progressData);
+        }
+
+        private void PlayUiConfirm()
+        {
+            FourfoldUiAudio.PlayConfirm(this, progressData);
+        }
+
+        private void PlayUiBack()
+        {
+            FourfoldUiAudio.PlayBack(this, progressData);
         }
 
         private string RequestScene(string unitySceneName)

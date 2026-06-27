@@ -398,7 +398,7 @@ function normalizeUnityPath(value) {
 }
 
 function isConcretePath(value) {
-  return Boolean(value) && value !== "TBD";
+  return Boolean(value) && value !== "TBD" && value !== "runtime-generated";
 }
 
 function toRepoPath(fullPath) {
