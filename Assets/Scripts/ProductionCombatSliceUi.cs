@@ -49,6 +49,7 @@ namespace FourfoldEchoes.Product
         private Label eventLabel;
         private Label statusLabel;
         private Label toolLabel;
+        private Label promptLabel;
         private Label saveLabel;
         private readonly List<Button> titleButtons = new List<Button>();
         private readonly List<Button> pauseButtons = new List<Button>();
@@ -175,6 +176,11 @@ namespace FourfoldEchoes.Product
             toolLabel.style.color = MutedTextColor;
             toolLabel.style.marginTop = 8f;
             panel.Add(toolLabel);
+
+            promptLabel = MakeLabel("North Button / E / RMB: Echo Tool", 13, FontStyle.Bold);
+            promptLabel.style.color = AccentColor;
+            promptLabel.style.marginTop = 3f;
+            panel.Add(promptLabel);
 
             statusLabel = MakeLabel("Shortcut closed | Gate sealed | Reward waiting", 13, FontStyle.Normal);
             statusLabel.style.color = MutedTextColor;
@@ -418,6 +424,12 @@ namespace FourfoldEchoes.Product
                 statusLabel.text = $"Shortcut {(controller.ShortcutOpen ? "open" : "closed")} | Gate {(controller.GateOpen ? "open" : "sealed")} | Reward {(controller.RewardClaimed ? "claimed" : "waiting")}";
             }
 
+            if (promptLabel != null)
+            {
+                promptLabel.text = BuildPromptText();
+                promptLabel.style.color = BuildPromptColor();
+            }
+
             if (saveLabel != null)
             {
                 saveLabel.text = controller.SaveStatus;
@@ -459,6 +471,33 @@ namespace FourfoldEchoes.Product
 
             selectedButtonIndex = 0;
             RefreshButtonSelection();
+        }
+
+        private string BuildPromptText()
+        {
+            if (controller.RewardClaimed)
+            {
+                return "Reward claimed";
+            }
+
+            if (controller.GateOpen)
+            {
+                return "North Button / E / RMB: Claim reward";
+            }
+
+            return controller.ToolReady01 >= 0.99f
+                ? "North Button / E / RMB: Echo Tool"
+                : "Echo Tool recovering";
+        }
+
+        private Color BuildPromptColor()
+        {
+            if (controller.RewardClaimed || controller.GateOpen)
+            {
+                return ConfirmColor;
+            }
+
+            return controller.ToolReady01 >= 0.99f ? AccentColor : MutedTextColor;
         }
 
         private static ScreenState ToScreenState(ProductionCombatRunState state)
