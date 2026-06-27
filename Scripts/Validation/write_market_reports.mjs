@@ -12,11 +12,13 @@ const d020Screenshot = inspectPng("artifacts/Previews/d020-slice-camera.png");
 const d020ToolRead = inspectPng("artifacts/Previews/d020-tool-node-read.png");
 const d020RewardRead = inspectPng("artifacts/Previews/d020-reward-read.png");
 const d020PlayableAttackRead = inspectPng("artifacts/Previews/d020-playable-attack-read.png");
+const d020HudRewardSaveRead = inspectPng("artifacts/Previews/d020-hud-reward-save.png");
 const requiredVisualEvidence = [
   "artifacts/Previews/d020-slice-camera.png",
   "artifacts/Previews/d020-tool-node-read.png",
   "artifacts/Previews/d020-reward-read.png",
-  "artifacts/Previews/d020-playable-attack-read.png"
+  "artifacts/Previews/d020-playable-attack-read.png",
+  "artifacts/Previews/d020-hud-reward-save.png"
 ].map(inspectPng);
 const buildArtifact = inspectPath("Build/D020Slice/macos/FourfoldEchoesD020Slice.app");
 const d020Scene = inspectPath("Assets/Scenes/D020VerticalSlice.unity");
@@ -46,6 +48,7 @@ const performanceSnapshot = {
   d020ToolRead,
   d020RewardRead,
   d020PlayableAttackRead,
+  d020HudRewardSaveRead,
   buildArtifact,
   d020Runtime: {
     scenePath: d020Scene.path,
@@ -94,6 +97,7 @@ const finalStatus = {
     d020ToolScreenshot: d020ToolRead.exists ? d020ToolRead.path : null,
     d020RewardScreenshot: d020RewardRead.exists ? d020RewardRead.path : null,
     d020PlayableAttackScreenshot: d020PlayableAttackRead.exists ? d020PlayableAttackRead.path : null,
+    d020HudRewardSaveScreenshot: d020HudRewardSaveRead.exists ? d020HudRewardSaveRead.path : null,
     visualEvidence: requiredVisualEvidence.filter((evidence) => evidence.exists).map((evidence) => evidence.path),
     performanceSnapshot: "artifacts/Reports/performance-snapshot.json",
     audioInventory: "artifacts/Reports/audio-inventory.json",
@@ -437,6 +441,7 @@ Canonical hook: ${status.canonicalHook}
 | D-020 tool screenshot | \`${status.currentEvidence.d020ToolScreenshot ?? "missing"}\` |
 | D-020 reward screenshot | \`${status.currentEvidence.d020RewardScreenshot ?? "missing"}\` |
 | D-020 playable attack screenshot | \`${status.currentEvidence.d020PlayableAttackScreenshot ?? "missing"}\` |
+| D-020 HUD reward/save screenshot | \`${status.currentEvidence.d020HudRewardSaveScreenshot ?? "missing"}\` |
 | Visual evidence shots | ${status.currentEvidence.visualEvidence?.length ?? 0} generated |
 | Performance snapshot | \`${status.currentEvidence.performanceSnapshot}\` |
 | Audio inventory | \`${status.currentEvidence.audioInventory}\` |

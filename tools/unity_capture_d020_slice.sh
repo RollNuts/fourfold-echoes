@@ -30,3 +30,4 @@ fi
   -logFile -
 
 echo "D-020 vertical slice camera evidence: $FOURFOLD_EVIDENCE_DIR/d020-slice-camera.png"
+echo "D-020 HUD reward/save evidence: $FOURFOLD_EVIDENCE_DIR/d020-hud-reward-save.png"
