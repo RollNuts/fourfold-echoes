@@ -1,0 +1,119 @@
+{
+  "asset_id": "art.ui.reward_sigils.v0_1_0",
+  "family": "FoldedReliquary",
+  "subject": "RewardSigil",
+  "version": "0.1.0",
+  "adopted_concept": "Reward, shortcut, and boss weak-point sigils for readable compact action-adventure feedback.",
+  "status": "production-intent draft",
+  "source_strategy": "repository-authored procedural raster generation",
+  "asset_request": {
+    "source": "inferred because no visual asset_request.yaml was present in the checkout",
+    "out_of_scope_asset_requests": [
+      "artifacts/Reports/SFXPack_v0_1_0/asset_request.yaml is an SFX Session request and was not used for this visual asset family."
+    ],
+    "usage_context": "FOURFOLD ECHOES reward reveal, relic pickup, shortcut open, and boss weak-point readback",
+    "target_platforms": [
+      "Steam Windows",
+      "Steam Deck-oriented PC handheld readability"
+    ],
+    "constraints": {
+      "size_px": [
+        128,
+        256
+      ],
+      "texture_budget": "512px atlas for BaseColor/Mask/Normal/Emissive",
+      "background": "transparent",
+      "text": "none"
+    }
+  },
+  "style_ref": [
+    "docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md",
+    "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+    "docs/Product/MVP_BLUEPRINT.md",
+    "docs/Art/NEXT_ASSET_BATCH.md"
+  ],
+  "style_tokens": [
+    "folded_reliquary",
+    "reward_reliquary",
+    "fourfold_inlay",
+    "chunk_tabs",
+    "signal_socket",
+    "boss_weak_read",
+    "low_noise"
+  ],
+  "tags": [
+    "ui",
+    "reward",
+    "relic",
+    "boss-weak-point",
+    "shortcut",
+    "folded-reliquary",
+    "transparent-png",
+    "runtime-art",
+    "p0-readability"
+  ],
+  "license_spdx": "LicenseRef-RepositoryAuthored-Proprietary",
+  "prompt_hash": "e0a9ee1a57c0d4db1c4036c54ef87986a8599aa1de8b5684caad263d653e58d3",
+  "prompt_contract": "Use case: stylized-concept\nAsset type: Unity UI icon family plus 3D material atlas maps\nPrimary request: compact FOURFOLD ECHOES reward and weak-point sigils, no text, no background\nStyle/medium: procedural 2D raster icon, folded reliquary miniature product line\nSubject: four small reward/weak-point sigils built from folded slabs, chunky tabs, fourfold inlays, and one functional signal socket\nComposition/framing: centered silhouette, transparent padding, readable at 64px, 128px, and 256px\nColor palette: ivory stone, warm gold, cool route blue, root green, ember orange, restrained weak red\nMaterials/textures: broad stylized PBR planes, sparse bevel-like normal detail, no photoreal grime, no noisy fantasy texture\nConstraints: transparent PNG, no labels, no letters, no background plate, no cast shadow, variations differ by outline, socket, weak-point shape, material temperature, and signal placement\nAvoid: generic treasure chest icon, inventory bag, keyhole text, quest marker, external IP style names, fine decorative clutter, watermark",
+  "library_path_proposal": "unity-game-asset-library/Runtime/Art/UI/RewardSigils/ART_FoldedReliquary_RewardSigils_v0.1.0/",
+  "unity_runtime_path": "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/",
+  "unity_import": {
+    "texture_type": "Sprite (2D and UI) for individual icons; Default/Normal Map for atlas maps as needed",
+    "pixels_per_unit": 100,
+    "max_texture_size": 512,
+    "alpha_is_transparency": true,
+    "wrap_mode": "Clamp",
+    "filter_mode": "Bilinear"
+  },
+  "texture_maps": {
+    "BaseColor": "ART_FoldedReliquary_RewardSigilAtlas_BaseColor_v0.1.0.png",
+    "Mask": "ART_FoldedReliquary_RewardSigilAtlas_Mask_v0.1.0.png",
+    "Normal": "ART_FoldedReliquary_RewardSigilAtlas_Normal_v0.1.0.png",
+    "Emissive": "ART_FoldedReliquary_RewardSigilAtlas_Emissive_v0.1.0.png",
+    "Mask_channels": "R=silhouette/occlusion, G=material roughness group, B=emissive mask, A=alpha"
+  },
+  "variants": [
+    {
+      "name": "Root",
+      "difference": "rounded root-leaf socket and green reward signal"
+    },
+    {
+      "name": "Ember",
+      "difference": "warm seed/flame socket and amber lower slab"
+    },
+    {
+      "name": "BossWeak",
+      "difference": "red diamond weak socket, cracked center, cross read"
+    },
+    {
+      "name": "Shortcut",
+      "difference": "opened latch silhouette and cool route signal"
+    }
+  ],
+  "files": [
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigilAtlas_BaseColor_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigilAtlas_Emissive_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigilAtlas_Mask_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigilAtlas_Normal_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigil_BossWeak128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigil_BossWeak_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigil_Ember128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigil_Ember_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigil_Root128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigil_Root_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigil_Shortcut128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/ART_FoldedReliquary_RewardSigil_Shortcut_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RewardSigils_v0.1.0/preview.png"
+  ],
+  "qc": {
+    "transparent_corners": true,
+    "no_text_or_background": true,
+    "min_canvas_margin_px_256": 24,
+    "readability_checks": [
+      "64px preview sample included in preview.png",
+      "128px and 256px individual sprites exported"
+    ],
+    "edge_bleed": "none detected in alpha-corner and edge checks after inset pass",
+    "tile_seam": "not applicable; icons and atlas, not loop tiles"
+  }
+}
