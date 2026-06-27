@@ -28,19 +28,21 @@ cover feel, readability, art, and audio.
 ## Run Commands
 
 From the repository root, prefer Unity Test Runner in the editor. For batchmode,
-use the project editor target from `ProjectSettings/ProjectVersion.txt`:
+use the repository wrapper. It reads the project editor target from
+`ProjectSettings/ProjectVersion.txt`, avoids `-quit`, and fails if Test Runner
+XML is missing:
 
 ```bash
-/Applications/Unity/Hub/Editor/6000.3.18f1/Unity.app/Contents/MacOS/Unity -batchmode -projectPath . -runTests -testPlatform EditMode -testResults reports/editmode-results.xml -logFile reports/unity-editmode.log
-/Applications/Unity/Hub/Editor/6000.3.18f1/Unity.app/Contents/MacOS/Unity -batchmode -projectPath . -runTests -testPlatform PlayMode -testResults reports/playmode-results.xml -logFile reports/unity-playmode.log
+tools/unity_run_tests.sh --mode EditMode --results-dir artifacts/unity-tests-local/EditMode
+tools/unity_run_tests.sh --mode PlayMode --results-dir artifacts/unity-tests-local/PlayMode
 ```
 
 If the Unity editor is already open on this checkout, use the Test Runner window
 instead of launching a second editor process.
 
-Do not add `-quit` to these commands. Unity Test Framework 1.6 exits the editor
-itself after the run; with `-quit`, batchmode can close before the test runner
-starts.
+Do not add `-quit` to Test Runner batchmode commands. Unity Test Framework 1.6
+exits the editor itself after the run; with `-quit`, batchmode can close before
+the test runner starts and leave no XML result.
 
 ## Test Design Rules
 
