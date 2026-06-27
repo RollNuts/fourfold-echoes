@@ -36,6 +36,7 @@ namespace FourfoldEchoes.Product
         private const float NavigationRepeatSeconds = 0.18f;
         private UIDocument document;
         private PanelSettings panelSettings;
+        private ThemeStyleSheet runtimeThemeStyleSheet;
         private VisualElement root;
         private VisualElement hud;
         private VisualElement titleOverlay;
@@ -96,6 +97,11 @@ namespace FourfoldEchoes.Product
             {
                 Destroy(panelSettings);
             }
+
+            if (runtimeThemeStyleSheet != null)
+            {
+                Destroy(runtimeThemeStyleSheet);
+            }
         }
 
         private void EnsureDocument()
@@ -115,6 +121,8 @@ namespace FourfoldEchoes.Product
             panelSettings.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
             panelSettings.match = 0.5f;
             panelSettings.sortingOrder = 50;
+            runtimeThemeStyleSheet = CreateRuntimeThemeStyleSheet($"{panelSettings.name} Theme");
+            panelSettings.themeStyleSheet = runtimeThemeStyleSheet;
 
             document = documentObject.AddComponent<UIDocument>();
             document.panelSettings = panelSettings;
@@ -493,6 +501,14 @@ namespace FourfoldEchoes.Product
             return HasSavedSliceProgress(shortcutOpen, gateOpen, rewardClaimed)
                 ? "Continue Saved Slice"
                 : "Start Game";
+        }
+
+        public static ThemeStyleSheet CreateRuntimeThemeStyleSheet(string name)
+        {
+            var theme = ScriptableObject.CreateInstance<ThemeStyleSheet>();
+            theme.name = string.IsNullOrWhiteSpace(name) ? "PCS Runtime UI Theme" : name;
+            theme.hideFlags = HideFlags.DontSave;
+            return theme;
         }
 
         private static bool HasSavedSliceProgress(bool shortcutOpen, bool gateOpen, bool rewardClaimed)

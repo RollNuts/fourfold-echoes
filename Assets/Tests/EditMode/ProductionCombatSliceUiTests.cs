@@ -1,5 +1,6 @@
 using FourfoldEchoes.Product;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace FourfoldEchoes.Tests.EditMode
 {
@@ -44,6 +45,23 @@ namespace FourfoldEchoes.Tests.EditMode
             Assert.That(
                 ProductionCombatSliceUi.BuildTitleSaveLine(true, true, true, "Save failed - progress kept"),
                 Is.EqualTo("Local save is unavailable; progress will stay in memory for this run."));
+        }
+
+        [Test]
+        public void UI_RuntimeThemeFallback_CreatesNonSavedThemeStyleSheet()
+        {
+            var theme = ProductionCombatSliceUi.CreateRuntimeThemeStyleSheet(string.Empty);
+
+            try
+            {
+                Assert.That(theme, Is.Not.Null);
+                Assert.That(theme.name, Is.EqualTo("PCS Runtime UI Theme"));
+                Assert.That(theme.hideFlags, Is.EqualTo(HideFlags.DontSave));
+            }
+            finally
+            {
+                Object.DestroyImmediate(theme);
+            }
         }
     }
 }
