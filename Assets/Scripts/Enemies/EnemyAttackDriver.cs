@@ -78,6 +78,11 @@ namespace FourfoldEchoes.Product
                 }
             }
 
+            if (hits > 0 && ownerDamageable != null)
+            {
+                ownerDamageable.ShowHitConfirm(lastAttackCenter);
+            }
+
             return hits;
         }
 

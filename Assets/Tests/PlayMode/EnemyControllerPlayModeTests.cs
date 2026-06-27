@@ -190,6 +190,45 @@ namespace FourfoldEchoes.Tests
         }
 
         [UnityTest]
+        public IEnumerator EnemyAttackDriver_ShowsOwnerHitConfirmWhenAttackConnects()
+        {
+            var definition = CreateDefinition("test_hit_confirm");
+            definition.attackDamage = 7f;
+            definition.attackRange = 0.75f;
+            definition.attackRadius = 0.35f;
+            definition.attackArcDegrees = 120f;
+
+            var attacker = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            cleanup.Add(attacker);
+            attacker.name = "AI Test Hit Confirm Attacker";
+            attacker.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
+            var ownerDamageable = attacker.AddComponent<Damageable>();
+            ownerDamageable.hitConfirmFlashDuration = 0.05f;
+            ownerDamageable.hitConfirmFlashScale = 0.33f;
+            ownerDamageable.hitConfirmFlashColor = new Color(0.2f, 0.9f, 1f, 0.95f);
+            var attackDriver = attacker.AddComponent<EnemyAttackDriver>();
+
+            var target = CreateTarget(new Vector3(0.7f, 0f, 0f), 100f);
+            Physics.SyncTransforms();
+
+            var hitCount = attackDriver.ResolveHit(definition, attacker);
+
+            Assert.AreEqual(1, hitCount);
+            Assert.That(target.GetComponent<Damageable>().CurrentHealth, Is.EqualTo(93f).Within(0.01f));
+            Assert.IsTrue(ownerDamageable.IsAlive);
+
+            var confirm = ownerDamageable.HitFlashInstance;
+            Assert.IsNotNull(confirm);
+            Assert.IsTrue(confirm.activeSelf);
+            Assert.That(confirm.transform.position.x, Is.EqualTo(definition.attackRange).Within(0.01f));
+            Assert.That(confirm.transform.localScale.x, Is.EqualTo(ownerDamageable.hitConfirmFlashScale).Within(0.01f));
+            AssertColorApproximately(ownerDamageable.hitConfirmFlashColor, ReadTint(confirm.GetComponentInChildren<Renderer>()));
+
+            yield return new WaitForSeconds(0.08f);
+            Assert.IsFalse(confirm.activeSelf);
+        }
+
+        [UnityTest]
         public IEnumerator EnemyController_ReturnsHomeWhenTargetBreaksLeash()
         {
             var definition = CreateDefinition("test_leash");
