@@ -53,7 +53,10 @@ Asset: MDL_Enemy_MeleeShardling_SealedLockRelic_v0.1.0
 
 ## Sample Scene Setup
 
-- Prefab root at `(0, 0, 0)` with model visual as child.
-- Add a BoxCollider or simple convex hull around the base; add a separate trigger hitbox under `SOCKET_ForwardHit`.
+- Generated AnimatorController: `Runtime/Animator/AC_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.controller`.
+- Generated runtime prefab: `Runtime/Prefabs/PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.prefab`.
+- Generated preview scene: `Runtime/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity`.
+- Prefab root starts at `(0, 0, 0)` and keeps `Animator.applyRootMotion = false`.
+- The prefab includes a root BoxCollider and a trigger hitbox at `SOCKET_ForwardHit/HITBOX_ForwardPreview`.
 - Attach red seam VFX to `SOCKET_RedSeamVFX`, projectile/cast VFX to `SOCKET_Cast`, and impact VFX to `SOCKET_HitVfx`.
 - Animator states: Idle default, Walk/Run locomotion, AttackStart -> AttackLoop -> AttackEnd, CastStart -> ChannelLoop -> CastRelease, hit reactions, Knockdown, Death, Interact.
