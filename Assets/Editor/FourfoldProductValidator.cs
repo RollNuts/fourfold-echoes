@@ -34,10 +34,12 @@ namespace FourfoldEchoes.Editor
             {
                 FourfoldD020SliceSceneBuilder.BuildAndValidate();
                 findings.Add(Finding.Info("d020.slice", "D-020 vertical slice evidence scene generated and validated with player, one tool node, shortcut route, enemy, and relic chest."));
+                FourfoldD020PlayableSmoke.Run();
+                findings.Add(Finding.Info("d020.playable_smoke", "D-020 playable smoke passed for movement, dodge, normal attack, enemy hit, and one-tool node activation."));
             }
             catch (Exception exception)
             {
-                findings.Add(Finding.Error("d020.slice", "D-020 vertical slice scene generation or validation failed: " + exception.Message));
+                findings.Add(Finding.Error("d020.slice", "D-020 vertical slice generation, validation, or playable smoke failed: " + exception.Message));
             }
 
             if (ShouldIncludeLegacyGateA())
@@ -292,7 +294,7 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine();
             builder.AppendLine("## Product Interpretation");
             builder.AppendLine();
-            builder.AppendLine("This report validates technical hygiene only. D020VerticalSlice is the current D-020 evidence path for the first single ExplorationTool + ExplorationNode loop. Historical ProductReview evidence is deliberately outside this lane.");
+            builder.AppendLine("This report validates technical hygiene only. D020VerticalSlice is the current D-020 evidence path for the first single ExplorationTool + ExplorationNode loop, now including a batchmode playable smoke for movement, dodge, normal attack, enemy hit, and tool activation. Historical ProductReview evidence is deliberately outside this lane.");
             return builder.ToString();
         }
 
