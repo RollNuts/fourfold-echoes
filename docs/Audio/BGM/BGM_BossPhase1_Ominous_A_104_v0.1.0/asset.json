@@ -1,0 +1,114 @@
+{
+  "asset_id": "audio.music.bgm_boss",
+  "title": "Root Warden Coil",
+  "scene": "BossPhase1",
+  "scene_type": "boss phase1",
+  "mood": "Ominous",
+  "variant": "A",
+  "bpm": 104,
+  "version": "0.1.0",
+  "status": "generated_pilot",
+  "source_strategy": "repository-authored deterministic procedural synthesis",
+  "license": "repository-authored",
+  "target_platforms": [
+    "Steam PC",
+    "future console portable"
+  ],
+  "library_root_relative": "Runtime/Audio/BGM/BGM_BossPhase1_Ominous_A_104_v0.1.0",
+  "paths": {
+    "master_wav": "BGM_BossPhase1_Ominous_A_104_v0.1.0.wav",
+    "runtime_intro_ogg": "Assets/Audio/Generated/BGM_BossPhase1_Ominous_AIntro_104_v0.1.0.ogg",
+    "runtime_loop_ogg": "Assets/Audio/Generated/BGM_BossPhase1_Ominous_ALoop_104_v0.1.0.ogg",
+    "cue_sheet": "cue_sheet.csv",
+    "asset_request": "asset_request.yaml",
+    "qc_result": "qc_result.json",
+    "stems": {
+      "rhythm": "Stems/BGM_BossPhase1_Ominous_ARhythm_104_v0.1.0.wav",
+      "harmony": "Stems/BGM_BossPhase1_Ominous_AHarmony_104_v0.1.0.wav",
+      "lead": "Stems/BGM_BossPhase1_Ominous_ALead_104_v0.1.0.wav",
+      "percussion": "Stems/BGM_BossPhase1_Ominous_APercussion_104_v0.1.0.wav"
+    }
+  },
+  "loop": {
+    "full_master_start_sample": 203536,
+    "full_master_end_sample": 1831824,
+    "full_master_start_seconds": 4.615328798185941,
+    "full_master_end_seconds": 41.53795918367347,
+    "loop_clip_start_sample": 0,
+    "loop_clip_end_sample": 1628288,
+    "loop_clip_length_seconds": 36.92263038548753,
+    "intro_bars": 2,
+    "loop_bars": 16,
+    "playback_instruction": "Play runtime_intro_ogg once for phase entry, then loop runtime_loop_ogg from sample 0."
+  },
+  "mix_notes": {
+    "loudness_note": "Peak -6.01 dBFS, RMS -23.20 dBFS.",
+    "fade_note": "No baked loop fade. Optional engine crossfade 150-300 ms on phase transition.",
+    "sfx_space_note": "Music avoids heavy impacts so boss tells, impacts, shield breaks, and transition SFX stay in front.",
+    "low_end_note": "No sub/kick layer; roots are short and gain-limited.",
+    "melody_note": "Lead is limited to short warning callouts."
+  },
+  "stems": [
+    {
+      "name": "rhythm",
+      "file": "Stems/BGM_BossPhase1_Ominous_ARhythm_104_v0.1.0.wav",
+      "peak_dbfs": -9.844661085238247,
+      "rms_dbfs": -33.69902972742169
+    },
+    {
+      "name": "harmony",
+      "file": "Stems/BGM_BossPhase1_Ominous_AHarmony_104_v0.1.0.wav",
+      "peak_dbfs": -6.0132410620489445,
+      "rms_dbfs": -23.78163532836752
+    },
+    {
+      "name": "lead",
+      "file": "Stems/BGM_BossPhase1_Ominous_ALead_104_v0.1.0.wav",
+      "peak_dbfs": -8.851396315010923,
+      "rms_dbfs": -39.40289563993933
+    },
+    {
+      "name": "percussion",
+      "file": "Stems/BGM_BossPhase1_Ominous_APercussion_104_v0.1.0.wav",
+      "peak_dbfs": -15.351028510701823,
+      "rms_dbfs": -52.93317436593167
+    }
+  ],
+  "planned_companion_cues": [
+    {
+      "structure": "title",
+      "status": "planned"
+    },
+    {
+      "structure": "field exploration",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_region01"
+    },
+    {
+      "structure": "battle",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_normal_combat"
+    },
+    {
+      "structure": "boss phase1",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_boss"
+    },
+    {
+      "structure": "boss phase2",
+      "status": "planned"
+    },
+    {
+      "structure": "rest room",
+      "status": "planned"
+    },
+    {
+      "structure": "victory stinger",
+      "status": "planned"
+    },
+    {
+      "structure": "defeat stinger",
+      "status": "planned"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+asset_id: audio.music.bgm_boss_phase2
+title: Root Warden Break
+scene_type: boss phase2
+mood: urgent
+bpm_target: 128
+loop_requirement:
+  intro_bars: 1
+  loop_bars: 16
+  seamless_loop: true
+  full_master_loop_start_sample: 82684
+  full_master_loop_end_sample: 1405628
+  runtime_intro_clip: Assets/Audio/Generated/BGM_BossPhase2_Urgent_AIntro_128_v0.1.0.ogg
+  runtime_loop_clip: Assets/Audio/Generated/BGM_BossPhase2_Urgent_ALoop_128_v0.1.0.ogg
+stems_requirement:
+  - rhythm
+  - harmony
+  - lead
+  - percussion
+target_platforms:
+  - Steam PC
+  - future console portable
+source_strategy: repository-authored deterministic procedural synthesis
+license: repository-authored
+status: generated_pilot
+notes:
+  - Boss tell and impact SFX outrank this music.
+  - Use the intro for deliberate boss phase entry, then loop the runtime loop clip.
+  - Keep phase transitions in code simple: stop or crossfade phase1, play phase2 intro once, then phase2 loop.
