@@ -1,0 +1,133 @@
+{
+  "asset_id": "art.vfx.surface_signal_decals.v0_1_0",
+  "family": "FoldedReliquary",
+  "subject": "SurfaceSignalDecal",
+  "version": "0.1.0",
+  "adopted_concept": "Top-down readable surface signal decals for exploration tool targets, route opening, reward spawn, and lock break feedback.",
+  "status": "production-intent draft",
+  "source_strategy": "repository-authored procedural raster generation",
+  "brand_line_id": "folded_reliquary",
+  "product_line_role": "Grounding Detail / Route Surface VFX decal",
+  "required_shape_tokens": [
+    "low folded slab ring",
+    "fourfold inlay",
+    "chunk tabs",
+    "functional signal thread",
+    "readable central socket"
+  ],
+  "motif_limit_policy": "Regional material hints stay below 15%; no standalone plant, pipe, crystal forest, crown, text, or external-IP motif.",
+  "asset_request": {
+    "source": "inferred because no visual asset_request.yaml was present in the checkout for this VFX/decal family",
+    "out_of_scope_asset_requests": [
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/asset_request.yaml is a model/rig animation request and was not used for this decal request."
+    ],
+    "usage_context": "FOURFOLD ECHOES exploration tool target response, route opening floor cue, reward spawn readback, and lock break/gate surface feedback",
+    "target_platforms": [
+      "Steam Windows",
+      "Steam Deck-oriented PC handheld readability"
+    ],
+    "constraints": {
+      "size_px": [
+        128,
+        256
+      ],
+      "texture_budget": "512px atlas for BaseColor/Mask/Normal/Emissive",
+      "background": "transparent",
+      "text": "none"
+    }
+  },
+  "style_ref": [
+    "docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md",
+    "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+    "docs/Product/MVP_BLUEPRINT.md",
+    "docs/Product/VERTICAL_SLICE_CONTENT.md"
+  ],
+  "style_tokens": [
+    "folded_reliquary",
+    "route_surface",
+    "grounding_detail",
+    "fourfold_inlay",
+    "signal_thread",
+    "tool_target",
+    "reward_feedback",
+    "lock_break",
+    "low_noise"
+  ],
+  "tags": [
+    "vfx",
+    "decal",
+    "surface-signal",
+    "exploration-tool",
+    "route",
+    "reward",
+    "lock",
+    "folded-reliquary",
+    "transparent-png",
+    "runtime-art",
+    "p0-readability"
+  ],
+  "license_spdx": "LicenseRef-RepositoryAuthored-Proprietary",
+  "prompt_hash": "1ba622ecf0664b8467a9f9d53bbd2cd54f3698ee563614358903bfb9d8f479e1",
+  "prompt_contract": "Use case: stylized-concept\nAsset type: Unity VFX/decal texture family plus 3D material atlas maps\nPrimary request: compact FOURFOLD ECHOES surface signal decals for tool target, route open, reward bloom, and lock break, no text, no background\nStyle/medium: procedural 2D raster decal, folded reliquary miniature product line\nSubject: four floor/gate readable signal decals built from low folded slab rings, fourfold inlays, chunky chip tabs, and one functional signal thread\nComposition/framing: centered top-down decal silhouette, transparent padding, readable at 64px, 128px, and 256px\nColor palette: controlled ivory stone dust, warm gold reward, cool tool blue, route teal, restrained lock red with cool shadow support\nMaterials/textures: broad stylized PBR planes, sparse bevel-like normal detail, no photoreal grime, no noisy fantasy texture\nConstraints: transparent PNG, no labels, no letters, no background plate, no cast shadow, variations differ by outline, socket, weak/open point, material temperature, and signal placement rather than color alone\nAvoid: generic map pin, quest marker, magic circle clutter, runic text, external IP style names, fine decorative clutter, watermark",
+  "library_path_proposal": "unity-game-asset-library/Runtime/Art/VFX/SurfaceSignalDecals/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/",
+  "unity_runtime_path": "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/",
+  "unity_import": {
+    "texture_type": "Sprite (2D and UI) for individual decals; Default/Normal Map for atlas maps as needed",
+    "pixels_per_unit": 100,
+    "max_texture_size": 512,
+    "alpha_is_transparency": true,
+    "wrap_mode": "Clamp",
+    "filter_mode": "Bilinear"
+  },
+  "texture_maps": {
+    "BaseColor": "ART_FoldedReliquary_SurfaceSignalDecalAtlas_BaseColor_v0.1.0.png",
+    "Mask": "ART_FoldedReliquary_SurfaceSignalDecalAtlas_Mask_v0.1.0.png",
+    "Normal": "ART_FoldedReliquary_SurfaceSignalDecalAtlas_Normal_v0.1.0.png",
+    "Emissive": "ART_FoldedReliquary_SurfaceSignalDecalAtlas_Emissive_v0.1.0.png",
+    "Mask_channels": "R=silhouette/occlusion, G=material roughness group, B=emissive mask, A=alpha"
+  },
+  "variants": [
+    {
+      "name": "ToolTarget",
+      "difference": "open targeting lens, four stepped aim tabs, cool blue signal thread from tool socket"
+    },
+    {
+      "name": "RouteOpen",
+      "difference": "split-open route silhouette, offset gate slit, teal path thread across one side"
+    },
+    {
+      "name": "RewardBloom",
+      "difference": "chunky reward bloom tabs, central reliquary cup, warm gold signal points"
+    },
+    {
+      "name": "LockBreak",
+      "difference": "broken lock ring with separated heavy tabs, red fracture signal and visible weak/open gap"
+    }
+  ],
+  "files": [
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecalAtlas_BaseColor_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecalAtlas_Emissive_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecalAtlas_Mask_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecalAtlas_Normal_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecal_LockBreak128_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecal_LockBreak_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecal_RewardBloom128_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecal_RewardBloom_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecal_RouteOpen128_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecal_RouteOpen_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecal_ToolTarget128_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/ART_FoldedReliquary_SurfaceSignalDecal_ToolTarget_v0.1.0.png",
+    "Assets/Art/VFX/Generated/ART_FoldedReliquary_SurfaceSignalDecals_v0.1.0/preview.png"
+  ],
+  "qc": {
+    "transparent_corners": true,
+    "no_text_or_background": true,
+    "min_canvas_margin_px_256": 24,
+    "readability_checks": [
+      "64px preview sample included in preview.png",
+      "128px and 256px individual sprites exported"
+    ],
+    "edge_bleed": "none detected in alpha-corner and edge checks after inset pass",
+    "tile_seam": "not applicable; decals and atlas, not loop tiles"
+  }
+}
