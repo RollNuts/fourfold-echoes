@@ -72,6 +72,10 @@ namespace FourfoldEchoes.Editor.Mediator
                     FourfoldProductionArtP0Builder.CapturePreview();
                     break;
 
+                case "model_rig_animation.verify_melee_shardling":
+                    FourfoldModelRigAnimationPackVerifier.VerifyMeleeShardlingPack();
+                    break;
+
                 case "capture_scene":
                     FourfoldUnitySpikeBuilder.BuildAndValidate();
                     Debug.Log("Forge capture requested. Screenshot capture is deferred until the capture camera runner lands.");

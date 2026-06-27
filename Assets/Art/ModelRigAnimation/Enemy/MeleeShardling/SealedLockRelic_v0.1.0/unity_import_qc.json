@@ -1,0 +1,173 @@
+﻿{
+  "schema": "model_rig_animation_unity_import_qc_v1",
+  "generatedAtUtc": "2026-06-27T08:13:52.3683160Z",
+  "status": "pass",
+  "model": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Models/MDL_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.fbx",
+  "unityImport": {
+    "modelImporterAnimationType": "Generic",
+    "rigStyle": "mechanical_transform_hierarchy_with_generated_animation_clips",
+    "globalScale": 1.0,
+    "rootMotion": "off_root_locked_controller_driven_transform_clips",
+    "axis": "Unity Y-up +Z-forward from FBX import"
+  },
+  "animations": [
+    {
+      "action": "Idle",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Idle_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": true,
+      "importedLoop": true,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 2,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "Walk",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Walk_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": true,
+      "importedLoop": true,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 1,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "Run",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Run_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": true,
+      "importedLoop": true,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 0.8,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "AttackStart",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_AttackStart_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": false,
+      "importedLoop": false,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 0.6,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "AttackLoop",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_AttackLoop_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": true,
+      "importedLoop": true,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 0.8,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "AttackEnd",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_AttackEnd_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": false,
+      "importedLoop": false,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 0.4666667,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "HitFront",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_HitFront_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": false,
+      "importedLoop": false,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 0.4,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "HitBack",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_HitBack_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": false,
+      "importedLoop": false,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 0.4,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "Knockdown",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Knockdown_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": false,
+      "importedLoop": false,
+      "clipCount": 1,
+      "curveCount": 6,
+      "frameRate": 30,
+      "lengthSeconds": 1,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "Death",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Death_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": false,
+      "importedLoop": false,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 1.466667,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "CastStart",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_CastStart_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": false,
+      "importedLoop": false,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 0.6666667,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "ChannelLoop",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_ChannelLoop_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": true,
+      "importedLoop": true,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 1.2,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "CastRelease",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_CastRelease_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": false,
+      "importedLoop": false,
+      "clipCount": 1,
+      "curveCount": 6,
+      "frameRate": 30,
+      "lengthSeconds": 0.6,
+      "rootPositionMaxAbs": 0
+    },
+    {
+      "action": "Interact",
+      "file": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/AnimationClips/ANM_Enemy_MeleeShardling_Interact_SealedLockRelic_v0.1.0.anim",
+      "expectedLoop": false,
+      "importedLoop": false,
+      "clipCount": 1,
+      "curveCount": 9,
+      "frameRate": 30,
+      "lengthSeconds": 0.8,
+      "rootPositionMaxAbs": 0
+    }
+  ],
+  "warnings": [
+  ],
+  "errors": [
+  ]
+}
