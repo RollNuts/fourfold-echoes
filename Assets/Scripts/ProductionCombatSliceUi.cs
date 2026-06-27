@@ -196,7 +196,7 @@ namespace FourfoldEchoes.Product
             panel.Add(MakeLabel("FOURFOLD ECHOES", 42, FontStyle.Bold));
             panel.Add(MakeBodyLabel("Production Combat Slice"));
             panel.Add(MakeBodyLabel("Clear two wardens, open the shortcut with the Echo Tool, break the boss gate, and claim the reward."));
-            panel.Add(MakeBodyLabel("Controller: Left Stick, South Button, Menu. Keyboard: WASD, J / Mouse, E / Right Mouse, Esc or P."));
+            panel.Add(MakeBodyLabel("Controller: Left Stick, South Button attack, North Button interact, Menu pause. Keyboard: WASD, J / Mouse, E / Right Mouse, Esc or P."));
             AddButton(panel, titleButtons, "Start Game", () => controller?.BeginRun());
             AddButton(panel, titleButtons, "Quit", Application.Quit);
             WireButtons(titleButtons);
