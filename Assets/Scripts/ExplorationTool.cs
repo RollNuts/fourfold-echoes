@@ -4,8 +4,14 @@ namespace FourfoldEchoes.Product
 {
     public sealed class ExplorationTool : MonoBehaviour
     {
+        public const KeyCode DefaultUseKey = KeyCode.E;
+        public const KeyCode DefaultControllerUseButton = KeyCode.JoystickButton3;
+        public const int DefaultMouseUseButton = 1;
+
         [Header("Input")]
-        public KeyCode useKey = KeyCode.E;
+        public KeyCode useKey = DefaultUseKey;
+        public KeyCode controllerUseButton = DefaultControllerUseButton;
+        public int mouseUseButton = DefaultMouseUseButton;
         public float range = 2.7f;
         public float cooldownSeconds = 0.45f;
 
@@ -63,7 +69,7 @@ namespace FourfoldEchoes.Product
                 pulseRead.SetActive(false);
             }
 
-            if (Input.GetKeyDown(useKey))
+            if (UsePressed())
             {
                 TryUse();
             }
@@ -89,6 +95,28 @@ namespace FourfoldEchoes.Product
 
             Play(fail);
             return false;
+        }
+
+        public static bool IsDefaultUseKey(KeyCode keyCode)
+        {
+            return keyCode == DefaultUseKey || keyCode == DefaultControllerUseButton;
+        }
+
+        public bool AcceptsUseKey(KeyCode keyCode)
+        {
+            return keyCode == useKey || keyCode == controllerUseButton;
+        }
+
+        public bool AcceptsMouseButton(int button)
+        {
+            return mouseUseButton >= 0 && button == mouseUseButton;
+        }
+
+        private bool UsePressed()
+        {
+            return Input.GetKeyDown(useKey)
+                || Input.GetKeyDown(controllerUseButton)
+                || (mouseUseButton >= 0 && Input.GetMouseButtonDown(mouseUseButton));
         }
 
         private ExplorationNode FindBestNode()
