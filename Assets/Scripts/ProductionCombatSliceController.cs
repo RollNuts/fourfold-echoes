@@ -65,6 +65,11 @@ namespace FourfoldEchoes.Product
         private const float RoomMaxX = 6.35f;
         private const float RoomMinZ = -4.65f;
         private const float RoomMaxZ = 4.45f;
+        private const string LocalSaveReadyStatus = "Local save ready";
+        private const string AutosaveOffStatus = "Autosave off";
+        private const string ProgressRestoredStatus = "Progress restored";
+        private const string ProgressSavedStatus = "Progress saved";
+        private const string SaveFailedStatus = "Save failed - progress kept";
 
         private float[] health;
         private float[] strikeCooldowns;
@@ -84,6 +89,7 @@ namespace FourfoldEchoes.Product
         private ProductionCombatSliceProgressSnapshot lastSavedProgress;
         private LocalSaveService localSaveService;
         private string lastEvent = "Production slice ready";
+        private string saveStatus = LocalSaveReadyStatus;
 
         public int HostileCount => (enemies == null ? 0 : enemies.Length) + (boss == null ? 0 : 1);
         public ProductionCombatRunState State => runState;
@@ -92,6 +98,7 @@ namespace FourfoldEchoes.Product
         public bool RewardClaimed => rewardClaimed;
         public bool ShortcutOpen => shortcutNode != null && shortcutNode.IsSolved;
         public string LastEvent => lastEvent;
+        public string SaveStatus => saveStatus;
         public float PlayerHealth01 => Mathf.Clamp01(playerHealth / PlayerMaxHealth);
         public float WardensHealth01 => LivingMinor01();
         public float BossHealth01 => Boss01();
@@ -215,11 +222,74 @@ namespace FourfoldEchoes.Product
         {
             ApplyProgressSnapshot(ProductionCombatSliceProgress.Read(data));
             lastSavedProgress = CaptureProgressSnapshot();
+            saveStatus = HasAnyProgress(lastSavedProgress) ? ProgressRestoredStatus : LocalSaveReadyStatus;
         }
 
         public void WriteSavedProgress(FourfoldSaveData data)
         {
             ProductionCombatSliceProgress.Write(data, CaptureProgressSnapshot());
+        }
+
+        public bool ClearMinorWardens()
+        {
+            if (health == null)
+            {
+                return false;
+            }
+
+            var enemyCount = enemies == null ? 0 : enemies.Length;
+            if (enemyCount == 0)
+            {
+                return false;
+            }
+
+            for (var index = 0; index < enemyCount && index < health.Length; index++)
+            {
+                health[index] = 0f;
+            }
+
+            UpdateProgressState();
+            lastEvent = bossUnlocked ? "Boss unlocked" : "Wardens cleared";
+            SaveProgressIfChanged();
+            ApplyPresentation(999f);
+            return true;
+        }
+
+        public bool ClearBossGate()
+        {
+            UpdateProgressState();
+            if (!bossUnlocked || boss == null || health == null)
+            {
+                return false;
+            }
+
+            var bossIndex = enemies == null ? 0 : enemies.Length;
+            if (bossIndex < 0 || bossIndex >= health.Length)
+            {
+                return false;
+            }
+
+            health[bossIndex] = 0f;
+            UpdateProgressState();
+            lastEvent = "Boss core broken";
+            SaveProgressIfChanged();
+            ApplyPresentation(999f);
+            return gateOpen;
+        }
+
+        public bool ClaimReward()
+        {
+            if (!gateOpen || rewardClaimed)
+            {
+                return false;
+            }
+
+            rewardClaimed = true;
+            lastEvent = "Reward claimed";
+            SetRunState(ProductionCombatRunState.Completed);
+            SaveProgressIfChanged();
+            ApplyPresentation(999f);
+            return true;
         }
 
         private void ResetSliceCore()
@@ -260,6 +330,7 @@ namespace FourfoldEchoes.Product
             gateOpen = false;
             rewardClaimed = false;
             lastSavedProgress = CaptureProgressSnapshot();
+            saveStatus = useLocalSave ? LocalSaveReadyStatus : AutosaveOffStatus;
             lastEvent = "Defeat the two wardens, reveal the shortcut, then break the boss gate";
             ApplyPresentation(999f);
         }
@@ -464,9 +535,7 @@ namespace FourfoldEchoes.Product
             var distance = Vector3.Distance(player.position, rewardChest.transform.position);
             if (distance <= 1.65f && (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1)))
             {
-                rewardClaimed = true;
-                lastEvent = "Reward claimed";
-                SetRunState(ProductionCombatRunState.Completed);
+                ClaimReward();
             }
         }
 
@@ -589,6 +658,7 @@ namespace FourfoldEchoes.Product
             if (!useLocalSave)
             {
                 lastSavedProgress = CaptureProgressSnapshot();
+                saveStatus = AutosaveOffStatus;
                 return;
             }
 
@@ -609,6 +679,7 @@ namespace FourfoldEchoes.Product
             }
 
             lastSavedProgress = snapshot;
+            saveStatus = ProgressSavedStatus;
         }
 
         private bool TrySaveProgress(ProductionCombatSliceProgressSnapshot snapshot)
@@ -624,16 +695,19 @@ namespace FourfoldEchoes.Product
             catch (IOException)
             {
                 lastEvent = "Save failed - progress kept in memory";
+                saveStatus = SaveFailedStatus;
                 return false;
             }
             catch (UnauthorizedAccessException)
             {
                 lastEvent = "Save failed - progress kept in memory";
+                saveStatus = SaveFailedStatus;
                 return false;
             }
             catch (ArgumentException)
             {
                 lastEvent = "Save failed - progress kept in memory";
+                saveStatus = SaveFailedStatus;
                 return false;
             }
         }
@@ -696,6 +770,11 @@ namespace FourfoldEchoes.Product
             return left.ShortcutOpen == right.ShortcutOpen
                 && left.BossDefeated == right.BossDefeated
                 && left.RewardClaimed == right.RewardClaimed;
+        }
+
+        private static bool HasAnyProgress(ProductionCombatSliceProgressSnapshot snapshot)
+        {
+            return snapshot.ShortcutOpen || snapshot.BossDefeated || snapshot.RewardClaimed;
         }
 
         private void EnsureRuntimeUi()

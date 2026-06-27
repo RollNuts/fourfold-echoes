@@ -49,6 +49,7 @@ namespace FourfoldEchoes.Product
         private Label eventLabel;
         private Label statusLabel;
         private Label toolLabel;
+        private Label saveLabel;
         private readonly List<Button> titleButtons = new List<Button>();
         private readonly List<Button> pauseButtons = new List<Button>();
         private readonly List<Button> retryButtons = new List<Button>();
@@ -180,6 +181,11 @@ namespace FourfoldEchoes.Product
             statusLabel.style.marginTop = 3f;
             panel.Add(statusLabel);
 
+            saveLabel = MakeLabel("Local save ready", 12, FontStyle.Normal);
+            saveLabel.style.color = MutedTextColor;
+            saveLabel.style.marginTop = 6f;
+            panel.Add(saveLabel);
+
             return panel;
         }
 
@@ -189,7 +195,8 @@ namespace FourfoldEchoes.Product
             var panel = BuildOverlayPanel();
             panel.Add(MakeLabel("FOURFOLD ECHOES", 42, FontStyle.Bold));
             panel.Add(MakeBodyLabel("Production Combat Slice"));
-            panel.Add(MakeBodyLabel("A compact room proof for combat, the exploration tool, the boss gate, and reward retry flow."));
+            panel.Add(MakeBodyLabel("Clear two wardens, open the shortcut with the Echo Tool, break the boss gate, and claim the reward."));
+            panel.Add(MakeBodyLabel("Controller: Left Stick, South Button, Menu. Keyboard: WASD, J / Mouse, E / Right Mouse, Esc or P."));
             AddButton(panel, titleButtons, "Start Game", () => controller?.BeginRun());
             AddButton(panel, titleButtons, "Quit", Application.Quit);
             WireButtons(titleButtons);
@@ -409,6 +416,14 @@ namespace FourfoldEchoes.Product
             if (statusLabel != null)
             {
                 statusLabel.text = $"Shortcut {(controller.ShortcutOpen ? "open" : "closed")} | Gate {(controller.GateOpen ? "open" : "sealed")} | Reward {(controller.RewardClaimed ? "claimed" : "waiting")}";
+            }
+
+            if (saveLabel != null)
+            {
+                saveLabel.text = controller.SaveStatus;
+                saveLabel.style.color = controller.SaveStatus.StartsWith("Save failed", StringComparison.Ordinal)
+                    ? WarningColor
+                    : MutedTextColor;
             }
         }
 

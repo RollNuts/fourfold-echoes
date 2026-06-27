@@ -117,6 +117,7 @@ namespace FourfoldEchoes.Tests.PlayMode
             controller.BeginRun();
             yield return null;
 
+            Assert.That(controller.SaveStatus, Is.EqualTo("Progress restored"));
             Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Completed));
             Assert.That(controller.ShortcutOpen, Is.True);
             Assert.That(controller.BossUnlocked, Is.True);
@@ -127,6 +128,97 @@ namespace FourfoldEchoes.Tests.PlayMode
             Assert.That(node.responseTarget.activeSelf, Is.True);
             Assert.That(controller.rewardPad, Is.Not.Null);
             Assert.That(controller.rewardPad.activeSelf, Is.True);
+        }
+
+        [UnityTest]
+        public IEnumerator SLICE_PRODUCTION_TitlePauseRetryClearRouteSavesReward()
+        {
+            SceneManager.LoadScene("ProductionCombatSlice", LoadSceneMode.Single);
+            yield return null;
+
+            var controller = FindRequired<ProductionCombatSliceController>();
+            var tool = FindRequired<ExplorationTool>();
+
+            Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Title));
+
+            controller.BeginRun();
+            yield return null;
+            Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Playing));
+
+            controller.SetPaused(true);
+            yield return null;
+            Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Paused));
+
+            controller.RetryRun();
+            yield return null;
+            Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Playing));
+            Assert.That(controller.ShortcutOpen, Is.False);
+            Assert.That(controller.GateOpen, Is.False);
+            Assert.That(controller.RewardClaimed, Is.False);
+
+            Assert.That(tool.TryUse(), Is.True);
+            yield return null;
+            Assert.That(controller.ShortcutOpen, Is.True);
+
+            Assert.That(controller.ClearMinorWardens(), Is.True);
+            yield return null;
+            Assert.That(controller.BossUnlocked, Is.True);
+
+            Assert.That(controller.ClearBossGate(), Is.True);
+            yield return null;
+            Assert.That(controller.GateOpen, Is.True);
+
+            Assert.That(controller.ClaimReward(), Is.True);
+            yield return null;
+            Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Completed));
+            Assert.That(controller.RewardClaimed, Is.True);
+            Assert.That(controller.SaveStatus, Is.EqualTo("Progress saved"));
+
+            var service = new LocalSaveService(temporarySavePath);
+            Assert.That(service.TryLoad(out var saved), Is.True);
+            Assert.That(saved.IsShortcutOpened(ProductionCombatSliceProgress.ShortcutId), Is.True);
+            Assert.That(saved.IsBossDefeated(ProductionCombatSliceProgress.BossId), Is.True);
+            Assert.That(saved.IsRelicClaimed(ProductionCombatSliceProgress.RewardId), Is.True);
+
+            controller.ReturnToTitle();
+            yield return null;
+            Assert.That(controller.State, Is.EqualTo(ProductionCombatRunState.Title));
+        }
+
+        [UnityTest]
+        public IEnumerator SLICE_PRODUCTION_ClaimedRewardRestoresAfterSceneReload()
+        {
+            SceneManager.LoadScene("ProductionCombatSlice", LoadSceneMode.Single);
+            yield return null;
+
+            var controller = FindRequired<ProductionCombatSliceController>();
+            var tool = FindRequired<ExplorationTool>();
+
+            controller.BeginRun();
+            Assert.That(tool.TryUse(), Is.True);
+            Assert.That(controller.ClearMinorWardens(), Is.True);
+            Assert.That(controller.ClearBossGate(), Is.True);
+            Assert.That(controller.ClaimReward(), Is.True);
+            yield return null;
+
+            SceneManager.LoadScene("ProductionCombatSlice", LoadSceneMode.Single);
+            yield return null;
+
+            var restoredController = FindRequired<ProductionCombatSliceController>();
+            var restoredNode = FindRequired<ExplorationNode>();
+
+            restoredController.BeginRun();
+            yield return null;
+
+            Assert.That(restoredController.State, Is.EqualTo(ProductionCombatRunState.Completed));
+            Assert.That(restoredController.SaveStatus, Is.EqualTo("Progress restored"));
+            Assert.That(restoredController.ShortcutOpen, Is.True);
+            Assert.That(restoredController.BossUnlocked, Is.True);
+            Assert.That(restoredController.GateOpen, Is.True);
+            Assert.That(restoredController.RewardClaimed, Is.True);
+            Assert.That(restoredNode.IsSolved, Is.True);
+            Assert.That(restoredController.rewardPad, Is.Not.Null);
+            Assert.That(restoredController.rewardPad.activeSelf, Is.True);
         }
 
         private static T FindRequired<T>() where T : UnityEngine.Object

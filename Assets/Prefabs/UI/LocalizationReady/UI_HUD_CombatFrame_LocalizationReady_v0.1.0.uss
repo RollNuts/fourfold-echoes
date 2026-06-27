@@ -1,0 +1,346 @@
+:root {
+    --fe-text: rgb(243, 238, 218);
+    --fe-muted: rgb(178, 188, 176);
+    --fe-ink: rgb(12, 17, 20);
+    --fe-panel: rgba(20, 27, 29, 0.86);
+    --fe-panel-strong: rgba(13, 18, 20, 0.94);
+    --fe-line: rgb(101, 113, 102);
+    --fe-focus: rgb(248, 199, 83);
+    --fe-health: rgb(70, 190, 118);
+    --fe-danger: rgb(222, 86, 70);
+    --fe-tool: rgb(86, 184, 219);
+    --fe-boss: rgb(165, 134, 226);
+}
+
+.fe-screen-space-ui {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    color: var(--fe-text);
+    -unity-font-style: normal;
+}
+
+.fe-safe-area {
+    padding-left: 32px;
+    padding-right: 32px;
+    padding-top: 28px;
+    padding-bottom: 28px;
+}
+
+.fe-hud-cluster {
+    position: absolute;
+    left: 32px;
+    top: 28px;
+    width: 408px;
+    max-width: 44%;
+    min-width: 304px;
+    padding: 14px 16px 14px 16px;
+    background-color: var(--fe-panel);
+    border-left-width: 2px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 2px;
+    border-color: var(--fe-line);
+    border-radius: 6px;
+}
+
+.fe-hud-row,
+.fe-prompt-row,
+.fe-badge-row,
+.fe-action-row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.fe-title {
+    font-size: 18px;
+    -unity-font-style: bold;
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+.fe-body {
+    font-size: 14px;
+    color: var(--fe-muted);
+    margin-top: 6px;
+}
+
+.fe-kicker {
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: var(--fe-muted);
+    white-space: normal;
+}
+
+.fe-wrap {
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+.fe-icon {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    margin-right: 8px;
+    background-color: rgba(243, 238, 218, 0.16);
+    border-width: 1px;
+    border-color: rgba(243, 238, 218, 0.44);
+    border-radius: 4px;
+}
+
+.fe-meter {
+    margin-top: 10px;
+}
+
+.fe-meter-track {
+    height: 12px;
+    margin-top: 3px;
+    background-color: rgba(0, 0, 0, 0.48);
+    border-width: 1px;
+    border-color: rgba(243, 238, 218, 0.22);
+    border-radius: 3px;
+}
+
+.fe-meter-fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 2px;
+}
+
+.fe-fill-health {
+    background-color: var(--fe-health);
+}
+
+.fe-fill-tool {
+    background-color: var(--fe-tool);
+}
+
+.fe-fill-boss {
+    background-color: var(--fe-boss);
+}
+
+.fe-meter-notch {
+    position: absolute;
+    left: 33%;
+    top: -1px;
+    width: 2px;
+    height: 14px;
+    background-color: rgba(12, 17, 20, 0.72);
+}
+
+.fe-meter-notch-mid {
+    left: 66%;
+}
+
+.fe-badge-row {
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.fe-badge {
+    flex-direction: row;
+    align-items: center;
+    min-height: 32px;
+    margin-right: 8px;
+    margin-bottom: 6px;
+    padding: 3px 8px 3px 5px;
+    background-color: rgba(8, 10, 12, 0.44);
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.fe-badge-open {
+    border-color: var(--fe-health);
+}
+
+.fe-badge-locked {
+    border-color: var(--fe-danger);
+}
+
+.fe-badge-label,
+.fe-prompt-label {
+    font-size: 13px;
+    -unity-font-style: bold;
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+.fe-prompt-cluster {
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    max-width: 420px;
+    min-width: 256px;
+    padding: 10px 12px 10px 12px;
+    background-color: rgba(13, 18, 20, 0.74);
+    border-width: 1px;
+    border-color: rgba(243, 238, 218, 0.30);
+    border-radius: 6px;
+}
+
+.fe-input-keyboard {
+    margin-top: 6px;
+}
+
+.fe-boss-strip {
+    position: absolute;
+    left: 50%;
+    top: 28px;
+    translate: -50% 0;
+    width: 560px;
+    max-width: 42%;
+    min-width: 360px;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 14px 10px 14px;
+    background-color: rgba(13, 18, 20, 0.70);
+    border-width: 1px;
+    border-color: rgba(165, 134, 226, 0.66);
+    border-radius: 6px;
+}
+
+.fe-boss-copy {
+    flex-grow: 1;
+}
+
+.fe-boss-track {
+    height: 10px;
+}
+
+.fe-modal {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background-color: rgba(4, 6, 7, 0.62);
+}
+
+.fe-modal-panel,
+.fe-menu-panel {
+    width: 640px;
+    max-width: 88%;
+    padding: 24px;
+    background-color: var(--fe-panel-strong);
+    border-width: 1px;
+    border-color: var(--fe-line);
+    border-radius: 8px;
+}
+
+.fe-modal-title {
+    font-size: 26px;
+    -unity-font-style: bold;
+}
+
+.fe-menu-panel {
+    position: absolute;
+    left: 32px;
+    bottom: 32px;
+}
+
+.fe-menu-title {
+    font-size: 34px;
+    -unity-font-style: bold;
+    margin-bottom: 14px;
+}
+
+.fe-button {
+    min-height: 44px;
+    margin-top: 8px;
+    padding-left: 14px;
+    padding-right: 14px;
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: var(--fe-text);
+    border-width: 1px;
+    border-radius: 6px;
+}
+
+.fe-button-primary {
+    background-color: rgba(76, 117, 74, 0.92);
+    border-color: var(--fe-focus);
+}
+
+.fe-button-secondary {
+    background-color: rgba(37, 46, 48, 0.92);
+    border-color: var(--fe-line);
+}
+
+.fe-world-space-ui {
+    color: var(--fe-text);
+}
+
+.fe-world-prompt {
+    flex-direction: row;
+    align-items: center;
+    max-width: 256px;
+    padding: 5px 8px 5px 6px;
+    background-color: rgba(13, 18, 20, 0.82);
+    border-width: 1px;
+    border-color: rgba(243, 238, 218, 0.38);
+    border-radius: 5px;
+}
+
+.fe-world-label {
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.fe-map-marker {
+    width: 32px;
+    height: 32px;
+    border-width: 2px;
+    border-radius: 6px;
+}
+
+.fe-map-marker-open {
+    border-color: var(--fe-health);
+    background-color: rgba(70, 190, 118, 0.24);
+}
+
+.fe-map-marker-locked {
+    border-color: var(--fe-danger);
+    background-color: rgba(222, 86, 70, 0.24);
+}
+
+.fe-hidden {
+    display: none;
+}
+
+@media (max-width: 960px) {
+    .fe-safe-area {
+        padding-left: 18px;
+        padding-right: 18px;
+        padding-top: 18px;
+        padding-bottom: 18px;
+    }
+
+    .fe-hud-cluster {
+        left: 18px;
+        top: 18px;
+        width: 344px;
+        max-width: 58%;
+        min-width: 280px;
+    }
+
+    .fe-boss-strip {
+        top: auto;
+        bottom: 18px;
+        width: 420px;
+        max-width: 52%;
+        min-width: 300px;
+    }
+
+    .fe-prompt-cluster {
+        right: 18px;
+        bottom: 18px;
+        max-width: 34%;
+        min-width: 224px;
+    }
+}

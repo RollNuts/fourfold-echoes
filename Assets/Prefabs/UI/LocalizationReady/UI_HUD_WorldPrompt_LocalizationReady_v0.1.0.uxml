@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="UI_HUD_WorldPrompt_LocalizationReady_v0.1.0" class="fe-world-space-ui">
+        <ui:VisualElement name="world_prompt_tool_node" class="fe-world-prompt fe-world-prompt-tool">
+            <ui:VisualElement name="world_prompt_icon" class="fe-icon fe-icon-tool-ready" />
+            <ui:Label name="ui.world.tool_node" text="Echo Tool" class="fe-label fe-world-label fe-wrap" />
+        </ui:VisualElement>
+        <ui:VisualElement name="world_prompt_save" class="fe-world-prompt fe-world-prompt-save">
+            <ui:VisualElement name="world_save_icon" class="fe-icon fe-icon-save" />
+            <ui:Label name="ui.world.save_point" text="Save point" class="fe-label fe-world-label fe-wrap" />
+        </ui:VisualElement>
+        <ui:VisualElement name="world_marker_shortcut" class="fe-map-marker fe-map-marker-open">
+            <ui:VisualElement name="world_shortcut_icon" class="fe-icon fe-icon-shortcut" />
+        </ui:VisualElement>
+        <ui:VisualElement name="world_marker_gate" class="fe-map-marker fe-map-marker-locked">
+            <ui:VisualElement name="world_gate_icon" class="fe-icon fe-icon-gate-sealed" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

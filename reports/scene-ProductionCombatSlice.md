@@ -56,6 +56,10 @@ Required Prefab:
 
 - `Assets/Prefabs/Production/P1/FE_PROP_R01_RevealMarker_01.prefab`
 
+Asset-library note:
+
+- The scene reuses the existing production snapshot Prefab that originated from the reusable Unity asset library workflow. No new bulky asset-library import was needed for this pass.
+
 No new ScriptableObject was required.
 
 No new lightmap or LightingSettings asset was required. The scene still uses existing dynamic lighting and has `m_LightingSettings: {fileID: 0}`.

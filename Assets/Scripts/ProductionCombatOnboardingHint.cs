@@ -8,7 +8,7 @@ namespace FourfoldEchoes.Product
         private const string TargetSceneName = "ProductionCombatSlice";
         private const float FullOpacitySeconds = 6.5f;
         private const float FadeSeconds = 1.5f;
-        private const int PanelHeight = 88;
+        private const int PanelHeight = 112;
         private const int PanelMargin = 18;
 
         private static ProductionCombatOnboardingHint instance;
@@ -99,8 +99,10 @@ namespace FourfoldEchoes.Product
             GUI.Box(rect, GUIContent.none, panelStyle);
             GUI.Label(new Rect(rect.x + 16f, rect.y + 12f, rect.width - 32f, 22f), "Controls", titleStyle);
             GUI.Label(
-                new Rect(rect.x + 16f, rect.y + 38f, rect.width - 32f, 42f),
-                "Move: Left Stick / WASD    Attack: Face Button / J / Mouse\nEcho Tool: E / Right Mouse    Retry: R",
+                new Rect(rect.x + 16f, rect.y + 38f, rect.width - 32f, 64f),
+                "Move: Left Stick / WASD    Attack: South Button / J / Mouse\n"
+                + "Echo Tool / Claim: E / Right Mouse    Pause: Menu / Esc / P\n"
+                + "Retry after defeat: R",
                 bodyStyle);
 
             GUI.color = previousColor;
@@ -137,7 +139,7 @@ namespace FourfoldEchoes.Product
             bodyStyle = new GUIStyle(GUI.skin.label)
             {
                 alignment = TextAnchor.UpperLeft,
-                fontSize = 14,
+                fontSize = 13,
                 wordWrap = true,
                 normal = { textColor = new Color(0.96f, 0.97f, 0.98f, 1f) }
             };
