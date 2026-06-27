@@ -9,6 +9,8 @@ namespace FourfoldEchoes.Tests
 {
     public sealed class EnemyControllerPlayModeTests
     {
+        private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
+
         private readonly List<Object> cleanup = new List<Object>();
 
         [TearDown]
@@ -55,6 +57,37 @@ namespace FourfoldEchoes.Tests
             controller.Damageable.ApplyDamage(999f, target);
             controller.Tick(0.02f);
             Assert.AreEqual(EnemyState.Dead, controller.CurrentState);
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator EnemyController_TintsRendererDuringReadableAttackStates()
+        {
+            var definition = CreateDefinition("test_readability");
+            definition.attackRange = 1.4f;
+            definition.telegraphTime = 0.12f;
+            definition.activeTime = 0.08f;
+            definition.recoveryTime = 0.12f;
+            definition.retreatAfterAttack = false;
+
+            var target = CreateTarget(new Vector3(0.9f, 0f, 0f), 100f);
+            var controller = CreateEnemy(Vector3.zero, definition, target.transform);
+            var enemyRenderer = controller.GetComponentInChildren<Renderer>();
+            Assert.IsNotNull(enemyRenderer);
+
+            controller.Tick(0.01f);
+            controller.Tick(0.01f);
+            Assert.AreEqual(EnemyState.Telegraph, controller.CurrentState);
+            AssertColorApproximately(controller.telegraphTint, ReadTint(enemyRenderer));
+
+            controller.Tick(definition.telegraphTime + 0.01f);
+            Assert.AreEqual(EnemyState.Attack, controller.CurrentState);
+            AssertColorApproximately(controller.attackTint, ReadTint(enemyRenderer));
+
+            controller.Tick(definition.activeTime + 0.01f);
+            Assert.AreEqual(EnemyState.Recover, controller.CurrentState);
+            AssertColorApproximately(controller.recoverTint, ReadTint(enemyRenderer));
 
             yield return null;
         }
@@ -193,6 +226,21 @@ namespace FourfoldEchoes.Tests
             definition.cooldownTime = 0.05f;
             definition.drawDebug = false;
             return definition;
+        }
+
+        private static Color ReadTint(Renderer targetRenderer)
+        {
+            var block = new MaterialPropertyBlock();
+            targetRenderer.GetPropertyBlock(block);
+            return block.GetColor(BaseColorProperty);
+        }
+
+        private static void AssertColorApproximately(Color expected, Color actual)
+        {
+            Assert.That(actual.r, Is.EqualTo(expected.r).Within(0.01f));
+            Assert.That(actual.g, Is.EqualTo(expected.g).Within(0.01f));
+            Assert.That(actual.b, Is.EqualTo(expected.b).Within(0.01f));
+            Assert.That(actual.a, Is.EqualTo(expected.a).Within(0.01f));
         }
     }
 }
