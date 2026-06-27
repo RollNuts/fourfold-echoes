@@ -162,7 +162,7 @@ namespace FourfoldEchoes.Tests
         }
 
         [UnityTest]
-        public IEnumerator EnemyController_ShowsTelegraphVfxDuringTellAndHidesAfterImpact()
+        public IEnumerator EnemyController_UsesAssignedTelegraphMarkerPrefabDuringTell()
         {
             var definition = CreateDefinition("test_vfx");
             definition.attackRange = 0.85f;
@@ -174,15 +174,16 @@ namespace FourfoldEchoes.Tests
 
             var target = CreateTarget(new Vector3(0.65f, 0f, 0f), 100f);
             var controller = CreateEnemy(Vector3.zero, definition, target.transform, CreateTelegraphPrefab());
-            var telegraphVfx = controller.GetComponent<EnemyTelegraphVfx>();
 
             controller.Tick(0.02f);
             controller.Tick(0.02f);
 
             Assert.AreEqual(EnemyState.Telegraph, controller.CurrentState);
-            Assert.IsTrue(telegraphVfx.IsVisible);
-            Assert.NotNull(telegraphVfx.ActiveInstance);
-            Assert.Greater(telegraphVfx.ActiveInstance.transform.localScale.x, 0f);
+            var marker = controller.TelegraphGroundMarkerInstance;
+            Assert.IsNotNull(marker);
+            Assert.IsTrue(marker.activeSelf);
+            Assert.That(marker.GetComponentsInChildren<Renderer>().Length, Is.EqualTo(1));
+            Assert.That(marker.transform.localScale.x, Is.EqualTo(definition.attackRadius * 2f).Within(0.01f));
 
             for (var index = 0; index < 12 && controller.CurrentState != EnemyState.Recover; index++)
             {
@@ -190,7 +191,7 @@ namespace FourfoldEchoes.Tests
             }
 
             Assert.AreEqual(EnemyState.Recover, controller.CurrentState);
-            Assert.IsFalse(telegraphVfx.IsVisible);
+            Assert.IsFalse(marker.activeSelf);
 
             yield return null;
         }
@@ -249,7 +250,12 @@ namespace FourfoldEchoes.Tests
             yield return null;
         }
 
-        private EnemyController CreateEnemy(Vector3 position, EnemyDefinition definition, Transform target, GameObject telegraphPrefab = null)
+        private EnemyController CreateEnemy(
+            Vector3 position,
+            EnemyDefinition definition,
+            Transform target,
+            GameObject telegraphPrefab = null,
+            float telegraphPrefabSourceDiameter = 1f)
         {
             var enemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             cleanup.Add(enemy);
@@ -257,13 +263,13 @@ namespace FourfoldEchoes.Tests
             enemy.transform.position = position;
             enemy.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
 
+            var controller = enemy.AddComponent<EnemyController>();
             if (telegraphPrefab != null)
             {
-                var telegraphVfx = enemy.AddComponent<EnemyTelegraphVfx>();
-                telegraphVfx.telegraphPrefab = telegraphPrefab;
+                controller.telegraphGroundMarkerPrefab = telegraphPrefab;
+                controller.telegraphGroundMarkerPrefabSourceDiameter = telegraphPrefabSourceDiameter;
             }
 
-            var controller = enemy.AddComponent<EnemyController>();
             controller.autoStart = false;
             controller.definition = definition;
             controller.ResetAi(target);

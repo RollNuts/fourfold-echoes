@@ -24,6 +24,8 @@ namespace FourfoldEchoes.Product
         public GameObject telegraphGroundMarkerPrefab;
         public Color telegraphGroundMarkerColor = new Color(1f, 0.22f, 0.08f, 0.72f);
         public float telegraphGroundMarkerHeight = 0.035f;
+        [Min(0.05f)]
+        public float telegraphGroundMarkerPrefabSourceDiameter = 1f;
 
         [Header("Debug")]
         [SerializeField]
@@ -36,7 +38,6 @@ namespace FourfoldEchoes.Product
         private EnemySensor sensor;
         private EnemyAnimatorBridge animatorBridge;
         private EnemyAttackDriver attackDriver;
-        private EnemyTelegraphVfx telegraphVfx;
         private Damageable damageable;
         private MaterialPropertyBlock readabilityBlock;
         private GameObject telegraphGroundMarkerInstance;
@@ -88,7 +89,6 @@ namespace FourfoldEchoes.Product
                 damageable.Damaged -= HandleDamaged;
                 damageable.Died -= HandleDied;
             }
-            telegraphVfx?.Hide();
             ClearReadabilityTint();
             SetTelegraphGroundMarkerVisible(false);
         }
@@ -124,7 +124,6 @@ namespace FourfoldEchoes.Product
             motor.Configure(definition);
             attackDriver.Configure(definition);
             damageable.ConfigureMaxHealth(definition.maxHealth, true);
-            telegraphVfx?.Hide();
             ChangeState(EnemyState.Search);
             ApplyReadabilityTint(currentState);
             ApplyTelegraphGroundMarker(currentState);
@@ -232,7 +231,6 @@ namespace FourfoldEchoes.Product
             motor.Stop();
             var facing = perception.HasKnownTarget ? lastKnownTargetPosition - transform.position : transform.forward;
             motor.Face(facing, definition, dt);
-            UpdateTelegraphVfx(definition.telegraphTime <= 0f ? 1f : stateTimer / definition.telegraphTime);
 
             if (perception.OutsideLeash)
             {
@@ -249,7 +247,6 @@ namespace FourfoldEchoes.Product
         private void TickAttack(float dt)
         {
             motor.Stop();
-            UpdateTelegraphVfx(1f);
             if (!attackResolved)
             {
                 attackDriver.ResolveHit(definition, gameObject);
@@ -354,7 +351,6 @@ namespace FourfoldEchoes.Product
             if (next == EnemyState.Telegraph)
             {
                 animatorBridge.TriggerTelegraph();
-                UpdateTelegraphVfx(0f);
             }
             else if (next == EnemyState.Attack)
             {
@@ -365,34 +361,9 @@ namespace FourfoldEchoes.Product
                 animatorBridge.TriggerDeath();
             }
 
-            if (next != EnemyState.Telegraph && next != EnemyState.Attack)
-            {
-                telegraphVfx?.Hide();
-            }
-
             ApplyReadabilityTint(next);
             ApplyTelegraphGroundMarker(next);
             StateChanged?.Invoke(previous, next);
-        }
-
-        private void UpdateTelegraphVfx(float normalizedProgress)
-        {
-            if (telegraphVfx == null || definition == null)
-            {
-                return;
-            }
-
-            var origin = attackDriver != null && attackDriver.attackOrigin != null ? attackDriver.attackOrigin : transform;
-            var forward = origin.forward;
-            forward.y = 0f;
-            if (forward.sqrMagnitude <= 0.0001f)
-            {
-                forward = transform.forward;
-                forward.y = 0f;
-            }
-            forward = forward.sqrMagnitude <= 0.0001f ? Vector3.forward : forward.normalized;
-
-            telegraphVfx.Show(definition, origin.position + forward * definition.attackRange, forward, normalizedProgress);
         }
 
         private void CacheComponents()
@@ -405,7 +376,6 @@ namespace FourfoldEchoes.Product
                 animatorBridge = gameObject.AddComponent<EnemyAnimatorBridge>();
             }
             attackDriver = attackDriver != null ? attackDriver : GetComponent<EnemyAttackDriver>();
-            telegraphVfx = telegraphVfx != null ? telegraphVfx : GetComponent<EnemyTelegraphVfx>();
             damageable = damageable != null ? damageable : GetComponent<Damageable>();
             CacheReadabilityRenderers();
         }
@@ -546,7 +516,15 @@ namespace FourfoldEchoes.Product
 
             telegraphGroundMarkerInstance.transform.position = markerPosition;
             telegraphGroundMarkerInstance.transform.rotation = Quaternion.identity;
-            telegraphGroundMarkerInstance.transform.localScale = new Vector3(markerDiameter, 0.02f, markerDiameter);
+            if (telegraphGroundMarkerPrefab != null)
+            {
+                var prefabScale = markerDiameter / Mathf.Max(0.05f, telegraphGroundMarkerPrefabSourceDiameter);
+                telegraphGroundMarkerInstance.transform.localScale = Vector3.one * prefabScale;
+            }
+            else
+            {
+                telegraphGroundMarkerInstance.transform.localScale = new Vector3(markerDiameter, 0.02f, markerDiameter);
+            }
             ApplyTelegraphGroundMarkerColor();
         }
 
