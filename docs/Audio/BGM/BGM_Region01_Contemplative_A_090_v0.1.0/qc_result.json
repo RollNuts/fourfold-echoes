@@ -1,0 +1,90 @@
+{
+  "asset_id": "audio.music.bgm_region01",
+  "qc_status": "pass_with_notes",
+  "checks": [
+    {
+      "name": "loop_point_recorded",
+      "status": "pass",
+      "detail": "loop_start_sample=470400, loop_end_sample=2352000"
+    },
+    {
+      "name": "loop_boundary_click_risk",
+      "status": "pass",
+      "detail": "loop clip first/last sample delta 0.000000"
+    },
+    {
+      "name": "loop_tail_release",
+      "status": "pass",
+      "detail": "last 1024 sample peak 0.000000"
+    },
+    {
+      "name": "low_end_control",
+      "status": "pass",
+      "detail": "20-160 Hz energy ratio 0.1068"
+    },
+    {
+      "name": "dialogue_band_control",
+      "status": "pass",
+      "detail": "1-4 kHz energy ratio 0.0072"
+    },
+    {
+      "name": "headroom",
+      "status": "pass",
+      "detail": "peak -7.86 dBFS"
+    },
+    {
+      "name": "long_playback_density",
+      "status": "pass",
+      "detail": "Sparse melody, no constant kick, weak-beat pulse pattern, 16-bar loop body."
+    }
+  ],
+  "metrics": {
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "channels": 2,
+    "bpm": 90,
+    "beats_per_bar": 4,
+    "duration_seconds": 53.333333333333336,
+    "total_samples": 2352000,
+    "intro_bars": 4,
+    "loop_bars": 16,
+    "loop_start_sample": 470400,
+    "loop_end_sample": 2352000,
+    "loop_start_seconds": 10.666666666666666,
+    "loop_end_seconds": 53.333333333333336,
+    "loop_length_samples": 1881600,
+    "loop_length_seconds": 42.666666666666664,
+    "peak_dbfs": -7.86105210170227,
+    "rms_dbfs": -23.999999101626976,
+    "loop_boundary_delta_peak": 0.0,
+    "loop_tail_peak": 0.0,
+    "low_energy_ratio_20_160hz": 0.10675951679474169,
+    "dialogue_band_ratio_1_4khz": 0.007190543236008899,
+    "runtime_bytes": {
+      "intro": 80728,
+      "loop": 330707
+    },
+    "stem_metrics": {
+      "rhythm": {
+        "peak_dbfs": -18.992148931548623,
+        "rms_dbfs": -38.81052511402442
+      },
+      "harmony": {
+        "peak_dbfs": -9.53727608974561,
+        "rms_dbfs": -24.288994688920994
+      },
+      "lead": {
+        "peak_dbfs": -13.367241729250223,
+        "rms_dbfs": -39.72933551258099
+      },
+      "percussion": {
+        "peak_dbfs": -17.904796880695187,
+        "rms_dbfs": -50.64828234193005
+      }
+    }
+  },
+  "notes": [
+    "Procedural pilot only; requires listening review on target speakers before Steam capture.",
+    "Runtime is split into intro and loop clips so Unity does not need sub-sample loop metadata for this pilot."
+  ]
+}

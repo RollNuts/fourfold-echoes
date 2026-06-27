@@ -1,0 +1,5 @@
+stem,path,role
+rhythm,Stems/BGM_Region01_Contemplative_ARhythm_090_v0.1.0.wav,"soft offbeat tonal pulse, low attack density"
+harmony,Stems/BGM_Region01_Contemplative_AHarmony_090_v0.1.0.wav,"warm chord bed, restrained low end"
+lead,Stems/BGM_Region01_Contemplative_ALead_090_v0.1.0.wav,sparse motif only; keep below SFX
+percussion,Stems/BGM_Region01_Contemplative_APercussion_090_v0.1.0.wav,"quiet wood/glass ticks, no heavy kick"
