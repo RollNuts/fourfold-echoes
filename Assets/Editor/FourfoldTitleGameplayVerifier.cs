@@ -84,12 +84,43 @@ namespace FourfoldEchoes.Editor
                 }
 
                 var hubSummary = controller.ContinueSummary();
-                if (hubSummary.IndexOf("Save: Hub", StringComparison.Ordinal) < 0 || hubSummary.IndexOf("Saved reward skills", StringComparison.Ordinal) < 0)
+                if (hubSummary.IndexOf("Save: Hub", StringComparison.Ordinal) < 0
+                    || hubSummary.IndexOf("Saved skills: none", StringComparison.Ordinal) < 0
+                    || hubSummary.IndexOf("Equipped: base build", StringComparison.Ordinal) < 0)
                 {
                     throw new InvalidOperationException("Title gameplay verifier failed: hub continue summary does not expose location and saved reward progress.");
                 }
 
+                var namedRewardProgress = FourfoldProgressSave.Load();
+                namedRewardProgress.currentScene = FourfoldGameIds.SceneHubCrossroads;
+                namedRewardProgress.d020Cleared = true;
+                namedRewardProgress.regionD020Cleared = true;
+                namedRewardProgress.d020RewardClaimed = true;
+                namedRewardProgress.d020SecondRewardClaimed = true;
+                namedRewardProgress.d020LoadoutInitialized = true;
+                namedRewardProgress.d020EdgeEquipped = true;
+                namedRewardProgress.d020WardEquipped = true;
+                namedRewardProgress.d020ClearCount = 1;
+                namedRewardProgress.d020BestClearTimeSeconds = 91f;
+                FourfoldProgressSave.Save(namedRewardProgress);
+                var namedRewardSummary = controller.ContinueSummary();
+                if (namedRewardSummary.IndexOf("Lumen Edge", StringComparison.Ordinal) < 0
+                    || namedRewardSummary.IndexOf("Lumen Ward", StringComparison.Ordinal) < 0
+                    || namedRewardSummary.IndexOf("Lumen Link", StringComparison.Ordinal) < 0)
+                {
+                    throw new InvalidOperationException("Title gameplay verifier failed: continue summary does not name saved reward skills and equipped build.");
+                }
+
+                newGameSave = FourfoldProgressSave.Load();
                 newGameSave.currentScene = FourfoldGameIds.SceneD020VerticalSlice;
+                newGameSave.d020Cleared = false;
+                newGameSave.regionD020Cleared = false;
+                newGameSave.d020RewardClaimed = false;
+                newGameSave.d020SecondRewardClaimed = false;
+                newGameSave.d020EdgeEquipped = false;
+                newGameSave.d020WardEquipped = false;
+                newGameSave.d020ClearCount = 0;
+                newGameSave.d020BestClearTimeSeconds = 0f;
                 newGameSave.d020FailureCount = 2;
                 FourfoldProgressSave.Save(newGameSave);
                 var d020Summary = controller.ContinueSummary();
