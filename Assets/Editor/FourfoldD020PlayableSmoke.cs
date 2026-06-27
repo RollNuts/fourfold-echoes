@@ -16,21 +16,29 @@ namespace FourfoldEchoes.Editor
             var player = UnityEngine.Object.FindFirstObjectByType<D020PlayerController>();
             var enemy = UnityEngine.Object.FindFirstObjectByType<D020EnemyDummy>();
             var tool = UnityEngine.Object.FindFirstObjectByType<ExplorationTool>();
-            var node = UnityEngine.Object.FindFirstObjectByType<ExplorationNode>();
             var reward = UnityEngine.Object.FindFirstObjectByType<D020RelicReward>();
             var progressSave = UnityEngine.Object.FindFirstObjectByType<D020ProgressSave>();
             var hud = UnityEngine.Object.FindFirstObjectByType<D020HudController>();
+            var nodeObject = FindSceneObject("D020 Exploration Tool Node");
+            var rewardNodeObject = FindSceneObject("D020 Reward Lens Node");
+            var node = nodeObject != null ? nodeObject.GetComponent<ExplorationNode>() : null;
+            var rewardNode = rewardNodeObject != null ? rewardNodeObject.GetComponent<ExplorationNode>() : null;
             var shortcut = FindSceneObject("D020 Shortcut Route");
+            var rewardResponse = FindSceneObject("D020 Reward Lens Response");
             var camera = Camera.main;
 
             Require(player != null, "D-020 smoke requires a D020PlayerController.");
             Require(enemy != null, "D-020 smoke requires a D020EnemyDummy.");
             Require(tool != null, "D-020 smoke requires an ExplorationTool.");
-            Require(node != null, "D-020 smoke requires an ExplorationNode.");
+            Require(node != null, "D-020 smoke requires a shortcut ExplorationNode.");
+            Require(rewardNode != null, "D-020 smoke requires a reward-lens ExplorationNode.");
             Require(reward != null, "D-020 smoke requires one collectible reward.");
             Require(progressSave != null, "D-020 smoke requires a progress save component.");
             Require(hud != null, "D-020 smoke requires a minimal HUD component.");
             Require(shortcut != null, "D-020 smoke requires one shortcut response object.");
+            Require(rewardResponse != null, "D-020 smoke requires one reward-lens response object.");
+            Require(tool.nodes != null && tool.nodes.Length == 2, "D-020 exploration tool must bind exactly two one-tool nodes.");
+            Require(progressSave.nodes != null && progressSave.nodes.Length == 2, "D-020 progress save must track both one-tool nodes.");
             Require(camera != null && camera.orthographic, "D-020 smoke requires a fixed orthographic top-down camera.");
             Require(reward.GetComponentsInChildren<Renderer>(true).Length > 0, "D-020 reward has no readable renderer.");
             Require(player.useControllerAxes, "D-020 player movement must read controller axes.");
@@ -45,6 +53,7 @@ namespace FourfoldEchoes.Editor
             Require(hud.PromptRead == "Use tool: E / North", "HUD did not expose the initial one-tool controller prompt.");
 
             var start = player.transform.position;
+            tool.cooldownSeconds = 0f;
             player.Tick(new Vector2(1f, 1f), false, false, 0.5f);
             Require(Vector3.Distance(start, player.transform.position) > 0.25f, "Player did not move during smoke input.");
 
@@ -66,16 +75,26 @@ namespace FourfoldEchoes.Editor
             Require(enemy.IsDefeated, "Enemy was not defeated by repeated normal attacks.");
 
             node.ResetNode();
+            rewardNode.ResetNode();
+            reward.ResetReward();
             Require(!shortcut.activeSelf, "Shortcut response should start hidden before tool use.");
+            Require(!rewardResponse.activeSelf, "Reward-lens response should start hidden before tool use.");
             player.ResetForSmoke(node.transform.position + new Vector3(0f, 0f, 0.55f));
             Require(tool.TryUse(), "Exploration tool did not activate the nearby node.");
             Require(node.IsSolved, "Exploration node was not solved by the tool.");
             Require(node.responseTarget != null && node.responseTarget.activeSelf, "Exploration tool did not reveal the shortcut response.");
             Require(node.activeRead != null && node.activeRead.activeSelf, "Exploration tool did not reveal the node active read.");
+            Require(!reward.IsUnlocked, "Reward unlocked before the second one-tool response was solved.");
+            player.ResetForSmoke(rewardNode.transform.position + new Vector3(0f, 0f, 0.55f));
+            Require(tool.TryUse(), "Exploration tool did not activate the reward-lens node.");
+            Require(rewardNode.IsSolved, "Reward-lens node was not solved by the tool.");
+            Require(rewardNode.responseTarget != null && rewardNode.responseTarget.activeSelf, "Exploration tool did not reveal the reward-lens response.");
+            Require(rewardNode.activeRead != null && rewardNode.activeRead.activeSelf, "Exploration tool did not reveal the reward-lens active read.");
+            Require(reward.IsUnlocked, "Reward did not unlock after enemy defeat and both one-tool responses.");
             hud.RefreshNow();
-            Require(hud.ToolRead != "Tool Ready", "HUD did not expose tool cooldown after use.");
+            Require(hud.ToolRead == "Tool Ready", "HUD should expose ready tool state when smoke disables cooldown.");
+            Require(hud.ProgressRead == "Progress S2 R0", "HUD did not expose both solved one-tool nodes before reward pickup.");
 
-            reward.ResetReward();
             player.ResetForSmoke(reward.transform.position + new Vector3(0f, 0f, -0.55f));
             hud.RefreshNow();
             Require(hud.PromptRead == "Claim relic: E / North", "HUD did not expose the controller reward claim prompt.");
@@ -92,18 +111,20 @@ namespace FourfoldEchoes.Editor
             progressSave.overrideFilePath = smokeSavePath;
             Require(progressSave.SaveNow(), "Progress save did not write solved shortcut and collected reward state.");
             hud.RefreshNow();
-            Require(hud.ProgressRead == "Progress S1 R1", "HUD did not expose saved shortcut and reward counts.");
+            Require(hud.ProgressRead == "Progress S2 R1", "HUD did not expose saved two-node and reward counts.");
             node.ResetNode();
+            rewardNode.ResetNode();
             reward.ResetReward();
-            Require(!node.IsSolved && !reward.IsCollected, "Progress reset setup failed before load.");
+            Require(!node.IsSolved && !rewardNode.IsSolved && !reward.IsCollected, "Progress reset setup failed before load.");
             Require(progressSave.LoadNow(), "Progress save did not load the saved state.");
             Require(node.IsSolved, "Progress save did not restore the shortcut flag.");
+            Require(rewardNode.IsSolved, "Progress save did not restore the reward-lens flag.");
             Require(reward.IsCollected, "Progress save did not restore the collected reward flag.");
             hud.RefreshNow();
-            Require(hud.ProgressRead == "Progress S1 R1", "HUD did not expose loaded shortcut and reward counts.");
+            Require(hud.ProgressRead == "Progress S2 R1", "HUD did not expose loaded two-node and reward counts.");
             Require(progressSave.ClearSave(false), "Progress save cleanup failed.");
 
-            Debug.Log("FOURFOLD D-020 playable smoke passed: movement, fixed camera, dodge, normal attack, enemy defeat, one-tool shortcut response, reward pickup, minimal HUD, local progress save/load, and core SFX assets.");
+            Debug.Log("FOURFOLD D-020 playable smoke passed: movement, fixed camera, dodge, normal attack, enemy defeat, one ExplorationTool solving shortcut and reward-lens responses, reward pickup, minimal HUD, local progress save/load, and core SFX assets.");
         }
 
         private static void RequireCoreSfx()
