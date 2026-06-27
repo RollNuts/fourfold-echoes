@@ -203,7 +203,7 @@ Acceptance conditions:
   `GateOpen`, `RewardClaimed`, the solved node response target, and visible
   reward pad after restore.
 - Validation output and PR notes must remain sanitized: no raw Unity logs, no
-  token/secret/private URL, and no personal local path.
+  credential material, and no personal local path.
 
 Veripsa status:
 
@@ -217,8 +217,24 @@ Veripsa status:
 Unity verification commands planned:
 
 ```sh
-{UNITY_EDITOR} -batchmode -quit -projectPath {REPO_ROOT} -runTests -testPlatform PlayMode -logFile {SANITIZED_TMP_LOG}
+{UNITY_EDITOR} -batchmode -quit -projectPath {REPO_ROOT} -runTests -testPlatform PlayMode -logFile {TMP_LOG}
 ```
 
 If the project is already open in Unity, batchmode must wait until the active
 editor releases the project lock.
+
+Verification results:
+
+- `git diff --check -- Assets/Scripts/ProductionCombatSliceController.cs Assets/Tests/PlayMode/SliceSceneSmokeTests.cs reports/qa-gap-analysis.md`
+  - Result: passed.
+- `node Scripts/Validation/validate_repo.mjs`
+  - Result: passed. Required reset files present: 57.
+- `node Scripts/Validation/check_public_repo_hygiene.mjs`
+  - Result: passed. Scanned tracked/untracked files: 6233.
+- Sanitization scan over the changed exact paths
+  - Result: passed. No personal local path, credential assignment, private key,
+    credentialed URL, or database URL pattern found.
+- Unity batchmode
+  - Result: not run. `Temp/UnityLockfile` exists, so launching another Unity
+    instance for the same project would violate the serialized Unity validation
+    rule.

@@ -1,5 +1,5 @@
 {
-  "generatedUtc": "2026-06-25T18:23:31.438Z",
+  "generatedUtc": "2026-06-27T03:08:17.777Z",
   "coreSource": "GitHub Veripsa checks; local veripsa CLI unavailable",
   "coreObservations": [
     {
@@ -13,7 +13,7 @@
       "implication": "New Unity editor/tool files were not in main's graph, so Core treated them as unknown. Split new C# runtime, editor scene generation, and capture/build tooling into separate PRs instead of landing them with docs."
     }
   ],
-  "dirtyFileCount": 144,
+  "dirtyFileCount": 1,
   "lanes": [
     {
       "id": "PR-A",
@@ -25,12 +25,7 @@
       "id": "PR-B",
       "name": "art-audio-direction",
       "order": 2,
-      "files": [
-        {
-          "status": "??",
-          "path": "Assets/Audio.meta"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-C",
@@ -42,623 +37,49 @@
       "id": "PR-D",
       "name": "validation-sync",
       "order": 4,
-      "files": [
-        {
-          "status": "A ",
-          "path": "Scripts/Validation/validate_repo.mjs"
-        },
-        {
-          "status": "AM",
-          "path": "Scripts/Validation/write_veripsa_split_report.mjs"
-        },
-        {
-          "status": "M ",
-          "path": "artifacts/.gitignore"
-        },
-        {
-          "status": "A ",
-          "path": "artifacts/Reports/.gitkeep"
-        },
-        {
-          "status": "A ",
-          "path": "artifacts/Reports/veripsa-current-split.json"
-        },
-        {
-          "status": "A ",
-          "path": "artifacts/Reports/veripsa-current-split.md"
-        },
-        {
-          "status": "A ",
-          "path": "commands/samples/inspect-d020-slice.json"
-        },
-        {
-          "status": "M ",
-          "path": "tools/forge/check.mjs"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E1",
       "name": "d020-tool-runtime",
       "order": 5,
-      "files": [
-        {
-          "status": "??",
-          "path": "Assets/Scripts/ExplorationNode.cs"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scripts/ExplorationNode.cs.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scripts/ExplorationTool.cs"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scripts/ExplorationTool.cs.meta"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E2",
       "name": "d020-scene-evidence",
       "order": 6,
-      "files": [
-        {
-          "status": " M",
-          "path": "ProjectSettings/EditorBuildSettings.asset"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_ChestWood.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_ChestWood.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_EnemyInk.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_EnemyInk.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_EnemyTell.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_EnemyTell.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_Floor.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_Floor.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_FloorDark.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_FloorDark.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_PlayerCape.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_PlayerCape.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_PlayerIvory.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_PlayerIvory.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_RelicBlue.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_RelicBlue.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_RouteGold.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_RouteGold.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_ToolSignal.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/D020/Materials/D020_ToolSignal.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Editor/FourfoldD020SliceSceneBuilder.cs"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Editor/FourfoldD020SliceSceneBuilder.cs.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scenes/D020VerticalSlice.unity"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scenes/D020VerticalSlice.unity.meta"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-E3",
       "name": "d020-capture-build",
       "order": 7,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Editor/FourfoldUnityBuild.cs"
-        },
-        {
-          "status": " M",
-          "path": "Assets/Editor/FourfoldUnityEvidenceCapture.cs"
-        },
-        {
-          "status": "??",
-          "path": "Scripts/Validation/run_all.sh"
-        },
-        {
-          "status": "??",
-          "path": "Scripts/Validation/write_market_reports.mjs"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Reports/audio-inventory.json"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Reports/audio-inventory.md"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Reports/final-status-report.json"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Reports/final-status-report.md"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Reports/performance-snapshot.json"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Reports/performance-snapshot.md"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Reports/unity-product-validation.json"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Reports/unity-product-validation.md"
-        },
-        {
-          "status": "??",
-          "path": "tools/unity_capture_d020_slice.sh"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-F",
       "name": "historical-proof-cleanup",
       "order": 8,
-      "files": [
-        {
-          "status": " D",
-          "path": "events/.gitkeep"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Bloom.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Bloom.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Ember.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Ember.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_EnemyObsidian.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_EnemyObsidian.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_EnemyThreat.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_EnemyThreat.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_HeroCloak.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_HeroCloak.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_HeroIvory.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_HeroIvory.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_HeroSteel.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_HeroSteel.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Moss.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Moss.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Prism.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Prism.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_RewardPrism.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_RewardPrism.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_RouteGold.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_RouteGold.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Stone.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Stone.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_StoneDark.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_StoneDark.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Telegraph.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Telegraph.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Tide.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_Tide.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_TideWater.mat"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Materials/ProductReview_TideWater.mat.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Meshes.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Meshes/product_review_crystal.asset"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Meshes/product_review_crystal.asset.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/BossReadTarget.prefab"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/BossReadTarget.prefab.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/EnemyReadTarget.prefab"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/EnemyReadTarget.prefab.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/PlayerReadTarget.prefab"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/PlayerReadTarget.prefab.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/RewardReadTarget.prefab"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/RewardReadTarget.prefab.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/WorldLandmark.prefab"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Prefabs/WorldLandmark.prefab.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Textures.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Textures/product_review_stone_trim.png"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/Textures/product_review_stone_trim.png.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Editor/FourfoldProductReviewSceneBuilder.cs"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Editor/FourfoldProductReviewSceneBuilder.cs.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Editor/FourfoldProductValidator.cs"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Editor/FourfoldProductValidator.cs.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scenes/ProductReviewSandbox.unity"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scenes/ProductReviewSandbox.unity.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scripts/EchoPhaseState.cs"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scripts/EchoPhaseState.cs.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scripts/FourfoldProductReviewController.cs"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Scripts/FourfoldProductReviewController.cs.meta"
-        },
-        {
-          "status": "??",
-          "path": "tools/unity_capture_product_review.sh"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-G",
       "name": "forge-mediator-sync",
       "order": 9,
-      "files": [
-        {
-          "status": " M",
-          "path": "Assets/Editor/Mediator/FourfoldForgeMediator.cs"
-        },
-        {
-          "status": " M",
-          "path": "Assets/Editor/Mediator/FourfoldForgeMenuItems.cs"
-        },
-        {
-          "status": " M",
-          "path": "tools/unity_forge_command.sh"
-        },
-        {
-          "status": "??",
-          "path": "ProjectSettings/PackageManagerSettings.asset"
-        }
-      ]
+      "files": []
     },
     {
       "id": "PR-H",
       "name": "asset-pipeline-pilot-optional",
       "order": 10,
-      "files": [
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Models.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Models/FE_Boss_Guardian_Pilot.fbx"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Models/FE_Boss_Guardian_Pilot.fbx.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Models/FE_Env_RuinKit_Pilot.fbx"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Models/FE_Env_RuinKit_Pilot.fbx.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Models/FE_Hero_Pilot.fbx"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Models/FE_Hero_Pilot.fbx.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Prefabs.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Prefabs/FE_Boss_Guardian_Pilot.prefab"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Prefabs/FE_Boss_Guardian_Pilot.prefab.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Prefabs/FE_Env_RuinKit_Pilot.prefab"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Prefabs/FE_Env_RuinKit_Pilot.prefab.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Prefabs/FE_Hero_Pilot.prefab"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Prefabs/FE_Hero_Pilot.prefab.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Source.meta"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Source/FE_BlenderPilotAssets.blend"
-        },
-        {
-          "status": "??",
-          "path": "Assets/Art/Generated/BlenderPilot/Source/FE_BlenderPilotAssets.blend.meta"
-        },
-        {
-          "status": "??",
-          "path": "artifacts/Reports/blender-pilot-assets.json"
-        },
-        {
-          "status": "??",
-          "path": "tools/AssetPipeline/README.md"
-        },
-        {
-          "status": "??",
-          "path": "tools/AssetPipeline/validate_generated_assets.mjs"
-        },
-        {
-          "status": "??",
-          "path": "tools/Blender/README.md"
-        },
-        {
-          "status": "??",
-          "path": "tools/Blender/generate_pilot_assets.py"
-        }
-      ]
+      "files": []
     }
   ],
-  "unknown": []
+  "unknown": [
+    {
+      "status": " M",
+      "path": "reports/qa-gap-analysis.md"
+    }
+  ]
 }
