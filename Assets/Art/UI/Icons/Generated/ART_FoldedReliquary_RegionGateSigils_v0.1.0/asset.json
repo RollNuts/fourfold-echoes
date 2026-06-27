@@ -1,0 +1,121 @@
+{
+  "asset_id": "art.ui.region_gate_sigils.v0_1_0",
+  "family": "FoldedReliquary",
+  "subject": "RegionGateSigil",
+  "version": "0.1.0",
+  "adopted_concept": "Hub and three-region gate sigils for readable region entrance, unlock, route, and save/continue UI cues.",
+  "status": "production-intent draft",
+  "source_strategy": "repository-authored procedural raster generation",
+  "asset_request": {
+    "source": "inferred because no visual asset_request.yaml was present in the checkout for this UI icon family",
+    "out_of_scope_asset_requests": [
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/asset_request.yaml is a model/rig animation request and was not used as this UI icon request."
+    ],
+    "usage_context": "FOURFOLD ECHOES hub gate, region unlock, route selection, save/continue region cue, and optional gate material/VFX atlas use",
+    "target_platforms": [
+      "Steam Windows",
+      "Steam Deck-oriented PC handheld readability"
+    ],
+    "constraints": {
+      "size_px": [
+        128,
+        256
+      ],
+      "texture_budget": "512px atlas for BaseColor/Mask/Normal/Emissive",
+      "background": "transparent",
+      "text": "none"
+    }
+  },
+  "style_ref": [
+    "docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md",
+    "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+    "docs/Product/MVP_BLUEPRINT.md",
+    "docs/Product/VERTICAL_SLICE_CONTENT.md"
+  ],
+  "style_tokens": [
+    "folded_reliquary",
+    "low_boundary_gate",
+    "fourfold_inlay",
+    "chunk_tabs",
+    "route_signal_thread",
+    "regional_restraint",
+    "top_down_readability",
+    "low_noise"
+  ],
+  "tags": [
+    "ui",
+    "region-gate",
+    "hub",
+    "region-01",
+    "region-02",
+    "region-03",
+    "folded-reliquary",
+    "transparent-png",
+    "runtime-art",
+    "p0-readability"
+  ],
+  "license_spdx": "LicenseRef-RepositoryAuthored-Proprietary",
+  "prompt_hash": "e4cabd5d8ce03ded14931648f7e057173d8b90036a3da215ce967309dc5b21b7",
+  "prompt_contract": "Use case: stylized-concept\nAsset type: Unity UI icon family plus 3D material atlas maps\nPrimary request: compact FOURFOLD ECHOES hub and three-region gate sigils, no text, no background\nStyle/medium: procedural 2D raster icon, folded reliquary miniature product line\nSubject: four region gate sigils built from low folded slabs, fourfold inlays, chunky tabs, and one functional route signal thread\nComposition/framing: centered silhouette, transparent padding, readable at 64px, 128px, and 256px\nColor palette: ivory hub stone, moss-weathered R01, scorched amber-charcoal R02, cold violet-blue R03, shared warm gold inlays\nMaterials/textures: broad stylized PBR planes, sparse bevel-like normal detail, no photoreal grime, no noisy fantasy texture\nConstraints: transparent PNG, no labels, no letters, no background plate, no cast shadow, variations differ by outline, socket, material temperature, and signal placement rather than color alone\nAvoid: quest markers, map pins, generic elemental icons, inventory symbols, external IP style names, fine decorative clutter, text, watermark",
+  "library_path_proposal": "unity-game-asset-library/Runtime/Art/UI/RegionGateSigils/ART_FoldedReliquary_RegionGateSigils_v0.1.0/",
+  "unity_runtime_path": "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/",
+  "unity_import": {
+    "texture_type": "Sprite (2D and UI) for individual icons; Default/Normal Map for atlas maps as needed",
+    "pixels_per_unit": 100,
+    "max_texture_size": 512,
+    "alpha_is_transparency": true,
+    "wrap_mode": "Clamp",
+    "filter_mode": "Bilinear"
+  },
+  "texture_maps": {
+    "BaseColor": "ART_FoldedReliquary_RegionGateSigilAtlas_BaseColor_v0.1.0.png",
+    "Mask": "ART_FoldedReliquary_RegionGateSigilAtlas_Mask_v0.1.0.png",
+    "Normal": "ART_FoldedReliquary_RegionGateSigilAtlas_Normal_v0.1.0.png",
+    "Emissive": "ART_FoldedReliquary_RegionGateSigilAtlas_Emissive_v0.1.0.png",
+    "Mask_channels": "R=silhouette/occlusion, G=material roughness group, B=emissive mask, A=alpha"
+  },
+  "variants": [
+    {
+      "name": "Hub",
+      "difference": "polished arch silhouette, open circular return socket, cool vertical route thread"
+    },
+    {
+      "name": "Region01",
+      "difference": "rounded weathered side tabs, leaf-like receiver socket, green left signal thread"
+    },
+    {
+      "name": "Region02",
+      "difference": "scorched bent lower tabs, ember receiver socket, amber lower hook thread"
+    },
+    {
+      "name": "Region03",
+      "difference": "cold sharp side tabs, diamond lens socket, split right-side signal thread"
+    }
+  ],
+  "files": [
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigilAtlas_BaseColor_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigilAtlas_Emissive_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigilAtlas_Mask_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigilAtlas_Normal_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigil_Hub128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigil_Hub_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigil_Region01128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigil_Region01_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigil_Region02128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigil_Region02_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigil_Region03128_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/ART_FoldedReliquary_RegionGateSigil_Region03_v0.1.0.png",
+    "Assets/Art/UI/Icons/Generated/ART_FoldedReliquary_RegionGateSigils_v0.1.0/preview.png"
+  ],
+  "qc": {
+    "transparent_corners": true,
+    "no_text_or_background": true,
+    "min_canvas_margin_px_256": 24,
+    "readability_checks": [
+      "64px preview sample included in preview.png",
+      "128px and 256px individual sprites exported"
+    ],
+    "edge_bleed": "none detected in alpha-corner and edge checks after inset pass",
+    "tile_seam": "not applicable; icons and atlas, not loop tiles"
+  }
+}
