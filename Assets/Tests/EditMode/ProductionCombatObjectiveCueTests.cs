@@ -34,6 +34,21 @@ namespace FourfoldEchoes.Tests.EditMode
         }
 
         [Test]
+        public void UI_ObjectiveCue_ShowsControllerFirstActionPrompts()
+        {
+            Assert.That(
+                BuildPrompt(ProductionCombatRunState.Playing, wardensHealth01: 0.5f),
+                Is.EqualTo("South Button / J: Attack"));
+            Assert.That(
+                BuildPrompt(ProductionCombatRunState.Playing, wardensHealth01: 0f, shortcutOpen: false, toolReady01: 1f),
+                Is.EqualTo("North Button / E: Echo Tool"));
+            Assert.That(
+                BuildPrompt(ProductionCombatRunState.Playing, gateOpen: true),
+                Is.EqualTo("North Button / E: Claim reward"));
+            Assert.That(BuildPrompt(ProductionCombatRunState.Paused), Is.Empty);
+        }
+
+        [Test]
         public void UI_ObjectiveCue_UsesReadablePanelPlacement()
         {
             var desktop = ProductionCombatObjectiveCue.BuildPanelRect(1280f, 720f);
@@ -57,6 +72,27 @@ namespace FourfoldEchoes.Tests.EditMode
             float toolReady01 = 1f)
         {
             return ProductionCombatObjectiveCue.BuildObjectiveText(
+                state,
+                wardensHealth01,
+                shortcutOpen,
+                bossUnlocked,
+                bossHealth01,
+                gateOpen,
+                rewardClaimed,
+                toolReady01);
+        }
+
+        private static string BuildPrompt(
+            ProductionCombatRunState state,
+            float wardensHealth01 = 1f,
+            bool shortcutOpen = false,
+            bool bossUnlocked = false,
+            float bossHealth01 = 1f,
+            bool gateOpen = false,
+            bool rewardClaimed = false,
+            float toolReady01 = 1f)
+        {
+            return ProductionCombatObjectiveCue.BuildActionPromptText(
                 state,
                 wardensHealth01,
                 shortcutOpen,
