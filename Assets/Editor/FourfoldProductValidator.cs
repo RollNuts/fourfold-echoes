@@ -57,6 +57,16 @@ namespace FourfoldEchoes.Editor
                 findings.Add(Finding.Info("prototype.gate_a", "Legacy Gate A generation skipped. Set FOURFOLD_INCLUDE_LEGACY_GATE_A=1 to validate the old harness explicitly."));
             }
 
+            try
+            {
+                FourfoldProductionCombatSliceSceneBuilder.BuildAndValidate();
+                findings.Add(Finding.Info("production.prefab_slice", "Production combat slice generated and validated with real Production prefabs for hero, enemies, boss, block field, exploration node, gate, bridge, and reward."));
+            }
+            catch (Exception exception)
+            {
+                findings.Add(Finding.Error("production.prefab_slice", "Production combat slice generation or validation failed: " + exception.Message));
+            }
+
             ScanAssets(metrics, findings);
             ScanOpenScene(metrics, findings);
             WriteReports(metrics, findings);
@@ -292,7 +302,7 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine();
             builder.AppendLine("## Product Interpretation");
             builder.AppendLine();
-            builder.AppendLine("This report validates technical hygiene only. D020VerticalSlice is the current D-020 evidence path for the first single ExplorationTool + ExplorationNode loop. Historical ProductReview evidence is deliberately outside this lane.");
+            builder.AppendLine("This report validates technical hygiene and scene wiring. D020VerticalSlice remains the focused ExplorationTool + ExplorationNode evidence path, while ProductionCombatSlice is the current production-prefab combat/readability lane with hero, enemies, boss, block field, exploration node, gate, and reward wiring. Art quality, animation quality, LOD coverage, and store-level feel still require separate review.");
             return builder.ToString();
         }
 

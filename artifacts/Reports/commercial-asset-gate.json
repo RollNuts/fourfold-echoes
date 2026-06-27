@@ -1,0 +1,561 @@
+{
+  "version": 1,
+  "generated_at": "2026-06-26T20:51:56.317Z",
+  "source_manifest": "artifacts/Reports/fourfold-model-pack.json",
+  "schema_dir": "artifacts/AssetPipeline/schema_v1",
+  "prompt_contract": "artifacts/Reports/fourfold-asset-prompt-contract.jsonl",
+  "manifest_asset_count": 173,
+  "schema_record_count": 154,
+  "prompt_contract_count": 173,
+  "repository_authored_manifest_pass": true,
+  "prompt_contract_safety_pass": true,
+  "manifest_issues": [],
+  "prompt_issues": [],
+  "third_party_candidates": [
+    {
+      "asset_id": "art.env.hub_floor_mosaic",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.hub_floor_stone",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.hub_kit",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.r01_floor_broken",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.r01_floor_moss",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.r01_kit",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.r02_floor_charcoal",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.r02_floor_cracked",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.r02_kit",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.r03_crystal_bridge",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.r03_floor_dark",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.env.r03_kit",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.boss_boundary",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.hub_bench_stone",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.hub_light_anchor",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.hub_low_wall",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.hub_planter",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.hub_save_stone",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.hub_sign_obelisk",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.hub_stair_short",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r01_flower_clump",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r01_low_wall_root",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r01_moss_pillar",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r01_root_arch",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r01_route_edge",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r01_rubble",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r01_short_grass",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r01_step_stone",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r01_vine_rail",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r02_angled_cliff",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r02_broken_gear",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r02_low_wall_iron",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r02_metal_frame",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r02_route_edge",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r02_rust_pipe",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r02_sunken_step",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r03_bridge_post",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r03_cold_white_lamp",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r03_crystal_cluster",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r03_low_wall_crystal",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r03_narrow_bridge",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r03_route_edge",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r03_shatter_rock",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    },
+    {
+      "asset_id": "art.prop.r03_smooth_obelisk",
+      "tool_recommendation": "Marketplace",
+      "status": "blocked_until_license_source_and_rework_review",
+      "required_evidence": [
+        "vendor name/SKU or source URL",
+        "commercial-use license",
+        "redistribution and modification terms",
+        "proof file stored in docs/Art or artifacts/Reports",
+        "human art/IP review after rework into the project shape grammar"
+      ]
+    }
+  ],
+  "third_party_candidate_count": 44,
+  "third_party_direct_use_approved_count": 0,
+  "benchmark": {
+    "report": "artifacts/Reports/visual-benchmark.json",
+    "score_overall": 0.87,
+    "threshold_overall": 0.8,
+    "verdict": "near_market_metric_range",
+    "market_finish_pass": true,
+    "comparison_scope": "aggregate market finish metrics only; no shape, palette, composition, character, prop, logo, or trade-dress extraction"
+  },
+  "gate_status": "commercial_safe_candidate_needs_human_review",
+  "policy": [
+    "Repository-authored procedural assets may proceed to internal prototype use after validation.",
+    "Third-party or marketplace candidates are blocked until license/provenance evidence is captured.",
+    "External market screenshots are aggregate metric benchmarks only and are never visual references.",
+    "Market-facing approval remains blocked until benchmark finish and human art/IP review pass."
+  ]
+}

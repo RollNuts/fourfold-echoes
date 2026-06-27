@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "art_direction_id": "folded_reliquary",
+  "art_direction_name": "Folded Reliquary Miniatures",
+  "schema_dir": "artifacts/AssetPipeline/schema_v1",
+  "source_manifest": "artifacts/Reports/fourfold-model-pack.json",
+  "contract_file": "artifacts/Reports/fourfold-asset-prompt-contract.jsonl",
+  "schema_records": 186,
+  "manifest_assets": 177,
+  "matched_records": 177,
+  "schema_only": [
+    {
+      "asset_id": "art.env.hub_kit",
+      "file": "artifacts/AssetPipeline/schema_v1/art_env_hub_kit.json"
+    },
+    {
+      "asset_id": "art.env.r01_kit",
+      "file": "artifacts/AssetPipeline/schema_v1/art_env_r01_kit.json"
+    },
+    {
+      "asset_id": "art.env.r02_kit",
+      "file": "artifacts/AssetPipeline/schema_v1/art_env_r02_kit.json"
+    },
+    {
+      "asset_id": "art.env.r03_kit",
+      "file": "artifacts/AssetPipeline/schema_v1/art_env_r03_kit.json"
+    },
+    {
+      "asset_id": "art.ui.tool_icon",
+      "file": "artifacts/AssetPipeline/schema_v1/art_ui_tool_icon.json"
+    },
+    {
+      "asset_id": "art.vfx.enemy_tell",
+      "file": "artifacts/AssetPipeline/schema_v1/art_vfx_enemy_tell.json"
+    },
+    {
+      "asset_id": "art.vfx.reward_get",
+      "file": "artifacts/AssetPipeline/schema_v1/art_vfx_reward_get.json"
+    },
+    {
+      "asset_id": "art.vfx.tool_pulse",
+      "file": "artifacts/AssetPipeline/schema_v1/art_vfx_tool_pulse.json"
+    },
+    {
+      "asset_id": "art.vfx.tool_target_hit",
+      "file": "artifacts/AssetPipeline/schema_v1/art_vfx_tool_target_hit.json"
+    }
+  ],
+  "manifest_only": [],
+  "raw_risk_summary": {
+    "regional_motif_may_override_folded_reliquary:pipe": 78,
+    "regional_motif_may_override_folded_reliquary:crystal|pipe": 15,
+    "regional_motif_may_override_folded_reliquary:glass|pipe": 1,
+    "regional_motif_may_override_folded_reliquary:root|pipe": 10,
+    "regional_motif_may_override_folded_reliquary:furnace|pipe": 2,
+    "regional_motif_may_override_folded_reliquary:crystal|glass|crown|pipe": 1,
+    "regional_motif_may_override_folded_reliquary:root|crystal|glass|crown|pipe": 1,
+    "regional_motif_may_override_folded_reliquary:crown|pipe": 3,
+    "regional_motif_may_override_folded_reliquary:flower|pipe": 28,
+    "regional_motif_may_override_folded_reliquary:root|flower|pipe": 17,
+    "regional_motif_may_override_folded_reliquary:crystal|flower|pipe": 2,
+    "regional_motif_may_override_folded_reliquary:plant|pipe": 16,
+    "regional_motif_may_override_folded_reliquary:glass|plant|pipe": 1,
+    "regional_motif_may_override_folded_reliquary:root|plant|pipe": 1,
+    "regional_motif_may_override_folded_reliquary:root|crown|pipe": 5,
+    "marketplace_license_review_required": 44,
+    "regional_motif_may_override_folded_reliquary:pipe|gear": 2,
+    "regional_motif_may_override_folded_reliquary:crystal|plant|pipe": 1,
+    "regional_motif_may_override_folded_reliquary:root|pipe|gear": 1,
+    "regional_motif_may_override_folded_reliquary:crystal|glass|pipe": 1
+  },
+  "direct_use_policy": "schema_v1 records are reference-only; use the sanitized prompt contract for any generation or vendor handoff.",
+  "external_reference_policy": "internal project files only; official store screenshots remain aggregate metric benchmarks and must not be used as image or style references."
+}

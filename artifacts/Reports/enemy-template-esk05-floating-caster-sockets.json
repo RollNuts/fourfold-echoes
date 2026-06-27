@@ -1,0 +1,160 @@
+{
+  "asset": "FE_ENEMY_TEMPLATE_ESK05_FloatingCaster_01",
+  "skeleton_category": "ESK-05",
+  "movement_mode": "Hover caster",
+  "collider_profile": "sphere_actor",
+  "collider_contract": "root sphere or short vertical capsule covers central body only; side parts and hover marker do not define navigation size or ground contact",
+  "socket_plan": [
+    {
+      "name": "SOCKET_Ground",
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "purpose": "bottom-center pivot and hover height reference; not a foot contact"
+    },
+    {
+      "name": "SOCKET_ChestCore",
+      "position": {
+        "x": 0.0,
+        "y": 0.322,
+        "z": 0.91
+      },
+      "purpose": "front exposed casting core"
+    },
+    {
+      "name": "SOCKET_Mouth",
+      "position": {
+        "x": 0.0,
+        "y": 0.322,
+        "z": 0.91
+      },
+      "purpose": "mouth-equivalent casting face on the front core"
+    },
+    {
+      "name": "SOCKET_AttackOrigin",
+      "position": {
+        "x": 0.0,
+        "y": 0.42,
+        "z": 0.91
+      },
+      "purpose": "projectile and beam origin; visibly in front of the core"
+    },
+    {
+      "name": "SOCKET_Cast",
+      "position": {
+        "x": 0.0,
+        "y": 0.42,
+        "z": 0.91
+      },
+      "purpose": "charge/release VFX origin tied to the same front core"
+    },
+    {
+      "name": "SOCKET_WeakPoint",
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 1.205
+      },
+      "purpose": "top weak core exposed during stagger or cast recovery"
+    },
+    {
+      "name": "SOCKET_HitVfx",
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.9
+      },
+      "purpose": "central body impact VFX"
+    },
+    {
+      "name": "SOCKET_Back",
+      "position": {
+        "x": 0.0,
+        "y": -0.275,
+        "z": 0.94
+      },
+      "purpose": "rear support socket for capes, fins, back plates, or status VFX"
+    },
+    {
+      "name": "SOCKET_Head",
+      "position": {
+        "x": 0.0,
+        "y": -0.018,
+        "z": 1.155
+      },
+      "purpose": "optional top mask, crest, or antenna swap; not a humanoid head"
+    },
+    {
+      "name": "SOCKET_LeftHand",
+      "position": {
+        "x": -0.385,
+        "y": 0.005,
+        "z": 0.9
+      },
+      "purpose": "left side-part socket for shield, winglet, or spell focus"
+    },
+    {
+      "name": "SOCKET_RightHand",
+      "position": {
+        "x": 0.385,
+        "y": 0.005,
+        "z": 0.9
+      },
+      "purpose": "right side-part socket for shield, winglet, or spell focus"
+    }
+  ],
+  "minimum_animation_clips": [
+    {
+      "name": "idle_loop",
+      "frames": 60,
+      "notes": "slow hover bob; ground socket stays fixed and body never touches ground"
+    },
+    {
+      "name": "move_loop",
+      "frames": 36,
+      "notes": "drift loop with body lean and side-part lag"
+    },
+    {
+      "name": "turn_in_place",
+      "frames": 24,
+      "notes": "rotate around SOCKET_Ground while front core remains readable"
+    },
+    {
+      "name": "attack_a",
+      "frames": 36,
+      "notes": "short projectile: 10f charge, release from SOCKET_AttackOrigin, 12f recoil"
+    },
+    {
+      "name": "attack_b",
+      "frames": 48,
+      "notes": "long cast or radial pulse: clear charge, release, and recovery phases"
+    },
+    {
+      "name": "hit_light",
+      "frames": 14,
+      "notes": "small body wobble; side parts overshoot and settle"
+    },
+    {
+      "name": "hit_heavy",
+      "frames": 24,
+      "notes": "strong recoil exposing SOCKET_WeakPoint"
+    },
+    {
+      "name": "stagger",
+      "frames": 36,
+      "notes": "top weak core exposed; casting disabled"
+    },
+    {
+      "name": "death",
+      "frames": 48,
+      "notes": "body collapses downward into dissipating fragments without gore"
+    },
+    {
+      "name": "spawn",
+      "frames": 36,
+      "notes": "appears from hover anchor, then lifts into idle clearance"
+    }
+  ]
+}

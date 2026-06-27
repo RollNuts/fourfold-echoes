@@ -1,0 +1,46 @@
+{
+  "schema_version": "mass_asset_validation_v1",
+  "generated_at": "2026-06-27T00:00:00+09:00",
+  "summary": {
+    "asset_count": 285,
+    "local_passed": 285,
+    "local_failed": 0,
+    "coverage_pass": true,
+    "unity_import_pass": false,
+    "unity_import_status": "blocked"
+  },
+  "coverage": {
+    "counts": {
+      "anim": 28,
+      "audio": 16,
+      "boss": 7,
+      "elite": 4,
+      "enemy": 15,
+      "environment": 39,
+      "equipment": 5,
+      "npc": 3,
+      "player": 13,
+      "prop": 91,
+      "ui": 48,
+      "vfx": 16
+    },
+    "missing_minimums": {}
+  },
+  "environment_blockers": [
+    {
+      "code": "UNITY_LICENSE_INIT_FAILED",
+      "severity": "blocker",
+      "message": "Unity batchmode import could not complete because licensing initialization timed out.",
+      "command": "tools/unity_forge_command.sh commands/samples/import-mass-asset-contract-batch.json"
+    },
+    {
+      "code": "BLENDER_METAL_STARTUP_CRASH",
+      "severity": "blocker",
+      "message": "Blender 5.1.2 crashes during empty background startup, so OBJ->FBX conversion and true LOD decimation could not run.",
+      "command": "Blender --background --factory-startup --python-expr \"print('blender-start-ok')\""
+    }
+  ],
+  "warnings": [],
+  "failed_assets_path": "failed_assets.json",
+  "retry_queue_path": "retry_queue.json"
+}

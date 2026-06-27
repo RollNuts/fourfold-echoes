@@ -1,0 +1,19 @@
+{
+  "schema_version": "failed_assets_v1",
+  "generated_at": "2026-06-27T00:00:00+09:00",
+  "environment_blockers": [
+    {
+      "code": "UNITY_LICENSE_INIT_FAILED",
+      "severity": "blocker",
+      "message": "Unity batchmode import could not complete because licensing initialization timed out.",
+      "command": "tools/unity_forge_command.sh commands/samples/import-mass-asset-contract-batch.json"
+    },
+    {
+      "code": "BLENDER_METAL_STARTUP_CRASH",
+      "severity": "blocker",
+      "message": "Blender 5.1.2 crashes during empty background startup, so OBJ->FBX conversion and true LOD decimation could not run.",
+      "command": "Blender --background --factory-startup --python-expr \"print('blender-start-ok')\""
+    }
+  ],
+  "failed_assets": []
+}

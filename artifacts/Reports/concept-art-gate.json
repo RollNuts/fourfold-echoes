@@ -1,0 +1,86 @@
+{
+  "generated_at": "2026-06-26",
+  "gate": "concept_first_before_3d",
+  "production_3d_status": "paused_until_concept_gate_passes",
+  "product_line": "Folded Reliquary Miniatures",
+  "commercial_safety": {
+    "named_external_games_in_prompts": false,
+    "franchise_motifs_allowed": false,
+    "user_taste_translation": [
+      "readable stylization",
+      "controlled saturation",
+      "warm key and cool shadow",
+      "layered object hierarchy",
+      "current-market polish"
+    ]
+  },
+  "references": [
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/FE_CONCEPT_FoldedReliquary_StyleBoard_v001.png",
+      "status": "accepted_with_notes",
+      "use": "overall material, object, and grouped presentation reference"
+    },
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/FE_CONCEPT_FirstFold_KeyArt_v001.png",
+      "status": "conditional",
+      "use": "gameplay relationship reference; avoid copying circular arena and broad floor layout"
+    },
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/FE_CONCEPT_RouteSurface_ModelSheet_v001.png",
+      "status": "rejected_as_primary",
+      "use": "negative comparison for generic rectangular route modules"
+    },
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/FE_CONCEPT_RouteSurface_ModelSheet_v002.png",
+      "status": "accepted_primary_route_reference",
+      "use": "modeling source for route surfaces and FE_ENV_R01_ShortcutBridge_01"
+    }
+  ],
+  "forbidden_shortcuts": [
+    "treasure chest",
+    "crystal tower",
+    "square tile grid",
+    "medieval cobblestone",
+    "sword",
+    "shield",
+    "wand",
+    "slime",
+    "goblin",
+    "dragon",
+    "mascot silhouette",
+    "symmetrical generic fantasy relic"
+  ],
+  "accepted_shape_tokens": [
+    "folded shell-stone leaves",
+    "thick beveled lips",
+    "brass hinge spines",
+    "clasp teeth",
+    "teal enamel signal grooves",
+    "dull red wax seams",
+    "dark underside support mass",
+    "asymmetrical chipped tabs"
+  ],
+  "next_target": {
+    "asset_id": "FE_ENV_R01_ShortcutBridge_01",
+    "source_reference": "artifacts/Concepts/FoldedReliquary/FE_CONCEPT_RouteSurface_ModelSheet_v002.png",
+    "requirements": [
+      "asymmetrical folded-shell bridge",
+      "pivot at route connection center",
+      "two visible connection sockets",
+      "teal opened signal groove",
+      "one broken edge cluster",
+      "dark underside support mass",
+      "no rectangular tile bridge silhouette"
+    ]
+  },
+  "multi_agent_consensus": {
+    "priority_family": "Route Surface",
+    "first_asset": "FE_ENV_R01_ShortcutBridge_01",
+    "reasons": [
+      "route surfaces occupy and repeat across the most screen area",
+      "current floor assets read too much like procedural slabs",
+      "thick functional signal seams and localized broken clusters will improve contrast and edge density",
+      "market-facing renders need stronger lighting, contact shadows, saturation, and tighter framing"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "source": "direct OBJ parser",
+  "lod_ratios": {
+    "lod0": 1.0,
+    "lod1": 0.55,
+    "lod2": 0.28
+  },
+  "exported_lod_files": 531,
+  "exported_assets": 177,
+  "failed": []
+}

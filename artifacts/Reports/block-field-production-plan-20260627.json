@@ -1,0 +1,48 @@
+{
+  "generated_at": "2026-06-27",
+  "decision": "Use block/chunk-based field modules for fast playable ARPG field construction.",
+  "review_adjustment": "Current images are exploration references only; model terrain grammar first and avoid cute voxel diorama / marketplace icon-pack reads.",
+  "visual_guardrail": "Construction can be Minecraft-like, but visual style must be smooth stylized ARPG, not voxel pixel art or Minecraft copy.",
+  "concept_sheets": [
+    "artifacts/Concepts/BlockField/Batch_20260627/FE_BLOCKFIELD_BATCH_01_CoreTerrain_48Thumbs.png",
+    "artifacts/Concepts/BlockField/Batch_20260627/FE_BLOCKFIELD_BATCH_02_BiomeVariants_42Thumbs.png",
+    "artifacts/Concepts/BlockField/Batch_20260627/FE_BLOCKFIELD_BATCH_03_TownDungeonKit_48Thumbs.png"
+  ],
+  "first_modules": [
+    "BF_GRASS_Floor_1x1_Flat",
+    "BF_GRASS_Floor_1x2_Straight",
+    "BF_GRASS_Floor_2x2_Plaza",
+    "BF_GRASS_Edge_Straight",
+    "BF_GRASS_Edge_OuterCorner",
+    "BF_GRASS_Edge_InnerCorner",
+    "BF_GRASS_Height_Cliff_Up1",
+    "BF_STONE_Floor_1x1_Clean",
+    "BF_STONE_Floor_2x2_Clean",
+    "BF_STONE_Floor_1x1_Cracked",
+    "BF_STONE_Wall_Straight_1x1",
+    "BF_STONE_Wall_OuterCorner",
+    "BF_STONE_Wall_InnerCorner",
+    "BF_STONE_Arch_Doorway",
+    "BF_STAIR_Straight_Up1",
+    "BF_STAIR_CornerLanding_Up1",
+    "BF_WATER_ChannelEdge_Straight",
+    "BF_BRIDGE_Wood_1x2",
+    "BF_FENCE_Railing_Straight",
+    "BF_HAZARD_Floor_Spike"
+  ],
+  "scale_rules": {
+    "unity_unit": "1m",
+    "base_footprint": "2m x 2m",
+    "height_step": "0.5m",
+    "snap_origin": "bottom center of footprint"
+  },
+  "defer_until_after_first_20": [
+    "portals",
+    "crystals",
+    "trees",
+    "wells",
+    "shops",
+    "decorative biome props",
+    "hero landmarks"
+  ]
+}

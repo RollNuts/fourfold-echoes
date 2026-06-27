@@ -1,0 +1,6 @@
+# Materials for FE_PROP_R03_RouteEdge_01
+newmtl r03_dark
+Kd 0.10980 0.12941 0.21961
+Ka 0.05000 0.05000 0.05000
+Ks 0.15000 0.15000 0.15000
+Ns 24

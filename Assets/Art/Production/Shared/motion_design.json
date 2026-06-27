@@ -1,0 +1,55 @@
+{
+  "schema_version": "motion_design_v1",
+  "generated_at": "2026-06-27T00:00:00+09:00",
+  "default_clip_sets": {
+    "player": [
+      "idle",
+      "walk",
+      "run",
+      "attack01",
+      "hit",
+      "death"
+    ],
+    "npc": [
+      "idle",
+      "walk"
+    ],
+    "enemy": [
+      "idle",
+      "walk",
+      "attack01",
+      "hit",
+      "death"
+    ],
+    "elite": [
+      "idle",
+      "walk",
+      "attack01",
+      "hit",
+      "death"
+    ],
+    "boss": [
+      "idle",
+      "walk",
+      "attack01",
+      "hit",
+      "death"
+    ]
+  },
+  "root_motion": {
+    "player": "off by default; controller-driven ARPG movement",
+    "npc": "off by default; nav/controller-driven",
+    "enemy": "off for normal locomotion; charge clips may expose event windows",
+    "boss": "mixed; large attacks use authored event windows"
+  },
+  "animation_events": [
+    "footstep",
+    "attack_active_start",
+    "attack_active_end",
+    "vfx_spawn",
+    "projectile_release",
+    "hit_react",
+    "death_hide"
+  ],
+  "rule": "Motion contract must exist before blockout/fleshing. Generated mocap or procedural clips clean up to this contract."
+}

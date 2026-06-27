@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-06-26",
+  "workflow": "batch_concept_triage_before_model_polish",
+  "status": "image_first_active",
+  "sheets": [
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_01_ProductLine_24Thumbs.png",
+      "triage": "accept_parts_hold_low_walls"
+    },
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_02_FirstFoldRooms_12Thumbs.png",
+      "triage": "accept_asymmetric_layouts_reject_circular_arena_defaults"
+    },
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_03_HostileRelics_18Thumbs.png",
+      "triage": "strong_accept_pool"
+    },
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_04_RewardReliquaries_20Thumbs.png",
+      "triage": "strong_accept_pool_reject_box_like_rewards"
+    },
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_05_ToolReceiverPairs_16Thumbs.png",
+      "triage": "receivers_useful_handheld_tools_too_staff_like"
+    },
+    {
+      "path": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_06_NonStaffExplorationTools_20Thumbs.png",
+      "triage": "accept_pool_for_handheld_tool_redesign"
+    }
+  ],
+  "reject_rules": [
+    "average fantasy prop",
+    "rectangular tile bridge",
+    "circular arena by default",
+    "generic treasure chest or loot box",
+    "staff",
+    "wand",
+    "literal key",
+    "gun",
+    "sword",
+    "shield",
+    "antenna",
+    "animal",
+    "goblin",
+    "slime",
+    "dragon",
+    "skull",
+    "mascot creature",
+    "decorative stone wall without folded-reliquary function"
+  ],
+  "next_modeling_candidates": [
+    {
+      "asset_id": "FE_PROP_COMMON_ExplorationTool_01",
+      "source": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_06_NonStaffExplorationTools_20Thumbs.png",
+      "direction": "compact folded lens/clamp device, not staff"
+    },
+    {
+      "asset_id": "FE_PROP_COMMON_RelicChest_01",
+      "source": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_04_RewardReliquaries_20Thumbs.png",
+      "direction": "replace chest language with an open petal vessel or low socket bowl"
+    },
+    {
+      "asset_id": "FE_ENEMY_MELEE_Shardling",
+      "source": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_03_HostileRelics_18Thumbs.png",
+      "direction": "broken sealed relic or trap object, not creature"
+    },
+    {
+      "asset_id": "FE_ENV_R01_ShortcutBridge_01",
+      "source": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_01_ProductLine_24Thumbs.png",
+      "direction": "socketed folded leaf route, not rectangular slab bridge"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+# Materials for FE_PROP_BOSS_SpawnAnchor_01
+newmtl stone_dark
+Kd 0.21961 0.21176 0.21961
+Ka 0.05000 0.05000 0.05000
+Ks 0.15000 0.15000 0.15000
+Ns 24
+newmtl danger_red
+Kd 0.94902 0.12157 0.05882
+Ka 0.05000 0.05000 0.05000
+Ks 0.15000 0.15000 0.15000
+Ns 24

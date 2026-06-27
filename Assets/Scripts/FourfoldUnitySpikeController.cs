@@ -34,6 +34,7 @@ namespace FourfoldEchoes.Spike
         public Material gateClosedMaterial;
         public Material gateOpenMaterial;
         public Material gateReadyMaterial;
+        public string hudTitle = "FOURFOLD ECHOES - Gate A";
 
         private const float MoveSpeed = 5.15f;
         private const float DodgeSpeed = 11.25f;
@@ -526,7 +527,7 @@ namespace FourfoldEchoes.Spike
 
         private void ApplyPhaseMaterial()
         {
-            player.GetComponentInChildren<Renderer>().sharedMaterial = CurrentPhaseMaterial();
+            SetFirstRendererMaterial(player, CurrentPhaseMaterial());
         }
 
         private Material CurrentPhaseMaterial()
@@ -583,19 +584,19 @@ namespace FourfoldEchoes.Spike
             var playerRenderer = player.GetComponentInChildren<Renderer>();
             if (playerHitFlashTimer > 0f && playerMaterial != null)
             {
-                playerRenderer.sharedMaterial = playerMaterial;
+                SetRendererMaterial(playerRenderer, playerMaterial);
             }
             else if ((dodgeTimer > 0f || playerInvulnerableTimer > 0f) && gateReadyMaterial != null && Mathf.Sin(Time.time * 24f) > 0f)
             {
-                playerRenderer.sharedMaterial = gateReadyMaterial;
+                SetRendererMaterial(playerRenderer, gateReadyMaterial);
             }
             else if (rewardPickupTimer > 0f && gateReadyMaterial != null && Mathf.Sin(Time.time * 18f) > -0.25f)
             {
-                playerRenderer.sharedMaterial = gateReadyMaterial;
+                SetRendererMaterial(playerRenderer, gateReadyMaterial);
             }
             else
             {
-                playerRenderer.sharedMaterial = CurrentPhaseMaterial();
+                SetRendererMaterial(playerRenderer, CurrentPhaseMaterial());
             }
 
             if (dodgeReadyRing != null)
@@ -655,15 +656,15 @@ namespace FourfoldEchoes.Spike
                     enemy.localScale = new Vector3(scale + windupPulse + hitPulse, 1f + windupPulse + hitPulse + recoverySquash, scale + windupPulse + hitPulse);
                     if (enemyHitFlashTimer > 0f && gateReadyMaterial != null)
                     {
-                        enemyRenderer.sharedMaterial = gateReadyMaterial;
+                        SetRendererMaterial(enemyRenderer, gateReadyMaterial);
                     }
                     else if (enemyRecoveryTimer > 0f && tideMaterial != null)
                     {
-                        enemyRenderer.sharedMaterial = tideMaterial;
+                        SetRendererMaterial(enemyRenderer, tideMaterial);
                     }
                     else
                     {
-                        enemyRenderer.sharedMaterial = enemyMaterial;
+                        SetRendererMaterial(enemyRenderer, enemyMaterial);
                     }
                 }
                 else
@@ -671,7 +672,7 @@ namespace FourfoldEchoes.Spike
                     var deathProgress = 1f - enemyDeathTimer / EnemyDeathVisibleDuration;
                     var scale = Mathf.Lerp(0.9f, 0.45f, deathProgress);
                     enemy.localScale = new Vector3(scale, Mathf.Lerp(0.75f, 0.18f, deathProgress), scale);
-                    enemyRenderer.sharedMaterial = enemyDeadMaterial != null ? enemyDeadMaterial : enemyMaterial;
+                    SetRendererMaterial(enemyRenderer, enemyDeadMaterial != null ? enemyDeadMaterial : enemyMaterial);
                 }
             }
 
@@ -754,11 +755,11 @@ namespace FourfoldEchoes.Spike
             altarCore.localScale = new Vector3(0.85f + altarPulse, 0.35f + heat * 0.55f + Mathf.Abs(altarPulse), 0.85f + altarPulse);
             if (altarMaterial != null && enemyAliveBlocking && altarBlockedTimer > 0f)
             {
-                altarCore.GetComponent<Renderer>().sharedMaterial = enemyMaterial != null ? enemyMaterial : altarMaterial;
+                SetFirstRendererMaterial(altarCore, enemyMaterial != null ? enemyMaterial : altarMaterial);
             }
             else
             {
-                altarCore.GetComponent<Renderer>().sharedMaterial = altarMaterial;
+                SetFirstRendererMaterial(altarCore, altarMaterial);
             }
             altarGlow.gameObject.SetActive((heat > 0.01f && !gateOpen) || altarCanCharge || gateOpenPulseTimer > 0f || roomCompleteTimer > 0f);
             if (altarGlow.gameObject.activeSelf)
@@ -1035,7 +1036,7 @@ namespace FourfoldEchoes.Spike
                 GUI.color = previousColor;
             }
 
-            GUI.Label(new Rect(24, 18, 520, 32), "FOURFOLD ECHOES - Gate A", style);
+            GUI.Label(new Rect(24, 18, 620, 32), string.IsNullOrWhiteSpace(hudTitle) ? "FOURFOLD ECHOES" : hudTitle, style);
             GUI.Label(new Rect(24, 48, 840, 32), $"HP {Mathf.RoundToInt(playerHealth)}   Hollow {hollowState}   Altar {altarState}   Gate {gateState}", style);
             GUI.Label(new Rect(24, 78, 900, 32), ObjectiveText(), style);
             GUI.Label(new Rect(24, 108, 760, 28), $"Cue: {lastEvent}", controlStyle);
@@ -1104,6 +1105,24 @@ namespace FourfoldEchoes.Spike
             GUI.color = Color.white;
             GUI.Label(new Rect(rect.x + 6f, rect.y, rect.width - 10f, rect.height), label, style);
             GUI.color = previousColor;
+        }
+
+        private static void SetFirstRendererMaterial(Transform root, Material material)
+        {
+            if (root == null)
+            {
+                return;
+            }
+
+            SetRendererMaterial(root.GetComponentInChildren<Renderer>(true), material);
+        }
+
+        private static void SetRendererMaterial(Renderer renderer, Material material)
+        {
+            if (renderer != null && material != null)
+            {
+                renderer.sharedMaterial = material;
+            }
         }
     }
 }

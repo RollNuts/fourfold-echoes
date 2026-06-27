@@ -8,12 +8,24 @@ cd "$ROOT"
 
 node Scripts/Validation/check_public_repo_hygiene.mjs
 node Scripts/Validation/validate_repo.mjs
+node tools/AssetPipeline/validate_generated_assets.mjs --phase=preimport
+node tools/AssetPipeline/write_unity_prefab_stubs.mjs
+node tools/AssetPipeline/validate_generated_assets.mjs --phase=postimport
 node tools/forge/check.mjs
 
 if [[ ! -x "$UNITY_EDITOR" ]]; then
   echo "Unity editor not found: $UNITY_EDITOR" >&2
   exit 1
 fi
+
+"$UNITY_EDITOR" \
+  -batchmode \
+  -quit \
+  -projectPath "$ROOT" \
+  -executeMethod FourfoldEchoes.Editor.FourfoldGeneratedModelPackImporter.ImportGeneratedModelPack \
+  -logFile -
+
+node tools/AssetPipeline/validate_generated_assets.mjs --phase=postimport
 
 "$UNITY_EDITOR" \
   -batchmode \

@@ -1,0 +1,65 @@
+{
+  "schema_version": "shared_rules_v1",
+  "generated_at": "2026-06-27T00:00:00+09:00",
+  "art_direction": "stylized readable fantasy ARPG, pop-deformed, silhouette-first",
+  "output_priority": [
+    "coverage",
+    "spec_compliance",
+    "naming_consistency",
+    "unity_import_success"
+  ],
+  "non_goals": [
+    "single_asset_polish_loop",
+    "photoreal_microdetail",
+    "untracked_manual_assets"
+  ],
+  "naming_rule": "[category]_[name]_[variant]_[part]_lod[0-2]",
+  "texture_suffixes": [
+    "_bc",
+    "_n",
+    "_orm",
+    "_emi",
+    "_msk"
+  ],
+  "animation_suffixes": [
+    "@idle",
+    "@walk",
+    "@run",
+    "@attack01",
+    "@hit",
+    "@death"
+  ],
+  "scale": "Unity 1 unit = 1 meter",
+  "pivot_defaults": {
+    "character": "feet bottom-center",
+    "enemy": "ground center or hover ground reference",
+    "weapon": "grip",
+    "environment": "grid snap origin",
+    "ui": "center",
+    "audio": "not applicable"
+  },
+  "mesh_defaults": {
+    "lods": [
+      "lod0",
+      "lod1",
+      "lod2"
+    ],
+    "uv0": "required",
+    "uv2": "required only for static lightmapped environment/building assets",
+    "material_slots": "minimum necessary; default <= 5",
+    "texture_set": [
+      "bc",
+      "n",
+      "orm"
+    ]
+  },
+  "batch_rule": "Generate the full batch first, then regenerate only failed validation assets. Max two micro-fix loops per asset.",
+  "source_art_direction_contract": {
+    "contract_id": "folded_reliquary",
+    "canonical_doc": "docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md",
+    "genre": "compact_top_down_action_adventure",
+    "shape_grammar": "folded_reliquary_miniature",
+    "brand_line_id": "folded_reliquary_miniatures",
+    "genre_statement": "Commercial-safe friendly compact action-adventure built from rounded low folded plates, four-part inlays, chunky broken tabs, saturated readable color planes, and one functional signal-thread language."
+  }
+}

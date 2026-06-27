@@ -5,12 +5,15 @@
 !test-results/
 !Reports/
 !Previews/
+!Concepts/
 !screenshots/.gitkeep
 !logs/.gitkeep
 !test-results/.gitkeep
 !Reports/.gitkeep
 !Reports/*.md
 !Reports/*.json
+!Reports/*.jsonl
 !Previews/.gitkeep
 !Previews/README.md
 !Previews/d020-*.png
+!Concepts/**

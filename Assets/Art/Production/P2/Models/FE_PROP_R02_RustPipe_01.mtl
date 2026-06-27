@@ -1,0 +1,6 @@
+# Materials for FE_PROP_R02_RustPipe_01
+newmtl r02_rust
+Kd 0.61961 0.21961 0.12157
+Ka 0.05000 0.05000 0.05000
+Ks 0.15000 0.15000 0.15000
+Ns 24

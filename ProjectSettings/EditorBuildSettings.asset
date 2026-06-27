@@ -6,7 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/ProductionCombatSlice.unity
+    guid: 65b124b8391464403b780c75f6c6938b
+  - enabled: 1
     path: Assets/Scenes/D020VerticalSlice.unity
     guid: b09ec6ec40d344d39b3565df95e99985
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
   m_UseUCBPForAssetBundles: 0

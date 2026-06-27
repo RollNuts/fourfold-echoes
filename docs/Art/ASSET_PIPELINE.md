@@ -4,6 +4,13 @@
 
 Final assets must be commercially usable, registered, validated, and visually reviewed. A model file existing on disk is not enough.
 
+All production model work must obey the current art-direction contract:
+
+- art axis: **Folded Reliquary Miniatures** / **折り目遺物の箱庭模型**
+- shared DNA: folded plinth, split inlay, signal thread, chunky tabs, top-down readability
+- region variation: material ratio and wear-state variation only; do not turn each region into a separate product family
+- external comparison: aggregate quality metrics only, never prompt/reference/model/style instructions
+
 ## Free / Low-Cost Tool Stack
 
 - Blender: modeling, rig blockout, export, preview renders.
@@ -39,6 +46,31 @@ Run:
 node Scripts/Validation/validate_repo.mjs
 node tools/AssetPipeline/validate_generated_assets.mjs
 ```
+
+## Production Model Pack Generator
+
+The current repeatable production-art first pass is:
+
+```sh
+blender --background --factory-startup --python tools/Blender/generate_fourfold_model_pack.py
+node tools/AssetPipeline/validate_generated_assets.mjs
+```
+
+It generates:
+
+- 103 original model FBX files under `Assets/Art/Production/P0/Models`,
+  `Assets/Art/Production/P1/Models`, and `Assets/Art/Production/P2/Models`
+- Blender source at `Assets/Art/Production/Source/FE_FourfoldModelPack.blend`
+- Unity prefabs under `Assets/Prefabs/Production/P0`, `P1`, and `P2`
+- preview PNGs under `artifacts/Previews/ProductionModelPack/`
+- manifest at `artifacts/Reports/fourfold-model-pack.json`
+- market comparison report at `artifacts/Reports/visual-benchmark.md`
+
+Acceptance status is `generated_first_pass`. The pack is commercially
+repo-authored and manifest-gated by the art-direction contract, but the latest
+external screenshot benchmark still marks it as below market finish. Treat it
+as a complete model inventory and first visual iteration, not final
+Steam-facing art.
 
 ## Blender Pilot Generator
 

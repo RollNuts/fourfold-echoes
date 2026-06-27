@@ -1,0 +1,70 @@
+{
+  "schema_version": "avatar_policy_v1",
+  "generated_at": "2026-06-27T00:00:00+09:00",
+  "policy": {
+    "player": "Humanoid",
+    "npc": "Humanoid",
+    "enemy": "Generic",
+    "elite": "Generic",
+    "boss": "Generic",
+    "equipment": "None",
+    "environment": "None",
+    "prop": "None",
+    "ui": "None",
+    "vfx": "None",
+    "audio": "None",
+    "anim": "HumanoidOrGenericByBinding"
+  },
+  "player_npc_template": {
+    "skeleton": "FE_CHAR_TEMPLATE_ChibiMannequin_01",
+    "avatar": "Humanoid",
+    "model": "Assets/Art/Production/P0/Models/FE_CHAR_TEMPLATE_ChibiMannequin_01.obj"
+  },
+  "enemy_templates": {
+    "ESK-01": {
+      "target": "FE_ENEMY_TEMPLATE_ESK01_SmallBiped_01",
+      "status": "template_candidate_importable",
+      "model_file": "Assets/Art/Production/P0/Models/FE_ENEMY_TEMPLATE_ESK01_SmallBiped_01.obj",
+      "preview_file": "artifacts/Previews/ProductionModelPack/FE_ENEMY_TEMPLATE_ESK01_SmallBiped_01.png",
+      "turnaround_preview_file": "artifacts/Previews/ProductionModelPack/FE_ENEMY_TEMPLATE_ESK01_SmallBiped_01_Turnaround.png",
+      "socket_report": "artifacts/Reports/enemy-template-esk01-small-biped-sockets.json",
+      "triangle_count": 5900,
+      "primitive_counts": {
+        "box": 1,
+        "capsule": 10,
+        "ellipsoid": 38,
+        "prism": 3
+      }
+    },
+    "ESK-03": {
+      "target": "FE_ENEMY_TEMPLATE_ESK03_Quadruped_01",
+      "status": "template_candidate_importable",
+      "model_file": "Assets/Art/Production/P0/Models/FE_ENEMY_TEMPLATE_ESK03_Quadruped_01.obj",
+      "preview_file": "artifacts/Previews/ProductionModelPack/FE_ENEMY_TEMPLATE_ESK03_Quadruped_01.png",
+      "turnaround_preview_file": "artifacts/Previews/ProductionModelPack/FE_ENEMY_TEMPLATE_ESK03_Quadruped_01_Turnaround.png",
+      "socket_report": "artifacts/Reports/enemy-template-esk03-quadruped-sockets.json",
+      "triangle_count": 6800,
+      "primitive_counts": {
+        "box": 1,
+        "capsule": 11,
+        "ellipsoid": 43,
+        "prism": 6
+      }
+    },
+    "ESK-05": {
+      "target": "FE_ENEMY_TEMPLATE_ESK05_FloatingCaster_01",
+      "status": "template_candidate_importable",
+      "model_file": "Assets/Art/Production/P0/Models/FE_ENEMY_TEMPLATE_ESK05_FloatingCaster_01.obj",
+      "preview_file": "artifacts/Previews/ProductionModelPack/FE_ENEMY_TEMPLATE_ESK05_FloatingCaster_01.png",
+      "turnaround_preview_file": "artifacts/Previews/ProductionModelPack/FE_ENEMY_TEMPLATE_ESK05_FloatingCaster_01_Turnaround.png",
+      "socket_report": "artifacts/Reports/enemy-template-esk05-floating-caster-sockets.json",
+      "triangle_count": 2176,
+      "primitive_counts": {
+        "capsule": 3,
+        "ellipsoid": 16,
+        "prism": 5
+      }
+    }
+  },
+  "rule": "Avatar and movement family are selected before body modeling. Do not model a creature whose attack origin, locomotion, or root motion policy is unknown."
+}

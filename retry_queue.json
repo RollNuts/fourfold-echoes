@@ -1,0 +1,6 @@
+{
+  "schema_version": "retry_queue_v1",
+  "generated_at": "2026-06-27T00:00:00+09:00",
+  "retry_policy": "Only failed assets are eligible. Do not regenerate local_pass assets. Max retry_count is 2.",
+  "items": []
+}

@@ -1,0 +1,98 @@
+{
+  "generated_at": "2026-06-27",
+  "workflow_verdict": "image_first_batch_then_triage_then_model",
+  "summary": "The current image pool contains useful candidates. Model only accepted or tightly guarded directions, and record both accepted construction tokens and rejected familiar reads before 3D work.",
+  "candidates": [
+    {
+      "asset_id": "FE_PROP_COMMON_RelicChest_01",
+      "concept_path": "artifacts/Concepts/FoldedReliquary/IndividualCandidates_20260627/FE_CONCEPT_CANDIDATE_RelicChest_PetalReliquary_v001.png",
+      "source_batch": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_04_RewardReliquaries_20Thumbs.png",
+      "status": "accept_primary",
+      "modeling_priority": "P0",
+      "accepted_tokens": [
+        "open petal reliquary vessel",
+        "low circular stone base",
+        "folded shell-stone petals",
+        "teal reward socket",
+        "aged brass collar and hinge logic"
+      ],
+      "rejected_reads": [
+        "generic treasure chest",
+        "wooden box",
+        "loot crate",
+        "coin container"
+      ],
+      "next_action": "Write model from the accepted image and replace chest language in prompts."
+    },
+    {
+      "asset_id": "FE_PROP_COMMON_ExplorationTool_01",
+      "concept_path": "artifacts/Concepts/FoldedReliquary/IndividualCandidates_20260627/FE_CONCEPT_CANDIDATE_ExplorationTool_ClampLens_v001.png",
+      "source_batch": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_06_NonStaffExplorationTools_20Thumbs.png",
+      "status": "hold_rework",
+      "modeling_priority": "P1_concept_rework",
+      "accepted_tokens": [
+        "compact folded clamp device",
+        "C-shaped shell-stone jaws",
+        "central teal lens",
+        "brass hinge barrels",
+        "short leather loop grip"
+      ],
+      "rejected_reads": [
+        "staff",
+        "wand",
+        "literal key",
+        "gun",
+        "sword",
+        "antenna",
+        "long handle"
+      ],
+      "review_notes": [
+        "Too visually redundant with the petal reward reliquary.",
+        "Needs stronger hand ergonomics, active end, scale cues, and tool identity before modeling."
+      ],
+      "next_action": "Regenerate before modeling. Preserve compact clamp/lens idea, but separate silhouette from reward reliquary language."
+    },
+    {
+      "asset_id": "FE_ENEMY_MELEE_Shardling",
+      "concept_path": "artifacts/Concepts/FoldedReliquary/IndividualCandidates_20260627/FE_CONCEPT_CANDIDATE_MeleeShardling_SealedLockRelic_v001.png",
+      "source_batch": "artifacts/Concepts/FoldedReliquary/Batch_20260626/FE_CONCEPT_BATCH_03_HostileRelics_18Thumbs.png",
+      "status": "hold_with_guardrails",
+      "modeling_priority": "P2",
+      "accepted_tokens": [
+        "broken sealed lock-relic",
+        "stone plates",
+        "dull red wax/fire seams",
+        "front locking wedge",
+        "low heavy trap mass"
+      ],
+      "rejected_reads": [
+        "animal head",
+        "eyes",
+        "jaw",
+        "claws",
+        "biological limbs",
+        "mascot creature"
+      ],
+      "review_notes": [
+        "Not enemy-ready as-is.",
+        "Needs readable attack direction, weak point, idle/active state, and category clarity without color or material detail."
+      ],
+      "next_action": "Regenerate or heavily guardrail before modeling. Use as hostile trap/relic only if face and limb reads are removed."
+    }
+  ],
+  "next_modeling_order": [
+    "FE_PROP_COMMON_RelicChest_01",
+    "FE_PROP_COMMON_ExplorationTool_01_rework",
+    "FE_ENEMY_MELEE_Shardling_rework"
+  ],
+  "camera_distance_silhouette_gate": {
+    "required": true,
+    "test": "Flat black three-quarter silhouette at 128px height.",
+    "pass_condition": "Gameplay category remains readable without color, material, cracks, bevels, glow, or labels.",
+    "required_reads": {
+      "FE_PROP_COMMON_RelicChest_01": "reward vessel / opened reliquary",
+      "FE_PROP_COMMON_ExplorationTool_01": "player-held tool, not a small reliquary",
+      "FE_ENEMY_MELEE_Shardling": "hostile lock-relic with attack direction, not a rock egg"
+    }
+  }
+}

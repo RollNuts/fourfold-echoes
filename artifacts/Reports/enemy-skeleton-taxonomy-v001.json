@@ -1,0 +1,147 @@
+{
+  "source_sheet": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/FE_ENEMY_SKELETON_TAXONOMY_16Thumbs_v001.png",
+  "crop_dir": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001",
+  "purpose": "enemy skeleton taxonomy seeds before final monster detailing",
+  "template_scope": "enemy_monster_boss_only",
+  "excluded_scope": "playable_and_friendly_npc_mannequin",
+  "records": [
+    {
+      "slot": 1,
+      "category_id": "ESK-01",
+      "name": "Small biped",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-01_small_biped.png",
+      "note": "Good base for fodder. Strip final panel details before mannequin modeling."
+    },
+    {
+      "slot": 2,
+      "category_id": "ESK-02",
+      "name": "Heavy biped",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-02_heavy_biped.png",
+      "note": "Good blocker/brute mass. Needs neutral joint landmarks and less finished armor."
+    },
+    {
+      "slot": 3,
+      "category_id": "ESK-03",
+      "name": "Quadruped beast",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-03_quadruped_beast.png",
+      "note": "Strong charger base. Remove crystal color identity for neutral template."
+    },
+    {
+      "slot": 4,
+      "category_id": "ESK-04",
+      "name": "Slime/blob",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-04_slime_blob.png",
+      "note": "Good non-biped body category. Core socket is readable."
+    },
+    {
+      "slot": 5,
+      "category_id": "ESK-05",
+      "name": "Floating caster",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-05_floating_caster.png",
+      "note": "Good ranged/support hover skeleton. Keep side shields as optional parts."
+    },
+    {
+      "slot": 6,
+      "category_id": "ESK-06",
+      "name": "Winged flyer",
+      "status": "revise_before_template",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-06_winged_flyer.png",
+      "note": "Useful silhouette, but too close to familiar bat/imp defaults. Needs more original head language."
+    },
+    {
+      "slot": 7,
+      "category_id": "ESK-07",
+      "name": "Insect/arachnid",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-07_insect_arachnid.png",
+      "note": "Good crawler template. Simplify shell into neutral body mannequin."
+    },
+    {
+      "slot": 8,
+      "category_id": "ESK-08",
+      "name": "Serpent/long body",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-08_serpent_long_body.png",
+      "note": "Useful segmented line-hazard body. Head should become swappable."
+    },
+    {
+      "slot": 9,
+      "category_id": "ESK-09",
+      "name": "Dragon/wyvern",
+      "status": "revise_before_template",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-09_dragon_wyvern.png",
+      "note": "Useful dragon category, but the head/wing read is too familiar. Must be reworked before modeling."
+    },
+    {
+      "slot": 10,
+      "category_id": "ESK-10",
+      "name": "Golem/mech",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-10_golem_mech.png",
+      "note": "Good slow telegraph bruiser. Works as a separate construct skeleton."
+    },
+    {
+      "slot": 11,
+      "category_id": "ESK-11",
+      "name": "Plant/root",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-11_plant_root.png",
+      "note": "Good rooted turret/support body. Keep as plant hazard skeleton, not NPC body."
+    },
+    {
+      "slot": 12,
+      "category_id": "ESK-12",
+      "name": "Boss multi-anchor",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-12_boss_multi-anchor.png",
+      "note": "Useful multi-limb socket boss seed. Needs clearer weak-point hierarchy."
+    },
+    {
+      "slot": 13,
+      "category_id": "ESK-13",
+      "name": "Crab shell",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-13_crab_shell.png",
+      "note": "Good alternate low crawler. Good for shielded side-step enemy."
+    },
+    {
+      "slot": 14,
+      "category_id": "ESK-14",
+      "name": "Rolling shell",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-14_rolling_shell.png",
+      "note": "Good roll/charge hazard. Needs unfolded attack pose concept later."
+    },
+    {
+      "slot": 15,
+      "category_id": "ESK-15",
+      "name": "Mimic/tool construct",
+      "status": "accept_template_seed",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-15_mimic_tool_construct.png",
+      "note": "Good object-enemy skeleton. Keep because ARPG needs surprise/interact enemies."
+    },
+    {
+      "slot": 16,
+      "category_id": "ESK-16",
+      "name": "Tall support caster",
+      "status": "revise_before_template",
+      "crop": "artifacts/Concepts/EnemySkeletonTaxonomy/Batch_20260627/Crops_v001/ESK-16_tall_support_caster.png",
+      "note": "Readable support silhouette, but too humanoid/staff-like. Rework to avoid generic caster."
+    }
+  ],
+  "next_template_order": [
+    "ESK-01",
+    "ESK-03",
+    "ESK-05",
+    "ESK-09",
+    "ESK-10",
+    "ESK-04",
+    "ESK-07",
+    "ESK-12"
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "asset": "FE_ENEMY_TEMPLATE_ESK03_Quadruped_01",
+  "skeleton_category": "ESK-03",
+  "movement_mode": "Run/charge quadruped",
+  "collider_profile": "capsule_actor",
+  "collider_contract": "root capsule covers main body only; charge and weak-point volumes are separate runtime hitboxes derived from sockets",
+  "socket_plan": [
+    {
+      "name": "SOCKET_Ground",
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "purpose": "bottom-center pivot and four-foot grounding reference"
+    },
+    {
+      "name": "SOCKET_Head",
+      "position": {
+        "x": 0.0,
+        "y": 0.73,
+        "z": 0.705
+      },
+      "purpose": "head, mask, tusk, or crest swap"
+    },
+    {
+      "name": "SOCKET_Mouth",
+      "position": {
+        "x": 0.0,
+        "y": 0.73,
+        "z": 0.925
+      },
+      "purpose": "bite/spit point; separate from charge hitbox"
+    },
+    {
+      "name": "SOCKET_AttackOrigin",
+      "position": {
+        "x": 0.0,
+        "y": 0.735,
+        "z": 1.03
+      },
+      "purpose": "charge/ram hitbox origin"
+    },
+    {
+      "name": "SOCKET_ChestCore",
+      "position": {
+        "x": 0.0,
+        "y": 0.625,
+        "z": 0.42
+      },
+      "purpose": "front chest core and charger read"
+    },
+    {
+      "name": "SOCKET_WeakPoint",
+      "position": {
+        "x": 0.225,
+        "y": 0.68,
+        "z": -0.075
+      },
+      "purpose": "side/back targetable weak point"
+    },
+    {
+      "name": "SOCKET_Back",
+      "position": {
+        "x": 0.0,
+        "y": 0.69,
+        "z": -0.08
+      },
+      "purpose": "saddle armor, mane, crest, or shell attachment"
+    },
+    {
+      "name": "SOCKET_Tail",
+      "position": {
+        "x": 0.0,
+        "y": 0.645,
+        "z": -0.69
+      },
+      "purpose": "tail, tail club, or rear VFX attachment"
+    },
+    {
+      "name": "SOCKET_LeftHand",
+      "position": {
+        "x": -0.21,
+        "y": 0.12,
+        "z": 0.52
+      },
+      "purpose": "front-left paw/claw attachment"
+    },
+    {
+      "name": "SOCKET_RightHand",
+      "position": {
+        "x": 0.21,
+        "y": 0.12,
+        "z": 0.52
+      },
+      "purpose": "front-right paw/claw attachment"
+    },
+    {
+      "name": "SOCKET_Cast",
+      "position": {
+        "x": 0.0,
+        "y": 0.76,
+        "z": 0.875
+      },
+      "purpose": "telegraph marker during charge windup"
+    },
+    {
+      "name": "SOCKET_HitVfx",
+      "position": {
+        "x": 0.0,
+        "y": 0.6,
+        "z": 0.1
+      },
+      "purpose": "body impact center"
+    }
+  ],
+  "minimum_animation_clips": [
+    {
+      "name": "idle_loop",
+      "frames": 54,
+      "notes": "subtle breathing; four paws remain planted"
+    },
+    {
+      "name": "move_loop",
+      "frames": 28,
+      "notes": "trot loop with stable foot contacts"
+    },
+    {
+      "name": "turn_in_place",
+      "frames": 24,
+      "notes": "short quadruped pivot without foot sliding"
+    },
+    {
+      "name": "charge_windup",
+      "frames": 24,
+      "notes": "front mass lowers and braces; attack tell visible by frame 8"
+    },
+    {
+      "name": "charge",
+      "frames": 20,
+      "notes": "active hitbox from SOCKET_AttackOrigin"
+    },
+    {
+      "name": "skid_recovery",
+      "frames": 26,
+      "notes": "charge end skid; no instant turn"
+    },
+    {
+      "name": "attack_b",
+      "frames": 30,
+      "notes": "short bite/body bump alternate attack"
+    },
+    {
+      "name": "hit_light",
+      "frames": 12,
+      "notes": "small side recoil, paws keep readable contact"
+    },
+    {
+      "name": "hit_heavy",
+      "frames": 22,
+      "notes": "strong recoil, weak point flashes"
+    },
+    {
+      "name": "stagger",
+      "frames": 38,
+      "notes": "brief exposed weak-point state"
+    },
+    {
+      "name": "death",
+      "frames": 46,
+      "notes": "collapse onto side without gore"
+    },
+    {
+      "name": "spawn",
+      "frames": 32,
+      "notes": "enter from crouch/ground socket"
+    }
+  ]
+}

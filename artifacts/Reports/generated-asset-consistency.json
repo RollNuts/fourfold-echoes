@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "asset_count": 177,
+  "genre_contract_id": "folded_reliquary_miniatures",
+  "brand_line_id": "folded_reliquary_miniatures",
+  "shape_grammar_id": "folded_reliquary",
+  "benchmark_policy_id": "external_market_metrics_only",
+  "genre_contract_passed": 177,
+  "genre_contract_failed": 0,
+  "missing_required_token_assets": [],
+  "required_token_coverage_min": 1,
+  "forbidden_token_hits": 0,
+  "forbidden_token_hit_assets": [],
+  "protected_term_hits": 0,
+  "external_reference_used_in_prompts": 0,
+  "raw_direct_use_approved_count": 0,
+  "product_line_role_counts": {
+    "Broken Hostile Relic": 19,
+    "Toolbearer Relic": 13,
+    "Exploration Instrument": 1,
+    "Service Cast": 3,
+    "Warden Relic": 7,
+    "Block-Field Equipment": 5,
+    "Route Surface": 39,
+    "Reliquary Set Dressing": 23,
+    "Tool Receiver": 15,
+    "Low Boundary": 18,
+    "Reward Reliquary": 4,
+    "Grounding Detail": 30
+  },
+  "style_counts": {
+    "common": 28,
+    "hub": 31,
+    "r01": 49,
+    "r02": 30,
+    "r03": 30,
+    "boss": 9
+  },
+  "benchmark": {
+    "present": true,
+    "source_count": 4,
+    "downloaded_image_count": 12,
+    "external_use": "aggregate_metrics_only",
+    "overall_score": 0.87,
+    "verdict": "near_market_metric_range",
+    "production_approval_status": "candidate_needs_human_review",
+    "score": {
+      "brightness": 1,
+      "contrast": 0.64,
+      "edge_density": 0.8,
+      "palette_bins_64": 1,
+      "saturation": 0.89,
+      "overall": 0.87
+    }
+  },
+  "production_approval_status": "blocked_until_human_art_ip_review",
+  "source_reference_policy": "repository-authored generation and approved internal previews only; external store screenshots are aggregate metric benchmarks only."
+}

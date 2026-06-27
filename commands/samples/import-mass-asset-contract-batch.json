@@ -1,0 +1,6 @@
+{
+  "commandId": "mass_asset.import_contract_batch.sample",
+  "action": "mass_asset.import_contract_batch",
+  "sceneId": "assets.mass_production_contract_batch",
+  "seed": 0
+}

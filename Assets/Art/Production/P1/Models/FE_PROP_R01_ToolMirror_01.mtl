@@ -1,0 +1,11 @@
+# Materials for FE_PROP_R01_ToolMirror_01
+newmtl stone_dark
+Kd 0.21961 0.21176 0.21961
+Ka 0.05000 0.05000 0.05000
+Ks 0.15000 0.15000 0.15000
+Ns 24
+newmtl route_teal
+Kd 0.10980 0.52941 0.50980
+Ka 0.05000 0.05000 0.05000
+Ks 0.15000 0.15000 0.15000
+Ns 24

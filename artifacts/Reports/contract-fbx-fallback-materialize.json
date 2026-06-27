@@ -1,0 +1,377 @@
+{
+  "copied_lod_files": 309,
+  "source_fbx_assets": 103,
+  "missing_source_fbx_assets": 74,
+  "missing_source_fbx": [
+    {
+      "asset": "elite_enemy_template_esk05_floatingcaster_01_v001_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENEMY_TEMPLATE_ESK05_FloatingCaster_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENEMY_TEMPLATE_ESK05_FloatingCaster_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_template_esk03_quadruped_01_v001_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENEMY_TEMPLATE_ESK03_Quadruped_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENEMY_TEMPLATE_ESK03_Quadruped_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_template_esk01_smallbiped_01_v001_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENEMY_TEMPLATE_ESK01_SmallBiped_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENEMY_TEMPLATE_ESK01_SmallBiped_01.fbx"
+    },
+    {
+      "asset": "player_char_template_chibimannequin_01_v001_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_CHAR_TEMPLATE_ChibiMannequin_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_CHAR_TEMPLATE_ChibiMannequin_01.fbx"
+    },
+    {
+      "asset": "player_char_player_signaturelead_01_v001_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_SignatureLead_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_SignatureLead_01.fbx"
+    },
+    {
+      "asset": "player_char_player_heavyguard_01_v001_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_HeavyGuard_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_HeavyGuard_01.fbx"
+    },
+    {
+      "asset": "player_char_player_stampcaster_01_v001_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_StampCaster_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_StampCaster_01.fbx"
+    },
+    {
+      "asset": "player_char_player_rangerscout_01_v001_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_RangerScout_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_RangerScout_01.fbx"
+    },
+    {
+      "asset": "player_char_player_fieldmedic_01_v001_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_FieldMedic_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_CHAR_PLAYER_FieldMedic_01.fbx"
+    },
+    {
+      "asset": "npc_char_npc_merchanttray_01_hub_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_CHAR_NPC_MerchantTray_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_CHAR_NPC_MerchantTray_01.fbx"
+    },
+    {
+      "asset": "npc_char_npc_upgradesmith_01_hub_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_CHAR_NPC_UpgradeSmith_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_CHAR_NPC_UpgradeSmith_01.fbx"
+    },
+    {
+      "asset": "npc_char_npc_cartographerguide_01_hub_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_CHAR_NPC_CartographerGuide_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_CHAR_NPC_CartographerGuide_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r01_foldbiter_01_r01_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_FoldBiter_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_FoldBiter_01.fbx"
+    },
+    {
+      "asset": "elite_enemy_r01_shieldclamp_01_r01_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_ShieldClamp_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_ShieldClamp_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r01_linespitter_01_r01_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_LineSpitter_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_LineSpitter_01.fbx"
+    },
+    {
+      "asset": "elite_enemy_r01_blockcharger_01_r01_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_BlockCharger_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_BlockCharger_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r01_glyphswarm_01_r01_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_GlyphSwarm_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENEMY_R01_GlyphSwarm_01.fbx"
+    },
+    {
+      "asset": "boss_boss_r01_stampminiboss_01_r01_body",
+      "source_model": "Assets/Art/Production/P0/Models/FE_BOSS_R01_StampMiniboss_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_BOSS_R01_StampMiniboss_01.fbx"
+    },
+    {
+      "asset": "equipment_prop_common_toolblade_01_v001_mesh",
+      "source_model": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_ToolBlade_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_ToolBlade_01.fbx"
+    },
+    {
+      "asset": "equipment_prop_common_blockhammer_01_v001_mesh",
+      "source_model": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_BlockHammer_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_BlockHammer_01.fbx"
+    },
+    {
+      "asset": "equipment_prop_common_guardclamp_01_v001_mesh",
+      "source_model": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_GuardClamp_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_GuardClamp_01.fbx"
+    },
+    {
+      "asset": "equipment_prop_common_sealstamp_01_v001_mesh",
+      "source_model": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_SealStamp_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_SealStamp_01.fbx"
+    },
+    {
+      "asset": "equipment_prop_common_routespool_01_v001_mesh",
+      "source_model": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_RouteSpool_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_RouteSpool_01.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_combatarena_2x2_01_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_CombatArena_2x2_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_CombatArena_2x2_01.fbx"
+    },
+    {
+      "asset": "prop_prop_common_checkpointsocketpad_01_v001_mesh",
+      "source_model": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_CheckpointSocketPad_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_CheckpointSocketPad_01.fbx"
+    },
+    {
+      "asset": "prop_prop_common_rewardreceiverpad_01_v001_mesh",
+      "source_model": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_RewardReceiverPad_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_PROP_COMMON_RewardReceiverPad_01.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_grassfloor_1x1_flat_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassFloor_1x1_Flat.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassFloor_1x1_Flat.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_grassfloor_1x2_straight_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassFloor_1x2_Straight.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassFloor_1x2_Straight.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_grassfloor_2x2_plaza_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassFloor_2x2_Plaza.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassFloor_2x2_Plaza.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_grassedge_straight_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassEdge_Straight.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassEdge_Straight.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_grassedge_outercorner_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassEdge_OuterCorner.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassEdge_OuterCorner.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_grassedge_innercorner_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassEdge_InnerCorner.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassEdge_InnerCorner.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_grassheight_cliff_up1_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassHeight_Cliff_Up1.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_GrassHeight_Cliff_Up1.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_stonefloor_1x1_clean_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneFloor_1x1_Clean.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneFloor_1x1_Clean.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_stonefloor_2x2_clean_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneFloor_2x2_Clean.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneFloor_2x2_Clean.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_stonefloor_1x1_cracked_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneFloor_1x1_Cracked.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneFloor_1x1_Cracked.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_stonewall_straight_1x1_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneWall_Straight_1x1.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneWall_Straight_1x1.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_stonewall_outercorner_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneWall_OuterCorner.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneWall_OuterCorner.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_stonewall_innercorner_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneWall_InnerCorner.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneWall_InnerCorner.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_stonearch_doorway_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneArch_Doorway.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_StoneArch_Doorway.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_stair_straight_up1_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_Stair_Straight_Up1.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_Stair_Straight_Up1.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_stair_cornerlanding_up1_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_Stair_CornerLanding_Up1.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_Stair_CornerLanding_Up1.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_waterchanneledge_straight_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_WaterChannelEdge_Straight.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_WaterChannelEdge_Straight.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_bridgewood_1x2_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_BridgeWood_1x2.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_BridgeWood_1x2.fbx"
+    },
+    {
+      "asset": "environment_env_r01_bf_fencerailing_straight_r01_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_FenceRailing_Straight.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_R01_BF_FenceRailing_Straight.fbx"
+    },
+    {
+      "asset": "environment_env_hub_bf_hazardfloor_spike_hub_module",
+      "source_model": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_HazardFloor_Spike.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P0/Models/FE_ENV_HUB_BF_HazardFloor_Spike.fbx"
+    },
+    {
+      "asset": "player_char_player_leadtier02_01_v001_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_LeadTier02_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_LeadTier02_01.fbx"
+    },
+    {
+      "asset": "player_char_player_guardtier02_01_v001_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_GuardTier02_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_GuardTier02_01.fbx"
+    },
+    {
+      "asset": "player_char_player_castertier02_01_v001_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_CasterTier02_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_CasterTier02_01.fbx"
+    },
+    {
+      "asset": "player_char_player_scouttier02_01_v001_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_ScoutTier02_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_ScoutTier02_01.fbx"
+    },
+    {
+      "asset": "player_char_player_medictier02_01_v001_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_MedicTier02_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_MedicTier02_01.fbx"
+    },
+    {
+      "asset": "player_char_player_striker_01_v001_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_Striker_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_CHAR_PLAYER_Striker_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r02_cindercrawler_01_r02_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENEMY_R02_CinderCrawler_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENEMY_R02_CinderCrawler_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r02_clampguard_01_r02_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENEMY_R02_ClampGuard_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENEMY_R02_ClampGuard_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r02_heatlobber_01_r02_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENEMY_R02_HeatLobber_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENEMY_R02_HeatLobber_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r02_bellowcharger_01_r02_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENEMY_R02_BellowCharger_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENEMY_R02_BellowCharger_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r03_shardling_01_r03_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENEMY_R03_Shardling_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENEMY_R03_Shardling_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r03_prismcaster_01_r03_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENEMY_R03_PrismCaster_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENEMY_R03_PrismCaster_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r03_mirrorguard_01_r03_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENEMY_R03_MirrorGuard_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENEMY_R03_MirrorGuard_01.fbx"
+    },
+    {
+      "asset": "enemy_enemy_r03_glassleaper_01_r03_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENEMY_R03_GlassLeaper_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENEMY_R03_GlassLeaper_01.fbx"
+    },
+    {
+      "asset": "boss_boss_r02_anvilmaw_01_r02_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_BOSS_R02_AnvilMaw_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_BOSS_R02_AnvilMaw_01.fbx"
+    },
+    {
+      "asset": "boss_boss_r03_mirrormaw_01_r03_body",
+      "source_model": "Assets/Art/Production/P3/Models/FE_BOSS_R03_MirrorMaw_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_BOSS_R03_MirrorMaw_01.fbx"
+    },
+    {
+      "asset": "environment_env_r02_bf_floor_1x1_hotplate_r02_module",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENV_R02_BF_Floor_1x1_Hotplate.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENV_R02_BF_Floor_1x1_Hotplate.fbx"
+    },
+    {
+      "asset": "environment_env_r02_bf_wall_straight_iron_r02_module",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENV_R02_BF_Wall_Straight_Iron.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENV_R02_BF_Wall_Straight_Iron.fbx"
+    },
+    {
+      "asset": "environment_env_r02_bf_hazard_vent_1x1_r02_module",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENV_R02_BF_Hazard_Vent_1x1.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENV_R02_BF_Hazard_Vent_1x1.fbx"
+    },
+    {
+      "asset": "environment_env_r02_bf_conveyorbridge_1x2_r02_module",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENV_R02_BF_ConveyorBridge_1x2.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENV_R02_BF_ConveyorBridge_1x2.fbx"
+    },
+    {
+      "asset": "environment_env_r03_bf_floor_1x1_crystal_r03_module",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENV_R03_BF_Floor_1x1_Crystal.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENV_R03_BF_Floor_1x1_Crystal.fbx"
+    },
+    {
+      "asset": "environment_env_r03_bf_wall_shard_straight_r03_module",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENV_R03_BF_Wall_Shard_Straight.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENV_R03_BF_Wall_Shard_Straight.fbx"
+    },
+    {
+      "asset": "environment_env_r03_bf_prismgate_1x1_r03_module",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENV_R03_BF_PrismGate_1x1.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENV_R03_BF_PrismGate_1x1.fbx"
+    },
+    {
+      "asset": "environment_env_r03_bf_glassbridge_1x2_r03_module",
+      "source_model": "Assets/Art/Production/P3/Models/FE_ENV_R03_BF_GlassBridge_1x2.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_ENV_R03_BF_GlassBridge_1x2.fbx"
+    },
+    {
+      "asset": "prop_prop_r02_pressureswitch_01_r02_mesh",
+      "source_model": "Assets/Art/Production/P3/Models/FE_PROP_R02_PressureSwitch_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_PROP_R02_PressureSwitch_01.fbx"
+    },
+    {
+      "asset": "prop_prop_r02_furnacegate_01_r02_mesh",
+      "source_model": "Assets/Art/Production/P3/Models/FE_PROP_R02_FurnaceGate_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_PROP_R02_FurnaceGate_01.fbx"
+    },
+    {
+      "asset": "prop_prop_r03_mirrorswitch_01_r03_mesh",
+      "source_model": "Assets/Art/Production/P3/Models/FE_PROP_R03_MirrorSwitch_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_PROP_R03_MirrorSwitch_01.fbx"
+    },
+    {
+      "asset": "prop_prop_r03_prismlock_01_r03_mesh",
+      "source_model": "Assets/Art/Production/P3/Models/FE_PROP_R03_PrismLock_01.obj",
+      "expected_existing_fbx": "Assets/Art/Production/P3/Models/FE_PROP_R03_PrismLock_01.fbx"
+    }
+  ]
+}

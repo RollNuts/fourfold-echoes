@@ -2,6 +2,45 @@
 
 Status: canonical after D-020.
 
+The stricter production-line contract is:
+
+- `docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md`
+
+When this file and the style bible differ, the style bible wins for production
+3D model generation, prompt contracts, and validation gates.
+
+## 正規アート軸
+
+**折り目遺物の箱庭模型**
+
+FOURFOLD ECHOES の3Dモデルは、地域ごとに別ジャンルを作るのでは
+なく、すべてを「折られた小さな遺物」の変奏として扱う。根、炉、
+水晶、王冠などの単語は素材や状態の説明に留め、画面の第一印象は
+常に同じプロダクトファミリーに見えること。
+
+このプロダクトファミリーは、トップダウンで読む、低い折り石板・
+四分割象嵌・厚い欠けタブ・一本の機能シグナル糸で統一された、
+商用安全な箱庭遺物アクションアドベンチャーとして固定する。R01は
+森ジャンル、R02は工場ジャンル、R03は水晶ジャンルではない。同じ
+商品ラインが、摩耗、熱、冷気で変質しているだけでなければならない。
+
+外部ゲームの公式スクリーンショットは、市場品質を測るための集計
+ベンチマークだけに使う。明度、コントラスト、エッジ密度、遠景での
+可読性、画面密度は比較してよいが、形状、配色セット、構図、
+キャラクター、敵、宝箱、ゲート、UI、ロゴ、固有モチーフを設計指示
+へ還元してはいけない。複数作品の平均を取って「別物」とする設計も
+禁止する。
+
+## 造形DNA
+
+| Rule | Required Treatment |
+| --- | --- |
+| Folded plinth | 主要モデルは低い台座、折れた縁、ずれた板面を持つ。 |
+| Split inlay | 四分割、45度前後の切れ目、短い象嵌線を共通記号にする。 |
+| Signal thread | ツール、報酬、ロック、危険面は一本の発光糸またはソケットで読む。 |
+| Chunk tab | 細い装飾ではなく、厚みのある欠け、爪、段差で密度を出す。 |
+| Shared family | 敵は欠けた遺物、ボスは大型化した遺物、ツールは完全形の遺物として作る。 |
+
 ## アートピラー
 
 1. **Readable Stylized 3D**
@@ -57,10 +96,12 @@ boss count as a lower final-MVP cap.
 
 | Category | Pattern | Example |
 | --- | --- | --- |
+| Character | `FE_CHAR_<ROLE>_<NAME>_##` | `FE_CHAR_PLAYER_Hero_01` |
 | Props | `FE_PROP_<AREA>_<NAME>_##` | `FE_PROP_R01_RootGate_01` |
 | Terrain | `FE_ENV_<AREA>_<TYPE>_##` | `FE_ENV_R02_FloorCracked_03` |
 | Enemy | `FE_ENEMY_<ROLE>_<NAME>` | `FE_ENEMY_MELEE_Shardling` |
 | Boss | `FE_BOSS_##_<NAME>` | `FE_BOSS_01_RootWarden` |
+| Relic | `FE_RELIC_<NAME>_##` | `FE_RELIC_EmberSeed_01` |
 | UI | `FE_UI_<PURPOSE>_<STATE>` | `FE_UI_Tool_Ready` |
 | VFX | `FE_VFX_<SOURCE>_<ACTION>` | `FE_VFX_Tool_Pulse` |
 | Material | `FE_MAT_<AREA_OR_ROLE>_<SURFACE>` | `FE_MAT_R03_CrystalGlow` |
@@ -79,10 +120,10 @@ Use area codes:
 
 | Area | Color Script | Shape Language | Lighting | Gameplay Read |
 | --- | --- | --- | --- | --- |
-| Hub | ivory, warm gold, soft blue | circular plaza, low walls, clean stones | soft warm key, safe shadows | safety, return, orientation |
-| Region 01 | moss green, pale stone, yellow flowers | roots, rounded ruins, shallow slopes | bright adventure light | first tool reads and basic enemies |
-| Region 02 | rust red, charcoal, amber | broken tile, angled cliffs, metal frames | hard side light, warm danger | shortcut and combat pressure |
-| Region 03 | deep blue, violet, cold white | crystals, narrow bridges, smooth dark stone | cool contrast, clear glow | late route reads and boss foreshadow |
+| Hub | ivory, warm gold, soft blue | clean folded plinths, quartered floor marks, low safe barriers | soft warm key, safe shadows | safety, return, orientation |
+| Region 01 | moss green, pale stone, yellow flowers | weathered folded relics with rounded chip tabs and low growth accents | bright adventure light | first tool reads and basic enemies |
+| Region 02 | rust red, charcoal, amber | scorched folded relics with bent tabs and amber inlay threads | hard side light, warm danger | shortcut and combat pressure |
+| Region 03 | deep blue, violet, cold white | cold folded relics with sharp tabs and violet split inlays | cool contrast, clear glow | late route reads and boss foreshadow |
 
 ## 最低品質基準
 

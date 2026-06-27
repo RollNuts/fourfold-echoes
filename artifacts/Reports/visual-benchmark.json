@@ -1,0 +1,151 @@
+{
+  "version": 1,
+  "note": "Official store screenshots are used as market benchmarks, not as style prompts or derivative-asset instructions.",
+  "art_direction_id": "folded_reliquary",
+  "art_direction_name": "Folded Reliquary Miniatures",
+  "brand_line_id": "folded_reliquary_miniatures",
+  "benchmark_policy_id": "external_market_metrics_only",
+  "downloaded_at": "2026-06-26T19:16:45.885568+00:00",
+  "metrics_only_policy_ack": true,
+  "production_metric_thresholds": {
+    "overall": 0.8,
+    "contrast": 0.6,
+    "edge_density": 0.6,
+    "saturation": 0.55
+  },
+  "comparison_scope": "aggregate market finish metrics only; no shape, palette, composition, character, prop, logo, or trade-dress extraction",
+  "our_scene": "artifacts/Previews/ProductionModelPack/FE_BENCHMARK_R01_GameplayScene.png",
+  "grammar_board": "artifacts/Previews/ProductionModelPack/FE_BENCHMARK_FoldedReliquaryGrammar.png",
+  "our_metrics": {
+    "brightness": 94.85,
+    "contrast": 26.31,
+    "edge_density": 14.71,
+    "palette_bins_64": 64.0,
+    "saturation": 108.07
+  },
+  "market_summary": {
+    "brightness": {
+      "mean": 94.77,
+      "low": 31.13,
+      "high": 143.78
+    },
+    "contrast": {
+      "mean": 40.85,
+      "low": 23.33,
+      "high": 53.9
+    },
+    "edge_density": {
+      "mean": 18.43,
+      "low": 7.34,
+      "high": 46.21
+    },
+    "palette_bins_64": {
+      "mean": 64.0,
+      "low": 64.0,
+      "high": 64.0
+    },
+    "saturation": {
+      "mean": 121.79,
+      "low": 66.52,
+      "high": 185.78
+    }
+  },
+  "market_sources": [
+    {
+      "title": "TUNIC",
+      "url": "https://store.steampowered.com/app/553420/TUNIC/",
+      "role": "aggregate readability and chunky-form finish metrics only",
+      "appid": 553420
+    },
+    {
+      "title": "Death's Door",
+      "url": "https://store.steampowered.com/app/894020/Deaths_Door/",
+      "role": "aggregate combat-readability, lighting, and enemy-tell metrics only",
+      "appid": 894020
+    },
+    {
+      "title": "OCTOPATH TRAVELER II",
+      "url": "https://store.steampowered.com/app/1971650/OCTOPATH_TRAVELER_II/",
+      "role": "aggregate premium-finish and screenshot-density metrics only",
+      "appid": 1971650
+    },
+    {
+      "title": "DRAGON QUEST XI S",
+      "url": "https://store.steampowered.com/app/1295510/DRAGON_QUEST_XI_S_Echoes_of_an_Elusive_Age__Definitive_Edition/",
+      "role": "aggregate warm-readability and adventure-finish metrics only",
+      "appid": 1295510
+    }
+  ],
+  "downloaded_benchmarks": [
+    {
+      "title": "TUNIC",
+      "path": "artifacts/Previews/MarketBenchmarks/553420_1.jpg",
+      "sha256": "c66f5e5586b79c16c5879a9b84c111fa79af220c6fffac26b13fa25b41c67566"
+    },
+    {
+      "title": "TUNIC",
+      "path": "artifacts/Previews/MarketBenchmarks/553420_2.jpg",
+      "sha256": "aafc26d23e9c838ea3fdf6a2a95b8180cfae363a2a59b92d477c6a4038667706"
+    },
+    {
+      "title": "TUNIC",
+      "path": "artifacts/Previews/MarketBenchmarks/553420_3.jpg",
+      "sha256": "3504f0795b95bf2bb9a2d65d4a0847649ff4786f1e719d8f18bc61de92102e51"
+    },
+    {
+      "title": "Death's Door",
+      "path": "artifacts/Previews/MarketBenchmarks/894020_1.jpg",
+      "sha256": "6067d10caa4b47ae040e779271d500bc136f670442a3c21527682e058b3b497d"
+    },
+    {
+      "title": "Death's Door",
+      "path": "artifacts/Previews/MarketBenchmarks/894020_2.jpg",
+      "sha256": "2b7831213bec562e806f05438cf7133319991ad7feb2d002af5a039d9d501673"
+    },
+    {
+      "title": "Death's Door",
+      "path": "artifacts/Previews/MarketBenchmarks/894020_3.jpg",
+      "sha256": "2023938e5822c4f17f871dc2d844e7de74e1e7cb723ae0a6c8c5ecc9129dcca8"
+    },
+    {
+      "title": "OCTOPATH TRAVELER II",
+      "path": "artifacts/Previews/MarketBenchmarks/1971650_1.jpg",
+      "sha256": "0f0652296450bf01a012465550fca25e2dd95b081ef7acf3f99c7bbecb383d51"
+    },
+    {
+      "title": "OCTOPATH TRAVELER II",
+      "path": "artifacts/Previews/MarketBenchmarks/1971650_2.jpg",
+      "sha256": "311682e4ae0f781eaffd27658a96b9b7186787f09e67abcb5b7c5ad2fb7cd760"
+    },
+    {
+      "title": "OCTOPATH TRAVELER II",
+      "path": "artifacts/Previews/MarketBenchmarks/1971650_3.jpg",
+      "sha256": "697fb2e6d12e9b28cac9d1dcec5a79d4c876509bc30a87cd3c79e276930b4eb1"
+    },
+    {
+      "title": "DRAGON QUEST XI S",
+      "path": "artifacts/Previews/MarketBenchmarks/1295510_1.jpg",
+      "sha256": "23bd46f8a1913db2c45459aa131cf8ff98fdf3d7a8bda5e244cca702d58e7a08"
+    },
+    {
+      "title": "DRAGON QUEST XI S",
+      "path": "artifacts/Previews/MarketBenchmarks/1295510_2.jpg",
+      "sha256": "246390cc2d198098a7a3d148740085be938cf5066bffb5a75e15c2029c562653"
+    },
+    {
+      "title": "DRAGON QUEST XI S",
+      "path": "artifacts/Previews/MarketBenchmarks/1295510_3.jpg",
+      "sha256": "4ce0615db2bd814f6b03d4767c98385a4fca6224a00d34fd2fc70b4fd126a973"
+    }
+  ],
+  "score": {
+    "brightness": 1.0,
+    "contrast": 0.64,
+    "edge_density": 0.8,
+    "palette_bins_64": 1.0,
+    "saturation": 0.89,
+    "overall": 0.87
+  },
+  "verdict": "near_market_metric_range",
+  "production_approval_status": "candidate_needs_human_art_ip_review"
+}

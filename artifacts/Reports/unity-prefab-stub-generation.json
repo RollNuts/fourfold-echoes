@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "generator": "tools/AssetPipeline/write_unity_prefab_stubs.mjs",
+  "manifest": "artifacts/Reports/fourfold-model-pack.json",
+  "note": "Deterministic Unity prefab/meta stubs for offline validation. Unity Editor import still remains the authoritative integration step when licensing is available.",
+  "static_flag_policy": {
+    "rendering_static_flags": 22,
+    "nav_blocking_static_flags": 30,
+    "nav_bit": 8
+  },
+  "stats": {
+    "asset_count": 177,
+    "model_meta_created": 1,
+    "model_meta_preserved": 176,
+    "material_meta_created": 1,
+    "material_meta_preserved": 176,
+    "prefab_created": 1,
+    "prefab_updated": 176,
+    "prefab_meta_created": 1,
+    "prefab_meta_preserved": 176,
+    "meta_settings_updated": 0,
+    "folder_meta_created": 0,
+    "folder_meta_preserved": 1593,
+    "no_collider_prefabs": 37,
+    "trigger_prefabs": 2,
+    "static_prefabs": 128,
+    "nav_blocking_prefabs": 21,
+    "errors": []
+  }
+}

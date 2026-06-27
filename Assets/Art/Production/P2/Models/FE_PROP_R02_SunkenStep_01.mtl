@@ -1,0 +1,6 @@
+# Materials for FE_PROP_R02_SunkenStep_01
+newmtl r02_charcoal
+Kd 0.14118 0.14118 0.14902
+Ka 0.05000 0.05000 0.05000
+Ks 0.15000 0.15000 0.15000
+Ns 24

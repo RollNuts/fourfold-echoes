@@ -1,0 +1,1309 @@
+{
+  "version": 1,
+  "generated_at": "2026-06-26T19:16:36.048Z",
+  "source_manifest": "artifacts/Reports/fourfold-model-pack.json",
+  "scope": "P0 generated models only",
+  "note": "This is a first-pass model-density and usability audit, not final art approval.",
+  "p0_asset_count": 54,
+  "pass_count": 54,
+  "fail_count": 0,
+  "gate_status": "p0_model_density_gate_passed",
+  "rows": [
+    {
+      "name": "FE_CHAR_PLAYER_Hero_01",
+      "asset_kind": "Hero",
+      "category": "Character",
+      "builder": "hero",
+      "triangles_lod0": 508,
+      "part_count": 51,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 500,
+        "parts": 50,
+        "materialsMin": 4,
+        "anchors": 4
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_CHAR_PLAYER_SignatureLead_01",
+      "asset_kind": "Hero",
+      "category": "Character",
+      "builder": "pop_hero_lead",
+      "triangles_lod0": 524,
+      "part_count": 53,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 500,
+        "parts": 50,
+        "materialsMin": 4,
+        "anchors": 4
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_CHAR_PLAYER_HeavyGuard_01",
+      "asset_kind": "Hero",
+      "category": "Character",
+      "builder": "pop_playable_heavy",
+      "triangles_lod0": 524,
+      "part_count": 53,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 500,
+        "parts": 50,
+        "materialsMin": 4,
+        "anchors": 4
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_CHAR_PLAYER_StampCaster_01",
+      "asset_kind": "Hero",
+      "category": "Character",
+      "builder": "pop_playable_caster",
+      "triangles_lod0": 544,
+      "part_count": 56,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 500,
+        "parts": 50,
+        "materialsMin": 4,
+        "anchors": 4
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_CHAR_PLAYER_RangerScout_01",
+      "asset_kind": "Hero",
+      "category": "Character",
+      "builder": "pop_playable_ranger",
+      "triangles_lod0": 524,
+      "part_count": 53,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 500,
+        "parts": 50,
+        "materialsMin": 4,
+        "anchors": 4
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_CHAR_PLAYER_FieldMedic_01",
+      "asset_kind": "Hero",
+      "category": "Character",
+      "builder": "pop_playable_medic",
+      "triangles_lod0": 572,
+      "part_count": 58,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 500,
+        "parts": 50,
+        "materialsMin": 4,
+        "anchors": 4
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_COMMON_ExplorationTool_01",
+      "asset_kind": "Interactable",
+      "category": "Prop",
+      "builder": "exploration_tool",
+      "triangles_lod0": 216,
+      "part_count": 24,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 120,
+        "parts": 12,
+        "materialsMin": 2,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_CHAR_NPC_MerchantTray_01",
+      "asset_kind": "ServiceNPC",
+      "category": "NPC",
+      "builder": "pop_npc_merchant",
+      "triangles_lod0": 428,
+      "part_count": 45,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 300,
+        "parts": 32,
+        "materialsMin": 4,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_CHAR_NPC_UpgradeSmith_01",
+      "asset_kind": "ServiceNPC",
+      "category": "NPC",
+      "builder": "pop_npc_smith",
+      "triangles_lod0": 320,
+      "part_count": 32,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 300,
+        "parts": 32,
+        "materialsMin": 4,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_CHAR_NPC_CartographerGuide_01",
+      "asset_kind": "ServiceNPC",
+      "category": "NPC",
+      "builder": "pop_npc_cartographer",
+      "triangles_lod0": 332,
+      "part_count": 33,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 300,
+        "parts": 32,
+        "materialsMin": 4,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENEMY_MELEE_Shardling",
+      "asset_kind": "Combatant",
+      "category": "Enemy",
+      "builder": "melee_enemy",
+      "triangles_lod0": 344,
+      "part_count": 37,
+      "material_count": 3,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 230,
+        "parts": 24,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENEMY_RANGED_BloomSpitter",
+      "asset_kind": "Combatant",
+      "category": "Enemy",
+      "builder": "ranged_enemy",
+      "triangles_lod0": 316,
+      "part_count": 30,
+      "material_count": 3,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 230,
+        "parts": 24,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENEMY_MINIBOSS_RootBruiser",
+      "asset_kind": "Combatant",
+      "category": "Enemy",
+      "builder": "miniboss",
+      "triangles_lod0": 324,
+      "part_count": 36,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 230,
+        "parts": 24,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENEMY_R01_FoldBiter_01",
+      "asset_kind": "Combatant",
+      "category": "Enemy",
+      "builder": "pop_enemy_fodder",
+      "triangles_lod0": 256,
+      "part_count": 25,
+      "material_count": 3,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 230,
+        "parts": 24,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENEMY_R01_ShieldClamp_01",
+      "asset_kind": "Combatant",
+      "category": "Enemy",
+      "builder": "pop_enemy_shield",
+      "triangles_lod0": 312,
+      "part_count": 32,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 230,
+        "parts": 24,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENEMY_R01_LineSpitter_01",
+      "asset_kind": "Combatant",
+      "category": "Enemy",
+      "builder": "pop_enemy_turret",
+      "triangles_lod0": 284,
+      "part_count": 25,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 230,
+        "parts": 24,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENEMY_R01_BlockCharger_01",
+      "asset_kind": "Combatant",
+      "category": "Enemy",
+      "builder": "pop_enemy_charger",
+      "triangles_lod0": 272,
+      "part_count": 29,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 230,
+        "parts": 24,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENEMY_R01_GlyphSwarm_01",
+      "asset_kind": "Combatant",
+      "category": "Enemy",
+      "builder": "pop_enemy_swarm",
+      "triangles_lod0": 252,
+      "part_count": 24,
+      "material_count": 3,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 230,
+        "parts": 24,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_BOSS_R01_StampMiniboss_01",
+      "asset_kind": "Boss",
+      "category": "Boss",
+      "builder": "pop_miniboss_stamp",
+      "triangles_lod0": 384,
+      "part_count": 40,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 320,
+        "parts": 34,
+        "materialsMin": 4,
+        "anchors": 4
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_BOSS_01_RootWarden",
+      "asset_kind": "Boss",
+      "category": "Boss",
+      "builder": "boss_root",
+      "triangles_lod0": 352,
+      "part_count": 37,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 320,
+        "parts": 34,
+        "materialsMin": 4,
+        "anchors": 4
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_COMMON_ToolBlade_01",
+      "asset_kind": "Equipment",
+      "category": "Equipment",
+      "builder": "pop_weapon_blade",
+      "triangles_lod0": 104,
+      "part_count": 11,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 100,
+        "parts": 10,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_COMMON_BlockHammer_01",
+      "asset_kind": "Equipment",
+      "category": "Equipment",
+      "builder": "pop_weapon_hammer",
+      "triangles_lod0": 104,
+      "part_count": 11,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 100,
+        "parts": 10,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_COMMON_GuardClamp_01",
+      "asset_kind": "Equipment",
+      "category": "Equipment",
+      "builder": "pop_weapon_guard_clamp",
+      "triangles_lod0": 116,
+      "part_count": 12,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 100,
+        "parts": 10,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_COMMON_SealStamp_01",
+      "asset_kind": "Equipment",
+      "category": "Equipment",
+      "builder": "pop_weapon_seal_stamp",
+      "triangles_lod0": 124,
+      "part_count": 14,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 100,
+        "parts": 10,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_COMMON_RouteSpool_01",
+      "asset_kind": "Equipment",
+      "category": "Equipment",
+      "builder": "pop_weapon_route_spool",
+      "triangles_lod0": 148,
+      "part_count": 17,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 100,
+        "parts": 10,
+        "materialsMin": 3,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_CombatArena_2x2_01",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_combat_arena_2x2",
+      "triangles_lod0": 324,
+      "part_count": 31,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_COMMON_CheckpointSocketPad_01",
+      "asset_kind": "Interactable",
+      "category": "Prop",
+      "builder": "checkpoint_socket_pad",
+      "triangles_lod0": 252,
+      "part_count": 29,
+      "material_count": 3,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 120,
+        "parts": 12,
+        "materialsMin": 2,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_COMMON_RewardReceiverPad_01",
+      "asset_kind": "Interactable",
+      "category": "Prop",
+      "builder": "reward_receiver_pad",
+      "triangles_lod0": 252,
+      "part_count": 29,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 120,
+        "parts": 12,
+        "materialsMin": 2,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_R01_GimmickPedestal_01",
+      "asset_kind": "Interactable",
+      "category": "Prop",
+      "builder": "pedestal",
+      "triangles_lod0": 212,
+      "part_count": 22,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 120,
+        "parts": 12,
+        "materialsMin": 2,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_ShortcutBridge_01",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "shortcut_bridge",
+      "triangles_lod0": 668,
+      "part_count": 60,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_GrassFloor_1x1_Flat",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_grass_floor_1x1",
+      "triangles_lod0": 168,
+      "part_count": 14,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_GrassFloor_1x2_Straight",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_grass_floor_1x2",
+      "triangles_lod0": 168,
+      "part_count": 14,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_GrassFloor_2x2_Plaza",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_grass_floor_2x2",
+      "triangles_lod0": 168,
+      "part_count": 14,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_GrassEdge_Straight",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_grass_edge_straight",
+      "triangles_lod0": 180,
+      "part_count": 15,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_GrassEdge_OuterCorner",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_grass_edge_outer",
+      "triangles_lod0": 192,
+      "part_count": 16,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_GrassEdge_InnerCorner",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_grass_edge_inner",
+      "triangles_lod0": 192,
+      "part_count": 16,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_GrassHeight_Cliff_Up1",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_grass_cliff_up1",
+      "triangles_lod0": 180,
+      "part_count": 15,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_StoneFloor_1x1_Clean",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_stone_floor_1x1",
+      "triangles_lod0": 180,
+      "part_count": 15,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_StoneFloor_2x2_Clean",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_stone_floor_2x2",
+      "triangles_lod0": 180,
+      "part_count": 15,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_StoneFloor_1x1_Cracked",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_stone_floor_cracked",
+      "triangles_lod0": 204,
+      "part_count": 17,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_StoneWall_Straight_1x1",
+      "asset_kind": "Boundary",
+      "category": "Environment",
+      "builder": "block_stone_wall_straight",
+      "triangles_lod0": 180,
+      "part_count": 15,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 60,
+        "parts": 5,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_StoneWall_OuterCorner",
+      "asset_kind": "Boundary",
+      "category": "Environment",
+      "builder": "block_stone_wall_outer",
+      "triangles_lod0": 192,
+      "part_count": 16,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 60,
+        "parts": 5,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_StoneWall_InnerCorner",
+      "asset_kind": "Boundary",
+      "category": "Environment",
+      "builder": "block_stone_wall_inner",
+      "triangles_lod0": 192,
+      "part_count": 16,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 60,
+        "parts": 5,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_StoneArch_Doorway",
+      "asset_kind": "Boundary",
+      "category": "Environment",
+      "builder": "block_stone_arch_doorway",
+      "triangles_lod0": 204,
+      "part_count": 17,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 60,
+        "parts": 5,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_Stair_Straight_Up1",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_stair_straight_up1",
+      "triangles_lod0": 252,
+      "part_count": 21,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_Stair_CornerLanding_Up1",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_stair_corner_landing",
+      "triangles_lod0": 204,
+      "part_count": 17,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_WaterChannelEdge_Straight",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_water_edge_straight",
+      "triangles_lod0": 192,
+      "part_count": 16,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_BridgeWood_1x2",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_bridge_wood_1x2",
+      "triangles_lod0": 228,
+      "part_count": 19,
+      "material_count": 3,
+      "material_budget": 3,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_R01_BF_FenceRailing_Straight",
+      "asset_kind": "Boundary",
+      "category": "Environment",
+      "builder": "block_fence_railing_straight",
+      "triangles_lod0": 216,
+      "part_count": 18,
+      "material_count": 4,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 60,
+        "parts": 5,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_ENV_HUB_BF_HazardFloor_Spike",
+      "asset_kind": "Tile",
+      "category": "Environment",
+      "builder": "block_hazard_spike_floor",
+      "triangles_lod0": 240,
+      "part_count": 26,
+      "material_count": 5,
+      "material_budget": 5,
+      "required_threshold": {
+        "triangles": 48,
+        "parts": 4,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_R01_RootGate_01",
+      "asset_kind": "Boundary",
+      "category": "Prop",
+      "builder": "root_gate",
+      "triangles_lod0": 108,
+      "part_count": 10,
+      "material_count": 2,
+      "material_budget": 2,
+      "required_threshold": {
+        "triangles": 60,
+        "parts": 5,
+        "materialsMin": 2,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_PROP_COMMON_RelicChest_01",
+      "asset_kind": "Interactable",
+      "category": "Prop",
+      "builder": "chest",
+      "triangles_lod0": 144,
+      "part_count": 15,
+      "material_count": 3,
+      "material_budget": 4,
+      "required_threshold": {
+        "triangles": 120,
+        "parts": 12,
+        "materialsMin": 2,
+        "anchors": 3
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_RELIC_EmberSeed_01",
+      "asset_kind": "Pickup",
+      "category": "Prop",
+      "builder": "relic_seed",
+      "triangles_lod0": 70,
+      "part_count": 8,
+      "material_count": 1,
+      "material_budget": 1,
+      "required_threshold": {
+        "triangles": 60,
+        "parts": 6,
+        "materialsMin": 1,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    },
+    {
+      "name": "FE_RELIC_RootSigil_01",
+      "asset_kind": "Pickup",
+      "category": "Prop",
+      "builder": "relic_sigil",
+      "triangles_lod0": 112,
+      "part_count": 13,
+      "material_count": 1,
+      "material_budget": 1,
+      "required_threshold": {
+        "triangles": 60,
+        "parts": 6,
+        "materialsMin": 1,
+        "anchors": 2
+      },
+      "checks": {
+        "triangles": true,
+        "parts": true,
+        "materials": true,
+        "anchors": true,
+        "original_license": true
+      },
+      "pass": true
+    }
+  ]
+}

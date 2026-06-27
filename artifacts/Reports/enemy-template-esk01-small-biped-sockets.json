@@ -1,0 +1,159 @@
+{
+  "asset": "FE_ENEMY_TEMPLATE_ESK01_SmallBiped_01",
+  "skeleton_category": "ESK-01",
+  "movement_mode": "Walk biped",
+  "collider_profile": "capsule_actor",
+  "socket_plan": [
+    {
+      "name": "SOCKET_Ground",
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "purpose": "bottom-center pivot and spawn grounding"
+    },
+    {
+      "name": "SOCKET_Head",
+      "position": {
+        "x": 0.0,
+        "y": 1.12,
+        "z": 0.03
+      },
+      "purpose": "head or mask swap"
+    },
+    {
+      "name": "SOCKET_Mouth",
+      "position": {
+        "x": 0.0,
+        "y": 1.12,
+        "z": 0.225
+      },
+      "purpose": "short bite/spit origin for variants"
+    },
+    {
+      "name": "SOCKET_ChestCore",
+      "position": {
+        "x": 0.0,
+        "y": 0.8,
+        "z": 0.283
+      },
+      "purpose": "front core and main readability mark"
+    },
+    {
+      "name": "SOCKET_WeakPoint",
+      "position": {
+        "x": 0.0,
+        "y": 0.82,
+        "z": 0.31
+      },
+      "purpose": "targetable weak point, separate from root collider"
+    },
+    {
+      "name": "SOCKET_Back",
+      "position": {
+        "x": 0.0,
+        "y": 0.85,
+        "z": -0.205
+      },
+      "purpose": "backpack, shell, or rear weak attachment"
+    },
+    {
+      "name": "SOCKET_AttackOrigin",
+      "position": {
+        "x": 0.0,
+        "y": 0.83,
+        "z": 0.39
+      },
+      "purpose": "forward attack hitbox/VFX origin"
+    },
+    {
+      "name": "SOCKET_LeftHand",
+      "position": {
+        "x": -0.335,
+        "y": 0.47,
+        "z": 0.205
+      },
+      "purpose": "left hand weapon/tool/claw attachment"
+    },
+    {
+      "name": "SOCKET_RightHand",
+      "position": {
+        "x": 0.335,
+        "y": 0.47,
+        "z": 0.205
+      },
+      "purpose": "right hand weapon/tool/claw attachment"
+    },
+    {
+      "name": "SOCKET_Cast",
+      "position": {
+        "x": 0.0,
+        "y": 0.9,
+        "z": 0.36
+      },
+      "purpose": "cast warning and projectile startup"
+    },
+    {
+      "name": "SOCKET_HitVfx",
+      "position": {
+        "x": 0.0,
+        "y": 0.78,
+        "z": 0.12
+      },
+      "purpose": "impact and damage VFX center"
+    }
+  ],
+  "minimum_animation_clips": [
+    {
+      "name": "idle_loop",
+      "frames": 48,
+      "notes": "small weight shift; feet stay grounded"
+    },
+    {
+      "name": "move_loop",
+      "frames": 24,
+      "notes": "walk biped loop; no sliding"
+    },
+    {
+      "name": "turn_in_place",
+      "frames": 18,
+      "notes": "short readable turn for target reacquire"
+    },
+    {
+      "name": "attack_a",
+      "frames": 22,
+      "notes": "fast forward swipe from hand/attack origin"
+    },
+    {
+      "name": "attack_b",
+      "frames": 30,
+      "notes": "heavier lunge, windup visible by frame 8"
+    },
+    {
+      "name": "hit_light",
+      "frames": 12,
+      "notes": "small recoil, keeps feet under collider"
+    },
+    {
+      "name": "hit_heavy",
+      "frames": 20,
+      "notes": "strong recoil, weak-point flash"
+    },
+    {
+      "name": "stagger",
+      "frames": 34,
+      "notes": "temporary exposed weak-point state"
+    },
+    {
+      "name": "death",
+      "frames": 42,
+      "notes": "collapse without gore"
+    },
+    {
+      "name": "spawn",
+      "frames": 30,
+      "notes": "rise/pop-in from ground socket"
+    }
+  ]
+}
