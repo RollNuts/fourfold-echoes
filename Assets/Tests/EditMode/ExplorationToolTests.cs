@@ -81,6 +81,19 @@ namespace FourfoldEchoes.Tests.EditMode
             Assert.That(node.IsSolved, Is.False);
         }
 
+        [Test]
+        public void CORE_EXPLORATION_TOOL_DefaultInputIncludesControllerToolButton()
+        {
+            var toolObject = CreateObject("Exploration Tool");
+            var tool = toolObject.AddComponent<ExplorationTool>();
+
+            Assert.That(tool.useKey, Is.EqualTo(KeyCode.E));
+            Assert.That(tool.gamepadUseKey, Is.EqualTo(KeyCode.JoystickButton3));
+            Assert.That(tool.AcceptsUseKey(KeyCode.E), Is.True);
+            Assert.That(tool.AcceptsUseKey(KeyCode.JoystickButton3), Is.True);
+            Assert.That(tool.AcceptsUseKey(KeyCode.None), Is.False);
+        }
+
         private ExplorationNode CreateNode(string name, Vector3 position)
         {
             var nodeObject = CreateObject(name);
