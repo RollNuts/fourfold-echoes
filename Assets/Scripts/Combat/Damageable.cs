@@ -31,8 +31,11 @@ namespace FourfoldEchoes.Product
         public bool showHitFlash = true;
         public GameObject hitFlashPrefab;
         public Color hitFlashColor = new Color(1f, 0.92f, 0.28f, 0.95f);
+        public Color defeatFlashColor = new Color(1f, 0.36f, 0.14f, 1f);
         public float hitFlashDuration = 0.16f;
+        public float defeatFlashDuration = 0.28f;
         public float hitFlashScale = 0.36f;
+        public float defeatFlashScaleMultiplier = 1.55f;
         public float hitFlashHeight = 0.55f;
 
         [SerializeField]
@@ -109,11 +112,12 @@ namespace FourfoldEchoes.Product
 
             var applied = Mathf.Min(amount, currentHealth);
             currentHealth = Mathf.Max(0f, currentHealth - amount);
+            var defeated = currentHealth <= 0f;
             var info = new DamageInfo(applied, source, point);
-            TriggerHitFlash(point);
+            TriggerHitFlash(point, defeated);
             Damaged?.Invoke(this, info);
 
-            if (currentHealth <= 0f)
+            if (defeated)
             {
                 Died?.Invoke(this, info);
             }
@@ -126,7 +130,7 @@ namespace FourfoldEchoes.Product
             ApplyDamage(Mathf.Max(currentHealth, maxHealth), source, transform.position);
         }
 
-        private void TriggerHitFlash(Vector3 point)
+        private void TriggerHitFlash(Vector3 point, bool defeated)
         {
             if (!showHitFlash)
             {
@@ -143,9 +147,10 @@ namespace FourfoldEchoes.Product
             markerPosition.y = Mathf.Max(markerPosition.y, transform.position.y + Mathf.Max(0f, hitFlashHeight));
             hitFlashInstance.transform.position = markerPosition;
             hitFlashInstance.transform.rotation = Quaternion.identity;
-            hitFlashInstance.transform.localScale = Vector3.one * Mathf.Max(0.05f, hitFlashScale);
-            ApplyHitFlashColor();
-            hitFlashTimer = Mathf.Max(0.02f, hitFlashDuration);
+            var flashScale = hitFlashScale * (defeated ? Mathf.Max(1f, defeatFlashScaleMultiplier) : 1f);
+            hitFlashInstance.transform.localScale = Vector3.one * Mathf.Max(0.05f, flashScale);
+            ApplyHitFlashColor(defeated ? defeatFlashColor : hitFlashColor);
+            hitFlashTimer = Mathf.Max(0.02f, defeated ? defeatFlashDuration : hitFlashDuration);
             SetHitFlashVisible(true);
         }
 
@@ -163,7 +168,7 @@ namespace FourfoldEchoes.Product
             hitFlashInstance.transform.SetParent(transform, true);
             DisableHitFlashColliders(hitFlashInstance);
             hitFlashRenderers = hitFlashInstance.GetComponentsInChildren<Renderer>();
-            ApplyHitFlashColor();
+            ApplyHitFlashColor(hitFlashColor);
             hitFlashInstance.SetActive(false);
         }
 
@@ -176,7 +181,7 @@ namespace FourfoldEchoes.Product
             }
         }
 
-        private void ApplyHitFlashColor()
+        private void ApplyHitFlashColor(Color color)
         {
             if (hitFlashRenderers == null || hitFlashRenderers.Length == 0)
             {
@@ -197,8 +202,8 @@ namespace FourfoldEchoes.Product
                 }
 
                 targetRenderer.GetPropertyBlock(hitFlashBlock);
-                hitFlashBlock.SetColor(BaseColorProperty, hitFlashColor);
-                hitFlashBlock.SetColor(ColorProperty, hitFlashColor);
+                hitFlashBlock.SetColor(BaseColorProperty, color);
+                hitFlashBlock.SetColor(ColorProperty, color);
                 targetRenderer.SetPropertyBlock(hitFlashBlock);
             }
         }
