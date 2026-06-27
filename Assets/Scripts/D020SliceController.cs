@@ -376,10 +376,19 @@ namespace FourfoldEchoes.Product
             {
                 if (settingsOpen)
                 {
+                    PlayUiBack();
                     CloseSettings();
                     return;
                 }
 
+                if (paused)
+                {
+                    PlayUiBack();
+                }
+                else
+                {
+                    PlayUiPause();
+                }
                 SetPaused(!paused);
                 return;
             }
@@ -1226,6 +1235,7 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
+            var previousSelection = selectedPauseIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedPauseIndex = Wrap(selectedPauseIndex - 1, PauseMenuCount);
@@ -1233,6 +1243,10 @@ namespace FourfoldEchoes.Product
             else if (Pressed(KeyCode.DownArrow, KeyCode.S) || AxisPressed(-1f))
             {
                 selectedPauseIndex = Wrap(selectedPauseIndex + 1, PauseMenuCount);
+            }
+            if (selectedPauseIndex != previousSelection)
+            {
+                PlayUiSelect();
             }
 
             if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadAttackKey))
@@ -1243,18 +1257,21 @@ namespace FourfoldEchoes.Product
 
             if (Pressed(retryKey, gamepadRetryKey))
             {
+                PlayUiConfirm();
                 RequestRetryRun();
                 return;
             }
 
             if (Pressed(returnToTitleKey, gamepadReturnToTitleKey))
             {
+                PlayUiConfirm();
                 RequestReturnToTitle();
             }
         }
 
         private void UpdateFailureInput()
         {
+            var previousSelection = selectedFailureIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedFailureIndex = Wrap(selectedFailureIndex - 1, FailureMenuCount);
@@ -1263,15 +1280,21 @@ namespace FourfoldEchoes.Product
             {
                 selectedFailureIndex = Wrap(selectedFailureIndex + 1, FailureMenuCount);
             }
+            if (selectedFailureIndex != previousSelection)
+            {
+                PlayUiSelect();
+            }
 
             if (Pressed(retryKey, gamepadRetryKey))
             {
+                PlayUiConfirm();
                 RequestRetryRun();
                 return;
             }
 
             if (Pressed(returnToTitleKey, gamepadReturnToTitleKey))
             {
+                PlayUiConfirm();
                 RequestReturnToTitle();
                 return;
             }
@@ -1283,20 +1306,24 @@ namespace FourfoldEchoes.Product
 
             if (selectedFailureIndex == FailureRetry)
             {
+                PlayUiConfirm();
                 RequestRetryRun();
             }
             else if (selectedFailureIndex == FailureHub)
             {
+                PlayUiConfirm();
                 TryReturnToHubAfterFailure();
             }
             else
             {
+                PlayUiConfirm();
                 RequestReturnToTitle();
             }
         }
 
         private void UpdateSettingsInput()
         {
+            var previousSelection = selectedSettingIndex;
             if (Pressed(KeyCode.UpArrow, KeyCode.W) || AxisPressed(1f))
             {
                 selectedSettingIndex = Wrap(selectedSettingIndex - 1, SettingsCount);
@@ -1305,18 +1332,30 @@ namespace FourfoldEchoes.Product
             {
                 selectedSettingIndex = Wrap(selectedSettingIndex + 1, SettingsCount);
             }
+            if (selectedSettingIndex != previousSelection)
+            {
+                PlayUiSelect();
+            }
 
             if (Pressed(KeyCode.LeftArrow, KeyCode.A) || HorizontalAxisPressed(-1f))
             {
+                PlayUiSelect();
                 AdjustSelectedSetting(-1f);
             }
             else if (Pressed(KeyCode.RightArrow, KeyCode.D) || HorizontalAxisPressed(1f))
             {
+                PlayUiSelect();
                 AdjustSelectedSetting(1f);
             }
 
-            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadAttackKey) || Pressed(returnToTitleKey, gamepadReturnToTitleKey, gamepadDodgeKey))
+            if (Pressed(interactKey, KeyCode.Return, gamepadInteractKey, gamepadAttackKey))
             {
+                PlayUiConfirm();
+                CloseSettings();
+            }
+            else if (Pressed(returnToTitleKey, gamepadReturnToTitleKey, gamepadDodgeKey))
+            {
+                PlayUiBack();
                 CloseSettings();
             }
         }
@@ -1326,15 +1365,19 @@ namespace FourfoldEchoes.Product
             switch (selectedPauseIndex)
             {
                 case PauseResume:
+                    PlayUiConfirm();
                     SetPaused(false);
                     break;
                 case PauseSettings:
+                    PlayUiConfirm();
                     OpenSettings();
                     break;
                 case PauseRetry:
+                    PlayUiConfirm();
                     RequestRetryRun();
                     break;
                 case PauseTitle:
+                    PlayUiConfirm();
                     RequestReturnToTitle();
                     break;
             }
@@ -1396,6 +1439,7 @@ namespace FourfoldEchoes.Product
             {
                 var returnToPaused = pendingExitReturnToPaused;
                 pendingExitAction = PendingExitAction.None;
+                PlayUiBack();
                 SetPaused(returnToPaused);
                 return true;
             }
@@ -1417,6 +1461,7 @@ namespace FourfoldEchoes.Product
 
             var action = pendingExitAction;
             pendingExitAction = PendingExitAction.None;
+            PlayUiConfirm();
             if (action == PendingExitAction.RetryRun)
             {
                 ResetRun();
@@ -1427,6 +1472,26 @@ namespace FourfoldEchoes.Product
             }
 
             return true;
+        }
+
+        private void PlayUiSelect()
+        {
+            FourfoldUiAudio.PlaySelect(this, progressData);
+        }
+
+        private void PlayUiConfirm()
+        {
+            FourfoldUiAudio.PlayConfirm(this, progressData);
+        }
+
+        private void PlayUiBack()
+        {
+            FourfoldUiAudio.PlayBack(this, progressData);
+        }
+
+        private void PlayUiPause()
+        {
+            FourfoldUiAudio.PlayPause(this, progressData);
         }
 
         private void UpdateToolInputLock()

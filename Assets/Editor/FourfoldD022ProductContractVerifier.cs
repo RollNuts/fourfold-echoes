@@ -217,6 +217,10 @@ namespace FourfoldEchoes.Editor
             RequireContains(regionCopy, "Failed before hub return:", "Region failed-return reward loss UI");
             RequireContains(regionCopy, "ATTEMPT FAILED", "Region failure result UI");
             RequireContains(regionCopy, "Lumen Link", "Region combined reward-skill synergy");
+            RequireContains(regionCopy, "FourfoldUiAudio.PlaySelect", "Region menu select SFX");
+            RequireContains(regionCopy, "FourfoldUiAudio.PlayConfirm", "Region menu confirm SFX");
+            RequireContains(regionCopy, "FourfoldUiAudio.PlayBack", "Region menu back SFX");
+            RequireContains(regionCopy, "FourfoldUiAudio.PlayPause", "Region pause SFX");
 
             RequireContains(inputPrompts, "PreferGamepad", "Input prompt mode split");
             RequireContains(inputPrompts, "Move: D-pad/Left Stick", "Title controller prompt");
