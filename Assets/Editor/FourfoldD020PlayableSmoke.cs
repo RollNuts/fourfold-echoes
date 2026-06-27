@@ -19,6 +19,7 @@ namespace FourfoldEchoes.Editor
             var node = UnityEngine.Object.FindFirstObjectByType<ExplorationNode>();
             var reward = UnityEngine.Object.FindFirstObjectByType<D020RelicReward>();
             var progressSave = UnityEngine.Object.FindFirstObjectByType<D020ProgressSave>();
+            var hud = UnityEngine.Object.FindFirstObjectByType<D020HudController>();
             var shortcut = FindSceneObject("D020 Shortcut Route");
             var camera = Camera.main;
 
@@ -28,10 +29,16 @@ namespace FourfoldEchoes.Editor
             Require(node != null, "D-020 smoke requires an ExplorationNode.");
             Require(reward != null, "D-020 smoke requires one collectible reward.");
             Require(progressSave != null, "D-020 smoke requires a progress save component.");
+            Require(hud != null, "D-020 smoke requires a minimal HUD component.");
             Require(shortcut != null, "D-020 smoke requires one shortcut response object.");
             Require(camera != null && camera.orthographic, "D-020 smoke requires a fixed orthographic top-down camera.");
             Require(reward.GetComponentsInChildren<Renderer>(true).Length > 0, "D-020 reward has no readable renderer.");
             RequireCoreSfx();
+
+            hud.RefreshNow();
+            Require(hud.ToolRead == "Tool Ready", "HUD did not expose initial tool readiness.");
+            Require(hud.RewardRead == "Relic Locked", "HUD did not expose initial reward lock state.");
+            Require(hud.PromptRead == "Use tool on sigil", "HUD did not expose the initial one-tool prompt.");
 
             var start = player.transform.position;
             player.Tick(new Vector2(1f, 1f), false, false, 0.5f);
@@ -61,6 +68,8 @@ namespace FourfoldEchoes.Editor
             Require(node.IsSolved, "Exploration node was not solved by the tool.");
             Require(node.responseTarget != null && node.responseTarget.activeSelf, "Exploration tool did not reveal the shortcut response.");
             Require(node.activeRead != null && node.activeRead.activeSelf, "Exploration tool did not reveal the node active read.");
+            hud.RefreshNow();
+            Require(hud.ToolRead != "Tool Ready", "HUD did not expose tool cooldown after use.");
 
             reward.ResetReward();
             player.ResetForSmoke(reward.transform.position + new Vector3(0f, 0f, -0.55f));
@@ -68,20 +77,27 @@ namespace FourfoldEchoes.Editor
             Require(reward.IsCollected, "Reward did not stay collected after pickup.");
             Require(reward.idleRead == null || !reward.idleRead.activeSelf, "Reward idle read stayed visible after pickup.");
             Require(reward.collectedRead == null || reward.collectedRead.activeSelf, "Reward collected read did not activate after pickup.");
+            hud.RefreshNow();
+            Require(hud.RewardRead == "Relic Claimed", "HUD did not expose collected reward state.");
+            Require(hud.PromptRead == "Relic secured", "HUD did not expose the secured relic prompt.");
 
             var smokeSavePath = Path.Combine(Path.GetTempPath(), "fourfold-d020-progress-smoke.json");
             TryDeleteSmokeSave(smokeSavePath);
             progressSave.overrideFilePath = smokeSavePath;
             Require(progressSave.SaveNow(), "Progress save did not write solved shortcut and collected reward state.");
+            hud.RefreshNow();
+            Require(hud.ProgressRead == "Progress S1 R1", "HUD did not expose saved shortcut and reward counts.");
             node.ResetNode();
             reward.ResetReward();
             Require(!node.IsSolved && !reward.IsCollected, "Progress reset setup failed before load.");
             Require(progressSave.LoadNow(), "Progress save did not load the saved state.");
             Require(node.IsSolved, "Progress save did not restore the shortcut flag.");
             Require(reward.IsCollected, "Progress save did not restore the collected reward flag.");
+            hud.RefreshNow();
+            Require(hud.ProgressRead == "Progress S1 R1", "HUD did not expose loaded shortcut and reward counts.");
             Require(progressSave.ClearSave(false), "Progress save cleanup failed.");
 
-            Debug.Log("FOURFOLD D-020 playable smoke passed: movement, fixed camera, dodge, normal attack, enemy defeat, one-tool shortcut response, reward pickup, local progress save/load, and core SFX assets.");
+            Debug.Log("FOURFOLD D-020 playable smoke passed: movement, fixed camera, dodge, normal attack, enemy defeat, one-tool shortcut response, reward pickup, minimal HUD, local progress save/load, and core SFX assets.");
         }
 
         private static void RequireCoreSfx()
