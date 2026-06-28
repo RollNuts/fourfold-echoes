@@ -1,0 +1,155 @@
+{
+  "asset_id": "art.environment.reward_relic_pickups.v0_1_0",
+  "family": "FoldedReliquary",
+  "subject": "RewardRelicPickup",
+  "version": "0.1.0",
+  "adopted_concept": "Transparent 2D and 3D-facing reward pickup decals for the two vertical-slice relic rewards and their claim states.",
+  "status": "production-intent draft",
+  "source_strategy": "repository-authored procedural raster generation",
+  "brand_line_id": "folded_reliquary",
+  "product_line_role": "Reward Reliquary / Relic pickup state read",
+  "required_shape_tokens": [
+    "small folded relic vessel",
+    "pickup disc",
+    "lid/petal opening",
+    "reward socket",
+    "single functional reward signal thread"
+  ],
+  "motif_limit_policy": "Reward differences stay in relic silhouette, lid/petal opening, pickup disc, and signal placement; no generic coin, key, crown, chest, text, or inventory icon motif.",
+  "asset_request": {
+    "source": "inferred because no visual asset_request.yaml for this reward relic pickup family was present in the checkout",
+    "out_of_scope_asset_requests": [
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/asset_request.yaml is a model/rig animation request and was not used for this reward pickup decal request."
+    ],
+    "usage_context": "FOURFOLD ECHOES vertical-slice reward pickup read for FE_RELIC_EmberSeed_01, FE_RELIC_RootSigil_01, RelicChest reward glow, and reward receiver pad feedback",
+    "target_platforms": [
+      "Steam Windows",
+      "Steam Deck-oriented PC handheld readability"
+    ],
+    "constraints": {
+      "size_px": [
+        64,
+        128,
+        256,
+        512
+      ],
+      "texture_budget": "512px atlas for BaseColor/Mask/Normal/Emissive plus 256px per-state maps and 128px transparent decals",
+      "background": "transparent outside relic silhouette",
+      "text": "none",
+      "tile_mode": "not a loop tile; clamp transparent decals"
+    }
+  },
+  "style_ref": [
+    "docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md",
+    "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+    "docs/Art/NEXT_ASSET_BATCH.md",
+    "docs/Product/VERTICAL_SLICE_CONTENT.md"
+  ],
+  "style_tokens": [
+    "folded_reliquary",
+    "reward_reliquary",
+    "relic_pickup",
+    "pickup_disc",
+    "reward_socket",
+    "claim_state",
+    "fourfold_inlay",
+    "chunk_tabs",
+    "transparent_decal",
+    "pbr_intent"
+  ],
+  "tags": [
+    "environment",
+    "reward",
+    "relic",
+    "pickup",
+    "ember-seed",
+    "root-sigil",
+    "state-decal",
+    "transparent-png",
+    "folded-reliquary",
+    "runtime-art",
+    "pbr-intent",
+    "vertical-slice-reward"
+  ],
+  "license_spdx": "LicenseRef-RepositoryAuthored-Proprietary",
+  "prompt_hash": "17ed63bfa5a77fc2731723fe1614e950319e70361c4473d250a488168c0d4184",
+  "prompt_contract": "Use case: stylized-concept\nAsset type: Unity transparent reward pickup decals plus 3D material atlas maps\nPrimary request: compact FOURFOLD ECHOES folded reliquary reward relic pickups for two vertical-slice relic rewards, no text, no decorative background\nStyle/medium: procedural 2D raster, transparent top-down pickup decal and PBR-intent texture maps in the folded reliquary miniature product line\nSubject: EmberSeed and RootSigil reward pickup states built from small folded relic vessels, chunky tabs, lid/petal opening, pickup disc, and one functional reward signal thread\nComposition/framing: centered top-down silhouette, generous transparent padding, readable at 64px/128px/256px, 512px atlas quadrants\nColor palette: warm amber EmberSeed, muted root-green RootSigil, ivory/gold folded slab material, cool shadow support; saturated but not neon\nMaterials/textures: broad color planes, bevel-like normal detail, sparse reward emission, no coin icon, no generic treasure chest, no photoreal dirt, no noisy scan texture\nConstraints: PNG maps, transparent outside silhouette, no labels, no letters, no watermark, no external IP style names, variations differ by silhouette, lid/petal opening, material temperature, socket shape, and signal placement rather than color alone\nAvoid: generic coin, generic key, inventory icon, magic rune circle, crown, treasure chest silhouette, text, fine decorative clutter, external-IP motif",
+  "library_path_proposal": "unity-game-asset-library/Runtime/Art/Environment/Rewards/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/",
+  "unity_runtime_path": "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/",
+  "unity_import": {
+    "texture_type": "Sprite (2D and UI) for transparent pickup decals; Default for BaseColor/Mask/Emissive; Normal Map for Normal textures",
+    "pixels_per_unit": 100,
+    "max_texture_size": 512,
+    "alpha_is_transparency": true,
+    "wrap_mode": "Clamp",
+    "filter_mode": "Bilinear"
+  },
+  "texture_maps": {
+    "BaseColor": "ART_FoldedReliquary_RewardRelicPickupAtlas_BaseColor_v0.1.0.png",
+    "Mask": "ART_FoldedReliquary_RewardRelicPickupAtlas_Mask_v0.1.0.png",
+    "Normal": "ART_FoldedReliquary_RewardRelicPickupAtlas_Normal_v0.1.0.png",
+    "Emissive": "ART_FoldedReliquary_RewardRelicPickupAtlas_Emissive_v0.1.0.png",
+    "Mask_channels": "R=occlusion/silhouette depth, G=roughness group, B=emissive mask, A=alpha/coverage"
+  },
+  "variants": [
+    {
+      "name": "EmberSeedIdle",
+      "difference": "warm seed pickup, closed folded pod, amber reward core held low"
+    },
+    {
+      "name": "EmberSeedClaim",
+      "difference": "warm seed pickup, opened pod petals, brighter claim glow without becoming a generic coin"
+    },
+    {
+      "name": "RootSigilIdle",
+      "difference": "root sigil pickup, ring/sigil silhouette, low green reward socket"
+    },
+    {
+      "name": "RootSigilClaim",
+      "difference": "root sigil pickup, opened ring tabs and resolved green claim thread"
+    }
+  ],
+  "files": [
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedIdle_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedIdle128_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedIdle_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedIdle_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedIdle_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedIdle_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedClaim_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedClaim128_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedClaim_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedClaim_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedClaim_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_EmberSeedClaim_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilIdle_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilIdle128_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilIdle_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilIdle_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilIdle_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilIdle_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilClaim_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilClaim128_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilClaim_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilClaim_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilClaim_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickup_RootSigilClaim_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickupAtlas_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickupAtlas_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickupAtlas_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/ART_FoldedReliquary_RewardRelicPickupAtlas_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0/preview.png"
+  ],
+  "qc": {
+    "transparent_corners": true,
+    "no_text_or_background": true,
+    "min_canvas_margin_px_256": 8,
+    "readability_checks": [
+      "64px preview row included in preview.png",
+      "128px and 256px transparent decals exported",
+      "512px atlas maps exported"
+    ],
+    "edge_bleed": "transparent outside silhouette; no colored pixels on image border",
+    "tile_seam": "not applicable; clamp transparent decals, not loop tiles"
+  }
+}
