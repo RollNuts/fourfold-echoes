@@ -6,6 +6,10 @@ namespace FourfoldEchoes.Product
     public sealed class TitleSceneController : MonoBehaviour
     {
         public Camera titleCamera;
+        public AudioSource musicSource;
+        public AudioSource musicLoopSource;
+        public AudioClip titleIntroMusicClip;
+        public AudioClip titleLoopMusicClip;
 
         [Header("Input")]
         public KeyCode upKey = KeyCode.UpArrow;
@@ -42,8 +46,12 @@ namespace FourfoldEchoes.Product
         private int selectedSettingIndex;
         private float axisRepeatTimer;
         private FourfoldProgressData progressData;
+        private bool titleIntroStarted;
+        private bool titleLoopStarted;
+        private double titleLoopScheduledDspTime = -1d;
 
         public string LastRequestedUnityScene { get; private set; } = string.Empty;
+        public bool HasTitleMusicBinding => musicSource != null && musicLoopSource != null && titleIntroMusicClip != null && titleLoopMusicClip != null;
 
         public static bool LayoutFitsResolution(int screenWidth, int screenHeight, bool settingsOpen, out string reason)
         {
@@ -88,11 +96,13 @@ namespace FourfoldEchoes.Product
             }
 
             LoadProgress();
+            EnsureTitleMusicSource();
         }
 
         private void Update()
         {
             FourfoldInputPrompts.ObserveFrameInput();
+            UpdateTitleMusic();
             axisRepeatTimer = Mathf.Max(0f, axisRepeatTimer - Time.unscaledDeltaTime);
             if (settingsOpen)
             {
@@ -553,6 +563,112 @@ namespace FourfoldEchoes.Product
 
             progressData.settingsInitialized = true;
             FourfoldProgressSave.Save(progressData);
+            ApplyTitleMusicVolume();
+        }
+
+        private void UpdateTitleMusic()
+        {
+            if (!EnsureTitleMusicSource())
+            {
+                return;
+            }
+
+            ApplyTitleMusicVolume();
+            if (!titleIntroStarted)
+            {
+                ScheduleTitleMusic();
+                return;
+            }
+
+            if (titleLoopStarted
+                && musicLoopSource != null
+                && !musicLoopSource.isPlaying
+                && AudioSettings.dspTime > titleLoopScheduledDspTime + 0.25d)
+            {
+                PlayTitleLoopNow();
+            }
+        }
+
+        private bool EnsureTitleMusicSource()
+        {
+            if (musicSource == null)
+            {
+                var sources = GetComponents<AudioSource>();
+                musicSource = sources.Length > 1 ? sources[1] : null;
+                musicLoopSource = sources.Length > 2 ? sources[2] : musicLoopSource;
+            }
+
+            if (musicSource == null)
+            {
+                musicSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            if (musicLoopSource == null)
+            {
+                musicLoopSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            ConfigureTitleMusicSource(musicSource);
+            ConfigureTitleMusicSource(musicLoopSource);
+            ApplyTitleMusicVolume();
+            return titleIntroMusicClip != null && titleLoopMusicClip != null;
+        }
+
+        private void ScheduleTitleMusic()
+        {
+            titleIntroStarted = true;
+            var startTime = AudioSettings.dspTime + 0.05d;
+            if (titleIntroMusicClip != null)
+            {
+                musicSource.clip = titleIntroMusicClip;
+                musicSource.loop = false;
+                musicSource.PlayScheduled(startTime);
+            }
+
+            titleLoopStarted = true;
+            titleLoopScheduledDspTime = titleIntroMusicClip != null ? startTime + titleIntroMusicClip.length : startTime;
+            musicLoopSource.clip = titleLoopMusicClip;
+            musicLoopSource.loop = true;
+            musicLoopSource.PlayScheduled(titleLoopScheduledDspTime);
+        }
+
+        private static void ConfigureTitleMusicSource(AudioSource source)
+        {
+            if (source == null)
+            {
+                return;
+            }
+
+            source.playOnAwake = false;
+            source.spatialBlend = 0f;
+            source.dopplerLevel = 0f;
+            source.ignoreListenerPause = true;
+        }
+
+        private void PlayTitleLoopNow()
+        {
+            titleLoopScheduledDspTime = AudioSettings.dspTime;
+            musicLoopSource.clip = titleLoopMusicClip;
+            musicLoopSource.loop = true;
+            musicLoopSource.Play();
+        }
+
+        private void ApplyTitleMusicVolume()
+        {
+            if (musicSource == null)
+            {
+                return;
+            }
+
+            var data = progressData ?? FourfoldProgressSave.Load();
+            var masterVolume = data != null ? data.masterVolume : 1f;
+            var musicVolume = data != null ? data.musicVolume : 1f;
+            var volume = 0.22f * Mathf.Clamp01(masterVolume) * Mathf.Clamp01(musicVolume);
+            musicSource.volume = volume;
+            if (musicLoopSource != null)
+            {
+                musicLoopSource.volume = volume;
+            }
         }
 
         private static FourfoldProgressData NewGameProgress()
