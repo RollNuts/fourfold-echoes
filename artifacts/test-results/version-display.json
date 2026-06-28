@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "generatedAtUtc": "2026-06-28T14:52:08.206Z",
+  "qaGate": "Build version and commit SHA are visible in debug or credits",
+  "buildIdentity": {
+    "version": "1.0",
+    "commit": "bca6ae661c12",
+    "fullCommit": "bca6ae661c12a7039fdcf5221c2927df13134816",
+    "branch": "codex/build-evidence-link-20260628",
+    "source": {
+      "version": "ProjectSettings.bundleVersion",
+      "commit": "git"
+    },
+    "titleBuildLine": "Build 1.0 / commit bca6ae661c12"
+  },
+  "runtimeDisplayContracts": [
+    {
+      "path": "Assets/Scripts/FourfoldBuildInfo.cs",
+      "exists": true,
+      "requiredSnippets": [
+        {
+          "snippet": "Resources.Load<TextAsset>(ResourceName)",
+          "present": true
+        },
+        {
+          "snippet": "Build {BuildVersion} / commit {ShortCommitSha}",
+          "present": true
+        }
+      ]
+    },
+    {
+      "path": "Assets/Scripts/TitleSceneController.cs",
+      "exists": true,
+      "requiredSnippets": [
+        {
+          "snippet": "FourfoldBuildInfo.TitleBuildLine",
+          "present": true
+        },
+        {
+          "snippet": "BuildInfoRect",
+          "present": true
+        }
+      ]
+    },
+    {
+      "path": "Assets/Editor/FourfoldUnityBuild.cs",
+      "exists": true,
+      "requiredSnippets": [
+        {
+          "snippet": "FOURFOLD_BUILD_VERSION",
+          "present": true
+        },
+        {
+          "snippet": "FOURFOLD_COMMIT_SHA",
+          "present": true
+        },
+        {
+          "snippet": "FourfoldBuildInfo.txt",
+          "present": true
+        }
+      ]
+    }
+  ],
+  "status": "evidence_ready",
+  "needsManualFollowUp": [
+    "Capture a clean-launch player run and confirm the title screen line is readable in the built player.",
+    "Attach the same build identity to future clean-launch and store-capture manifests."
+  ]
+}

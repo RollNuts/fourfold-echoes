@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T18:49:38.552Z",
+  "generatedAtUtc": "2026-06-28T14:52:08.206Z",
   "scope": "D-020 vertical slice evidence snapshot",
   "caveat": "This is not a runtime profiler capture. It summarizes current scene, asset, and screenshot evidence until a real playthrough/profiler scenario exists.",
   "targets": {
@@ -9,40 +9,40 @@
     "ps5Readiness": "asset budgets and platform-safe structure only; no PS5 build claim"
   },
   "unityMetrics": {
-    "sceneObjects": 116,
-    "sceneRenderers": 103,
-    "sceneAudioSources": 1,
+    "sceneObjects": 533,
+    "sceneRenderers": 508,
+    "sceneAudioSources": 2,
     "sceneLodGroups": 0,
     "sceneMissingMaterials": 0,
     "sceneMissingScripts": 0,
     "sceneNegativeScaleObjects": 0,
-    "materialAssets": 10,
+    "materialAssets": 75,
     "textureAssets": 0,
-    "audioClipAssets": 7,
-    "meshAssets": 0,
-    "prefabAssets": 0,
+    "audioClipAssets": 9,
+    "meshAssets": 35,
+    "prefabAssets": 33,
     "prefabsWithLod": 0,
-    "sceneAssets": 1
+    "sceneAssets": 4
   },
   "visualEvidence": [
     {
       "path": "artifacts/Previews/d020-slice-camera.png",
       "exists": true,
-      "sizeBytes": 196672,
+      "sizeBytes": 250097,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-tool-node-read.png",
       "exists": true,
-      "sizeBytes": 293457,
+      "sizeBytes": 404504,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-reward-read.png",
       "exists": true,
-      "sizeBytes": 326514,
+      "sizeBytes": 357193,
       "width": 1280,
       "height": 800
     }
@@ -50,28 +50,39 @@
   "d020Screenshot": {
     "path": "artifacts/Previews/d020-slice-camera.png",
     "exists": true,
-    "sizeBytes": 196672,
+    "sizeBytes": 250097,
     "width": 1280,
     "height": 800
   },
   "d020ToolRead": {
     "path": "artifacts/Previews/d020-tool-node-read.png",
     "exists": true,
-    "sizeBytes": 293457,
+    "sizeBytes": 404504,
     "width": 1280,
     "height": 800
   },
   "d020RewardRead": {
     "path": "artifacts/Previews/d020-reward-read.png",
     "exists": true,
-    "sizeBytes": 326514,
+    "sizeBytes": 357193,
     "width": 1280,
     "height": 800
   },
   "buildArtifact": {
     "path": "Build/D020Slice/macos/FourfoldEchoesD020Slice.app",
-    "exists": true,
-    "sizeBytes": 106559656
+    "exists": false,
+    "sizeBytes": 0
+  },
+  "buildIdentity": {
+    "version": "1.0",
+    "commit": "bca6ae661c12",
+    "fullCommit": "bca6ae661c12a7039fdcf5221c2927df13134816",
+    "branch": "codex/build-evidence-link-20260628",
+    "source": {
+      "version": "ProjectSettings.bundleVersion",
+      "commit": "git"
+    },
+    "titleBuildLine": "Build 1.0 / commit bca6ae661c12"
   },
   "d020Runtime": {
     "scenePath": "Assets/Scenes/D020VerticalSlice.unity",

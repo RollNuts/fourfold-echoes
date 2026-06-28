@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -25,6 +26,8 @@ const audioFiles = findAudioFiles("Assets/Audio");
 const audioFileSet = new Set(audioFiles);
 const registeredCues = audioRows.map((row) => buildAudioCue(row, audioFileSet));
 const audioFileAudit = buildAudioFileAudit(registeredCues, audioFiles);
+const buildIdentity = buildBuildIdentity();
+const versionDisplayEvidence = buildVersionDisplayEvidence(buildIdentity);
 
 const performanceSnapshot = {
   version: 1,
@@ -42,6 +45,7 @@ const performanceSnapshot = {
   d020ToolRead,
   d020RewardRead,
   buildArtifact,
+  buildIdentity,
   d020Runtime: {
     scenePath: d020Scene.path,
     sceneExists: d020Scene.exists,
@@ -87,6 +91,7 @@ const finalStatus = {
     visualEvidence: requiredVisualEvidence.filter((evidence) => evidence.exists).map((evidence) => evidence.path),
     performanceSnapshot: "artifacts/Reports/performance-snapshot.json",
     audioInventory: "artifacts/Reports/audio-inventory.json",
+    versionDisplayReport: "artifacts/test-results/version-display.json",
     d020ToolRuntime: d020ToolRuntime.exists ? d020ToolRuntime.path : null,
     buildArtifact: buildArtifact.exists ? buildArtifact.path : null
   },
@@ -113,10 +118,12 @@ writeJson("artifacts/Reports/performance-snapshot.json", performanceSnapshot);
 writeMarkdown("artifacts/Reports/performance-snapshot.md", buildPerformanceMarkdown(performanceSnapshot));
 writeJson("artifacts/Reports/audio-inventory.json", audioInventory);
 writeMarkdown("artifacts/Reports/audio-inventory.md", buildAudioMarkdown(audioInventory));
+writeJson("artifacts/test-results/version-display.json", versionDisplayEvidence);
+writeMarkdown("artifacts/test-results/version-display.md", buildVersionDisplayMarkdown(versionDisplayEvidence));
 writeJson("artifacts/Reports/final-status-report.json", finalStatus);
 writeMarkdown("artifacts/Reports/final-status-report.md", buildStatusMarkdown(finalStatus));
 
-console.log("[market-reports] wrote performance, audio inventory, and final status reports.");
+console.log("[market-reports] wrote performance, audio inventory, version display, and final status reports.");
 
 function readJson(relativePath) {
   const fullPath = path.join(repo, relativePath);
@@ -128,6 +135,11 @@ function readText(relativePath) {
   const fullPath = path.join(repo, relativePath);
   if (!fs.existsSync(fullPath)) return "";
   return fs.readFileSync(fullPath, "utf8");
+}
+
+function readRequiredText(relativePath) {
+  const fullPath = path.join(repo, relativePath);
+  return fs.existsSync(fullPath) ? fs.readFileSync(fullPath, "utf8") : "";
 }
 
 function writeJson(relativePath, value) {
@@ -183,6 +195,18 @@ function inspectPath(relativePath) {
     path: relativePath,
     exists: true,
     sizeBytes: pathSize(fullPath)
+  };
+}
+
+function inspectTextContract(relativePath, snippets) {
+  const text = readRequiredText(relativePath);
+  return {
+    path: relativePath,
+    exists: Boolean(text),
+    requiredSnippets: snippets.map((snippet) => ({
+      snippet,
+      present: text.includes(snippet)
+    }))
   };
 }
 
@@ -308,6 +332,90 @@ function buildAudioKnownGaps(cues, audit) {
   return gaps;
 }
 
+function buildBuildIdentity() {
+  const versionFromEnv = cleanBuildInfoValue(process.env.FOURFOLD_BUILD_VERSION);
+  const versionFromProject = readProjectBundleVersion();
+  const commitFromEnv = cleanBuildInfoValue(process.env.FOURFOLD_COMMIT_SHA);
+  const fullCommitFromGit = readGitValue(["rev-parse", "HEAD"]);
+  const shortCommitFromGit = readGitValue(["rev-parse", "--short=12", "HEAD"]);
+  const branchName = readGitValue(["branch", "--show-current"]) || "unknown";
+  const version = versionFromEnv || versionFromProject || "0.1.0-dev";
+  const shortCommit = trimCommit(commitFromEnv || shortCommitFromGit || fullCommitFromGit || "local-dev");
+  const fullCommit = fullCommitFromGit || commitFromEnv || shortCommit;
+
+  return {
+    version,
+    commit: shortCommit,
+    fullCommit,
+    branch: branchName,
+    source: {
+      version: versionFromEnv ? "FOURFOLD_BUILD_VERSION" : (versionFromProject ? "ProjectSettings.bundleVersion" : "fallback"),
+      commit: commitFromEnv ? "FOURFOLD_COMMIT_SHA" : (shortCommitFromGit || fullCommitFromGit ? "git" : "fallback")
+    },
+    titleBuildLine: `Build ${version} / commit ${shortCommit}`
+  };
+}
+
+function buildVersionDisplayEvidence(identity) {
+  const buildInfoContract = inspectTextContract("Assets/Scripts/FourfoldBuildInfo.cs", [
+    "Resources.Load<TextAsset>(ResourceName)",
+    "Build {BuildVersion} / commit {ShortCommitSha}"
+  ]);
+  const titleContract = inspectTextContract("Assets/Scripts/TitleSceneController.cs", [
+    "FourfoldBuildInfo.TitleBuildLine",
+    "BuildInfoRect"
+  ]);
+  const buildContract = inspectTextContract("Assets/Editor/FourfoldUnityBuild.cs", [
+    "FOURFOLD_BUILD_VERSION",
+    "FOURFOLD_COMMIT_SHA",
+    "FourfoldBuildInfo.txt"
+  ]);
+  const contracts = [buildInfoContract, titleContract, buildContract];
+  const allContractsPresent = contracts.every((contract) =>
+    contract.exists && contract.requiredSnippets.every((snippet) => snippet.present));
+
+  return {
+    version: 1,
+    generatedAtUtc,
+    qaGate: "Build version and commit SHA are visible in debug or credits",
+    buildIdentity: identity,
+    runtimeDisplayContracts: contracts,
+    status: allContractsPresent ? "evidence_ready" : "missing_runtime_contract",
+    needsManualFollowUp: [
+      "Capture a clean-launch player run and confirm the title screen line is readable in the built player.",
+      "Attach the same build identity to future clean-launch and store-capture manifests."
+    ]
+  };
+}
+
+function readProjectBundleVersion() {
+  const text = readRequiredText("ProjectSettings/ProjectSettings.asset");
+  const match = text.match(/^\s*bundleVersion:\s*(.+?)\s*$/m);
+  return match ? cleanBuildInfoValue(match[1]) : "";
+}
+
+function readGitValue(args) {
+  try {
+    return cleanBuildInfoValue(execFileSync("git", args, {
+      cwd: repo,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      timeout: 3000
+    }));
+  } catch {
+    return "";
+  }
+}
+
+function trimCommit(value) {
+  const commit = cleanBuildInfoValue(value);
+  return commit.length > 12 ? commit.slice(0, 12) : commit;
+}
+
+function cleanBuildInfoValue(value) {
+  return (value ?? "").replace(/\r|\n/g, " ").trim();
+}
+
 function buildPerformanceMarkdown(snapshot) {
   const metrics = snapshot.unityMetrics ?? {};
   const buildSizeMb = snapshot.buildArtifact.exists ? (snapshot.buildArtifact.sizeBytes / 1024 / 1024).toFixed(1) : "n/a";
@@ -330,6 +438,8 @@ ${snapshot.caveat}
 | Missing materials | ${metrics.sceneMissingMaterials ?? "n/a"} |
 | Missing scripts | ${metrics.sceneMissingScripts ?? "n/a"} |
 | Build artifact size | ${buildSizeMb} mb |
+| Build version | ${snapshot.buildIdentity.version} |
+| Commit | ${snapshot.buildIdentity.commit} |
 | D-020 screenshot | ${screenshotSize} |
 | D-020 runtime proof | ${snapshot.d020Runtime?.status ?? "n/a"} |
 
@@ -341,6 +451,45 @@ ${snapshot.visualEvidence.map((evidence) => `- \`${evidence.path}\`: ${evidence.
 
 ${snapshot.knownGaps.map((gap) => `- ${gap}`).join("\n")}
 `;
+}
+
+function buildVersionDisplayMarkdown(evidence) {
+  return `# Version Display Evidence
+
+Generated UTC: \`${evidence.generatedAtUtc}\`
+
+QA gate: ${evidence.qaGate}
+
+## Build Identity
+
+| Field | Value |
+| --- | --- |
+| Version | \`${evidence.buildIdentity.version}\` |
+| Commit | \`${evidence.buildIdentity.commit}\` |
+| Full commit | \`${evidence.buildIdentity.fullCommit}\` |
+| Branch | \`${evidence.buildIdentity.branch}\` |
+| Title line | \`${evidence.buildIdentity.titleBuildLine}\` |
+
+## Runtime Contracts
+
+${evidence.runtimeDisplayContracts.map(buildRuntimeContractMarkdown).join("\n\n")}
+
+## Status
+
+\`${evidence.status}\`
+
+## Follow Up
+
+${evidence.needsManualFollowUp.map((item) => `- ${item}`).join("\n")}
+`;
+}
+
+function buildRuntimeContractMarkdown(contract) {
+  return `### \`${contract.path}\`
+
+- Exists: ${contract.exists}
+- Required snippets:
+${contract.requiredSnippets.map((snippet) => `  - ${snippet.present ? "present" : "missing"}: \`${snippet.snippet}\``).join("\n")}`;
 }
 
 function buildAudioMarkdown(inventory) {
@@ -428,6 +577,7 @@ Canonical hook: ${status.canonicalHook}
 | Visual evidence shots | ${status.currentEvidence.visualEvidence?.length ?? 0} generated |
 | Performance snapshot | \`${status.currentEvidence.performanceSnapshot}\` |
 | Audio inventory | \`${status.currentEvidence.audioInventory}\` |
+| Version display report | \`${status.currentEvidence.versionDisplayReport}\` |
 | D-020 tool runtime | \`${status.currentEvidence.d020ToolRuntime ?? "missing"}\` |
 | Build artifact | \`${status.currentEvidence.buildArtifact ?? "missing"}\` |
 
