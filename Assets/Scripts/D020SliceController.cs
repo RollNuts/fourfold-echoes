@@ -121,6 +121,16 @@ namespace FourfoldEchoes.Product
         private const int FailureMenuCount = 3;
         private const int SettingsCount = 6;
         private const float AxisRepeatDelay = 0.24f;
+        private const int ProceduralAudioSampleRate = 24000;
+
+        private static AudioClip fallbackAttackClip;
+        private static AudioClip fallbackHitClip;
+        private static AudioClip fallbackDodgeClip;
+        private static AudioClip fallbackRewardClaimClip;
+        private static AudioClip fallbackRewardReadyClip;
+        private static AudioClip fallbackToolFailClip;
+        private static AudioClip fallbackExplorationMusicClip;
+        private static AudioClip fallbackBossMusicClip;
 
         private enum PendingExitAction
         {
@@ -2623,6 +2633,8 @@ namespace FourfoldEchoes.Product
             musicSource.spatialBlend = 0f;
             musicSource.dopplerLevel = 0f;
             musicSource.volume = 0.26f;
+
+            EnsureFallbackAudioClips();
         }
 
         private void UpdateMusicState()
@@ -2683,6 +2695,19 @@ namespace FourfoldEchoes.Product
                 explorationTool.useKey = KeyCode.Q;
                 explorationTool.alternateUseKey = KeyCode.JoystickButton2;
                 explorationTool.TryResolveFallback = TryOpenBossWithTool;
+                EnsureFallbackAudioClips();
+                if (explorationTool.pulse == null)
+                {
+                    explorationTool.pulse = rewardReadyClip;
+                }
+                if (explorationTool.targetHit == null)
+                {
+                    explorationTool.targetHit = rewardClaimClip;
+                }
+                if (explorationTool.fail == null)
+                {
+                    explorationTool.fail = fallbackToolFailClip;
+                }
             }
 
             if (requiredToolNode == null && explorationTool != null && explorationTool.nodes != null && explorationTool.nodes.Length > 0)
@@ -2731,6 +2756,172 @@ namespace FourfoldEchoes.Product
             }
 
             return Mathf.Clamp01(progressData.masterVolume) * Mathf.Clamp01(progressData.sfxVolume);
+        }
+
+        private void EnsureFallbackAudioClips()
+        {
+            if (attackClip == null)
+            {
+                attackClip = FallbackAttackClip();
+            }
+            if (hitClip == null)
+            {
+                hitClip = FallbackHitClip();
+            }
+            if (dodgeClip == null)
+            {
+                dodgeClip = FallbackDodgeClip();
+            }
+            if (rewardClaimClip == null)
+            {
+                rewardClaimClip = FallbackRewardClaimClip();
+            }
+            if (rewardReadyClip == null)
+            {
+                rewardReadyClip = FallbackRewardReadyClip();
+            }
+            if (explorationMusicClip == null)
+            {
+                explorationMusicClip = FallbackExplorationMusicClip();
+            }
+            if (bossMusicClip == null)
+            {
+                bossMusicClip = FallbackBossMusicClip();
+            }
+            if (fallbackToolFailClip == null)
+            {
+                fallbackToolFailClip = BuildToneClip(
+                    "D020_ToolFail_Fallback",
+                    new ProceduralToneSegment(190f, 0.055f, 0.15f),
+                    new ProceduralToneSegment(118f, 0.070f, 0.12f));
+            }
+        }
+
+        private static AudioClip FallbackAttackClip()
+        {
+            return fallbackAttackClip ?? (fallbackAttackClip = BuildToneClip(
+                "D020_Attack_Fallback",
+                new ProceduralToneSegment(260f, 0.045f, 0.19f),
+                new ProceduralToneSegment(420f, 0.055f, 0.14f)));
+        }
+
+        private static AudioClip FallbackHitClip()
+        {
+            return fallbackHitClip ?? (fallbackHitClip = BuildToneClip(
+                "D020_HitConfirm_Fallback",
+                new ProceduralToneSegment(392f, 0.050f, 0.20f),
+                new ProceduralToneSegment(620f, 0.065f, 0.13f)));
+        }
+
+        private static AudioClip FallbackDodgeClip()
+        {
+            return fallbackDodgeClip ?? (fallbackDodgeClip = BuildToneClip(
+                "D020_Dodge_Fallback",
+                new ProceduralToneSegment(620f, 0.040f, 0.12f),
+                new ProceduralToneSegment(410f, 0.060f, 0.10f)));
+        }
+
+        private static AudioClip FallbackRewardClaimClip()
+        {
+            return fallbackRewardClaimClip ?? (fallbackRewardClaimClip = BuildToneClip(
+                "D020_RewardClaim_Fallback",
+                new ProceduralToneSegment(660f, 0.070f, 0.16f),
+                new ProceduralToneSegment(880f, 0.095f, 0.14f),
+                new ProceduralToneSegment(990f, 0.070f, 0.10f)));
+        }
+
+        private static AudioClip FallbackRewardReadyClip()
+        {
+            return fallbackRewardReadyClip ?? (fallbackRewardReadyClip = BuildToneClip(
+                "D020_RewardReady_Fallback",
+                new ProceduralToneSegment(440f, 0.060f, 0.12f),
+                new ProceduralToneSegment(660f, 0.075f, 0.10f)));
+        }
+
+        private static AudioClip FallbackExplorationMusicClip()
+        {
+            return fallbackExplorationMusicClip ?? (fallbackExplorationMusicClip = BuildLoopClip(
+                "D020_ExplorationLoop_Fallback",
+                8f,
+                55f,
+                82.5f,
+                165f,
+                0.25f));
+        }
+
+        private static AudioClip FallbackBossMusicClip()
+        {
+            return fallbackBossMusicClip ?? (fallbackBossMusicClip = BuildLoopClip(
+                "D020_BossLoop_Fallback",
+                8f,
+                73.75f,
+                147.5f,
+                295f,
+                0.5f));
+        }
+
+        private static AudioClip BuildToneClip(string clipName, params ProceduralToneSegment[] segments)
+        {
+            var totalSamples = 0;
+            for (var i = 0; i < segments.Length; i++)
+            {
+                totalSamples += Mathf.Max(1, Mathf.CeilToInt(ProceduralAudioSampleRate * segments[i].Duration));
+            }
+
+            var data = new float[totalSamples];
+            var writeIndex = 0;
+            for (var segmentIndex = 0; segmentIndex < segments.Length; segmentIndex++)
+            {
+                var segment = segments[segmentIndex];
+                var samples = Mathf.Max(1, Mathf.CeilToInt(ProceduralAudioSampleRate * segment.Duration));
+                for (var sampleIndex = 0; sampleIndex < samples && writeIndex < data.Length; sampleIndex++)
+                {
+                    var t = sampleIndex / (float)ProceduralAudioSampleRate;
+                    var progress = samples <= 1 ? 1f : sampleIndex / (samples - 1f);
+                    var attack = Mathf.Clamp01(progress / 0.14f);
+                    var release = Mathf.Clamp01((1f - progress) / 0.72f);
+                    var envelope = attack * release;
+                    data[writeIndex] = Mathf.Sin(2f * Mathf.PI * segment.Frequency * t) * envelope * segment.Amplitude;
+                    writeIndex++;
+                }
+            }
+
+            var clip = AudioClip.Create(clipName, data.Length, 1, ProceduralAudioSampleRate, false);
+            clip.SetData(data, 0);
+            return clip;
+        }
+
+        private static AudioClip BuildLoopClip(string clipName, float duration, float lowHz, float middleHz, float highHz, float pulseHz)
+        {
+            var samples = Mathf.Max(1, Mathf.CeilToInt(ProceduralAudioSampleRate * duration));
+            var data = new float[samples];
+            for (var sampleIndex = 0; sampleIndex < samples; sampleIndex++)
+            {
+                var t = sampleIndex / (float)ProceduralAudioSampleRate;
+                var pulse = 0.68f + 0.32f * Mathf.Sin(2f * Mathf.PI * pulseHz * t);
+                var low = Mathf.Sin(2f * Mathf.PI * lowHz * t) * 0.034f;
+                var middle = Mathf.Sin(2f * Mathf.PI * middleHz * t + 0.6f) * 0.018f;
+                var high = Mathf.Sin(2f * Mathf.PI * highHz * t + 1.2f) * 0.008f * pulse;
+                data[sampleIndex] = (low + middle + high) * pulse;
+            }
+
+            var clip = AudioClip.Create(clipName, samples, 1, ProceduralAudioSampleRate, false);
+            clip.SetData(data, 0);
+            return clip;
+        }
+
+        private readonly struct ProceduralToneSegment
+        {
+            public ProceduralToneSegment(float frequency, float duration, float amplitude)
+            {
+                Frequency = frequency;
+                Duration = duration;
+                Amplitude = amplitude;
+            }
+
+            public float Frequency { get; }
+            public float Duration { get; }
+            public float Amplitude { get; }
         }
 
         private static GameObject CreateDisc(string name, Material material, float radius)
