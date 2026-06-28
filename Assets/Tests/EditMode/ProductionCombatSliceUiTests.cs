@@ -70,6 +70,18 @@ namespace FourfoldEchoes.Tests.EditMode
         }
 
         [Test]
+        public void UI_TitleCopy_DescribesProductLoopWithoutInternalSliceLabel()
+        {
+            Assert.That(ProductionCombatSliceUi.BuildTitleSliceLine(), Is.EqualTo("Region 01 vertical slice"));
+
+            var loopLine = ProductionCombatSliceUi.BuildTitleLoopLine();
+            Assert.That(loopLine, Does.Contain("one exploration tool"));
+            Assert.That(loopLine, Does.Contain("relic reward"));
+            Assert.That(loopLine, Does.Not.Contain("Production Combat Slice"));
+            Assert.That(loopLine, Does.Not.Contain("Echo Tool"));
+        }
+
+        [Test]
         public void UI_RuntimeThemeFallback_CreatesNonSavedThemeStyleSheet()
         {
             var theme = ProductionCombatSliceUi.CreateRuntimeThemeStyleSheet(string.Empty);
