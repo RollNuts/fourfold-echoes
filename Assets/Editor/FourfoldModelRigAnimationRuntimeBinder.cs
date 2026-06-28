@@ -25,6 +25,7 @@ namespace FourfoldEchoes.Editor
         private const string RuntimeQcPath = RuntimeRoot + "/runtime_binding_qc.json";
         private const string PreviewInstanceName = "Preview_PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0";
         private const float PreviewSecondsPerState = 0.75f;
+        private const float StateDriverCrossFadeSeconds = 0.05f;
 
         private static readonly string[] Actions =
         {
@@ -266,6 +267,7 @@ namespace FourfoldEchoes.Editor
 
                 var forwardHitbox = AddForwardHitbox(instance);
                 AddEventRelay(instance, forwardHitbox);
+                AddAnimationStateDriver(instance, animator);
 
                 PrefabUtility.SaveAsPrefabAsset(instance, PrefabPath, out var success);
                 if (!success)
@@ -424,6 +426,18 @@ namespace FourfoldEchoes.Editor
             EditorUtility.SetDirty(relay);
         }
 
+        private static void AddAnimationStateDriver(GameObject root, Animator animator)
+        {
+            var stateDriver = root.GetComponent<MeleeShardlingAnimationStateDriver>();
+            if (stateDriver == null)
+            {
+                stateDriver = root.AddComponent<MeleeShardlingAnimationStateDriver>();
+            }
+
+            stateDriver.ConfigureForRuntime(animator, Actions, StateDriverCrossFadeSeconds);
+            EditorUtility.SetDirty(stateDriver);
+        }
+
         private static void VerifyController(AnimatorController controller, List<string> errors)
         {
             var layer = controller.layers.FirstOrDefault();
@@ -480,6 +494,8 @@ namespace FourfoldEchoes.Editor
             {
                 errors.Add("Runtime prefab is missing body BoxCollider.");
             }
+
+            VerifyStateDriver(prefab, animator, errors);
 
             var eventRelay = prefab.GetComponent<MeleeShardlingAnimationEventRelay>();
             if (eventRelay == null)
@@ -586,6 +602,11 @@ namespace FourfoldEchoes.Editor
                         errors.Add("Preview driver state list must match the runtime AnimatorController action order.");
                     }
                 }
+
+                if (previewInstance.GetComponent<MeleeShardlingAnimationStateDriver>() == null)
+                {
+                    errors.Add("Preview scene prefab instance is missing MeleeShardlingAnimationStateDriver.");
+                }
             }
 
             if (!roots.Any(root => root.GetComponent<Camera>() != null))
@@ -601,6 +622,46 @@ namespace FourfoldEchoes.Editor
             if (!string.IsNullOrEmpty(previousScene) && previousScene != ScenePath)
             {
                 EditorSceneManager.OpenScene(previousScene, OpenSceneMode.Single);
+            }
+        }
+
+        private static void VerifyStateDriver(GameObject prefab, Animator animator, List<string> errors)
+        {
+            var stateDriver = prefab.GetComponent<MeleeShardlingAnimationStateDriver>();
+            if (stateDriver == null)
+            {
+                errors.Add("Runtime prefab is missing MeleeShardlingAnimationStateDriver.");
+                return;
+            }
+
+            if (stateDriver.Animator == null || stateDriver.Animator != animator)
+            {
+                errors.Add("MeleeShardlingAnimationStateDriver must reference the runtime prefab Animator.");
+            }
+
+            if (Mathf.Abs(stateDriver.CrossFadeSeconds - StateDriverCrossFadeSeconds) > 0.001f)
+            {
+                errors.Add($"State driver cross fade seconds must be {StateDriverCrossFadeSeconds.ToString(CultureInfo.InvariantCulture)}.");
+            }
+
+            if (!stateDriver.StateNames.SequenceEqual(Actions))
+            {
+                errors.Add("State driver action list must match the runtime AnimatorController state order.");
+            }
+
+            var enumNames = Enum.GetNames(typeof(MeleeShardlingAnimationAction));
+            if (!enumNames.SequenceEqual(Actions))
+            {
+                errors.Add("MeleeShardlingAnimationAction enum names must match the AnimatorController state order.");
+            }
+
+            foreach (MeleeShardlingAnimationAction action in Enum.GetValues(typeof(MeleeShardlingAnimationAction)))
+            {
+                var expectedState = Actions[(int)action];
+                if (!stateDriver.TryGetStateName(action, out var stateName) || stateName != expectedState)
+                {
+                    errors.Add($"State driver could not resolve {action} to {expectedState}.");
+                }
             }
         }
 
@@ -755,7 +816,11 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine("    \"preview_driver\": \"MeleeShardlingAnimationPreviewDriver\",");
             builder.AppendLine($"    \"preview_driver_state_count\": {Actions.Length.ToString(CultureInfo.InvariantCulture)},");
             builder.AppendLine($"    \"preview_seconds_per_state\": {PreviewSecondsPerState.ToString(CultureInfo.InvariantCulture)},");
-            builder.AppendLine($"    \"preview_driver_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\"");
+            builder.AppendLine($"    \"preview_driver_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\",");
+            builder.AppendLine("    \"animation_state_driver\": \"MeleeShardlingAnimationStateDriver\",");
+            builder.AppendLine($"    \"animation_state_driver_state_count\": {Actions.Length.ToString(CultureInfo.InvariantCulture)},");
+            builder.AppendLine($"    \"animation_state_driver_cross_fade_seconds\": {StateDriverCrossFadeSeconds.ToString(CultureInfo.InvariantCulture)},");
+            builder.AppendLine($"    \"animation_state_driver_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\"");
             builder.AppendLine("  },");
             builder.AppendLine("  \"errors\": [");
             AppendJsonArray(builder, errors, "    ");

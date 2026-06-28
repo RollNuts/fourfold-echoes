@@ -21,6 +21,10 @@ namespace FourfoldEchoes.Editor
         private const string ToolTargetHitClipPath = "Assets/Audio/Generated/shortcut_open.wav";
         private const string ExplorationMusicPath = "Assets/Audio/Generated/d020_exploration_loop.wav";
         private const string BossMusicPath = "Assets/Audio/Generated/d020_boss_loop.wav";
+        private const string R02HotplatePrefabPath = "Assets/Prefabs/Production/P3/FE_ENV_R02_BF_Floor_1x1_Hotplate.prefab";
+        private const string R02IronWallPrefabPath = "Assets/Prefabs/Production/P3/FE_ENV_R02_BF_Wall_Straight_Iron.prefab";
+        private const string R02FurnaceGatePrefabPath = "Assets/Prefabs/Production/P3/FE_PROP_R02_FurnaceGate_01.prefab";
+        private const string R02PressureSwitchPrefabPath = "Assets/Prefabs/Production/P3/FE_PROP_R02_PressureSwitch_01.prefab";
 
         public static void BuildAndValidate()
         {
@@ -334,6 +338,20 @@ namespace FourfoldEchoes.Editor
             CreateBlock(field.transform, "D020 Second Tool Backplate", assets.floorDark, new Vector3(8.30f, 0.44f, -4.25f), new Vector3(1.2f, 0.86f, 0.20f));
             CreateBlock(field.transform, "D020 Midfield Landmark A", assets.floorDark, new Vector3(-1.0f, 0.54f, 2.7f), new Vector3(0.42f, 1.08f, 1.1f));
             CreateBlock(field.transform, "D020 Midfield Landmark B", assets.floorDark, new Vector3(4.4f, 0.54f, -1.3f), new Vector3(1.2f, 1.08f, 0.36f));
+            CreateR02PrototypeDress(field.transform);
+        }
+
+        private static void CreateR02PrototypeDress(Transform field)
+        {
+            var dress = new GameObject("D020 P3 R02 Prototype Dress");
+            dress.transform.SetParent(field);
+
+            TryInstantiateProductionPrefab(R02HotplatePrefabPath, dress.transform, "D020 P3 Hotplate A", new Vector3(7.95f, 0.012f, -4.02f), Quaternion.identity, Vector3.one * 0.98f);
+            TryInstantiateProductionPrefab(R02HotplatePrefabPath, dress.transform, "D020 P3 Hotplate B", new Vector3(9.05f, 0.012f, -4.42f), Quaternion.Euler(0f, 90f, 0f), Vector3.one * 0.98f);
+            TryInstantiateProductionPrefab(R02IronWallPrefabPath, dress.transform, "D020 P3 Iron Wall A", new Vector3(7.05f, 0.08f, -5.28f), Quaternion.Euler(0f, 18f, 0f), Vector3.one * 0.92f);
+            TryInstantiateProductionPrefab(R02IronWallPrefabPath, dress.transform, "D020 P3 Iron Wall B", new Vector3(10.15f, 0.08f, -3.55f), Quaternion.Euler(0f, -72f, 0f), Vector3.one * 0.92f);
+            TryInstantiateProductionPrefab(R02FurnaceGatePrefabPath, dress.transform, "D020 P3 Furnace Gate Read", new Vector3(10.55f, 0.08f, -5.42f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.86f);
+            TryInstantiateProductionPrefab(R02PressureSwitchPrefabPath, dress.transform, "D020 P3 Pressure Switch Read", new Vector3(8.28f, 0.08f, -4.32f), Quaternion.Euler(0f, -18f, 0f), Vector3.one * 0.82f);
         }
 
         private static GameObject CreatePlayer(Transform root, GeneratedAssets assets)
