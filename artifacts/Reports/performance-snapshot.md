@@ -1,6 +1,6 @@
 # Performance Snapshot
 
-Generated UTC: `2026-06-28T15:06:24.540Z`
+Generated UTC: `2026-06-28T15:13:36.193Z`
 
 Scope: D-020 vertical slice evidence snapshot
 
@@ -17,7 +17,7 @@ This is not a runtime profiler capture. It summarizes current scene, asset, and 
 | Missing scripts | 0 |
 | Build artifact size | n/a mb |
 | Build version | 1.0 |
-| Commit | 786d4fa7e1e4 |
+| Commit | cf05ad810cf2 |
 | D-020 screenshot | 1280x800 |
 | D-020 runtime proof | one_tool_scene_proof |
 
