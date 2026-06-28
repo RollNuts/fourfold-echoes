@@ -12,6 +12,7 @@ namespace FourfoldEchoes.Tests.EditMode
             Assert.That(ProductionCombatSliceController.IsRewardClaimKey(KeyCode.E), Is.True);
             Assert.That(ProductionCombatSliceController.IsRewardClaimKey(KeyCode.JoystickButton3), Is.True);
             Assert.That(ProductionCombatSliceController.RewardClaimMouseButton, Is.EqualTo(1));
+            Assert.That(ProductionCombatRewardClaimPrompt.BuildDetailText(), Is.EqualTo("North Button / E / RMB"));
         }
 
         [Test]

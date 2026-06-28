@@ -116,7 +116,7 @@ namespace FourfoldEchoes.Product
 
             GUI.color = previousColor;
             GUI.Label(new Rect(rect.x + 28f, rect.y + 8f, rect.width - 44f, 22f), "Claim reward", titleStyle);
-            GUI.Label(new Rect(rect.x + 28f, rect.y + 30f, rect.width - 44f, 18f), "E / RMB / North Button", detailStyle);
+            GUI.Label(new Rect(rect.x + 28f, rect.y + 30f, rect.width - 44f, 18f), BuildDetailText(), detailStyle);
         }
 
         public static bool ShouldShowPrompt(
@@ -144,6 +144,11 @@ namespace FourfoldEchoes.Product
             var x = (screenWidth - width) * 0.5f;
             var y = Mathf.Max(24f, screenHeight - height - 36f);
             return new Rect(x, y, width, height);
+        }
+
+        public static string BuildDetailText()
+        {
+            return "North Button / E / RMB";
         }
 
         private void RefreshControllerIfNeeded()

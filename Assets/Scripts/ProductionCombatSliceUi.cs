@@ -205,9 +205,9 @@ namespace FourfoldEchoes.Product
             var overlay = BuildOverlay("PCS Title Screen");
             var panel = BuildOverlayPanel();
             panel.Add(MakeLabel("FOURFOLD ECHOES", 42, FontStyle.Bold));
-            panel.Add(MakeBodyLabel("Production Combat Slice"));
-            panel.Add(MakeBodyLabel("Clear two wardens, open the shortcut with the Echo Tool, break the boss gate, and claim the reward."));
-            panel.Add(MakeBodyLabel("Controller: Left Stick, South Button attack, North Button tool/claim, Menu pause. Keyboard: WASD, J / Mouse, E / Right Mouse, Esc or P."));
+            panel.Add(MakeBodyLabel(BuildTitleSliceLine()));
+            panel.Add(MakeBodyLabel(BuildTitleLoopLine()));
+            panel.Add(MakeBodyLabel(BuildTitleInputLine()));
             titleSaveLabel = MakeSaveResumeLabel();
             panel.Add(titleSaveLabel);
             startButton = AddButton(panel, titleButtons, "Start Game", () => controller?.BeginRun());
@@ -538,6 +538,21 @@ namespace FourfoldEchoes.Product
         internal static string BuildRetryBodyText()
         {
             return "South Button / Enter / R restarts the room from its initial state.";
+        }
+
+        internal static string BuildTitleSliceLine()
+        {
+            return "Region 01 vertical slice";
+        }
+
+        internal static string BuildTitleLoopLine()
+        {
+            return "Clear two wardens, use one exploration tool to open the shortcut, break the boss gate, and claim the relic reward.";
+        }
+
+        internal static string BuildTitleInputLine()
+        {
+            return "Controller: Left Stick, South Button attack, North Button tool/claim, Menu pause. Keyboard: WASD, J / Mouse, E / Right Mouse, Esc or P.";
         }
 
         public static ThemeStyleSheet CreateRuntimeThemeStyleSheet(string name)
