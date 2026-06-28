@@ -1,0 +1,19 @@
+{
+  "schema": "model_rig_animation_runtime_binding_qc_v1",
+  "asset_id": "modelrig.enemy.meleeshardling.sealedlockrelic.v0_1_0",
+  "generated_at": "2026-06-27T08:33:42Z",
+  "status": "pass",
+  "runtime_binding": {
+    "animator_controller": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Animator/AC_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.controller",
+    "prefab": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Prefabs/PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.prefab",
+    "preview_scene": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity",
+    "root_motion": "off",
+    "default_state": "Idle",
+    "animation_state_count": 14,
+    "forward_hitbox": "SOCKET_ForwardHit/HITBOX_ForwardPreview"
+  },
+  "errors": [
+  ],
+  "warnings": [
+  ]
+}

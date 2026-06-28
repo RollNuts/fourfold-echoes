@@ -1,0 +1,5 @@
+stem,path,role
+rhythm,Stems/BGM_BossPhase2_Urgent_ARhythm_128_v0.1.0.wav,"muted boss pulse, avoids boss tell attack masking"
+harmony,Stems/BGM_BossPhase2_Urgent_AHarmony_128_v0.1.0.wav,"dark phase bed, restrained sub energy"
+lead,Stems/BGM_BossPhase2_Urgent_ALead_128_v0.1.0.wav,short warning callouts only
+percussion,Stems/BGM_BossPhase2_Urgent_APercussion_128_v0.1.0.wav,"quiet high ticks, no impact replacement"
