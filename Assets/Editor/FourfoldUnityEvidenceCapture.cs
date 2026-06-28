@@ -38,7 +38,8 @@ namespace FourfoldEchoes.Editor
             var rewardLensResponse = FindSceneObject("D020 Reward Lens Response");
             var player = UnityEngine.Object.FindFirstObjectByType<D020PlayerController>();
             var enemy = UnityEngine.Object.FindFirstObjectByType<D020EnemyDummy>();
-            var reward = UnityEngine.Object.FindFirstObjectByType<D020RelicReward>();
+            var reward = FindSceneObject("D020 Relic Chest")?.GetComponent<D020RelicReward>();
+            var rewards = UnityEngine.Object.FindObjectsByType<D020RelicReward>(FindObjectsSortMode.None);
             var progressSave = UnityEngine.Object.FindFirstObjectByType<D020ProgressSave>();
             var hud = UnityEngine.Object.FindFirstObjectByType<D020HudController>();
 
@@ -87,6 +88,7 @@ namespace FourfoldEchoes.Editor
                 rewardLensNode,
                 rewardLensResponse,
                 reward,
+                rewards,
                 enemy,
                 progressSave,
                 hud);
@@ -178,6 +180,7 @@ namespace FourfoldEchoes.Editor
             ExplorationNode rewardLensNode,
             GameObject rewardLensResponse,
             D020RelicReward reward,
+            D020RelicReward[] rewards,
             D020EnemyDummy enemy,
             D020ProgressSave progressSave,
             D020HudController hud)
@@ -194,7 +197,17 @@ namespace FourfoldEchoes.Editor
             SetNodeSolved(shortcutNode, shortcutRoute, true);
             SetNodeSolved(rewardLensNode, rewardLensResponse, true);
 
-            if (reward != null)
+            if (rewards != null && rewards.Length > 0)
+            {
+                for (var i = 0; i < rewards.Length; i++)
+                {
+                    if (rewards[i] != null)
+                    {
+                        rewards[i].SetCollected(true);
+                    }
+                }
+            }
+            else if (reward != null)
             {
                 reward.SetCollected(true);
             }

@@ -43,11 +43,14 @@ namespace FourfoldEchoes.Editor
             var player = CreatePlayer(root.transform, assets);
             var enemy = CreateEnemy(root.transform, assets, player.transform);
             var reward = CreateChest(root.transform, assets, player.transform);
+            var shortcutReward = CreateShortcutRelic(root.transform, assets, player.transform);
             var nodes = CreateExplorationToolProof(root.transform, assets);
             reward.requiredEnemy = enemy;
             reward.requiredNode = nodes[0];
             reward.requiredNodes = new[] { nodes[1] };
-            CreateRuntimeHook(player.transform, nodes, reward, assets);
+            shortcutReward.requiredEnemy = enemy;
+            shortcutReward.requiredNode = nodes[0];
+            CreateRuntimeHook(player.transform, nodes, new[] { reward, shortcutReward }, assets);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[]
@@ -70,6 +73,7 @@ namespace FourfoldEchoes.Editor
             Require("D020 Player");
             Require("D020 Enemy Read Target");
             Require("D020 Relic Chest");
+            Require("D020 Echo Relic");
             Require("D020 Exploration Tool Node");
             Require("D020 Reward Lens Node");
             Require("D020 Reward Lens Chamber");
@@ -84,6 +88,7 @@ namespace FourfoldEchoes.Editor
             RequireComponent<D020PlayerController>("D020 Player");
             RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
             RequireComponent<D020RelicReward>("D020 Relic Chest");
+            RequireComponent<D020RelicReward>("D020 Echo Relic");
             RequireComponent<D020ProgressSave>("D020 Runtime Hook");
             RequireComponent<D020HudController>("D020 HUD");
 
@@ -312,6 +317,31 @@ namespace FourfoldEchoes.Editor
             return reward;
         }
 
+        private static D020RelicReward CreateShortcutRelic(Transform root, GeneratedAssets assets, Transform player)
+        {
+            var relicObject = new GameObject("D020 Echo Relic");
+            relicObject.transform.SetParent(root);
+            relicObject.transform.position = new Vector3(-3.30f, 0.1f, 0.88f);
+            relicObject.transform.rotation = Quaternion.Euler(0f, 24f, 0f);
+
+            CreatePrimitive(relicObject.transform, PrimitiveType.Cylinder, "D020 Echo Relic Footprint", assets.route, new Vector3(0f, 0.03f, 0f), new Vector3(0.74f, 0.026f, 0.74f));
+            CreateBlock(relicObject.transform, "D020 Echo Relic Pedestal", assets.floorDark, new Vector3(0f, 0.18f, 0f), new Vector3(0.38f, 0.32f, 0.38f));
+            var visibleRelic = CreatePrimitive(relicObject.transform, PrimitiveType.Sphere, "D020 Echo Relic Visible Read", assets.relic, new Vector3(0f, 0.62f, 0f), new Vector3(0.22f, 0.30f, 0.22f));
+            CreateBlock(relicObject.transform, "D020 Echo Relic Thread Read", assets.tool, new Vector3(0.18f, 0.66f, -0.08f), new Vector3(0.08f, 0.42f, 0.06f), Quaternion.Euler(0f, 0f, -28f));
+            var collectedRead = CreatePrimitive(relicObject.transform, PrimitiveType.Sphere, "D020 Echo Relic Collected Read", assets.tool, new Vector3(0f, 0.88f, 0f), new Vector3(0.15f, 0.15f, 0.15f));
+            collectedRead.SetActive(false);
+
+            var reward = relicObject.AddComponent<D020RelicReward>();
+            reward.rewardId = "d020.region01.relic.02";
+            reward.pickupRadius = 1.0f;
+            reward.player = player;
+            reward.idleRead = visibleRelic;
+            reward.collectedRead = collectedRead;
+            reward.pickupClip = assets.relicPickup;
+            reward.ResetReward();
+            return reward;
+        }
+
         private static ExplorationNode[] CreateExplorationToolProof(Transform root, GeneratedAssets assets)
         {
             var proof = new GameObject("D020 One Tool Proof");
@@ -388,7 +418,7 @@ namespace FourfoldEchoes.Editor
             return new[] { node, rewardNode };
         }
 
-        private static void CreateRuntimeHook(Transform player, ExplorationNode[] nodes, D020RelicReward reward, GeneratedAssets assets)
+        private static void CreateRuntimeHook(Transform player, ExplorationNode[] nodes, D020RelicReward[] rewards, GeneratedAssets assets)
         {
             var hookObject = new GameObject("D020 Runtime Hook");
             var audioSource = hookObject.AddComponent<AudioSource>();
@@ -407,8 +437,8 @@ namespace FourfoldEchoes.Editor
             var progress = hookObject.AddComponent<D020ProgressSave>();
             progress.nodes = nodes;
             progress.nodeIds = new[] { "d020.region01.shortcut.01", "d020.region01.reward_lens.01" };
-            progress.rewards = new[] { reward };
-            progress.rewardIds = new[] { "d020.region01.relic.01" };
+            progress.rewards = rewards;
+            progress.rewardIds = new[] { "d020.region01.relic.01", "d020.region01.relic.02" };
             progress.saveFileName = "d020-region01-progress.json";
             progress.loadOnAwake = true;
             progress.saveOnProgressChanged = true;
@@ -419,7 +449,8 @@ namespace FourfoldEchoes.Editor
             hud.tool = tool;
             hud.node = nodes[0];
             hud.nodes = nodes;
-            hud.reward = reward;
+            hud.reward = rewards != null && rewards.Length > 0 ? rewards[0] : null;
+            hud.rewards = rewards;
             hud.progressSave = progress;
             hud.RefreshNow();
         }
