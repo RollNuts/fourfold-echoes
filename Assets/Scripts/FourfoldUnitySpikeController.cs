@@ -12,6 +12,7 @@ namespace FourfoldEchoes.Spike
 
     public sealed class FourfoldUnitySpikeController : MonoBehaviour
     {
+        public const string RoomTitleText = "FOURFOLD ECHOES - Ashen Threshold";
         public const string ControlPromptText = "Move LS/WASD | Attack A/X/J | Dodge B/Space | Altar/Claim Y/E | Phase LB/RB | Reset Start/R";
 
         [Header("Scene")]
@@ -1037,7 +1038,7 @@ namespace FourfoldEchoes.Spike
                 GUI.color = previousColor;
             }
 
-            GUI.Label(new Rect(24, 18, 520, 32), "FOURFOLD ECHOES - Gate A", style);
+            GUI.Label(new Rect(24, 18, 520, 32), RoomTitleText, style);
             GUI.Label(new Rect(24, 48, 840, 32), $"HP {Mathf.RoundToInt(playerHealth)}   Hollow {hollowState}   Altar {altarState}   Gate {gateState}", style);
             GUI.Label(new Rect(24, 78, 900, 32), ObjectiveText(), style);
             GUI.Label(new Rect(24, 108, 760, 28), $"Cue: {lastEvent}", controlStyle);

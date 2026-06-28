@@ -17,5 +17,14 @@ namespace FourfoldEchoes.Tests
             Assert.That(prompt, Does.Contain("Phase LB/RB"));
             Assert.That(prompt, Does.Contain("Reset Start/R"));
         }
+
+        [Test]
+        public void RoomTitleText_UsesCurrentSliceName()
+        {
+            var title = FourfoldUnitySpikeController.RoomTitleText;
+
+            Assert.That(title, Does.Contain("Ashen Threshold"));
+            Assert.That(title, Does.Not.Contain("Gate A"));
+        }
     }
 }
