@@ -13,7 +13,8 @@ namespace FourfoldEchoes.Tests
             Assert.That(prompt, Does.Contain("Move LS"));
             Assert.That(prompt, Does.Contain("Attack A/X"));
             Assert.That(prompt, Does.Contain("Dodge B"));
-            Assert.That(prompt, Does.Contain("Altar/Claim Y/E"));
+            Assert.That(prompt, Does.Contain("Hold Altar Y/K"));
+            Assert.That(prompt, Does.Contain("Claim Y/E"));
             Assert.That(prompt, Does.Contain("Phase LB/RB"));
             Assert.That(prompt, Does.Contain("Reset Start/R"));
         }
@@ -25,6 +26,12 @@ namespace FourfoldEchoes.Tests
 
             Assert.That(title, Does.Contain("Ashen Threshold"));
             Assert.That(title, Does.Not.Contain("Gate A"));
+        }
+
+        [Test]
+        public void DownedPromptText_NamesGamepadAndKeyboardReset()
+        {
+            Assert.That(FourfoldUnitySpikeController.DownedPromptText, Does.Contain("Start/R"));
         }
     }
 }
