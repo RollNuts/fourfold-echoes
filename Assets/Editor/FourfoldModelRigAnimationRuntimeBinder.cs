@@ -23,6 +23,8 @@ namespace FourfoldEchoes.Editor
         private const string PrefabPath = RuntimeRoot + "/Prefabs/PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.prefab";
         private const string ScenePath = RuntimeRoot + "/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity";
         private const string RuntimeQcPath = RuntimeRoot + "/runtime_binding_qc.json";
+        private const string PreviewInstanceName = "Preview_PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0";
+        private const float PreviewSecondsPerState = 0.75f;
 
         private static readonly string[] Actions =
         {
@@ -279,9 +281,31 @@ namespace FourfoldEchoes.Editor
 
         private static void BuildPreviewScene()
         {
-            if (File.Exists(ScenePath))
+            var sceneExists = File.Exists(ScenePath);
+            var scene = sceneExists
+                ? EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single)
+                : EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+            if (!sceneExists)
             {
-                return;
+                scene.name = "SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0";
+            }
+
+            EnsurePreviewFloor(scene);
+            var instance = EnsurePreviewInstance(scene);
+            EnsurePreviewKeyLight(scene);
+            EnsurePreviewCamera(scene);
+            ConfigurePreviewDriver(instance);
+
+            EditorSceneManager.SaveScene(scene, ScenePath);
+        }
+
+        private static GameObject EnsurePreviewInstance(Scene scene)
+        {
+            var instance = scene.GetRootGameObjects().FirstOrDefault(root => root.name == PreviewInstanceName);
+            if (instance != null)
+            {
+                return instance;
             }
 
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
@@ -290,23 +314,49 @@ namespace FourfoldEchoes.Editor
                 throw new InvalidOperationException($"Prefab could not be loaded: {PrefabPath}");
             }
 
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            scene.name = "SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0";
+            instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
+            instance.name = PreviewInstanceName;
+            instance.transform.position = Vector3.zero;
+            instance.transform.rotation = Quaternion.identity;
+            instance.transform.localScale = Vector3.one;
+            return instance;
+        }
+
+        private static void EnsurePreviewFloor(Scene scene)
+        {
+            if (scene.GetRootGameObjects().Any(root => root.name == "Preview_Floor"))
+            {
+                return;
+            }
 
             var floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
             floor.name = "Preview_Floor";
             floor.transform.position = Vector3.zero;
             floor.transform.localScale = new Vector3(2.2f, 1f, 2.2f);
+            SceneManager.MoveGameObjectToScene(floor, scene);
+        }
 
-            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
-            instance.name = "Preview_PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0";
-            instance.transform.position = Vector3.zero;
+        private static void EnsurePreviewKeyLight(Scene scene)
+        {
+            if (scene.GetRootGameObjects().Any(root => root.name == "Preview_KeyLight" && root.GetComponent<Light>() != null))
+            {
+                return;
+            }
 
             var keyLight = new GameObject("Preview_KeyLight");
             var light = keyLight.AddComponent<Light>();
             light.type = LightType.Directional;
             light.intensity = 1.2f;
             keyLight.transform.rotation = Quaternion.Euler(48f, -35f, 0f);
+            SceneManager.MoveGameObjectToScene(keyLight, scene);
+        }
+
+        private static void EnsurePreviewCamera(Scene scene)
+        {
+            if (scene.GetRootGameObjects().Any(root => root.name == "Preview_Camera" && root.GetComponent<Camera>() != null))
+            {
+                return;
+            }
 
             var cameraObject = new GameObject("Preview_Camera");
             var camera = cameraObject.AddComponent<Camera>();
@@ -318,8 +368,26 @@ namespace FourfoldEchoes.Editor
             camera.farClipPlane = 20f;
             camera.fieldOfView = 38f;
             camera.tag = "MainCamera";
+            SceneManager.MoveGameObjectToScene(cameraObject, scene);
+        }
 
-            EditorSceneManager.SaveScene(scene, ScenePath);
+        private static void ConfigurePreviewDriver(GameObject instance)
+        {
+            var animator = instance.GetComponent<Animator>();
+            if (animator == null)
+            {
+                throw new InvalidOperationException("Preview prefab instance is missing Animator.");
+            }
+
+            var driver = instance.GetComponent<MeleeShardlingAnimationPreviewDriver>();
+            if (driver == null)
+            {
+                driver = instance.AddComponent<MeleeShardlingAnimationPreviewDriver>();
+            }
+
+            driver.ConfigureForPreview(animator, Actions, PreviewSecondsPerState);
+            EditorUtility.SetDirty(driver);
+            EditorUtility.SetDirty(instance);
         }
 
         private static BoxCollider AddForwardHitbox(GameObject root)
@@ -483,9 +551,41 @@ namespace FourfoldEchoes.Editor
             var previousScene = SceneManager.GetActiveScene().path;
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
             var roots = scene.GetRootGameObjects();
-            if (!roots.Any(root => root.name == "Preview_PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0"))
+            var previewInstance = roots.FirstOrDefault(root => root.name == PreviewInstanceName);
+            if (previewInstance == null)
             {
                 errors.Add("Preview scene is missing the runtime prefab instance.");
+            }
+            else
+            {
+                var driver = previewInstance.GetComponent<MeleeShardlingAnimationPreviewDriver>();
+                var animator = previewInstance.GetComponent<Animator>();
+                if (driver == null)
+                {
+                    errors.Add("Preview scene prefab instance is missing MeleeShardlingAnimationPreviewDriver.");
+                }
+                else
+                {
+                    if (driver.Animator == null || driver.Animator != animator)
+                    {
+                        errors.Add("Preview driver must reference the preview prefab Animator.");
+                    }
+
+                    if (!driver.PlayOnEnable)
+                    {
+                        errors.Add("Preview driver must auto-play when the preview scene enters Play Mode.");
+                    }
+
+                    if (Mathf.Abs(driver.SecondsPerState - PreviewSecondsPerState) > 0.001f)
+                    {
+                        errors.Add($"Preview driver seconds per state must be {PreviewSecondsPerState.ToString(CultureInfo.InvariantCulture)}.");
+                    }
+
+                    if (!driver.StateNames.SequenceEqual(Actions))
+                    {
+                        errors.Add("Preview driver state list must match the runtime AnimatorController action order.");
+                    }
+                }
             }
 
             if (!roots.Any(root => root.GetComponent<Camera>() != null))
@@ -651,7 +751,11 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine("    \"forward_hitbox_default_enabled\": false,");
             builder.AppendLine("    \"animation_event_relay\": \"MeleeShardlingAnimationEventRelay\",");
             builder.AppendLine($"    \"animation_event_receiver_count\": {RequiredAnimationEvents.Length.ToString(CultureInfo.InvariantCulture)},");
-            builder.AppendLine($"    \"animation_event_relay_behavior\": \"{(errors.Count == 0 ? "pass" : "fail")}\"");
+            builder.AppendLine($"    \"animation_event_relay_behavior\": \"{(errors.Count == 0 ? "pass" : "fail")}\",");
+            builder.AppendLine("    \"preview_driver\": \"MeleeShardlingAnimationPreviewDriver\",");
+            builder.AppendLine($"    \"preview_driver_state_count\": {Actions.Length.ToString(CultureInfo.InvariantCulture)},");
+            builder.AppendLine($"    \"preview_seconds_per_state\": {PreviewSecondsPerState.ToString(CultureInfo.InvariantCulture)},");
+            builder.AppendLine($"    \"preview_driver_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\"");
             builder.AppendLine("  },");
             builder.AppendLine("  \"errors\": [");
             AppendJsonArray(builder, errors, "    ");
