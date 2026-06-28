@@ -135,6 +135,41 @@ namespace FourfoldEchoes.Tests
         }
 
         [UnityTest]
+        public IEnumerator EnemyController_GroundMarkerGrowsAsStrikeNears()
+        {
+            var definition = CreateDefinition("test_ground_marker_warning_scale");
+            definition.attackRange = 1.2f;
+            definition.attackRadius = 0.4f;
+            definition.telegraphTime = 0.3f;
+            definition.activeTime = 0.08f;
+            definition.recoveryTime = 0.12f;
+            definition.retreatAfterAttack = false;
+
+            var target = CreateTarget(new Vector3(0.8f, 0f, 0f), 100f);
+            var controller = CreateEnemy(Vector3.zero, definition, target.transform);
+            controller.telegraphGroundMarkerWarningScale = 1.25f;
+
+            controller.Tick(0.01f);
+            controller.Tick(0.01f);
+            Assert.AreEqual(EnemyState.Telegraph, controller.CurrentState);
+
+            var marker = controller.TelegraphGroundMarkerInstance;
+            Assert.IsNotNull(marker);
+            var startScale = marker.transform.localScale.x;
+            Assert.That(startScale, Is.EqualTo(definition.attackRadius * 2f).Within(0.01f));
+
+            controller.Tick(definition.telegraphTime * 0.5f);
+            Assert.That(marker.transform.localScale.x, Is.GreaterThan(startScale));
+            Assert.That(marker.transform.localScale.x, Is.LessThan(definition.attackRadius * 2f * controller.telegraphGroundMarkerWarningScale));
+
+            controller.Tick(definition.telegraphTime);
+            Assert.AreEqual(EnemyState.Attack, controller.CurrentState);
+            Assert.That(marker.transform.localScale.x, Is.EqualTo(definition.attackRadius * 2f * controller.telegraphGroundMarkerWarningScale).Within(0.01f));
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator Damageable_ShowsHitFlashWhenDamaged()
         {
             var target = CreateTarget(Vector3.zero, 100f);
