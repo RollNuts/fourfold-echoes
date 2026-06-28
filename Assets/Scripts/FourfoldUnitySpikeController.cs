@@ -15,6 +15,8 @@ namespace FourfoldEchoes.Spike
         public const string ControlPromptText = "Move LS/WASD | Attack A/X/J | Dodge B/Space | Hold Altar Y/K | Claim Y/E | Phase LB/RB/[/] | Reset Start/R";
         public const string DownedPromptText = "Downed - press Start/R to reset the room";
         public const string CriticalHealthPromptText = "Critical HP - press B/Space through the tell, then create space";
+        public const string EnemyWindupPromptText = "Dodge B/Space now";
+        public const string EnemyRecoveryPromptText = "Attack A/X/J now";
 
         [Header("Scene")]
         public Transform player;
@@ -1060,11 +1062,11 @@ namespace FourfoldEchoes.Spike
             DrawBar(new Rect(300, 140, 260, 20), altarHeat / 100f, new Color(1f, 0.82f, 0.28f, 0.86f), gateOpen ? "Gate open" : IsAltarBlocked() ? "Altar locked" : $"Open gate {Mathf.RoundToInt(altarHeat)}%", barStyle);
             if (enemyWindupTimer > 0f)
             {
-                DrawBar(new Rect(24, 168, 300, 20), 1f - enemyWindupTimer / EnemyWindupDuration, new Color(1f, 0.18f, 0.18f, 0.88f), "Dodge now", barStyle);
+                DrawBar(new Rect(24, 168, 300, 20), 1f - enemyWindupTimer / EnemyWindupDuration, new Color(1f, 0.18f, 0.18f, 0.88f), EnemyWindupPromptText, barStyle);
             }
             else if (enemyRecoveryTimer > 0f && enemyHealth > 0f)
             {
-                DrawBar(new Rect(24, 168, 300, 20), enemyRecoveryTimer / EnemyRecoveryDuration, new Color(0.24f, 0.84f, 0.82f, 0.86f), "Attack now", barStyle);
+                DrawBar(new Rect(24, 168, 300, 20), enemyRecoveryTimer / EnemyRecoveryDuration, new Color(0.24f, 0.84f, 0.82f, 0.86f), EnemyRecoveryPromptText, barStyle);
             }
             if (roomCompleteTimer > 0f)
             {

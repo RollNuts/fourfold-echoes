@@ -37,6 +37,13 @@ namespace FourfoldEchoes.Tests
         }
 
         [Test]
+        public void CombatWindowPromptText_NamesImmediateControllerAndKeyboardInputs()
+        {
+            Assert.That(FourfoldUnitySpikeController.EnemyWindupPromptText, Does.Contain("Dodge B/Space"));
+            Assert.That(FourfoldUnitySpikeController.EnemyRecoveryPromptText, Does.Contain("Attack A/X/J"));
+        }
+
+        [Test]
         public void IsCriticalHealth_RequiresAliveHealthAtOrBelowThirtyPercent()
         {
             Assert.IsFalse(FourfoldUnitySpikeController.IsCriticalHealth(0f, 100f));
