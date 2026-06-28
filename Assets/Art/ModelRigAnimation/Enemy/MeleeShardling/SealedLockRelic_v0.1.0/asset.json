@@ -588,6 +588,10 @@
     "root_motion": "off",
     "collider": "Generated BoxCollider on prefab root plus trigger hitbox at SOCKET_ForwardHit/HITBOX_ForwardPreview",
     "forward_hitbox": "SOCKET_ForwardHit/HITBOX_ForwardPreview",
+    "forward_hitbox_default_enabled": false,
+    "animation_event_relay": "Assets/Scripts/MeleeShardlingAnimationEventRelay.cs",
+    "animation_event_receiver_count": 22,
+    "event_runtime_policy": "AnimationEvent methods are received on the prefab root and may toggle the forward hitbox or record gameplay cues.",
     "vfx_sockets": [
       "SOCKET_RedSeamVFX",
       "SOCKET_Cast",
@@ -712,6 +716,9 @@
     "runtime_binding_status": "pass",
     "runtime_prefab_status": "pass",
     "runtime_animator_state_count": 14,
-    "runtime_root_motion": "off"
+    "runtime_root_motion": "off",
+    "runtime_event_relay_status": "pass",
+    "runtime_event_receiver_count": 22,
+    "runtime_forward_hitbox_default_enabled": false
   }
 }
