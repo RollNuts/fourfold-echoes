@@ -19,6 +19,9 @@ namespace FourfoldEchoes.Product
         public const KeyCode RewardClaimKeyboardKey = KeyCode.E;
         public const KeyCode RewardClaimControllerButton = KeyCode.JoystickButton3;
         public const int RewardClaimMouseButton = 1;
+        public const KeyCode RetryKeyboardKey = KeyCode.R;
+        public const KeyCode RetrySubmitKeyboardKey = KeyCode.Return;
+        public const KeyCode RetryControllerButton = KeyCode.JoystickButton0;
 
         public static Func<LocalSaveService> SaveServiceFactory { get; set; } = LocalSaveService.CreateDefault;
 
@@ -134,7 +137,7 @@ namespace FourfoldEchoes.Product
 
             if (runState == ProductionCombatRunState.PlayerDown || runState == ProductionCombatRunState.Completed)
             {
-                if (Input.GetKeyDown(KeyCode.R))
+                if (RetryPressed())
                 {
                     RetryRun();
                     return;
@@ -685,6 +688,24 @@ namespace FourfoldEchoes.Product
         public static bool IsRewardClaimKey(KeyCode keyCode)
         {
             return keyCode == RewardClaimKeyboardKey || keyCode == RewardClaimControllerButton;
+        }
+
+        public static bool IsRetryKey(KeyCode keyCode)
+        {
+            return keyCode == RetryKeyboardKey
+                || keyCode == RetrySubmitKeyboardKey
+                || keyCode == KeyCode.KeypadEnter
+                || keyCode == KeyCode.Space
+                || keyCode == RetryControllerButton;
+        }
+
+        public static bool RetryPressed()
+        {
+            return Input.GetKeyDown(RetryKeyboardKey)
+                || Input.GetKeyDown(RetrySubmitKeyboardKey)
+                || Input.GetKeyDown(KeyCode.KeypadEnter)
+                || Input.GetKeyDown(KeyCode.Space)
+                || Input.GetKeyDown(RetryControllerButton);
         }
 
         private static bool InteractPressed()

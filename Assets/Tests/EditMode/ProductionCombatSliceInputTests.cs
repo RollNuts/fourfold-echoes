@@ -23,6 +23,26 @@ namespace FourfoldEchoes.Tests.EditMode
         }
 
         [Test]
+        public void Gameplay_RetryInput_SupportsControllerAndKeyboardSubmit()
+        {
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.R), Is.True);
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.Return), Is.True);
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.KeypadEnter), Is.True);
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.Space), Is.True);
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.JoystickButton0), Is.True);
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.JoystickButton3), Is.False);
+        }
+
+        [Test]
+        public void UI_RetryCopy_NamesControllerSubmitPath()
+        {
+            Assert.That(
+                ProductionCombatSliceUi.BuildRetryBodyText(),
+                Is.EqualTo("South Button / Enter / R restarts the room from its initial state."));
+            StringAssert.Contains("Retry after defeat: South Button / Enter / R", ProductionCombatOnboardingHint.BuildControlBodyText());
+        }
+
+        [Test]
         public void UI_RewardClaimPrompt_ShowsOnlyNearOpenReward()
         {
             var reward = Vector3.zero;
