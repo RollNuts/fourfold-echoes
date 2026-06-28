@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-28T15:00:17.227Z",
+  "generatedAtUtc": "2026-06-28T15:06:24.540Z",
   "scope": "D-020 vertical slice evidence snapshot",
   "caveat": "This is not a runtime profiler capture. It summarizes current scene, asset, and screenshot evidence until a real playthrough/profiler scenario exists.",
   "targets": {
@@ -75,14 +75,14 @@
   },
   "buildIdentity": {
     "version": "1.0",
-    "commit": "bcc5ebb6fdf0",
-    "fullCommit": "bcc5ebb6fdf0efbc978adb8d68f13d9d9a86b83f",
+    "commit": "786d4fa7e1e4",
+    "fullCommit": "786d4fa7e1e4f0e9b9d3e3799d805b3de85a2eb2",
     "branch": "codex/build-evidence-link-20260628",
     "source": {
       "version": "ProjectSettings.bundleVersion",
       "commit": "git"
     },
-    "titleBuildLine": "Build 1.0 / commit bcc5ebb6fdf0"
+    "titleBuildLine": "Build 1.0 / commit 786d4fa7e1e4"
   },
   "d020Runtime": {
     "scenePath": "Assets/Scenes/D020VerticalSlice.unity",
