@@ -1,6 +1,6 @@
 # Performance Snapshot
 
-Generated UTC: `2026-06-28T00:31:33.514Z`
+Generated UTC: `2026-06-28T14:46:26.935Z`
 
 Scope: D-020 vertical slice evidence snapshot
 

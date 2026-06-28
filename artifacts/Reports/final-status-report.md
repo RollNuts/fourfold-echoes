@@ -1,6 +1,6 @@
 # Final Status Report
 
-Generated UTC: `2026-06-28T00:31:33.514Z`
+Generated UTC: `2026-06-28T14:46:26.935Z`
 
 ## Final Product Definition
 
@@ -35,7 +35,7 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 ## Blockers
 
 - No top-down hub/region/boss vertical slice exists.
-- D-020 now has two one-tool responses, but not a complete authored second gimmick room with route flow.
+- D-020 is still a generated Region 01 test room proof, not a production-authored slice with hub, boss, and final route art.
 - Production hero/tool/enemy/boss silhouettes are not approved.
 - Final music and release-quality core SFX are not implemented.
 - No measured frame-time profiler scenario exists.
@@ -43,7 +43,7 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 
 ## Exact Next Highest-Leverage Work
 
-- Promote the second one-tool response into a compact authored second gimmick room with route flow.
+- Replace generated proof geometry with production-intent Region 01 route art while keeping the one-tool/two-relic smoke contract intact.
 - Replace pilot hero/tool/enemy with production-intent stylized silhouettes and turnaround evidence.
 - Add a non-placeholder tool pulse SFX, target-hit SFX, attack hit SFX, enemy tell SFX, and discovery stinger.
 - Extend the automated runtime smoke to cover SFX wiring and a build-level input replay.

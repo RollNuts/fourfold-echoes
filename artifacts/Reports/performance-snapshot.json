@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-28T00:31:33.514Z",
+  "generatedAtUtc": "2026-06-28T14:46:26.935Z",
   "scope": "D-020 vertical slice evidence snapshot",
   "caveat": "This is not a runtime profiler capture. It summarizes current scene, asset, and screenshot evidence until a real playthrough/profiler scenario exists.",
   "targets": {
@@ -28,14 +28,14 @@
     {
       "path": "artifacts/Previews/d020-slice-camera.png",
       "exists": true,
-      "sizeBytes": 201135,
+      "sizeBytes": 204523,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-tool-node-read.png",
       "exists": true,
-      "sizeBytes": 302320,
+      "sizeBytes": 307757,
       "width": 1280,
       "height": 800
     },
@@ -49,21 +49,21 @@
     {
       "path": "artifacts/Previews/d020-reward-read.png",
       "exists": true,
-      "sizeBytes": 341862,
+      "sizeBytes": 344900,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-playable-attack-read.png",
       "exists": true,
-      "sizeBytes": 403094,
+      "sizeBytes": 409941,
       "width": 1280,
       "height": 800
     },
     {
       "path": "artifacts/Previews/d020-hud-reward-save.png",
       "exists": true,
-      "sizeBytes": 315114,
+      "sizeBytes": 318396,
       "width": 1280,
       "height": 800
     }
@@ -71,14 +71,14 @@
   "d020Screenshot": {
     "path": "artifacts/Previews/d020-slice-camera.png",
     "exists": true,
-    "sizeBytes": 201135,
+    "sizeBytes": 204523,
     "width": 1280,
     "height": 800
   },
   "d020ToolRead": {
     "path": "artifacts/Previews/d020-tool-node-read.png",
     "exists": true,
-    "sizeBytes": 302320,
+    "sizeBytes": 307757,
     "width": 1280,
     "height": 800
   },
@@ -92,21 +92,21 @@
   "d020RewardRead": {
     "path": "artifacts/Previews/d020-reward-read.png",
     "exists": true,
-    "sizeBytes": 341862,
+    "sizeBytes": 344900,
     "width": 1280,
     "height": 800
   },
   "d020PlayableAttackRead": {
     "path": "artifacts/Previews/d020-playable-attack-read.png",
     "exists": true,
-    "sizeBytes": 403094,
+    "sizeBytes": 409941,
     "width": 1280,
     "height": 800
   },
   "d020HudRewardSaveRead": {
     "path": "artifacts/Previews/d020-hud-reward-save.png",
     "exists": true,
-    "sizeBytes": 315114,
+    "sizeBytes": 318396,
     "width": 1280,
     "height": 800
   },

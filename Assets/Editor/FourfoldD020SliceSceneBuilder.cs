@@ -43,11 +43,13 @@ namespace FourfoldEchoes.Editor
             var player = CreatePlayer(root.transform, assets);
             var enemy = CreateEnemy(root.transform, assets, player.transform);
             var reward = CreateChest(root.transform, assets, player.transform);
+            var shortcutReward = CreateShortcutRelicCache(root.transform, assets, player.transform);
             var nodes = CreateExplorationToolProof(root.transform, assets);
             reward.requiredEnemy = enemy;
             reward.requiredNode = nodes[0];
             reward.requiredNodes = new[] { nodes[1] };
-            CreateRuntimeHook(player.transform, nodes, reward, assets);
+            shortcutReward.requiredNode = nodes[0];
+            CreateRuntimeHook(player.transform, nodes, new[] { reward, shortcutReward }, assets);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[]
@@ -70,6 +72,7 @@ namespace FourfoldEchoes.Editor
             Require("D020 Player");
             Require("D020 Enemy Read Target");
             Require("D020 Relic Chest");
+            Require("D020 Shortcut Relic Cache");
             Require("D020 Exploration Tool Node");
             Require("D020 Reward Lens Node");
             Require("D020 Reward Lens Chamber");
@@ -84,6 +87,7 @@ namespace FourfoldEchoes.Editor
             RequireComponent<D020PlayerController>("D020 Player");
             RequireComponent<D020EnemyDummy>("D020 Enemy Read Target");
             RequireComponent<D020RelicReward>("D020 Relic Chest");
+            RequireComponent<D020RelicReward>("D020 Shortcut Relic Cache");
             RequireComponent<D020ProgressSave>("D020 Runtime Hook");
             RequireComponent<D020HudController>("D020 HUD");
 
@@ -96,6 +100,12 @@ namespace FourfoldEchoes.Editor
             if (renderers.Length < 24)
             {
                 throw new InvalidOperationException($"D-020 vertical slice has too few renderers for a readable proof scene: {renderers.Length}");
+            }
+
+            var rewards = UnityEngine.Object.FindObjectsByType<D020RelicReward>(FindObjectsSortMode.None);
+            if (rewards.Length != 2)
+            {
+                throw new InvalidOperationException($"D-020 vertical slice must expose exactly two relic rewards: {rewards.Length}");
             }
 
             Debug.Log("FOURFOLD D-020 vertical slice scene validation passed.");
@@ -312,6 +322,31 @@ namespace FourfoldEchoes.Editor
             return reward;
         }
 
+        private static D020RelicReward CreateShortcutRelicCache(Transform root, GeneratedAssets assets, Transform player)
+        {
+            var cache = new GameObject("D020 Shortcut Relic Cache");
+            cache.transform.SetParent(root);
+            cache.transform.position = new Vector3(-3.35f, 0.1f, 1.05f);
+            cache.transform.rotation = Quaternion.Euler(0f, 28f, 0f);
+
+            CreateBlock(cache.transform, "D020 Shortcut Cache Base", assets.floorDark, Vector3.zero, new Vector3(0.62f, 0.24f, 0.50f));
+            CreateBlock(cache.transform, "D020 Shortcut Cache Thread", assets.route, new Vector3(0f, 0.22f, 0f), new Vector3(0.66f, 0.08f, 0.54f));
+            var visibleRelic = CreatePrimitive(cache.transform, PrimitiveType.Sphere, "D020 Shortcut Relic Read", assets.relic, new Vector3(0f, 0.48f, 0f), new Vector3(0.20f, 0.24f, 0.20f));
+            CreatePrimitive(cache.transform, PrimitiveType.Cylinder, "D020 Shortcut Reward Footprint", assets.tool, new Vector3(0f, 0.03f, 0f), new Vector3(0.72f, 0.024f, 0.72f));
+            var collectedRead = CreatePrimitive(cache.transform, PrimitiveType.Sphere, "D020 Shortcut Reward Collected Read", assets.tool, new Vector3(0f, 0.70f, 0f), new Vector3(0.15f, 0.15f, 0.15f));
+            collectedRead.SetActive(false);
+
+            var reward = cache.AddComponent<D020RelicReward>();
+            reward.rewardId = "d020.region01.relic.02";
+            reward.pickupRadius = 1.0f;
+            reward.player = player;
+            reward.idleRead = visibleRelic;
+            reward.collectedRead = collectedRead;
+            reward.pickupClip = assets.relicPickup;
+            reward.ResetReward();
+            return reward;
+        }
+
         private static ExplorationNode[] CreateExplorationToolProof(Transform root, GeneratedAssets assets)
         {
             var proof = new GameObject("D020 One Tool Proof");
@@ -388,7 +423,7 @@ namespace FourfoldEchoes.Editor
             return new[] { node, rewardNode };
         }
 
-        private static void CreateRuntimeHook(Transform player, ExplorationNode[] nodes, D020RelicReward reward, GeneratedAssets assets)
+        private static void CreateRuntimeHook(Transform player, ExplorationNode[] nodes, D020RelicReward[] rewards, GeneratedAssets assets)
         {
             var hookObject = new GameObject("D020 Runtime Hook");
             var audioSource = hookObject.AddComponent<AudioSource>();
@@ -407,8 +442,8 @@ namespace FourfoldEchoes.Editor
             var progress = hookObject.AddComponent<D020ProgressSave>();
             progress.nodes = nodes;
             progress.nodeIds = new[] { "d020.region01.shortcut.01", "d020.region01.reward_lens.01" };
-            progress.rewards = new[] { reward };
-            progress.rewardIds = new[] { "d020.region01.relic.01" };
+            progress.rewards = rewards;
+            progress.rewardIds = new[] { "d020.region01.relic.01", "d020.region01.relic.02" };
             progress.saveFileName = "d020-region01-progress.json";
             progress.loadOnAwake = true;
             progress.saveOnProgressChanged = true;
@@ -419,7 +454,8 @@ namespace FourfoldEchoes.Editor
             hud.tool = tool;
             hud.node = nodes[0];
             hud.nodes = nodes;
-            hud.reward = reward;
+            hud.reward = rewards != null && rewards.Length > 0 ? rewards[0] : null;
+            hud.rewards = rewards;
             hud.progressSave = progress;
             hud.RefreshNow();
         }

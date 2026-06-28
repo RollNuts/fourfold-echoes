@@ -13,6 +13,7 @@ namespace FourfoldEchoes.Product
         public ExplorationNode[] nodes;
         public D020EnemyDummy enemy;
         public D020RelicReward reward;
+        public D020RelicReward[] rewards;
         public D020ProgressSave progressSave;
 
         private GUIStyle boxStyle;
@@ -133,17 +134,29 @@ namespace FourfoldEchoes.Product
 
         private string BuildRewardRead()
         {
-            if (reward == null)
+            var rewardCount = CountRewards();
+            if (rewardCount == 0)
             {
                 return "Relic --";
             }
 
-            if (reward.IsCollected)
+            if (rewardCount > 1)
+            {
+                return $"Relics {CountCollectedRewards()}/{rewardCount}";
+            }
+
+            var target = GetSingleReward();
+            if (target == null)
+            {
+                return "Relic --";
+            }
+
+            if (target.IsCollected)
             {
                 return "Relic Claimed";
             }
 
-            return reward.IsUnlocked ? "Relic Ready" : "Relic Locked";
+            return target.IsUnlocked ? "Relic Ready" : "Relic Locked";
         }
 
         private string BuildProgressRead()
@@ -168,17 +181,18 @@ namespace FourfoldEchoes.Product
                 return "Use tool: E / North";
             }
 
-            if (reward == null)
+            var rewardCount = CountRewards();
+            if (rewardCount == 0)
             {
                 return "Press forward";
             }
 
-            if (reward.IsCollected)
+            if (CountCollectedRewards() >= rewardCount)
             {
-                return "Relic secured";
+                return rewardCount > 1 ? "Relics secured" : "Relic secured";
             }
 
-            return reward.IsUnlocked ? "Claim relic: E / North" : "Defeat the enemy";
+            return HasUnlockedReward() ? "Claim relic: E / North" : "Defeat the enemy";
         }
 
         private bool HasUnsolvedNode()
@@ -203,6 +217,75 @@ namespace FourfoldEchoes.Product
             }
 
             return false;
+        }
+
+        private int CountRewards()
+        {
+            var activeRewards = GetRewards();
+            var count = 0;
+            for (var i = 0; i < activeRewards.Length; i++)
+            {
+                if (activeRewards[i] != null)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private int CountCollectedRewards()
+        {
+            var activeRewards = GetRewards();
+            var count = 0;
+            for (var i = 0; i < activeRewards.Length; i++)
+            {
+                if (activeRewards[i] != null && activeRewards[i].IsCollected)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private bool HasUnlockedReward()
+        {
+            var activeRewards = GetRewards();
+            for (var i = 0; i < activeRewards.Length; i++)
+            {
+                var target = activeRewards[i];
+                if (target != null && !target.IsCollected && target.IsUnlocked)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private D020RelicReward GetSingleReward()
+        {
+            var activeRewards = GetRewards();
+            for (var i = 0; i < activeRewards.Length; i++)
+            {
+                if (activeRewards[i] != null)
+                {
+                    return activeRewards[i];
+                }
+            }
+
+            return null;
+        }
+
+        private D020RelicReward[] GetRewards()
+        {
+            if (rewards != null && rewards.Length > 0)
+            {
+                return rewards;
+            }
+
+            return reward != null ? new[] { reward } : System.Array.Empty<D020RelicReward>();
         }
 
         private void UpdateSaveFeedback(float deltaTime)
