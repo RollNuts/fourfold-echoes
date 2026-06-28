@@ -55,6 +55,7 @@
     "animator_controller": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Animator/AC_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.controller",
     "runtime_prefab": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Prefabs/PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.prefab",
     "runtime_preview_scene": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity",
+    "runtime_socket_marker_material": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Materials/MAT_Enemy_MeleeShardling_SocketMarkerPreview_v0.1.0.mat",
     "runtime_preview_driver": "Assets/Scripts/MeleeShardlingAnimationPreviewDriver.cs",
     "runtime_animation_state_driver": "Assets/Scripts/MeleeShardlingAnimationStateDriver.cs",
     "runtime_socket_registry": "Assets/Scripts/MeleeShardlingSocketRegistry.cs",
@@ -606,6 +607,9 @@
     "socket_registry": "Assets/Scripts/MeleeShardlingSocketRegistry.cs",
     "socket_registry_count": 9,
     "socket_registry_policy": "Gameplay and VFX scripts can resolve SOCKET_* transforms by MeleeShardlingSocketRole or exact socket name from the prefab root.",
+    "socket_preview_marker_material": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Materials/MAT_Enemy_MeleeShardling_SocketMarkerPreview_v0.1.0.mat",
+    "socket_preview_marker_count": 9,
+    "socket_preview_marker_policy": "Preview scene includes small non-colliding markers parented to each SOCKET_* transform for hit/cast/VFX placement review.",
     "event_runtime_policy": "AnimationEvent methods are received on the prefab root and may toggle the forward hitbox or record gameplay cues.",
     "vfx_sockets": [
       "SOCKET_RedSeamVFX",
@@ -617,7 +621,7 @@
       "SOCKET_ForwardHit",
       "SOCKET_WeakPoint"
     ],
-    "sample_scene_setup": "Generated runtime preview scene contains the animated prefab at world origin, socket registry, runtime animation state driver, preview animation driver, camera, key light, and floor."
+    "sample_scene_setup": "Generated runtime preview scene contains the animated prefab at world origin, socket registry, socket preview markers, runtime animation state driver, preview animation driver, camera, key light, and floor."
   },
   "qc": {
     "generated_at": "2026-06-27T07:25:00Z",

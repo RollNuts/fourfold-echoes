@@ -23,8 +23,11 @@ namespace FourfoldEchoes.Editor
         private const string PrefabPath = RuntimeRoot + "/Prefabs/PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.prefab";
         private const string ScenePath = RuntimeRoot + "/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity";
         private const string RuntimeQcPath = RuntimeRoot + "/runtime_binding_qc.json";
+        private const string SocketMarkerMaterialPath = RuntimeRoot + "/Materials/MAT_Enemy_MeleeShardling_SocketMarkerPreview_v0.1.0.mat";
         private const string PreviewInstanceName = "Preview_PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0";
+        private const string SocketMarkerPrefix = "MARKER_";
         private const float PreviewSecondsPerState = 0.75f;
+        private const float SocketMarkerScale = 0.075f;
         private const float StateDriverCrossFadeSeconds = 0.05f;
 
         private static readonly string[] Actions =
@@ -98,6 +101,7 @@ namespace FourfoldEchoes.Editor
             Directory.CreateDirectory(RuntimeRoot + "/Animator");
             Directory.CreateDirectory(RuntimeRoot + "/Prefabs");
             Directory.CreateDirectory(RuntimeRoot + "/Scenes");
+            Directory.CreateDirectory(RuntimeRoot + "/Materials");
 
             var controller = BuildAnimatorController();
             BuildPrefab(controller);
@@ -299,6 +303,7 @@ namespace FourfoldEchoes.Editor
             EnsurePreviewKeyLight(scene);
             EnsurePreviewCamera(scene);
             ConfigurePreviewDriver(instance);
+            EnsureSocketPreviewMarkers(instance, BuildSocketMarkerMaterial());
 
             EditorSceneManager.SaveScene(scene, ScenePath);
         }
@@ -391,6 +396,73 @@ namespace FourfoldEchoes.Editor
             driver.ConfigureForPreview(animator, Actions, PreviewSecondsPerState);
             EditorUtility.SetDirty(driver);
             EditorUtility.SetDirty(instance);
+        }
+
+        private static Material BuildSocketMarkerMaterial()
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(SocketMarkerMaterialPath);
+            if (material == null)
+            {
+                var shader = Shader.Find("Universal Render Pipeline/Unlit")
+                    ?? Shader.Find("Unlit/Color")
+                    ?? Shader.Find("Standard");
+                if (shader == null)
+                {
+                    throw new InvalidOperationException("Could not find a shader for the socket marker material.");
+                }
+
+                material = new Material(shader);
+                AssetDatabase.CreateAsset(material, SocketMarkerMaterialPath);
+            }
+
+            material.name = "MAT_Enemy_MeleeShardling_SocketMarkerPreview_v0.1.0";
+            material.color = new Color(0.95f, 0.22f, 0.78f, 1f);
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static void EnsureSocketPreviewMarkers(GameObject instance, Material markerMaterial)
+        {
+            var staleMarkers = instance.GetComponentsInChildren<Transform>(true)
+                .Where(transform => transform.name.StartsWith(SocketMarkerPrefix, StringComparison.Ordinal))
+                .Select(transform => transform.gameObject)
+                .ToArray();
+            foreach (var marker in staleMarkers)
+            {
+                UnityEngine.Object.DestroyImmediate(marker);
+            }
+
+            foreach (var socketName in RequiredSockets)
+            {
+                var socket = instance.GetComponentsInChildren<Transform>(true).FirstOrDefault(transform => transform.name == socketName);
+                if (socket == null)
+                {
+                    throw new InvalidOperationException($"Preview instance is missing {socketName}.");
+                }
+
+                var marker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                marker.name = SocketMarkerPrefix + socketName;
+                marker.transform.SetParent(socket, false);
+                marker.transform.localPosition = Vector3.zero;
+                marker.transform.localRotation = Quaternion.identity;
+                marker.transform.localScale = Vector3.one * SocketMarkerScale;
+
+                var collider = marker.GetComponent<Collider>();
+                if (collider != null)
+                {
+                    UnityEngine.Object.DestroyImmediate(collider);
+                }
+
+                var renderer = marker.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    renderer.sharedMaterial = markerMaterial;
+                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    renderer.receiveShadows = false;
+                }
+
+                EditorUtility.SetDirty(marker);
+            }
         }
 
         private static BoxCollider AddForwardHitbox(GameObject root)
@@ -638,6 +710,8 @@ namespace FourfoldEchoes.Editor
                 {
                     errors.Add("Preview scene prefab instance is missing MeleeShardlingSocketRegistry.");
                 }
+
+                VerifySocketPreviewMarkers(previewInstance, errors);
             }
 
             if (!roots.Any(root => root.GetComponent<Camera>() != null))
@@ -653,6 +727,47 @@ namespace FourfoldEchoes.Editor
             if (!string.IsNullOrEmpty(previousScene) && previousScene != ScenePath)
             {
                 EditorSceneManager.OpenScene(previousScene, OpenSceneMode.Single);
+            }
+        }
+
+        private static void VerifySocketPreviewMarkers(GameObject previewInstance, List<string> errors)
+        {
+            var markers = previewInstance.GetComponentsInChildren<Transform>(true)
+                .Where(transform => transform.name.StartsWith(SocketMarkerPrefix, StringComparison.Ordinal))
+                .ToArray();
+            if (markers.Length != RequiredSockets.Length)
+            {
+                errors.Add($"Preview scene must contain {RequiredSockets.Length.ToString(CultureInfo.InvariantCulture)} socket markers.");
+            }
+
+            foreach (var socketName in RequiredSockets)
+            {
+                var marker = markers.FirstOrDefault(transform => transform.name == SocketMarkerPrefix + socketName);
+                if (marker == null)
+                {
+                    errors.Add($"Preview scene is missing marker for {socketName}.");
+                    continue;
+                }
+
+                if (marker.parent == null || marker.parent.name != socketName)
+                {
+                    errors.Add($"Preview marker {marker.name} must be parented to {socketName}.");
+                }
+
+                var renderer = marker.GetComponent<Renderer>();
+                if (renderer == null)
+                {
+                    errors.Add($"Preview marker {marker.name} is missing a Renderer.");
+                }
+                else if (renderer.sharedMaterial == null || AssetDatabase.GetAssetPath(renderer.sharedMaterial) != SocketMarkerMaterialPath)
+                {
+                    errors.Add($"Preview marker {marker.name} must use {SocketMarkerMaterialPath}.");
+                }
+
+                if (marker.GetComponent<Collider>() != null)
+                {
+                    errors.Add($"Preview marker {marker.name} must not include a Collider.");
+                }
             }
         }
 
@@ -910,7 +1025,10 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine($"    \"animation_state_driver_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\",");
             builder.AppendLine("    \"socket_registry\": \"MeleeShardlingSocketRegistry\",");
             builder.AppendLine($"    \"socket_registry_count\": {RequiredSockets.Length.ToString(CultureInfo.InvariantCulture)},");
-            builder.AppendLine($"    \"socket_registry_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\"");
+            builder.AppendLine($"    \"socket_registry_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\",");
+            builder.AppendLine($"    \"socket_preview_marker_material\": \"{SocketMarkerMaterialPath}\",");
+            builder.AppendLine($"    \"socket_preview_marker_count\": {RequiredSockets.Length.ToString(CultureInfo.InvariantCulture)},");
+            builder.AppendLine($"    \"socket_preview_markers_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\"");
             builder.AppendLine("  },");
             builder.AppendLine("  \"errors\": [");
             AppendJsonArray(builder, errors, "    ");
