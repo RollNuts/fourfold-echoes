@@ -1,6 +1,6 @@
 # Performance Snapshot
 
-Generated UTC: `2026-06-27T07:54:12.988Z`
+Generated UTC: `2026-06-27T08:45:29.092Z`
 
 Scope: D-020 vertical slice evidence snapshot
 
@@ -23,6 +23,7 @@ This is not a runtime profiler capture. It summarizes current scene, asset, and 
 
 - `artifacts/Previews/d020-slice-camera.png`: 1280x800
 - `artifacts/Previews/d020-tool-node-read.png`: 1280x800
+- `artifacts/Previews/d020-reward-lens-read.png`: 1280x800
 - `artifacts/Previews/d020-reward-read.png`: 1280x800
 - `artifacts/Previews/d020-playable-attack-read.png`: 1280x800
 - `artifacts/Previews/d020-hud-reward-save.png`: 1280x800

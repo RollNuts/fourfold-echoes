@@ -34,6 +34,8 @@ namespace FourfoldEchoes.Editor
             Directory.CreateDirectory(outputDirectory);
             var shortcutNode = FindSceneObject("D020 Exploration Tool Node")?.GetComponent<ExplorationNode>();
             var shortcutRoute = FindSceneObject("D020 Shortcut Route");
+            var rewardLensNode = FindSceneObject("D020 Reward Lens Node")?.GetComponent<ExplorationNode>();
+            var rewardLensResponse = FindSceneObject("D020 Reward Lens Response");
             var player = UnityEngine.Object.FindFirstObjectByType<D020PlayerController>();
             var enemy = UnityEngine.Object.FindFirstObjectByType<D020EnemyDummy>();
             var reward = UnityEngine.Object.FindFirstObjectByType<D020RelicReward>();
@@ -41,29 +43,24 @@ namespace FourfoldEchoes.Editor
             var hud = UnityEngine.Object.FindFirstObjectByType<D020HudController>();
 
             var outputPath = Path.Combine(outputDirectory, "d020-slice-camera.png");
-            if (shortcutNode != null)
-            {
-                shortcutNode.SetSolved(false);
-            }
-            else if (shortcutRoute != null)
-            {
-                shortcutRoute.SetActive(false);
-            }
+            SetNodeSolved(shortcutNode, shortcutRoute, false);
+            SetNodeSolved(rewardLensNode, rewardLensResponse, false);
             CaptureCamera(camera, outputPath);
-            if (shortcutNode != null)
-            {
-                shortcutNode.SetSolved(true);
-            }
-            else if (shortcutRoute != null)
-            {
-                shortcutRoute.SetActive(true);
-            }
+            SetNodeSolved(shortcutNode, shortcutRoute, true);
+            SetNodeSolved(rewardLensNode, rewardLensResponse, false);
             CaptureCameraFromPose(
                 camera,
                 Path.Combine(outputDirectory, "d020-tool-node-read.png"),
                 new Vector3(2.9f, 7.1f, -5.2f),
                 new Vector3(-2.35f, 0.35f, -0.1f),
                 3.9f);
+            SetNodeSolved(rewardLensNode, rewardLensResponse, true);
+            CaptureCameraFromPose(
+                camera,
+                Path.Combine(outputDirectory, "d020-reward-lens-read.png"),
+                new Vector3(6.1f, 6.35f, -4.65f),
+                new Vector3(2.72f, 0.42f, -1.0f),
+                3.15f);
             CaptureCameraFromPose(
                 camera,
                 Path.Combine(outputDirectory, "d020-reward-read.png"),
@@ -87,12 +84,28 @@ namespace FourfoldEchoes.Editor
                 Path.Combine(outputDirectory, "d020-hud-reward-save.png"),
                 shortcutNode,
                 shortcutRoute,
+                rewardLensNode,
+                rewardLensResponse,
                 reward,
                 enemy,
                 progressSave,
                 hud);
 
             Debug.Log($"FOURFOLD D-020 vertical slice camera evidence captured: {outputPath}");
+        }
+
+        private static void SetNodeSolved(ExplorationNode node, GameObject fallbackResponse, bool solved)
+        {
+            if (node != null)
+            {
+                node.SetSolved(solved);
+                return;
+            }
+
+            if (fallbackResponse != null)
+            {
+                fallbackResponse.SetActive(solved);
+            }
         }
 
         private static Camera FindCamera()
@@ -162,6 +175,8 @@ namespace FourfoldEchoes.Editor
             string outputPath,
             ExplorationNode shortcutNode,
             GameObject shortcutRoute,
+            ExplorationNode rewardLensNode,
+            GameObject rewardLensResponse,
             D020RelicReward reward,
             D020EnemyDummy enemy,
             D020ProgressSave progressSave,
@@ -176,14 +191,8 @@ namespace FourfoldEchoes.Editor
                 }
             }
 
-            if (shortcutNode != null)
-            {
-                shortcutNode.SetSolved(true);
-            }
-            else if (shortcutRoute != null)
-            {
-                shortcutRoute.SetActive(true);
-            }
+            SetNodeSolved(shortcutNode, shortcutRoute, true);
+            SetNodeSolved(rewardLensNode, rewardLensResponse, true);
 
             if (reward != null)
             {

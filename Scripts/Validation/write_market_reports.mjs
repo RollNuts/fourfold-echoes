@@ -10,12 +10,14 @@ const generatedAtUtc = new Date().toISOString();
 const unityReport = readJson("artifacts/Reports/unity-product-validation.json");
 const d020Screenshot = inspectPng("artifacts/Previews/d020-slice-camera.png");
 const d020ToolRead = inspectPng("artifacts/Previews/d020-tool-node-read.png");
+const d020RewardLensRead = inspectPng("artifacts/Previews/d020-reward-lens-read.png");
 const d020RewardRead = inspectPng("artifacts/Previews/d020-reward-read.png");
 const d020PlayableAttackRead = inspectPng("artifacts/Previews/d020-playable-attack-read.png");
 const d020HudRewardSaveRead = inspectPng("artifacts/Previews/d020-hud-reward-save.png");
 const requiredVisualEvidence = [
   "artifacts/Previews/d020-slice-camera.png",
   "artifacts/Previews/d020-tool-node-read.png",
+  "artifacts/Previews/d020-reward-lens-read.png",
   "artifacts/Previews/d020-reward-read.png",
   "artifacts/Previews/d020-playable-attack-read.png",
   "artifacts/Previews/d020-hud-reward-save.png"
@@ -46,6 +48,7 @@ const performanceSnapshot = {
   visualEvidence: requiredVisualEvidence,
   d020Screenshot,
   d020ToolRead,
+  d020RewardLensRead,
   d020RewardRead,
   d020PlayableAttackRead,
   d020HudRewardSaveRead,
@@ -95,6 +98,7 @@ const finalStatus = {
     d020SliceScene: d020Scene.exists ? d020Scene.path : null,
     d020SliceScreenshot: d020Screenshot.exists ? d020Screenshot.path : null,
     d020ToolScreenshot: d020ToolRead.exists ? d020ToolRead.path : null,
+    d020RewardLensScreenshot: d020RewardLensRead.exists ? d020RewardLensRead.path : null,
     d020RewardScreenshot: d020RewardRead.exists ? d020RewardRead.path : null,
     d020PlayableAttackScreenshot: d020PlayableAttackRead.exists ? d020PlayableAttackRead.path : null,
     d020HudRewardSaveScreenshot: d020HudRewardSaveRead.exists ? d020HudRewardSaveRead.path : null,
@@ -109,14 +113,14 @@ const finalStatus = {
   marketReadyStatus: "not_market_ready",
   blockers: [
     "No top-down hub/region/boss vertical slice exists.",
-    "No two gimmick rooms prove repeated use of the single exploration tool.",
+    "D-020 now has two one-tool responses, but not a complete authored second gimmick room with route flow.",
     "Production hero/tool/enemy/boss silhouettes are not approved.",
     "Final music and release-quality core SFX are not implemented.",
     "No measured frame-time profiler scenario exists.",
-    "Steam screenshot set is not production-ready."
+    "Steam screenshot set is not production-ready and still has fewer than 8 runtime candidates."
   ],
   nextHighestLeverageWork: [
-    "Add a second gimmick room that reuses the same ExplorationTool differently without adding a new system.",
+    "Promote the second one-tool response into a compact authored second gimmick room with route flow.",
     "Replace pilot hero/tool/enemy with production-intent stylized silhouettes and turnaround evidence.",
     "Add a non-placeholder tool pulse SFX, target-hit SFX, attack hit SFX, enemy tell SFX, and discovery stinger.",
     "Extend the automated runtime smoke to cover SFX wiring and a build-level input replay.",
@@ -439,6 +443,7 @@ Canonical hook: ${status.canonicalHook}
 | D-020 slice scene | \`${status.currentEvidence.d020SliceScene ?? "missing"}\` |
 | D-020 slice screenshot | \`${status.currentEvidence.d020SliceScreenshot ?? "missing"}\` |
 | D-020 tool screenshot | \`${status.currentEvidence.d020ToolScreenshot ?? "missing"}\` |
+| D-020 reward-lens screenshot | \`${status.currentEvidence.d020RewardLensScreenshot ?? "missing"}\` |
 | D-020 reward screenshot | \`${status.currentEvidence.d020RewardScreenshot ?? "missing"}\` |
 | D-020 playable attack screenshot | \`${status.currentEvidence.d020PlayableAttackScreenshot ?? "missing"}\` |
 | D-020 HUD reward/save screenshot | \`${status.currentEvidence.d020HudRewardSaveScreenshot ?? "missing"}\` |
