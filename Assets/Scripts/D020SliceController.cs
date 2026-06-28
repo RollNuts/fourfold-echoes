@@ -42,6 +42,12 @@ namespace FourfoldEchoes.Product
         public AudioClip attackClip;
         public AudioClip hitClip;
         public AudioClip dodgeClip;
+        public AudioClip enemyTellClip;
+        public AudioClip playerDamageClip;
+        public AudioClip bossImpactClip;
+        public AudioClip bossDefeatClip;
+        public AudioClip bossTransitionClip;
+        public AudioClip enemyDeathClip;
         public AudioClip rewardClaimClip;
         public AudioClip rewardReadyClip;
         public AudioSource musicSource;
@@ -123,6 +129,22 @@ namespace FourfoldEchoes.Product
         private const int FailureMenuCount = 3;
         private const int SettingsCount = 6;
         private const float AxisRepeatDelay = 0.24f;
+        private const int ProceduralAudioSampleRate = 24000;
+
+        private static AudioClip fallbackAttackClip;
+        private static AudioClip fallbackHitClip;
+        private static AudioClip fallbackDodgeClip;
+        private static AudioClip fallbackEnemyTellClip;
+        private static AudioClip fallbackPlayerDamageClip;
+        private static AudioClip fallbackBossImpactClip;
+        private static AudioClip fallbackBossDefeatClip;
+        private static AudioClip fallbackBossTransitionClip;
+        private static AudioClip fallbackEnemyDeathClip;
+        private static AudioClip fallbackRewardClaimClip;
+        private static AudioClip fallbackRewardReadyClip;
+        private static AudioClip fallbackToolFailClip;
+        private static AudioClip fallbackExplorationMusicClip;
+        private static AudioClip fallbackBossMusicClip;
 
         private enum PendingExitAction
         {
@@ -509,6 +531,7 @@ namespace FourfoldEchoes.Product
             attackReadTimer = 0.11f;
             PlayCue(attackClip, 0.72f);
             var hitAny = false;
+            var enemyDeathCuePlayed = false;
             for (var i = 0; i < enemyHealth.Length; i++)
             {
                 var enemy = enemies[i];
@@ -543,6 +566,11 @@ namespace FourfoldEchoes.Product
                     if (IsBossEnemy(i))
                     {
                         RegisterBossDefeat();
+                    }
+                    else if (!enemyDeathCuePlayed)
+                    {
+                        enemyDeathCuePlayed = true;
+                        PlayCue(enemyDeathClip, 0.74f);
                     }
 
                     enemy.gameObject.SetActive(false);
@@ -612,6 +640,7 @@ namespace FourfoldEchoes.Product
                     if (enemyWindupTimer[i] <= 0f)
                     {
                         enemyAttackAimDirections[i] = desired;
+                        PlayCue(enemyTellClip, IsBossEnemy(i) ? 0.78f : 0.56f);
                     }
                     enemyWindupTimer[i] += dt;
                     if (enemyWindupTimer[i] >= attackWindup)
@@ -668,7 +697,8 @@ namespace FourfoldEchoes.Product
                 player.position += knockback.normalized * 0.42f;
             }
 
-            PlayCue(hitClip, 0.62f);
+            var bossImpact = IsBossEnemy(index);
+            PlayCue(bossImpact ? bossImpactClip : playerDamageClip, bossImpact ? 0.86f : 0.78f);
             if (playerHealth <= 0f)
             {
                 RegisterRunFailure();
@@ -816,7 +846,7 @@ namespace FourfoldEchoes.Product
             runCleared = secondToolNode == null || secondRewardClaimPoint == null;
             ShowRewardNotice(
                 FourfoldLanguage.T(progressData, "LUMEN EDGE EARNED", "LUMEN EDGE 獲得"),
-                FourfoldLanguage.T(progressData, "Damage improves now; return to hub to save it.", "攻撃力が今すぐ上がる。ハブへ帰還すると保存される。"));
+                FourfoldLanguage.T(progressData, "Damage improves now; follow the blue RETURN marker to save it.", "攻撃力が今すぐ上がる。青いRETURNマーカーを追って保存。"));
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.92f);
             if (rewardReadyRead != null)
@@ -848,7 +878,7 @@ namespace FourfoldEchoes.Product
             previousReturnedToHubLoaded = false;
             ShowRewardNotice(
                 FourfoldLanguage.T(progressData, "LUMEN WARD EARNED", "LUMEN WARD 獲得"),
-                FourfoldLanguage.T(progressData, "Damage taken drops now; return to hub to save both rewards.", "被ダメージが今すぐ下がる。ハブへ帰還すると両方の報酬が保存される。"));
+                FourfoldLanguage.T(progressData, "Damage taken drops now; follow the blue RETURN marker to save both rewards.", "被ダメージが今すぐ下がる。青いRETURNマーカーを追って両方保存。"));
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.86f);
             if (secondRewardReadyRead != null)
@@ -1110,7 +1140,7 @@ namespace FourfoldEchoes.Product
 
             bossDefeatedThisRun = true;
             bossDefeatTimer = 2.8f;
-            PlayCue(rewardReadyClip, 0.82f);
+            PlayCue(bossDefeatClip, 0.88f);
         }
 
         private void RegisterRunFailure()
@@ -1731,7 +1761,7 @@ namespace FourfoldEchoes.Product
             ShowRewardNotice(
                 FourfoldLanguage.T(progressData, "BOSS OPENING", "ボスに隙"),
                 FourfoldLanguage.T(progressData, "Tool pulse exposed the boss. Attack now for bonus damage.", "ツールでボスに隙を作った。今は攻撃ダメージが上がる。"));
-            PlayCue(rewardReadyClip, 0.70f);
+            PlayCue(bossTransitionClip, 0.80f);
             return true;
         }
 
@@ -2625,6 +2655,8 @@ namespace FourfoldEchoes.Product
             musicSource.spatialBlend = 0f;
             musicSource.dopplerLevel = 0f;
             musicSource.volume = 0.26f;
+
+            EnsureFallbackAudioClips();
         }
 
         private void UpdateMusicState()
@@ -2685,6 +2717,19 @@ namespace FourfoldEchoes.Product
                 explorationTool.useKey = KeyCode.Q;
                 explorationTool.alternateUseKey = KeyCode.JoystickButton2;
                 explorationTool.TryResolveFallback = TryOpenBossWithTool;
+                EnsureFallbackAudioClips();
+                if (explorationTool.pulse == null)
+                {
+                    explorationTool.pulse = rewardReadyClip;
+                }
+                if (explorationTool.targetHit == null)
+                {
+                    explorationTool.targetHit = rewardClaimClip;
+                }
+                if (explorationTool.fail == null)
+                {
+                    explorationTool.fail = fallbackToolFailClip;
+                }
             }
 
             if (requiredToolNode == null && explorationTool != null && explorationTool.nodes != null && explorationTool.nodes.Length > 0)
@@ -2733,6 +2778,248 @@ namespace FourfoldEchoes.Product
             }
 
             return Mathf.Clamp01(progressData.masterVolume) * Mathf.Clamp01(progressData.sfxVolume);
+        }
+
+        private void EnsureFallbackAudioClips()
+        {
+            if (attackClip == null)
+            {
+                attackClip = FallbackAttackClip();
+            }
+            if (hitClip == null)
+            {
+                hitClip = FallbackHitClip();
+            }
+            if (dodgeClip == null)
+            {
+                dodgeClip = FallbackDodgeClip();
+            }
+            if (enemyTellClip == null)
+            {
+                enemyTellClip = FallbackEnemyTellClip();
+            }
+            if (playerDamageClip == null)
+            {
+                playerDamageClip = FallbackPlayerDamageClip();
+            }
+            if (bossImpactClip == null)
+            {
+                bossImpactClip = FallbackBossImpactClip();
+            }
+            if (bossDefeatClip == null)
+            {
+                bossDefeatClip = FallbackBossDefeatClip();
+            }
+            if (bossTransitionClip == null)
+            {
+                bossTransitionClip = FallbackBossTransitionClip();
+            }
+            if (enemyDeathClip == null)
+            {
+                enemyDeathClip = FallbackEnemyDeathClip();
+            }
+            if (rewardClaimClip == null)
+            {
+                rewardClaimClip = FallbackRewardClaimClip();
+            }
+            if (rewardReadyClip == null)
+            {
+                rewardReadyClip = FallbackRewardReadyClip();
+            }
+            if (explorationMusicClip == null)
+            {
+                explorationMusicClip = FallbackExplorationMusicClip();
+            }
+            if (bossMusicClip == null)
+            {
+                bossMusicClip = FallbackBossMusicClip();
+            }
+            if (fallbackToolFailClip == null)
+            {
+                fallbackToolFailClip = BuildToneClip(
+                    "D020_ToolFail_Fallback",
+                    new ProceduralToneSegment(190f, 0.055f, 0.15f),
+                    new ProceduralToneSegment(118f, 0.070f, 0.12f));
+            }
+        }
+
+        private static AudioClip FallbackAttackClip()
+        {
+            return fallbackAttackClip ?? (fallbackAttackClip = BuildToneClip(
+                "D020_Attack_Fallback",
+                new ProceduralToneSegment(260f, 0.045f, 0.19f),
+                new ProceduralToneSegment(420f, 0.055f, 0.14f)));
+        }
+
+        private static AudioClip FallbackHitClip()
+        {
+            return fallbackHitClip ?? (fallbackHitClip = BuildToneClip(
+                "D020_HitConfirm_Fallback",
+                new ProceduralToneSegment(392f, 0.050f, 0.20f),
+                new ProceduralToneSegment(620f, 0.065f, 0.13f)));
+        }
+
+        private static AudioClip FallbackDodgeClip()
+        {
+            return fallbackDodgeClip ?? (fallbackDodgeClip = BuildToneClip(
+                "D020_Dodge_Fallback",
+                new ProceduralToneSegment(620f, 0.040f, 0.12f),
+                new ProceduralToneSegment(410f, 0.060f, 0.10f)));
+        }
+
+        private static AudioClip FallbackEnemyTellClip()
+        {
+            return fallbackEnemyTellClip ?? (fallbackEnemyTellClip = BuildToneClip(
+                "D020_EnemyTell_Fallback",
+                new ProceduralToneSegment(150f, 0.070f, 0.15f),
+                new ProceduralToneSegment(112f, 0.055f, 0.12f)));
+        }
+
+        private static AudioClip FallbackPlayerDamageClip()
+        {
+            return fallbackPlayerDamageClip ?? (fallbackPlayerDamageClip = BuildToneClip(
+                "D020_PlayerDamage_Fallback",
+                new ProceduralToneSegment(96f, 0.080f, 0.19f),
+                new ProceduralToneSegment(72f, 0.075f, 0.14f)));
+        }
+
+        private static AudioClip FallbackBossImpactClip()
+        {
+            return fallbackBossImpactClip ?? (fallbackBossImpactClip = BuildToneClip(
+                "D020_BossImpact_Fallback",
+                new ProceduralToneSegment(58f, 0.075f, 0.22f),
+                new ProceduralToneSegment(116f, 0.080f, 0.16f),
+                new ProceduralToneSegment(174f, 0.060f, 0.11f)));
+        }
+
+        private static AudioClip FallbackBossDefeatClip()
+        {
+            return fallbackBossDefeatClip ?? (fallbackBossDefeatClip = BuildToneClip(
+                "D020_BossDefeat_Fallback",
+                new ProceduralToneSegment(185f, 0.080f, 0.18f),
+                new ProceduralToneSegment(370f, 0.100f, 0.15f),
+                new ProceduralToneSegment(740f, 0.125f, 0.12f)));
+        }
+
+        private static AudioClip FallbackBossTransitionClip()
+        {
+            return fallbackBossTransitionClip ?? (fallbackBossTransitionClip = BuildToneClip(
+                "D020_BossTransition_Fallback",
+                new ProceduralToneSegment(132f, 0.070f, 0.18f),
+                new ProceduralToneSegment(264f, 0.080f, 0.15f),
+                new ProceduralToneSegment(198f, 0.070f, 0.12f)));
+        }
+
+        private static AudioClip FallbackEnemyDeathClip()
+        {
+            return fallbackEnemyDeathClip ?? (fallbackEnemyDeathClip = BuildToneClip(
+                "D020_EnemyDeath_Fallback",
+                new ProceduralToneSegment(310f, 0.050f, 0.15f),
+                new ProceduralToneSegment(185f, 0.070f, 0.13f),
+                new ProceduralToneSegment(92f, 0.060f, 0.09f)));
+        }
+
+        private static AudioClip FallbackRewardClaimClip()
+        {
+            return fallbackRewardClaimClip ?? (fallbackRewardClaimClip = BuildToneClip(
+                "D020_RewardClaim_Fallback",
+                new ProceduralToneSegment(660f, 0.070f, 0.16f),
+                new ProceduralToneSegment(880f, 0.095f, 0.14f),
+                new ProceduralToneSegment(990f, 0.070f, 0.10f)));
+        }
+
+        private static AudioClip FallbackRewardReadyClip()
+        {
+            return fallbackRewardReadyClip ?? (fallbackRewardReadyClip = BuildToneClip(
+                "D020_RewardReady_Fallback",
+                new ProceduralToneSegment(440f, 0.060f, 0.12f),
+                new ProceduralToneSegment(660f, 0.075f, 0.10f)));
+        }
+
+        private static AudioClip FallbackExplorationMusicClip()
+        {
+            return fallbackExplorationMusicClip ?? (fallbackExplorationMusicClip = BuildLoopClip(
+                "D020_ExplorationLoop_Fallback",
+                8f,
+                55f,
+                82.5f,
+                165f,
+                0.25f));
+        }
+
+        private static AudioClip FallbackBossMusicClip()
+        {
+            return fallbackBossMusicClip ?? (fallbackBossMusicClip = BuildLoopClip(
+                "D020_BossLoop_Fallback",
+                8f,
+                73.75f,
+                147.5f,
+                295f,
+                0.5f));
+        }
+
+        private static AudioClip BuildToneClip(string clipName, params ProceduralToneSegment[] segments)
+        {
+            var totalSamples = 0;
+            for (var i = 0; i < segments.Length; i++)
+            {
+                totalSamples += Mathf.Max(1, Mathf.CeilToInt(ProceduralAudioSampleRate * segments[i].Duration));
+            }
+
+            var data = new float[totalSamples];
+            var writeIndex = 0;
+            for (var segmentIndex = 0; segmentIndex < segments.Length; segmentIndex++)
+            {
+                var segment = segments[segmentIndex];
+                var samples = Mathf.Max(1, Mathf.CeilToInt(ProceduralAudioSampleRate * segment.Duration));
+                for (var sampleIndex = 0; sampleIndex < samples && writeIndex < data.Length; sampleIndex++)
+                {
+                    var t = sampleIndex / (float)ProceduralAudioSampleRate;
+                    var progress = samples <= 1 ? 1f : sampleIndex / (samples - 1f);
+                    var attack = Mathf.Clamp01(progress / 0.14f);
+                    var release = Mathf.Clamp01((1f - progress) / 0.72f);
+                    var envelope = attack * release;
+                    data[writeIndex] = Mathf.Sin(2f * Mathf.PI * segment.Frequency * t) * envelope * segment.Amplitude;
+                    writeIndex++;
+                }
+            }
+
+            var clip = AudioClip.Create(clipName, data.Length, 1, ProceduralAudioSampleRate, false);
+            clip.SetData(data, 0);
+            return clip;
+        }
+
+        private static AudioClip BuildLoopClip(string clipName, float duration, float lowHz, float middleHz, float highHz, float pulseHz)
+        {
+            var samples = Mathf.Max(1, Mathf.CeilToInt(ProceduralAudioSampleRate * duration));
+            var data = new float[samples];
+            for (var sampleIndex = 0; sampleIndex < samples; sampleIndex++)
+            {
+                var t = sampleIndex / (float)ProceduralAudioSampleRate;
+                var pulse = 0.68f + 0.32f * Mathf.Sin(2f * Mathf.PI * pulseHz * t);
+                var low = Mathf.Sin(2f * Mathf.PI * lowHz * t) * 0.034f;
+                var middle = Mathf.Sin(2f * Mathf.PI * middleHz * t + 0.6f) * 0.018f;
+                var high = Mathf.Sin(2f * Mathf.PI * highHz * t + 1.2f) * 0.008f * pulse;
+                data[sampleIndex] = (low + middle + high) * pulse;
+            }
+
+            var clip = AudioClip.Create(clipName, samples, 1, ProceduralAudioSampleRate, false);
+            clip.SetData(data, 0);
+            return clip;
+        }
+
+        private readonly struct ProceduralToneSegment
+        {
+            public ProceduralToneSegment(float frequency, float duration, float amplitude)
+            {
+                Frequency = frequency;
+                Duration = duration;
+                Amplitude = amplitude;
+            }
+
+            public float Frequency { get; }
+            public float Duration { get; }
+            public float Amplitude { get; }
         }
 
         private static GameObject CreateDisc(string name, Material material, float radius)

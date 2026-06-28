@@ -214,6 +214,8 @@ namespace FourfoldEchoes.Editor
             RequireContains(regionCopy, "Step 4/6", "Region objective step 4");
             RequireContains(inputPrompts, "Step 5/6", "Region objective step 5");
             RequireContains(regionCopy, "Step 6/6", "Region objective step 6");
+            RequireContains(inputPrompts, "blue RETURN marker", "Region clear return objective names the marker");
+            RequireContains(regionCopy, "blue RETURN marker", "Region reward notice points to the return marker");
             RequireContains(regionCopy, "use the tool to open the sealed route", "Region tool route cause/effect");
             RequireContains(regionCopy, "use the tool to open the shortcut seal", "Region shortcut cause/effect");
             RequireContains(regionCopy, "BOSS HP", "Region boss HP UI");
