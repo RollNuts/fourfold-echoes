@@ -24,5 +24,24 @@ namespace FourfoldEchoes.Tests
         {
             Assert.That(FourfoldUnitySpikeController.DownedPromptText, Does.Contain("Start/R"));
         }
+
+        [Test]
+        public void CriticalHealthPromptText_NamesDodgeAndSpacingPriority()
+        {
+            var prompt = FourfoldUnitySpikeController.CriticalHealthPromptText;
+
+            Assert.That(prompt, Does.Contain("Critical HP"));
+            Assert.That(prompt, Does.Contain("dodge"));
+            Assert.That(prompt, Does.Contain("create space"));
+        }
+
+        [Test]
+        public void IsCriticalHealth_RequiresAliveHealthAtOrBelowThirtyPercent()
+        {
+            Assert.IsFalse(FourfoldUnitySpikeController.IsCriticalHealth(0f, 100f));
+            Assert.IsFalse(FourfoldUnitySpikeController.IsCriticalHealth(31f, 100f));
+            Assert.IsTrue(FourfoldUnitySpikeController.IsCriticalHealth(30f, 100f));
+            Assert.IsTrue(FourfoldUnitySpikeController.IsCriticalHealth(1f, 100f));
+        }
     }
 }
