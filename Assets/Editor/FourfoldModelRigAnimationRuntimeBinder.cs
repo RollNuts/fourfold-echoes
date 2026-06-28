@@ -133,6 +133,8 @@ namespace FourfoldEchoes.Editor
                 VerifyPrefab(prefab, controller, errors, warnings);
             }
 
+            VerifyRelayBehavior(errors);
+
             if (!File.Exists(ScenePath))
             {
                 errors.Add($"Missing runtime preview scene: {ScenePath}");
@@ -539,6 +541,67 @@ namespace FourfoldEchoes.Editor
             }
         }
 
+        private static void VerifyRelayBehavior(List<string> errors)
+        {
+            var root = new GameObject("MeleeShardlingAnimationEventRelay_Verifier");
+            var hitboxObject = new GameObject("Verifier_ForwardHitbox");
+            try
+            {
+                hitboxObject.transform.SetParent(root.transform, false);
+                var hitbox = hitboxObject.AddComponent<BoxCollider>();
+                hitbox.isTrigger = true;
+                hitbox.enabled = true;
+
+                var relay = root.AddComponent<MeleeShardlingAnimationEventRelay>();
+                relay.BindForwardHitbox(hitbox);
+                if (hitbox.enabled)
+                {
+                    errors.Add("Relay BindForwardHitbox must disable the forward hitbox by default.");
+                }
+
+                relay.hit_active_start();
+                if (!hitbox.enabled || relay.HitActiveCount != 1 || relay.LastEventName != "hit_active_start")
+                {
+                    errors.Add("Relay hit_active_start must enable the forward hitbox and record the hit event.");
+                }
+
+                relay.hit_peak();
+                if (!hitbox.enabled || relay.LastEventName != "hit_peak")
+                {
+                    errors.Add("Relay hit_peak must preserve the active hitbox and record the peak event.");
+                }
+
+                relay.hit_active_end();
+                if (hitbox.enabled || relay.LastEventName != "hit_active_end")
+                {
+                    errors.Add("Relay hit_active_end must disable the forward hitbox and record the end event.");
+                }
+
+                hitbox.enabled = true;
+                relay.recover();
+                if (hitbox.enabled || relay.LastEventName != "recover")
+                {
+                    errors.Add("Relay recover must disable the forward hitbox.");
+                }
+
+                relay.projectile_release();
+                if (relay.CastReleaseCount != 1 || relay.LastEventName != "projectile_release")
+                {
+                    errors.Add("Relay projectile_release must record the cast release event.");
+                }
+
+                relay.interact_contact();
+                if (relay.EventCount < 6 || relay.LastEventName != "interact_contact")
+                {
+                    errors.Add("Relay interact_contact must record an interaction event after combat/cast events.");
+                }
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
         private static AnimationClip LoadClip(string action)
         {
             var path = $"{ClipRoot}/ANM_Enemy_MeleeShardling_{action}_SealedLockRelic_v0.1.0.anim";
@@ -587,7 +650,8 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine("    \"forward_hitbox\": \"SOCKET_ForwardHit/HITBOX_ForwardPreview\",");
             builder.AppendLine("    \"forward_hitbox_default_enabled\": false,");
             builder.AppendLine("    \"animation_event_relay\": \"MeleeShardlingAnimationEventRelay\",");
-            builder.AppendLine($"    \"animation_event_receiver_count\": {RequiredAnimationEvents.Length.ToString(CultureInfo.InvariantCulture)}");
+            builder.AppendLine($"    \"animation_event_receiver_count\": {RequiredAnimationEvents.Length.ToString(CultureInfo.InvariantCulture)},");
+            builder.AppendLine($"    \"animation_event_relay_behavior\": \"{(errors.Count == 0 ? "pass" : "fail")}\"");
             builder.AppendLine("  },");
             builder.AppendLine("  \"errors\": [");
             AppendJsonArray(builder, errors, "    ");

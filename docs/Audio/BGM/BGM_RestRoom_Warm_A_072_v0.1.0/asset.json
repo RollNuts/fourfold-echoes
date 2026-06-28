@@ -1,0 +1,120 @@
+{
+  "asset_id": "audio.music.bgm_rest_room",
+  "title": "Hearth Between Folds",
+  "scene": "RestRoom",
+  "scene_type": "rest room",
+  "mood": "Warm",
+  "variant": "A",
+  "bpm": 72,
+  "version": "0.1.0",
+  "status": "generated_pilot",
+  "source_strategy": "repository-authored deterministic procedural synthesis",
+  "license": "repository-authored",
+  "target_platforms": [
+    "Steam PC",
+    "future console portable"
+  ],
+  "library_root_relative": "Runtime/Audio/BGM/BGM_RestRoom_Warm_A_072_v0.1.0",
+  "paths": {
+    "master_wav": "BGM_RestRoom_Warm_A_072_v0.1.0.wav",
+    "cue_sheet": "cue_sheet.csv",
+    "asset_request": "asset_request.yaml",
+    "qc_result": "qc_result.json",
+    "stems": {
+      "rhythm": "Stems/BGM_RestRoom_Warm_ARhythm_072_v0.1.0.wav",
+      "harmony": "Stems/BGM_RestRoom_Warm_AHarmony_072_v0.1.0.wav",
+      "lead": "Stems/BGM_RestRoom_Warm_ALead_072_v0.1.0.wav",
+      "percussion": "Stems/BGM_RestRoom_Warm_APercussion_072_v0.1.0.wav"
+    },
+    "runtime_intro_ogg": "Assets/Audio/Generated/BGM_RestRoom_Warm_AIntro_072_v0.1.0.ogg",
+    "runtime_loop_ogg": "Assets/Audio/Generated/BGM_RestRoom_Warm_ALoop_072_v0.1.0.ogg"
+  },
+  "loop": {
+    "looping": true,
+    "full_master_start_sample": 147000,
+    "full_master_end_sample": 1911000,
+    "full_master_start_seconds": 3.3333333333333335,
+    "full_master_end_seconds": 43.333333333333336,
+    "loop_clip_start_sample": 0,
+    "loop_clip_end_sample": 1764000,
+    "loop_clip_length_seconds": 40.0,
+    "intro_bars": 1,
+    "loop_bars": 12,
+    "playback_instruction": "Play BGM_RestRoom_Warm_AIntro_072_v0.1.0.ogg once, then loop BGM_RestRoom_Warm_ALoop_072_v0.1.0.ogg from sample 0."
+  },
+  "mix_notes": {
+    "loudness_note": "Peak -8.68 dBFS, RMS -25.40 dBFS.",
+    "fade_note": "No baked loop fade. Optional engine crossfade 250-500 ms from exploration music.",
+    "sfx_space_note": "Keep save, heal, menu, and pickup SFX in front; no dense rhythmic layer.",
+    "low_end_note": "No sub/kick layer; root notes are gain-limited and leave room for SFX.",
+    "melody_note": "Lead is a sparse reassurance response, not a foreground tune."
+  },
+  "stems": [
+    {
+      "name": "rhythm",
+      "file": "Stems/BGM_RestRoom_Warm_ARhythm_072_v0.1.0.wav",
+      "peak_dbfs": -14.526011506795104,
+      "rms_dbfs": -46.911284595217815
+    },
+    {
+      "name": "harmony",
+      "file": "Stems/BGM_RestRoom_Warm_AHarmony_072_v0.1.0.wav",
+      "peak_dbfs": -8.675811212048375,
+      "rms_dbfs": -25.55952733763644
+    },
+    {
+      "name": "lead",
+      "file": "Stems/BGM_RestRoom_Warm_ALead_072_v0.1.0.wav",
+      "peak_dbfs": -11.141586993427314,
+      "rms_dbfs": -41.162003424092745
+    },
+    {
+      "name": "percussion",
+      "file": "Stems/BGM_RestRoom_Warm_APercussion_072_v0.1.0.wav",
+      "peak_dbfs": -22.76883184245328,
+      "rms_dbfs": -65.76656011279294
+    }
+  ],
+  "planned_companion_cues": [
+    {
+      "structure": "title",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_title"
+    },
+    {
+      "structure": "field exploration",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_region01"
+    },
+    {
+      "structure": "battle",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_normal_combat"
+    },
+    {
+      "structure": "boss phase1",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_boss"
+    },
+    {
+      "structure": "boss phase2",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_boss_phase2"
+    },
+    {
+      "structure": "rest room",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_rest_room"
+    },
+    {
+      "structure": "victory stinger",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_victory_stinger"
+    },
+    {
+      "structure": "defeat stinger",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_defeat_stinger"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "asset_id": "audio.music.bgm_defeat_stinger",
+  "title": "Fold Unmade",
+  "scene": "DefeatStinger",
+  "scene_type": "defeat stinger",
+  "mood": "Somber",
+  "variant": "A",
+  "bpm": 84,
+  "version": "0.1.0",
+  "status": "generated_pilot",
+  "source_strategy": "repository-authored deterministic procedural synthesis",
+  "license": "repository-authored",
+  "target_platforms": [
+    "Steam PC",
+    "future console portable"
+  ],
+  "library_root_relative": "Runtime/Audio/BGM/BGM_DefeatStinger_Somber_A_084_v0.1.0",
+  "paths": {
+    "master_wav": "BGM_DefeatStinger_Somber_A_084_v0.1.0.wav",
+    "cue_sheet": "cue_sheet.csv",
+    "asset_request": "asset_request.yaml",
+    "qc_result": "qc_result.json",
+    "stems": {
+      "rhythm": "Stems/BGM_DefeatStinger_Somber_ARhythm_084_v0.1.0.wav",
+      "harmony": "Stems/BGM_DefeatStinger_Somber_AHarmony_084_v0.1.0.wav",
+      "lead": "Stems/BGM_DefeatStinger_Somber_ALead_084_v0.1.0.wav",
+      "percussion": "Stems/BGM_DefeatStinger_Somber_APercussion_084_v0.1.0.wav"
+    },
+    "runtime_ogg": "Assets/Audio/Generated/BGM_DefeatStinger_Somber_A_084_v0.1.0.ogg"
+  },
+  "loop": {
+    "looping": false,
+    "one_shot_start_sample": 0,
+    "one_shot_end_sample": 252000,
+    "one_shot_length_seconds": 5.714285714285714,
+    "playback_instruction": "Play BGM_DefeatStinger_Somber_A_084_v0.1.0.ogg once. Do not loop."
+  },
+  "mix_notes": {
+    "loudness_note": "Peak -7.39 dBFS, RMS -24.20 dBFS.",
+    "fade_note": "One-shot tail is baked. Do not loop; allow retry/menu SFX to remain readable.",
+    "sfx_space_note": "No low boom or hit replacement; player damage and retry UI SFX outrank it.",
+    "low_end_note": "No sub/kick layer; root notes are gain-limited and leave room for SFX.",
+    "melody_note": "Lead falls in two short phrases, then gets out of the way."
+  },
+  "stems": [
+    {
+      "name": "rhythm",
+      "file": "Stems/BGM_DefeatStinger_Somber_ARhythm_084_v0.1.0.wav",
+      "peak_dbfs": -240.0,
+      "rms_dbfs": -240.0
+    },
+    {
+      "name": "harmony",
+      "file": "Stems/BGM_DefeatStinger_Somber_AHarmony_084_v0.1.0.wav",
+      "peak_dbfs": -9.613926743947607,
+      "rms_dbfs": -24.79366745593703
+    },
+    {
+      "name": "lead",
+      "file": "Stems/BGM_DefeatStinger_Somber_ALead_084_v0.1.0.wav",
+      "peak_dbfs": -10.419540006997941,
+      "rms_dbfs": -33.39164781048994
+    },
+    {
+      "name": "percussion",
+      "file": "Stems/BGM_DefeatStinger_Somber_APercussion_084_v0.1.0.wav",
+      "peak_dbfs": -25.074840037090876,
+      "rms_dbfs": -62.11983142208833
+    }
+  ],
+  "planned_companion_cues": [
+    {
+      "structure": "title",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_title"
+    },
+    {
+      "structure": "field exploration",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_region01"
+    },
+    {
+      "structure": "battle",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_normal_combat"
+    },
+    {
+      "structure": "boss phase1",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_boss"
+    },
+    {
+      "structure": "boss phase2",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_boss_phase2"
+    },
+    {
+      "structure": "rest room",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_rest_room"
+    },
+    {
+      "structure": "victory stinger",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_victory_stinger"
+    },
+    {
+      "structure": "defeat stinger",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_defeat_stinger"
+    }
+  ]
+}

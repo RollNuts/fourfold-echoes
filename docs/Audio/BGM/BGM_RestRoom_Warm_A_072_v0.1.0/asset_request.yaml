@@ -1,0 +1,28 @@
+asset_id: audio.music.bgm_rest_room
+title: Hearth Between Folds
+scene_type: rest room
+mood: warm
+bpm_target: 72
+loop_requirement:
+  intro_bars: 1
+  loop_bars: 12
+  seamless_loop: true
+  full_master_loop_start_sample: 147000
+  full_master_loop_end_sample: 1911000
+  runtime_intro_clip: Assets/Audio/Generated/BGM_RestRoom_Warm_AIntro_072_v0.1.0.ogg
+  runtime_loop_clip: Assets/Audio/Generated/BGM_RestRoom_Warm_ALoop_072_v0.1.0.ogg
+stems_requirement:
+  - rhythm
+  - harmony
+  - lead
+  - percussion
+target_platforms:
+  - Steam PC
+  - future console portable
+source_strategy: repository-authored deterministic procedural synthesis
+license: repository-authored
+status: generated_pilot
+notes:
+  - Keep save, heal, menu, and pickup SFX in front; no dense rhythmic layer.
+  - Lead is a sparse reassurance response, not a foreground tune.
+  - No baked loop fade. Optional engine crossfade 250-500 ms from exploration music.
