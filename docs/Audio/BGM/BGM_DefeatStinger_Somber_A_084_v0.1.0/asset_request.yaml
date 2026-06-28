@@ -1,0 +1,27 @@
+asset_id: audio.music.bgm_defeat_stinger
+title: Fold Unmade
+scene_type: defeat stinger
+mood: somber
+bpm_target: 84
+loop_requirement:
+  intro_bars: 0
+  loop_bars: 0
+  seamless_loop: false
+  one_shot_start_sample: 0
+  one_shot_end_sample: 252000
+  runtime_clip: Assets/Audio/Generated/BGM_DefeatStinger_Somber_A_084_v0.1.0.ogg
+stems_requirement:
+  - rhythm
+  - harmony
+  - lead
+  - percussion
+target_platforms:
+  - Steam PC
+  - future console portable
+source_strategy: repository-authored deterministic procedural synthesis
+license: repository-authored
+status: generated_pilot
+notes:
+  - No low boom or hit replacement; player damage and retry UI SFX outrank it.
+  - Lead falls in two short phrases, then gets out of the way.
+  - One-shot tail is baked. Do not loop; allow retry/menu SFX to remain readable.

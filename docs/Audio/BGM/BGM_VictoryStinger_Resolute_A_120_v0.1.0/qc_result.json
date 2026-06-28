@@ -1,0 +1,78 @@
+{
+  "asset_id": "audio.music.bgm_victory_stinger",
+  "qc_status": "pass_with_notes",
+  "checks": [
+    {
+      "name": "one_shot_duration_recorded",
+      "status": "pass",
+      "detail": "one_shot_end_sample=176400"
+    },
+    {
+      "name": "one_shot_tail_release",
+      "status": "pass",
+      "detail": "last 1024 sample peak 0.000000"
+    },
+    {
+      "name": "low_end_control",
+      "status": "pass",
+      "detail": "20-160 Hz energy ratio 0.0047"
+    },
+    {
+      "name": "dialogue_band_control",
+      "status": "pass",
+      "detail": "1-4 kHz energy ratio 0.0126"
+    },
+    {
+      "name": "headroom",
+      "status": "pass",
+      "detail": "peak -5.80 dBFS"
+    },
+    {
+      "name": "sfx_space",
+      "status": "pass",
+      "detail": "No impact-heavy transient; victory SFX and UI confirms can sit above it."
+    }
+  ],
+  "metrics": {
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "channels": 2,
+    "bpm": 120,
+    "duration_seconds": 4.0,
+    "total_samples": 176400,
+    "looping": false,
+    "one_shot_start_sample": 0,
+    "one_shot_end_sample": 176400,
+    "one_shot_length_seconds": 4.0,
+    "peak_dbfs": -5.8000002193402365,
+    "rms_dbfs": -23.922799026814225,
+    "tail_peak": 0.0,
+    "low_energy_ratio_20_160hz": 0.004734907292878526,
+    "dialogue_band_ratio_1_4khz": 0.012577207431905118,
+    "runtime_bytes": {
+      "one_shot": 21497
+    },
+    "stem_metrics": {
+      "rhythm": {
+        "peak_dbfs": -240.0,
+        "rms_dbfs": -240.0
+      },
+      "harmony": {
+        "peak_dbfs": -8.866462475113902,
+        "rms_dbfs": -24.545190850026202
+      },
+      "lead": {
+        "peak_dbfs": -10.027861072011051,
+        "rms_dbfs": -32.56346827366487
+      },
+      "percussion": {
+        "peak_dbfs": -22.057363984526933,
+        "rms_dbfs": -57.06830125532499
+      }
+    }
+  },
+  "notes": [
+    "Procedural pilot only; requires listening review in scene before Steam capture.",
+    "Runtime loops are split into intro and loop clips; stingers are one-shot runtime clips."
+  ]
+}

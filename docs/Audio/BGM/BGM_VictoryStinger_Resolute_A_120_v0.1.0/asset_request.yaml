@@ -1,0 +1,27 @@
+asset_id: audio.music.bgm_victory_stinger
+title: Thread Rejoined
+scene_type: victory stinger
+mood: resolute
+bpm_target: 120
+loop_requirement:
+  intro_bars: 0
+  loop_bars: 0
+  seamless_loop: false
+  one_shot_start_sample: 0
+  one_shot_end_sample: 176400
+  runtime_clip: Assets/Audio/Generated/BGM_VictoryStinger_Resolute_A_120_v0.1.0.ogg
+stems_requirement:
+  - rhythm
+  - harmony
+  - lead
+  - percussion
+target_platforms:
+  - Steam PC
+  - future console portable
+source_strategy: repository-authored deterministic procedural synthesis
+license: repository-authored
+status: generated_pilot
+notes:
+  - No impact-heavy transient; victory SFX and UI confirms can sit above it.
+  - Lead resolves upward once, then releases.
+  - One-shot tail is baked. Do not loop; allow tail to finish or duck under result UI.

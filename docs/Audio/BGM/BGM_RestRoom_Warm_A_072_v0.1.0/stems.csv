@@ -1,0 +1,5 @@
+stem,path,role
+rhythm,Stems/BGM_RestRoom_Warm_ARhythm_072_v0.1.0.wav,soft pulse or spacing layer; never masks UI/combat attacks
+harmony,Stems/BGM_RestRoom_Warm_AHarmony_072_v0.1.0.wav,main bed with restrained low root energy
+lead,Stems/BGM_RestRoom_Warm_ALead_072_v0.1.0.wav,short motif only when the cue needs identity
+percussion,Stems/BGM_RestRoom_Warm_APercussion_072_v0.1.0.wav,small ticks only; no impact replacement

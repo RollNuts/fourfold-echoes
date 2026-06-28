@@ -1,0 +1,90 @@
+{
+  "asset_id": "audio.music.bgm_rest_room",
+  "qc_status": "pass_with_notes",
+  "checks": [
+    {
+      "name": "loop_point_recorded",
+      "status": "pass",
+      "detail": "loop_start_sample=147000, loop_end_sample=1911000"
+    },
+    {
+      "name": "loop_boundary_click_risk",
+      "status": "pass",
+      "detail": "loop clip first/last sample delta 0.000000"
+    },
+    {
+      "name": "loop_tail_release",
+      "status": "pass",
+      "detail": "last 1024 sample peak 0.000000"
+    },
+    {
+      "name": "low_end_control",
+      "status": "pass",
+      "detail": "20-160 Hz energy ratio 0.0451"
+    },
+    {
+      "name": "dialogue_band_control",
+      "status": "pass",
+      "detail": "1-4 kHz energy ratio 0.0005"
+    },
+    {
+      "name": "headroom",
+      "status": "pass",
+      "detail": "peak -8.68 dBFS"
+    },
+    {
+      "name": "sfx_space",
+      "status": "pass",
+      "detail": "Keep save, heal, menu, and pickup SFX in front; no dense rhythmic layer."
+    }
+  ],
+  "metrics": {
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "channels": 2,
+    "bpm": 72,
+    "beats_per_bar": 4,
+    "duration_seconds": 43.333333333333336,
+    "total_samples": 1911000,
+    "intro_bars": 1,
+    "loop_bars": 12,
+    "loop_start_sample": 147000,
+    "loop_end_sample": 1911000,
+    "loop_start_seconds": 3.3333333333333335,
+    "loop_end_seconds": 43.333333333333336,
+    "loop_length_samples": 1764000,
+    "loop_length_seconds": 40.0,
+    "peak_dbfs": -8.675811212048375,
+    "rms_dbfs": -25.400002117580147,
+    "loop_boundary_delta_peak": 0.0,
+    "loop_tail_peak": 0.0,
+    "low_energy_ratio_20_160hz": 0.04506593460163978,
+    "dialogue_band_ratio_1_4khz": 0.0005449796600879607,
+    "runtime_bytes": {
+      "intro": 17586,
+      "loop": 154125
+    },
+    "stem_metrics": {
+      "rhythm": {
+        "peak_dbfs": -14.526011506795104,
+        "rms_dbfs": -46.911284595217815
+      },
+      "harmony": {
+        "peak_dbfs": -8.675811212048375,
+        "rms_dbfs": -25.55952733763644
+      },
+      "lead": {
+        "peak_dbfs": -11.141586993427314,
+        "rms_dbfs": -41.162003424092745
+      },
+      "percussion": {
+        "peak_dbfs": -22.76883184245328,
+        "rms_dbfs": -65.76656011279294
+      }
+    }
+  },
+  "notes": [
+    "Procedural pilot only; requires listening review in scene before Steam capture.",
+    "Runtime loops are split into intro and loop clips; stingers are one-shot runtime clips."
+  ]
+}

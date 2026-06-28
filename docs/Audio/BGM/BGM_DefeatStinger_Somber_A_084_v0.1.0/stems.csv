@@ -1,0 +1,5 @@
+stem,path,role
+rhythm,Stems/BGM_DefeatStinger_Somber_ARhythm_084_v0.1.0.wav,soft pulse or spacing layer; never masks UI/combat attacks
+harmony,Stems/BGM_DefeatStinger_Somber_AHarmony_084_v0.1.0.wav,main bed with restrained low root energy
+lead,Stems/BGM_DefeatStinger_Somber_ALead_084_v0.1.0.wav,short motif only when the cue needs identity
+percussion,Stems/BGM_DefeatStinger_Somber_APercussion_084_v0.1.0.wav,small ticks only; no impact replacement
