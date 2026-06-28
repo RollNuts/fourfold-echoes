@@ -3,22 +3,27 @@ using UnityEngine.SceneManagement;
 
 namespace FourfoldEchoes.Product
 {
-    internal sealed class ProductionCombatOnboardingHint : MonoBehaviour
+    public sealed class ProductionCombatOnboardingHint : MonoBehaviour
     {
         private const string TargetSceneName = "ProductionCombatSlice";
         private const float FullOpacitySeconds = 6.5f;
         private const float FadeSeconds = 1.5f;
+        private const float ControllerRefreshSeconds = 0.25f;
         private const int PanelHeight = 112;
         private const int PanelMargin = 18;
 
         private static ProductionCombatOnboardingHint instance;
 
+        private ProductionCombatSliceController controller;
         private GUIStyle panelStyle;
         private GUIStyle titleStyle;
         private GUIStyle bodyStyle;
         private Texture2D panelTexture;
-        private float sceneStartedAt;
+        private float nextControllerRefreshAt;
+        private float playingStartedAt;
         private bool inTargetScene;
+        private bool hasPlayingStart;
+        private ProductionCombatRunState previousState = ProductionCombatRunState.Title;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
@@ -65,7 +70,11 @@ namespace FourfoldEchoes.Product
         private void RefreshSceneState(Scene scene)
         {
             inTargetScene = scene.name == TargetSceneName;
-            sceneStartedAt = Time.unscaledTime;
+            controller = null;
+            nextControllerRefreshAt = 0f;
+            playingStartedAt = 0f;
+            hasPlayingStart = false;
+            previousState = ProductionCombatRunState.Title;
         }
 
         private void OnGUI()
@@ -75,10 +84,28 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            var elapsed = Time.unscaledTime - sceneStartedAt;
-            var alpha = elapsed <= FullOpacitySeconds
-                ? 1f
-                : Mathf.Clamp01(1f - ((elapsed - FullOpacitySeconds) / FadeSeconds));
+            RefreshControllerIfNeeded();
+            if (controller == null)
+            {
+                return;
+            }
+
+            var state = controller.State;
+            if (ShouldResetTimer(previousState, state))
+            {
+                playingStartedAt = Time.unscaledTime;
+                hasPlayingStart = true;
+            }
+
+            previousState = state;
+
+            var elapsed = Time.unscaledTime - playingStartedAt;
+            if (!ShouldShowHint(state, hasPlayingStart, elapsed))
+            {
+                return;
+            }
+
+            var alpha = Opacity01(elapsed);
             if (alpha <= 0f)
             {
                 return;
@@ -106,6 +133,49 @@ namespace FourfoldEchoes.Product
                 bodyStyle);
 
             GUI.color = previousColor;
+        }
+
+        public static bool ShouldResetTimer(ProductionCombatRunState previous, ProductionCombatRunState current)
+        {
+            return current == ProductionCombatRunState.Playing
+                && previous != ProductionCombatRunState.Playing
+                && previous != ProductionCombatRunState.Paused;
+        }
+
+        public static bool ShouldShowHint(
+            ProductionCombatRunState state,
+            bool hasPlayingStarted,
+            float secondsSincePlayingStarted)
+        {
+            return state == ProductionCombatRunState.Playing
+                && hasPlayingStarted
+                && Opacity01(secondsSincePlayingStarted) > 0f;
+        }
+
+        public static float Opacity01(float secondsSincePlayingStarted)
+        {
+            if (secondsSincePlayingStarted <= FullOpacitySeconds)
+            {
+                return 1f;
+            }
+
+            return Mathf.Clamp01(1f - ((secondsSincePlayingStarted - FullOpacitySeconds) / FadeSeconds));
+        }
+
+        private void RefreshControllerIfNeeded()
+        {
+            if (controller != null && controller.isActiveAndEnabled)
+            {
+                return;
+            }
+
+            if (Time.unscaledTime < nextControllerRefreshAt)
+            {
+                return;
+            }
+
+            controller = Object.FindFirstObjectByType<ProductionCombatSliceController>();
+            nextControllerRefreshAt = Time.unscaledTime + ControllerRefreshSeconds;
         }
 
         private void EnsureStyles()
