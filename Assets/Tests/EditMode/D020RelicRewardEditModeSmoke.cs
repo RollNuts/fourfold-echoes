@@ -52,6 +52,9 @@ namespace FourfoldEchoes.Tests
 
                 reward.requiredNodes = new ExplorationNode[] { null };
                 Require(reward.IsUnlocked, "Null optional required node entries should not block reward unlock.");
+
+                Require(D020HudController.RoomTitleText.Contains("D020"), "D-020 HUD title must identify the active vertical slice.");
+                Require(!D020HudController.RoomTitleText.Contains("Gate A"), "D-020 HUD title must not regress to legacy Gate A copy.");
             }
             finally
             {
