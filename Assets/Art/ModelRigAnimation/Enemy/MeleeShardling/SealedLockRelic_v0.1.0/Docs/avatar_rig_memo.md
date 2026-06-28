@@ -58,5 +58,7 @@ Asset: MDL_Enemy_MeleeShardling_SealedLockRelic_v0.1.0
 - Generated preview scene: `Runtime/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity`.
 - Prefab root starts at `(0, 0, 0)` and keeps `Animator.applyRootMotion = false`.
 - The prefab includes a root BoxCollider and a trigger hitbox at `SOCKET_ForwardHit/HITBOX_ForwardPreview`.
+- The prefab root includes `MeleeShardlingAnimationEventRelay` so AnimationEvents such as `hit_active_start`, `hit_active_end`, and `projectile_release` have receiver methods.
+- `HITBOX_ForwardPreview` starts disabled and is enabled only between `hit_active_start` and `hit_active_end`.
 - Attach red seam VFX to `SOCKET_RedSeamVFX`, projectile/cast VFX to `SOCKET_Cast`, and impact VFX to `SOCKET_HitVfx`.
 - Animator states: Idle default, Walk/Run locomotion, AttackStart -> AttackLoop -> AttackEnd, CastStart -> ChannelLoop -> CastRelease, hit reactions, Knockdown, Death, Interact.

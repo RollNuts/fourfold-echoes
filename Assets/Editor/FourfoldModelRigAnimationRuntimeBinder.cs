@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FourfoldEchoes.Product;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEditor.SceneManagement;
@@ -54,6 +55,32 @@ namespace FourfoldEchoes.Editor
             "SOCKET_HitVfx",
         };
 
+        private static readonly string[] RequiredAnimationEvents =
+        {
+            "base_contact_left",
+            "base_contact_right",
+            "attack_windup",
+            "hit_active_start",
+            "hit_peak",
+            "hit_active_end",
+            "loop_pressure_pulse",
+            "recover",
+            "hit_vfx",
+            "armor_clack",
+            "ground_contact",
+            "stun_open",
+            "death_start",
+            "death_vfx",
+            "hide_allowed",
+            "cast_charge",
+            "cast_ready",
+            "channel_pulse",
+            "projectile_release",
+            "cast_recover",
+            "interact_contact",
+            "interact_vfx",
+        };
+
         [MenuItem("FOURFOLD/Assets/Build And Verify Melee Shardling Runtime Binding")]
         public static void BuildAndVerifyMeleeShardlingRuntimeBinding()
         {
@@ -93,6 +120,7 @@ namespace FourfoldEchoes.Editor
             else
             {
                 VerifyController(controller, errors);
+                VerifyAnimationEvents(errors);
             }
 
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
@@ -126,6 +154,12 @@ namespace FourfoldEchoes.Editor
 
         private static AnimatorController BuildAnimatorController()
         {
+            var existingController = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
+            if (existingController != null && ControllerHasRequiredStates(existingController))
+            {
+                return existingController;
+            }
+
             if (File.Exists(ControllerPath))
             {
                 AssetDatabase.DeleteAsset(ControllerPath);
@@ -153,6 +187,32 @@ namespace FourfoldEchoes.Editor
 
             EditorUtility.SetDirty(controller);
             return controller;
+        }
+
+        private static bool ControllerHasRequiredStates(AnimatorController controller)
+        {
+            var layer = controller.layers.FirstOrDefault();
+            if (layer.stateMachine == null)
+            {
+                return false;
+            }
+
+            if (layer.stateMachine.defaultState == null || layer.stateMachine.defaultState.name != "Idle")
+            {
+                return false;
+            }
+
+            var states = layer.stateMachine.states.Select(child => child.state).ToArray();
+            foreach (var action in Actions)
+            {
+                var state = states.FirstOrDefault(item => item.name == action);
+                if (state == null || state.motion != LoadClip(action))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static void BuildPrefab(RuntimeAnimatorController controller)
@@ -200,7 +260,8 @@ namespace FourfoldEchoes.Editor
                 bodyCollider.center = instance.transform.InverseTransformPoint(bounds.center);
                 bodyCollider.size = bounds.size + new Vector3(0.08f, 0.08f, 0.08f);
 
-                AddForwardHitbox(instance);
+                var forwardHitbox = AddForwardHitbox(instance);
+                AddEventRelay(instance, forwardHitbox);
 
                 PrefabUtility.SaveAsPrefabAsset(instance, PrefabPath, out var success);
                 if (!success)
@@ -216,6 +277,11 @@ namespace FourfoldEchoes.Editor
 
         private static void BuildPreviewScene()
         {
+            if (File.Exists(ScenePath))
+            {
+                return;
+            }
+
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             if (prefab == null)
             {
@@ -254,7 +320,7 @@ namespace FourfoldEchoes.Editor
             EditorSceneManager.SaveScene(scene, ScenePath);
         }
 
-        private static void AddForwardHitbox(GameObject root)
+        private static BoxCollider AddForwardHitbox(GameObject root)
         {
             var socket = root.GetComponentsInChildren<Transform>(true).FirstOrDefault(transform => transform.name == "SOCKET_ForwardHit");
             if (socket == null)
@@ -270,8 +336,22 @@ namespace FourfoldEchoes.Editor
 
             var collider = hitbox.AddComponent<BoxCollider>();
             collider.isTrigger = true;
+            collider.enabled = false;
             collider.center = Vector3.zero;
             collider.size = new Vector3(0.6f, 0.38f, 0.32f);
+            return collider;
+        }
+
+        private static void AddEventRelay(GameObject root, Collider forwardHitbox)
+        {
+            var relay = root.GetComponent<MeleeShardlingAnimationEventRelay>();
+            if (relay == null)
+            {
+                relay = root.AddComponent<MeleeShardlingAnimationEventRelay>();
+            }
+
+            relay.BindForwardHitbox(forwardHitbox);
+            EditorUtility.SetDirty(relay);
         }
 
         private static void VerifyController(AnimatorController controller, List<string> errors)
@@ -331,6 +411,21 @@ namespace FourfoldEchoes.Editor
                 errors.Add("Runtime prefab is missing body BoxCollider.");
             }
 
+            var eventRelay = prefab.GetComponent<MeleeShardlingAnimationEventRelay>();
+            if (eventRelay == null)
+            {
+                errors.Add("Runtime prefab is missing MeleeShardlingAnimationEventRelay.");
+            }
+            else
+            {
+                if (eventRelay.ForwardHitbox == null)
+                {
+                    errors.Add("MeleeShardlingAnimationEventRelay is missing its forward hitbox binding.");
+                }
+
+                VerifyRelayMethods(errors);
+            }
+
             var transforms = prefab.GetComponentsInChildren<Transform>(true).Select(transform => transform.name).ToHashSet();
             foreach (var socket in RequiredSockets)
             {
@@ -351,6 +446,10 @@ namespace FourfoldEchoes.Editor
                 if (collider == null || !collider.isTrigger)
                 {
                     errors.Add("HITBOX_ForwardPreview must have a trigger BoxCollider.");
+                }
+                else if (collider.enabled)
+                {
+                    errors.Add("HITBOX_ForwardPreview must start disabled until hit_active_start.");
                 }
             }
 
@@ -403,6 +502,43 @@ namespace FourfoldEchoes.Editor
             }
         }
 
+        private static void VerifyAnimationEvents(List<string> errors)
+        {
+            var emittedEvents = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var action in Actions)
+            {
+                var clip = LoadClip(action);
+                foreach (var animationEvent in AnimationUtility.GetAnimationEvents(clip))
+                {
+                    if (!string.IsNullOrWhiteSpace(animationEvent.functionName))
+                    {
+                        emittedEvents.Add(animationEvent.functionName);
+                    }
+                }
+            }
+
+            foreach (var eventName in RequiredAnimationEvents)
+            {
+                if (!emittedEvents.Contains(eventName))
+                {
+                    errors.Add($"Generated clips are missing AnimationEvent {eventName}.");
+                }
+            }
+        }
+
+        private static void VerifyRelayMethods(List<string> errors)
+        {
+            var relayType = typeof(MeleeShardlingAnimationEventRelay);
+            foreach (var eventName in RequiredAnimationEvents)
+            {
+                var method = relayType.GetMethod(eventName, Type.EmptyTypes);
+                if (method == null)
+                {
+                    errors.Add($"MeleeShardlingAnimationEventRelay is missing receiver method {eventName}().");
+                }
+            }
+        }
+
         private static AnimationClip LoadClip(string action)
         {
             var path = $"{ClipRoot}/ANM_Enemy_MeleeShardling_{action}_SealedLockRelic_v0.1.0.anim";
@@ -448,7 +584,10 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine("    \"root_motion\": \"off\",");
             builder.AppendLine("    \"default_state\": \"Idle\",");
             builder.AppendLine($"    \"animation_state_count\": {Actions.Length.ToString(CultureInfo.InvariantCulture)},");
-            builder.AppendLine("    \"forward_hitbox\": \"SOCKET_ForwardHit/HITBOX_ForwardPreview\"");
+            builder.AppendLine("    \"forward_hitbox\": \"SOCKET_ForwardHit/HITBOX_ForwardPreview\",");
+            builder.AppendLine("    \"forward_hitbox_default_enabled\": false,");
+            builder.AppendLine("    \"animation_event_relay\": \"MeleeShardlingAnimationEventRelay\",");
+            builder.AppendLine($"    \"animation_event_receiver_count\": {RequiredAnimationEvents.Length.ToString(CultureInfo.InvariantCulture)}");
             builder.AppendLine("  },");
             builder.AppendLine("  \"errors\": [");
             AppendJsonArray(builder, errors, "    ");
