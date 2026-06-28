@@ -82,9 +82,11 @@ Unity rerun status:
 - Isolated production scene validation passed with exit code 0.
 - Production scene validation reported 159 prefab instances, 87 distinct
   prefabs, and 156 renderers.
-- PlayMode was attempted twice in the isolated worktree. Both attempts imported
-  and compiled the project, then Unity shut down without producing Test Runner
-  XML. No PlayMode pass is claimed for the latest test.
+- EditMode `FourfoldEchoes.EditModeTests`: Unity process exit code 0, XML
+  passed 39/39.
+- PlayMode `FourfoldEchoes.PlayModeTests`: Unity process exit code 0, XML
+  passed 11/11. This includes the fresh-start save restoration test and reward
+  focus PlayMode coverage.
 - Windows build smoke reached `BuildProductionCombatSlice`, then exited 1
   because this editor does not have `StandaloneWindows64` support installed.
   No build artifact was produced.
@@ -111,11 +113,10 @@ Accept this pass when:
 
 Remaining acceptance blockers before release-candidate build readiness:
 
-- regenerate PlayMode Test Runner XML and get the updated suite to exit 0
 - install/use Windows Standalone build support and produce a current artifact
+- complete a manual controller-device smoke pass
 
 ## 7. Next Smallest Useful Task
 
-Restore reliable PlayMode Test Runner XML generation in batchmode, then rerun
-the updated suite and the production Windows build smoke on an editor with
-`StandaloneWindows64` support.
+Rerun the production Windows build smoke on an editor with
+`StandaloneWindows64` support, then capture a controller-device smoke pass.

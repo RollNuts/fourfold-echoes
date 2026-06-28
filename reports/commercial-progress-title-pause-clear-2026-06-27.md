@@ -89,13 +89,13 @@ second Unity process against the open working checkout:
 - PlayMode `FourfoldEchoes.PlayModeTests`: exit code 0, 9 total, 9 passed,
   0 failed.
 
-After that run, this lane added one fresh-start-equivalent PlayMode test. The
-checkout currently has `Temp/UnityLockfile`, so Unity was not relaunched against
-the same project. Rerun PlayMode before merging to count the new test.
+Follow-up validation for the D-031 save/build smoke lane:
 
-A later isolated-worktree Unity attempt did not reach Test Runner results
-because licensing initialization failed first. Treat current Unity XML evidence
-as pending until licensing recovers and the updated suite is rerun.
+- EditMode `FourfoldEchoes.EditModeTests`: Unity process exit code 0, 39 total,
+  39 passed, 0 failed.
+- PlayMode `FourfoldEchoes.PlayModeTests`: Unity process exit code 0, 11 total,
+  11 passed, 0 failed. This includes
+  `SLICE_PRODUCTION_FreshAppStartRestoresSavedRewardFromDisk`.
 
 Warnings observed and treated as shutdown/environment noise after passing test
 results: Unity CoreBusinessMetrics SQLite cache lock messages, .NET SDK
@@ -116,11 +116,9 @@ Accepted for this pass when:
 - A fresh-start-equivalent PlayMode proof exists for saved reward restoration
   after unloading the production scene.
 - Static validation passes.
-- Unity EditMode and PlayMode test assemblies pass with exit code 0 for the
-  earlier 9-test PlayMode run. The latest added fresh-start test still needs the
-  next serialized Unity rerun after licensing recovers.
+- Unity EditMode XML passes and Unity PlayMode exits 0 with the fresh-start
+  save restoration test included.
 
 ## 7. Next Smallest Useful Task
 
-Run the updated PlayMode suite in serialized Unity, then run a Windows build
-smoke for the playable slice.
+Run the Windows build smoke on an editor with `StandaloneWindows64` support.
