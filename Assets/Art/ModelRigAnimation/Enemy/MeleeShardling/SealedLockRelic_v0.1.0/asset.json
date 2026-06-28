@@ -591,6 +591,7 @@
     "forward_hitbox_default_enabled": false,
     "animation_event_relay": "Assets/Scripts/MeleeShardlingAnimationEventRelay.cs",
     "animation_event_receiver_count": 22,
+    "animation_event_relay_behavior": "hit_active_start enables the forward hitbox; hit_active_end and recover disable it; projectile_release and interact_contact are recorded as gameplay cues.",
     "event_runtime_policy": "AnimationEvent methods are received on the prefab root and may toggle the forward hitbox or record gameplay cues.",
     "vfx_sockets": [
       "SOCKET_RedSeamVFX",
@@ -719,6 +720,7 @@
     "runtime_root_motion": "off",
     "runtime_event_relay_status": "pass",
     "runtime_event_receiver_count": 22,
-    "runtime_forward_hitbox_default_enabled": false
+    "runtime_forward_hitbox_default_enabled": false,
+    "runtime_event_relay_behavior_status": "pass"
   }
 }
