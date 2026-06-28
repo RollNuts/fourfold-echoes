@@ -8,13 +8,16 @@ namespace FourfoldEchoes.Tests
     {
         public static void Run()
         {
-            var objects = new GameObject[4];
+            var objects = new GameObject[6];
             try
             {
                 objects[0] = new GameObject("D020 Test Collector");
                 objects[1] = new GameObject("D020 Test Reward");
                 objects[2] = new GameObject("D020 Test Shortcut Node");
                 objects[3] = new GameObject("D020 Test Reward Lens Node");
+                objects[4] = new GameObject("D020 Test Critical Enemy");
+                objects[5] = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                objects[5].name = "D020 Test Critical Tell";
 
                 objects[0].transform.position = new Vector3(0f, 0f, 0.35f);
                 var reward = objects[1].AddComponent<D020RelicReward>();
@@ -55,6 +58,23 @@ namespace FourfoldEchoes.Tests
 
                 Require(D020HudController.RoomTitleText.Contains("D020"), "D-020 HUD title must identify the active vertical slice.");
                 Require(!D020HudController.RoomTitleText.Contains("Gate A"), "D-020 HUD title must not regress to legacy Gate A copy.");
+
+                var enemy = objects[4].AddComponent<D020EnemyDummy>();
+                enemy.maxHealth = 3;
+                enemy.criticalHealthThreshold = 1;
+                enemy.tellRead = objects[5];
+                enemy.ResetEnemy();
+                enemy.Tick(0.1f);
+                var healthyTellScale = objects[5].transform.localScale.x;
+                Require(!enemy.IsCriticalHealth, "Enemy started in critical health read.");
+
+                enemy.TakeHit(1);
+                Require(!enemy.IsCriticalHealth, "Enemy entered critical health before the final readable hit.");
+
+                enemy.TakeHit(1);
+                enemy.Tick(0.1f);
+                Require(enemy.IsCriticalHealth, "Enemy did not expose a critical health read on its final hit.");
+                Require(objects[5].transform.localScale.x > healthyTellScale, "Critical health read did not enlarge the enemy tell ring.");
             }
             finally
             {
