@@ -17,6 +17,12 @@ namespace FourfoldEchoes.Editor
         private const string D020SliceProductName = "FourfoldEchoesD020Slice";
         private const string FullProductName = "FourfoldEchoes";
         private const string CompanyName = "RollNuts";
+        private const string DefaultBuildVersion = "0.1.0-dev";
+        private const string DefaultCommitSha = "local-dev";
+        private const string BuildInfoResourceFolder = "Assets/Resources";
+        private const string BuildInfoResourceFolderMetaPath = BuildInfoResourceFolder + ".meta";
+        private const string BuildInfoResourcePath = BuildInfoResourceFolder + "/FourfoldBuildInfo.txt";
+        private const string BuildInfoResourceMetaPath = BuildInfoResourcePath + ".meta";
 
         public static void BuildCurrentProductLoop()
         {
@@ -165,11 +171,17 @@ namespace FourfoldEchoes.Editor
 
             var originalProductName = PlayerSettings.productName;
             var originalCompanyName = PlayerSettings.companyName;
+            var originalBundleVersion = PlayerSettings.bundleVersion;
+            var buildVersion = GetRequestedBuildVersion(originalBundleVersion);
+            var commitSha = GetRequestedCommitSha();
+            BuildInfoBackup buildInfoBackup = null;
             BuildReport report;
             try
             {
                 PlayerSettings.productName = productName;
                 PlayerSettings.companyName = CompanyName;
+                PlayerSettings.bundleVersion = buildVersion;
+                buildInfoBackup = WriteBuildInfoAsset(productName, buildVersion, commitSha, target, label);
 
                 report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
                 {
@@ -183,6 +195,8 @@ namespace FourfoldEchoes.Editor
             {
                 PlayerSettings.productName = originalProductName;
                 PlayerSettings.companyName = originalCompanyName;
+                PlayerSettings.bundleVersion = originalBundleVersion;
+                RestoreBuildInfoAsset(buildInfoBackup);
             }
 
             var summary = report.summary;
@@ -199,6 +213,120 @@ namespace FourfoldEchoes.Editor
 
             Debug.Log(
                 $"FOURFOLD {label} build succeeded: target={target} artifact={Path.GetFullPath(artifactPath)} sizeBytes={CalculateSizeBytes(artifactPath)}");
+        }
+
+        private static string GetRequestedBuildVersion(string originalBundleVersion)
+        {
+            var value = GetArgument("--fourfoldBuildVersion");
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                value = Environment.GetEnvironmentVariable("FOURFOLD_BUILD_VERSION");
+            }
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                value = originalBundleVersion;
+            }
+
+            return string.IsNullOrWhiteSpace(value) ? DefaultBuildVersion : CleanBuildInfoValue(value);
+        }
+
+        private static string GetRequestedCommitSha()
+        {
+            var value = GetArgument("--fourfoldCommitSha");
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                value = Environment.GetEnvironmentVariable("FOURFOLD_COMMIT_SHA");
+            }
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                value = ReadGitCommitSha();
+            }
+
+            return string.IsNullOrWhiteSpace(value) ? DefaultCommitSha : CleanBuildInfoValue(value);
+        }
+
+        private static string ReadGitCommitSha()
+        {
+            try
+            {
+                var repoRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+                var startInfo = new System.Diagnostics.ProcessStartInfo("git", "rev-parse --short=12 HEAD")
+                {
+                    WorkingDirectory = repoRoot,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using (var process = System.Diagnostics.Process.Start(startInfo))
+                {
+                    if (process == null)
+                    {
+                        return DefaultCommitSha;
+                    }
+
+                    if (!process.WaitForExit(3000))
+                    {
+                        process.Kill();
+                        return DefaultCommitSha;
+                    }
+
+                    var output = process.StandardOutput.ReadToEnd();
+                    return process.ExitCode == 0 ? output.Trim() : DefaultCommitSha;
+                }
+            }
+            catch
+            {
+                return DefaultCommitSha;
+            }
+        }
+
+        private static BuildInfoBackup WriteBuildInfoAsset(string productName, string version, string commitSha, BuildTarget target, string label)
+        {
+            var backup = BuildInfoBackup.Capture();
+            Directory.CreateDirectory(BuildInfoResourceFolder);
+            File.WriteAllText(
+                BuildInfoResourcePath,
+                $"product={CleanBuildInfoValue(productName)}\nversion={CleanBuildInfoValue(version)}\ncommit={CleanBuildInfoValue(commitSha)}\ntarget={CleanBuildInfoValue(target.ToString())}\nlabel={CleanBuildInfoValue(label)}\n");
+            AssetDatabase.ImportAsset(BuildInfoResourcePath, ImportAssetOptions.ForceUpdate);
+            return backup;
+        }
+
+        private static void RestoreBuildInfoAsset(BuildInfoBackup backup)
+        {
+            if (backup == null)
+            {
+                return;
+            }
+
+            RestoreFile(BuildInfoResourcePath, backup.FileExisted, backup.FileText);
+            RestoreFile(BuildInfoResourceMetaPath, backup.FileMetaExisted, backup.FileMetaText);
+            RestoreFile(BuildInfoResourceFolderMetaPath, backup.FolderMetaExisted, backup.FolderMetaText);
+
+            if (!backup.FolderExisted && Directory.Exists(BuildInfoResourceFolder) && Directory.GetFileSystemEntries(BuildInfoResourceFolder).Length == 0)
+            {
+                Directory.Delete(BuildInfoResourceFolder);
+            }
+
+            AssetDatabase.Refresh();
+        }
+
+        private static void RestoreFile(string path, bool existed, string text)
+        {
+            if (existed)
+            {
+                File.WriteAllText(path, text);
+            }
+            else if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+
+        private static string CleanBuildInfoValue(string value)
+        {
+            return (value ?? string.Empty).Replace('\r', ' ').Replace('\n', ' ').Trim();
         }
 
         private static bool ArtifactExists(string artifactPath)
@@ -234,6 +362,36 @@ namespace FourfoldEchoes.Editor
             }
 
             return null;
+        }
+
+        private sealed class BuildInfoBackup
+        {
+            public bool FolderExisted;
+            public bool FolderMetaExisted;
+            public bool FileExisted;
+            public bool FileMetaExisted;
+            public string FolderMetaText;
+            public string FileText;
+            public string FileMetaText;
+
+            public static BuildInfoBackup Capture()
+            {
+                return new BuildInfoBackup
+                {
+                    FolderExisted = Directory.Exists(BuildInfoResourceFolder),
+                    FolderMetaExisted = File.Exists(BuildInfoResourceFolderMetaPath),
+                    FileExisted = File.Exists(BuildInfoResourcePath),
+                    FileMetaExisted = File.Exists(BuildInfoResourceMetaPath),
+                    FolderMetaText = ReadIfExists(BuildInfoResourceFolderMetaPath),
+                    FileText = ReadIfExists(BuildInfoResourcePath),
+                    FileMetaText = ReadIfExists(BuildInfoResourceMetaPath)
+                };
+            }
+
+            private static string ReadIfExists(string path)
+            {
+                return File.Exists(path) ? File.ReadAllText(path) : string.Empty;
+            }
         }
     }
 }
