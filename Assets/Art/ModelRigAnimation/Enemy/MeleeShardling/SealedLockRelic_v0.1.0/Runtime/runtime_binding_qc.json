@@ -1,7 +1,7 @@
 {
   "schema": "model_rig_animation_runtime_binding_qc_v1",
   "asset_id": "modelrig.enemy.meleeshardling.sealedlockrelic.v0_1_0",
-  "generated_at": "2026-06-28T00:28:16Z",
+  "generated_at": "2026-06-28T00:39:34Z",
   "status": "pass",
   "runtime_binding": {
     "animator_controller": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Animator/AC_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.controller",
@@ -14,7 +14,11 @@
     "forward_hitbox_default_enabled": false,
     "animation_event_relay": "MeleeShardlingAnimationEventRelay",
     "animation_event_receiver_count": 22,
-    "animation_event_relay_behavior": "pass"
+    "animation_event_relay_behavior": "pass",
+    "preview_driver": "MeleeShardlingAnimationPreviewDriver",
+    "preview_driver_state_count": 14,
+    "preview_seconds_per_state": 0.75,
+    "preview_driver_status": "pass"
   },
   "errors": [
   ],

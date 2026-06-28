@@ -55,6 +55,7 @@
     "animator_controller": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Animator/AC_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.controller",
     "runtime_prefab": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Prefabs/PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0.prefab",
     "runtime_preview_scene": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity",
+    "runtime_preview_driver": "Assets/Scripts/MeleeShardlingAnimationPreviewDriver.cs",
     "runtime_binding_qc": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/runtime_binding_qc.json"
   },
   "rig": {
@@ -592,6 +593,10 @@
     "animation_event_relay": "Assets/Scripts/MeleeShardlingAnimationEventRelay.cs",
     "animation_event_receiver_count": 22,
     "animation_event_relay_behavior": "hit_active_start enables the forward hitbox; hit_active_end and recover disable it; projectile_release and interact_contact are recorded as gameplay cues.",
+    "preview_driver": "Assets/Scripts/MeleeShardlingAnimationPreviewDriver.cs",
+    "preview_driver_state_count": 14,
+    "preview_driver_seconds_per_state": 0.75,
+    "preview_driver_policy": "Preview scene cycles through the full ordered Animator state list in Play Mode so model, rig, and event timing can be inspected from one scene.",
     "event_runtime_policy": "AnimationEvent methods are received on the prefab root and may toggle the forward hitbox or record gameplay cues.",
     "vfx_sockets": [
       "SOCKET_RedSeamVFX",
@@ -603,7 +608,7 @@
       "SOCKET_ForwardHit",
       "SOCKET_WeakPoint"
     ],
-    "sample_scene_setup": "Generated runtime preview scene contains the animated prefab at world origin, camera, key light, and floor."
+    "sample_scene_setup": "Generated runtime preview scene contains the animated prefab at world origin, preview animation driver, camera, key light, and floor."
   },
   "qc": {
     "generated_at": "2026-06-27T07:25:00Z",
