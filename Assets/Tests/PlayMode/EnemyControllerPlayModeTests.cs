@@ -229,8 +229,10 @@ namespace FourfoldEchoes.Tests
         {
             var target = CreateTarget(Vector3.zero, 100f);
             var damageable = target.GetComponent<Damageable>();
+            damageable.hitFlashDuration = 0.04f;
             damageable.hitFlashScale = 0.4f;
             damageable.heavyHitFlashThreshold = 0.35f;
+            damageable.heavyHitFlashDurationMultiplier = 2f;
             damageable.heavyHitFlashScaleMultiplier = 1.25f;
             damageable.heavyHitFlashColor = new Color(1f, 0.5f, 0.02f, 0.97f);
 
@@ -243,6 +245,38 @@ namespace FourfoldEchoes.Tests
             Assert.IsTrue(flash.activeSelf);
             Assert.That(flash.transform.localScale.x, Is.EqualTo(0.5f).Within(0.01f));
             AssertColorApproximately(damageable.heavyHitFlashColor, ReadTint(flash.GetComponentInChildren<Renderer>()));
+
+            yield return new WaitForSeconds(0.05f);
+            Assert.IsTrue(flash.activeSelf);
+
+            yield return new WaitForSeconds(0.05f);
+            Assert.IsFalse(flash.activeSelf);
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Damageable_ExtendsLowHealthFlashForEmergencyRead()
+        {
+            var target = CreateTarget(Vector3.zero, 100f);
+            var damageable = target.GetComponent<Damageable>();
+            damageable.hitFlashDuration = 0.04f;
+            damageable.hitFlashScale = 0.4f;
+            damageable.lowHealthHitFlashThreshold = 0.3f;
+            damageable.lowHealthHitFlashDurationMultiplier = 2.2f;
+            damageable.lowHealthHitFlashScaleMultiplier = 1.5f;
+
+            Assert.IsTrue(damageable.ApplyDamage(75f, null, new Vector3(0.2f, 0f, 0f)));
+
+            var flash = damageable.HitFlashInstance;
+            Assert.IsNotNull(flash);
+            Assert.IsTrue(flash.activeSelf);
+
+            yield return new WaitForSeconds(0.05f);
+            Assert.IsTrue(flash.activeSelf);
+
+            yield return new WaitForSeconds(0.06f);
+            Assert.IsFalse(flash.activeSelf);
 
             yield return null;
         }

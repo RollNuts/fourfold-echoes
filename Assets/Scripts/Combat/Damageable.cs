@@ -43,6 +43,8 @@ namespace FourfoldEchoes.Product
         public float hitFlashDuration = 0.16f;
         public float defeatFlashDuration = 0.28f;
         public float hitConfirmFlashDuration = 0.1f;
+        public float heavyHitFlashDurationMultiplier = 1.25f;
+        public float lowHealthHitFlashDurationMultiplier = 1.4f;
         public float hitFlashScale = 0.36f;
         public float heavyHitFlashScaleMultiplier = 1.18f;
         public float lowHealthHitFlashScaleMultiplier = 1.28f;
@@ -142,7 +144,10 @@ namespace FourfoldEchoes.Product
                         ? Mathf.Max(1f, lowHealthHitFlashScaleMultiplier)
                         : (heavyHit ? Mathf.Max(1f, heavyHitFlashScaleMultiplier) : 1f));
                 var flashScale = hitFlashScale * scaleMultiplier;
-                var flashDuration = defeated ? defeatFlashDuration : hitFlashDuration;
+                var durationMultiplier = lowHealthHit
+                    ? Mathf.Max(1f, lowHealthHitFlashDurationMultiplier)
+                    : (heavyHit ? Mathf.Max(1f, heavyHitFlashDurationMultiplier) : 1f);
+                var flashDuration = defeated ? defeatFlashDuration : hitFlashDuration * durationMultiplier;
                 TriggerFlash(point, flashColor, flashScale, flashDuration);
             }
             Damaged?.Invoke(this, info);
