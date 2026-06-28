@@ -813,6 +813,7 @@ GameObject:
   - component: {fileID: 7339134470347491027}
   - component: {fileID: 5539650172229489433}
   - component: {fileID: 7735284976573692284}
+  - component: {fileID: 1568363017347182830}
   m_Layer: 0
   m_Name: PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0
   m_TagString: Untagged
@@ -892,6 +893,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FourfoldEchoes.Product.MeleeShardlingAnimationEventRelay
   forwardHitbox: {fileID: 6388847557244640883}
+--- !u!114 &1568363017347182830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4958396161798221207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 992f5b111e8142409b846b9a92fb87a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FourfoldEchoes.Product.MeleeShardlingAnimationStateDriver
+  animator: {fileID: 7339134470347491027}
+  stateNames:
+  - Idle
+  - Walk
+  - Run
+  - AttackStart
+  - AttackLoop
+  - AttackEnd
+  - HitFront
+  - HitBack
+  - Knockdown
+  - Death
+  - CastStart
+  - ChannelLoop
+  - CastRelease
+  - Interact
+  crossFadeSeconds: 0.05
 --- !u!1 &5733279341450564147
 GameObject:
   m_ObjectHideFlags: 0
