@@ -31,7 +31,8 @@ namespace FourfoldEchoes.Tests
             var prompt = FourfoldUnitySpikeController.CriticalHealthPromptText;
 
             Assert.That(prompt, Does.Contain("Critical HP"));
-            Assert.That(prompt, Does.Contain("dodge"));
+            Assert.That(prompt, Does.Contain("B/Space"));
+            Assert.That(prompt, Does.Contain("through the tell"));
             Assert.That(prompt, Does.Contain("create space"));
         }
 
