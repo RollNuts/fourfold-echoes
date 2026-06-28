@@ -1,17 +1,17 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-28T14:52:08.206Z",
+  "generatedAtUtc": "2026-06-28T14:56:44.401Z",
   "qaGate": "Build version and commit SHA are visible in debug or credits",
   "buildIdentity": {
     "version": "1.0",
-    "commit": "bca6ae661c12",
-    "fullCommit": "bca6ae661c12a7039fdcf5221c2927df13134816",
+    "commit": "2742f9a3fd01",
+    "fullCommit": "2742f9a3fd017130d6772f95f8e324d22e439f13",
     "branch": "codex/build-evidence-link-20260628",
     "source": {
       "version": "ProjectSettings.bundleVersion",
       "commit": "git"
     },
-    "titleBuildLine": "Build 1.0 / commit bca6ae661c12"
+    "titleBuildLine": "Build 1.0 / commit 2742f9a3fd01"
   },
   "runtimeDisplayContracts": [
     {

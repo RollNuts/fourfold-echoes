@@ -1,6 +1,6 @@
 # Version Display Evidence
 
-Generated UTC: `2026-06-28T14:52:08.206Z`
+Generated UTC: `2026-06-28T14:56:44.401Z`
 
 QA gate: Build version and commit SHA are visible in debug or credits
 
@@ -9,10 +9,10 @@ QA gate: Build version and commit SHA are visible in debug or credits
 | Field | Value |
 | --- | --- |
 | Version | `1.0` |
-| Commit | `bca6ae661c12` |
-| Full commit | `bca6ae661c12a7039fdcf5221c2927df13134816` |
+| Commit | `2742f9a3fd01` |
+| Full commit | `2742f9a3fd017130d6772f95f8e324d22e439f13` |
 | Branch | `codex/build-evidence-link-20260628` |
-| Title line | `Build 1.0 / commit bca6ae661c12` |
+| Title line | `Build 1.0 / commit 2742f9a3fd01` |
 
 ## Runtime Contracts
 
