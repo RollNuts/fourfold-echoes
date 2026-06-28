@@ -8,6 +8,8 @@ namespace FourfoldEchoes.Product
     public sealed class D020SliceController : MonoBehaviour
     {
         public const string SecondRouteCueObjectiveText = "Step 4/6: follow the gold route, then use the tool to open the shortcut seal.";
+        public const string BossHudToolReadyStatusText = "  TOOL READY";
+        public const string BossHudOpeningStatusText = "  OPEN - ATTACK";
 
         [Header("Scene")]
         public Transform player;
@@ -1026,6 +1028,21 @@ namespace FourfoldEchoes.Product
         public static float SecondRouteCuePulse(float timeSeconds)
         {
             return 1.12f + Mathf.Sin(timeSeconds * 5.2f) * 0.10f;
+        }
+
+        public static string BossHudStatusSuffix(bool opening, bool enraged, bool toolReady)
+        {
+            if (opening)
+            {
+                return BossHudOpeningStatusText;
+            }
+
+            if (toolReady)
+            {
+                return BossHudToolReadyStatusText;
+            }
+
+            return enraged ? "  ENRAGED" : string.Empty;
         }
 
         private void ResetRun()
@@ -3153,11 +3170,14 @@ namespace FourfoldEchoes.Product
             }
 
             var opening = BossOpeningActive(bossIndex);
+            var toolReady = BossToolReadyForHud(bossIndex);
             var rect = BossHudRect(Screen.width);
             FourfoldRuntimeUi.DrawPanel(new Rect(rect.x - 6f, rect.y - 6f, rect.width + 12f, 76f));
-            FourfoldRuntimeUi.DrawBar(rect, health01, opening ? new Color(1.0f, 0.72f, 0.24f) : enraged ? new Color(1.0f, 0.28f, 0.18f) : new Color(0.82f, 0.32f, 1.0f), label, body);
+            FourfoldRuntimeUi.DrawBar(rect, health01, opening ? new Color(1.0f, 0.72f, 0.24f) : toolReady ? new Color(0.25f, 0.70f, 1.0f) : enraged ? new Color(1.0f, 0.28f, 0.18f) : new Color(0.82f, 0.32f, 1.0f), label, body);
             var hint = opening
                 ? FourfoldLanguage.T(progressData, "Tool opening active. Attack now.", "ツールで隙あり。今すぐ攻撃。")
+                : toolReady
+                ? FourfoldInputPrompts.RegionBossToolReady(progressData)
                 : enraged
                 ? FourfoldLanguage.T(progressData, "Pattern changed. Watch the line attack.", "行動変化。直線攻撃に注意。")
                 : FourfoldLanguage.T(progressData, "Boss pressure active. Keep position and read the tell.", "ボス戦中。位置取りと予兆を読む。");
@@ -3187,16 +3207,42 @@ namespace FourfoldEchoes.Product
                 var currentHealth = Mathf.CeilToInt(enemyHealth[i]);
                 enraged = BossEnraged(i);
                 var opening = BossOpeningActive(i);
+                var toolReady = BossToolReadyForHud(i);
                 health01 = enemyHealth[i] / maxHealth;
                 bossIndex = i;
                 label = FourfoldLanguage.T(
                     progressData,
-                    $"BOSS HP {currentHealth} / {Mathf.CeilToInt(maxHealth)}{(opening ? "  OPEN" : enraged ? "  ENRAGED" : string.Empty)}",
-                    $"ボスHP {currentHealth} / {Mathf.CeilToInt(maxHealth)}{(opening ? "  隙あり" : enraged ? "  激化" : string.Empty)}");
+                    $"BOSS HP {currentHealth} / {Mathf.CeilToInt(maxHealth)}{BossHudStatusSuffix(opening, enraged, toolReady)}",
+                    $"ボスHP {currentHealth} / {Mathf.CeilToInt(maxHealth)}{BossHudStatusSuffixJa(opening, enraged, toolReady)}");
                 return true;
             }
 
             return false;
+        }
+
+        private bool BossToolReadyForHud(int bossIndex)
+        {
+            return explorationTool != null && explorationTool.IsReady && NearestOpenableBossIndex() == bossIndex;
+        }
+
+        private bool AnyBossToolReadyForHud()
+        {
+            return explorationTool != null && explorationTool.IsReady && NearestOpenableBossIndex() >= 0;
+        }
+
+        private static string BossHudStatusSuffixJa(bool opening, bool enraged, bool toolReady)
+        {
+            if (opening)
+            {
+                return "  隙あり 攻撃";
+            }
+
+            if (toolReady)
+            {
+                return "  ツール準備OK";
+            }
+
+            return enraged ? "  激化" : string.Empty;
         }
 
         private void DrawSettings(Rect rect, GUIStyle style, GUIStyle mutedStyle)

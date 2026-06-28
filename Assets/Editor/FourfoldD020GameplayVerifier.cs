@@ -753,9 +753,9 @@ namespace FourfoldEchoes.Editor
             SetPrivate(controller, "firstRewardClaimedThisRun", true);
             var edgeAttack = InvokePrivateFloat(controller, "CurrentAttackDamage", 0);
             var edgeText = InvokePrivateString(controller, "RelicStateText");
-            if (edgeAttack <= baseAttack || edgeText.IndexOf("Lumen Edge", StringComparison.Ordinal) < 0 || edgeText.IndexOf("+DMG", StringComparison.Ordinal) < 0)
+            if (edgeAttack <= baseAttack || edgeText.IndexOf("Rare Edge", StringComparison.Ordinal) < 0 || edgeText.IndexOf("+DMG", StringComparison.Ordinal) < 0)
             {
-                throw new InvalidOperationException("D-020 combat verifier failed: first relic does not expose a distinct Lumen Edge damage role.");
+                throw new InvalidOperationException("D-020 combat verifier failed: first relic does not expose a distinct Rare Edge damage role.");
             }
 
             SetPrivate(controller, "secondRewardClaimedThisRun", true);
@@ -763,12 +763,12 @@ namespace FourfoldEchoes.Editor
             var bothText = InvokePrivateString(controller, "RelicStateText");
             var linkRecovery = InvokePrivateFloat(controller, "LumenLinkRecoveryAmount");
             if (wardIncoming >= baseIncoming
-                || bothText.IndexOf("Lumen Link", StringComparison.Ordinal) < 0
+                || bothText.IndexOf("Epic Link", StringComparison.Ordinal) < 0
                 || bothText.IndexOf("-DMG", StringComparison.Ordinal) < 0
                 || bothText.IndexOf("+HP", StringComparison.Ordinal) < 0
                 || linkRecovery <= 0f)
             {
-                throw new InvalidOperationException("D-020 combat verifier failed: combined relic loadout does not expose Lumen Link defense and hit-recovery synergy.");
+                throw new InvalidOperationException("D-020 combat verifier failed: combined relic loadout does not expose Epic Link defense and hit-recovery synergy.");
             }
 
             SetPrivate(controller, "playerHealth", 50f);
@@ -821,6 +821,17 @@ namespace FourfoldEchoes.Editor
                 tool.player.position = boss.position - Vector3.right * 1.2f;
                 tool.inputEnabled = true;
                 tool.cooldownSeconds = 0f;
+                tool.ClearRuntimeState();
+
+                if (D020SliceController.BossHudStatusSuffix(false, false, true).IndexOf("TOOL READY", StringComparison.Ordinal) < 0)
+                {
+                    throw new InvalidOperationException("D-020 combat verifier failed: boss HUD status copy does not expose the tool-ready attack window.");
+                }
+
+                if (!InvokePrivateBool(controller, "AnyBossToolReadyForHud"))
+                {
+                    throw new InvalidOperationException("D-020 combat verifier failed: boss HUD did not detect the tool-ready boss window before use.");
+                }
 
                 if (!tool.TryUse())
                 {
