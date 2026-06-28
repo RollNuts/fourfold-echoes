@@ -76,10 +76,20 @@ namespace FourfoldEchoes.Tests
                 Require(enemy.IsCriticalHealth, "Enemy did not expose a critical health read on its final hit.");
                 Require(objects[5].transform.localScale.x > healthyTellScale, "Critical health read did not enlarge the enemy tell ring.");
 
+                var player = objects[0].AddComponent<D020PlayerController>();
+                player.ResetForSmoke(Vector3.zero);
+
                 var hud = objects[0].AddComponent<D020HudController>();
+                hud.player = player;
                 hud.enemy = enemy;
                 hud.RefreshNow();
+                Require(hud.ActionRead.Contains("Atk Ready"), "D-020 HUD did not surface attack readiness.");
+                Require(hud.ActionRead.Contains("Dodge Ready"), "D-020 HUD did not surface dodge readiness.");
                 Require(hud.EnemyRead.Contains("Critical"), "D-020 HUD did not surface the enemy critical read.");
+
+                player.TryDodge(Vector2.up);
+                hud.RefreshNow();
+                Require(hud.ActionRead.Contains("Dodge 0%"), "D-020 HUD did not surface dodge cooldown progress.");
 
                 enemy.TakeHit(1);
                 hud.RefreshNow();
