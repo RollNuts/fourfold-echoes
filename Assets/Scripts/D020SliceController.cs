@@ -1045,6 +1045,20 @@ namespace FourfoldEchoes.Product
             return enraged ? "  ENRAGED" : string.Empty;
         }
 
+        public static string CombatRemainingObjectiveText(int remainingEnemies)
+        {
+            var remaining = Mathf.Max(0, remainingEnemies);
+            var noun = remaining == 1 ? "enemy" : "enemies";
+            return $"Step 2/6: defeat {remaining} {noun}, read tells, then claim the reward.";
+        }
+
+        public static string BossDownRemainingObjectiveText(int remainingEnemies)
+        {
+            var remaining = Mathf.Max(0, remainingEnemies);
+            var noun = remaining == 1 ? "enemy" : "enemies";
+            return $"BOSS DOWN: defeat {remaining} remaining {noun} to unlock rewards.";
+        }
+
         private void ResetRun()
         {
             pendingExitAction = PendingExitAction.None;
@@ -2247,6 +2261,25 @@ namespace FourfoldEchoes.Product
             return enemyHealth.Length > 0;
         }
 
+        private int RemainingEnemyCount()
+        {
+            if (enemyHealth == null)
+            {
+                return 0;
+            }
+
+            var count = 0;
+            for (var i = 0; i < enemyHealth.Length; i++)
+            {
+                if (enemyHealth[i] > 0f)
+                {
+                    count += 1;
+                }
+            }
+
+            return count;
+        }
+
         private bool BossDefeatedThisRun()
         {
             for (var i = 0; i < enemyHealth.Length; i++)
@@ -2835,6 +2868,7 @@ namespace FourfoldEchoes.Product
             };
             var mutedStyle = FourfoldRuntimeUi.MutedStyle(Screen.height, uiScale);
             var hpStyle = FourfoldRuntimeUi.BodyStyle(Screen.height, uiScale);
+            var remainingEnemies = RemainingEnemyCount();
 
             var objective = runCleared
                 ? returnedToHubThisRun
@@ -2845,13 +2879,13 @@ namespace FourfoldEchoes.Product
                     : !ToolGateSolved()
                         ? FourfoldLanguage.T(progressData, "Step 1/6: use the tool to open the sealed route.", "手順1/6: ツールで封じられた道を開く。")
                         : BossDefeatedThisRun() && !AllEnemiesDefeated()
-                        ? FourfoldLanguage.T(progressData, "BOSS DOWN: finish the remaining enemies to unlock rewards.", "ボス撃破: 残りの敵を倒すと報酬が開く。")
+                        ? FourfoldLanguage.T(progressData, BossDownRemainingObjectiveText(remainingEnemies), BossDownRemainingObjectiveTextJa(remainingEnemies))
                         : !AllEnemiesDefeated()
                         ? AnyBossOpeningActive()
                             ? FourfoldLanguage.T(progressData, "BOSS OPEN: attack now before the window closes.", "ボスに隙あり: 閉じる前に攻撃。")
                             : explorationTool != null && explorationTool.IsReady && NearestOpenableBossIndex() >= 0
                                 ? FourfoldLanguage.T(progressData, "BOSS TOOL: use the tool to expose an attack window.", "ボスツール: ツールで攻撃の隙を作る。")
-                                : FourfoldLanguage.T(progressData, "Step 2/6: defeat enemies, read tells, then claim the reward.", "手順2/6: 予兆を読みながら敵を倒し、報酬を獲得。")
+                                : FourfoldLanguage.T(progressData, CombatRemainingObjectiveText(remainingEnemies), CombatRemainingObjectiveTextJa(remainingEnemies))
                         : !firstRewardClaimedThisRun
                         ? FourfoldInputPrompts.RegionClaimEdgeObjective(progressData)
                         : !SecondToolGateSolved()
@@ -3243,6 +3277,18 @@ namespace FourfoldEchoes.Product
             }
 
             return enraged ? "  激化" : string.Empty;
+        }
+
+        private static string CombatRemainingObjectiveTextJa(int remainingEnemies)
+        {
+            var remaining = Mathf.Max(0, remainingEnemies);
+            return $"手順2/6: 残り{remaining}体の予兆を読み、倒して報酬を獲得。";
+        }
+
+        private static string BossDownRemainingObjectiveTextJa(int remainingEnemies)
+        {
+            var remaining = Mathf.Max(0, remainingEnemies);
+            return $"ボス撃破: 残り{remaining}体を倒すと報酬が開く。";
         }
 
         private void DrawSettings(Rect rect, GUIStyle style, GUIStyle mutedStyle)

@@ -363,6 +363,7 @@ namespace FourfoldEchoes.Editor
             ValidateRequiredReferences(controller, tool);
             PrepareControllerForCombat(controller);
             InvokePrivate(controller, "EnsureExplorationReferences");
+            VerifyCombatRemainingObjective(controller);
             VerifyRelicIdentityEffects(controller);
             VerifyBossToolOpening(controller, tool);
 
@@ -781,6 +782,37 @@ namespace FourfoldEchoes.Editor
 
             SetPrivate(controller, "firstRewardClaimedThisRun", false);
             SetPrivate(controller, "secondRewardClaimedThisRun", false);
+        }
+
+        private static void VerifyCombatRemainingObjective(D020SliceController controller)
+        {
+            var remaining = InvokePrivateInt(controller, "RemainingEnemyCount");
+            if (remaining <= 0 || remaining != controller.enemies.Length)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: combat objective remaining-enemy count did not match the active roster.");
+            }
+
+            var multiText = D020SliceController.CombatRemainingObjectiveText(remaining);
+            if (multiText.IndexOf("Step 2/6", StringComparison.Ordinal) < 0
+                || multiText.IndexOf($"defeat {remaining} enemies", StringComparison.Ordinal) < 0
+                || multiText.IndexOf("claim the reward", StringComparison.Ordinal) < 0)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: combat objective does not expose the remaining enemy count and reward goal.");
+            }
+
+            var singleText = D020SliceController.CombatRemainingObjectiveText(1);
+            if (singleText.IndexOf("defeat 1 enemy", StringComparison.Ordinal) < 0)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: combat objective singular remaining-enemy copy is not readable.");
+            }
+
+            var bossDownText = D020SliceController.BossDownRemainingObjectiveText(2);
+            if (bossDownText.IndexOf("BOSS DOWN", StringComparison.Ordinal) < 0
+                || bossDownText.IndexOf("2 remaining enemies", StringComparison.Ordinal) < 0
+                || bossDownText.IndexOf("unlock rewards", StringComparison.Ordinal) < 0)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: boss-down objective does not preserve remaining-enemy reward guidance.");
+            }
         }
 
         private static void VerifyBossToolOpening(D020SliceController controller, ExplorationTool tool)
