@@ -816,7 +816,7 @@ namespace FourfoldEchoes.Product
             runCleared = secondToolNode == null || secondRewardClaimPoint == null;
             ShowRewardNotice(
                 FourfoldLanguage.T(progressData, "LUMEN EDGE EARNED", "LUMEN EDGE 獲得"),
-                FourfoldLanguage.T(progressData, "Damage improves now; return to hub to save it.", "攻撃力が今すぐ上がる。ハブへ帰還すると保存される。"));
+                FourfoldLanguage.T(progressData, "Damage improves now; follow the blue RETURN marker to save it.", "攻撃力が今すぐ上がる。青いRETURNマーカーを追って保存。"));
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.92f);
             if (rewardReadyRead != null)
@@ -848,7 +848,7 @@ namespace FourfoldEchoes.Product
             previousReturnedToHubLoaded = false;
             ShowRewardNotice(
                 FourfoldLanguage.T(progressData, "LUMEN WARD EARNED", "LUMEN WARD 獲得"),
-                FourfoldLanguage.T(progressData, "Damage taken drops now; return to hub to save both rewards.", "被ダメージが今すぐ下がる。ハブへ帰還すると両方の報酬が保存される。"));
+                FourfoldLanguage.T(progressData, "Damage taken drops now; follow the blue RETURN marker to save both rewards.", "被ダメージが今すぐ下がる。青いRETURNマーカーを追って両方保存。"));
             UpdateToolInputLock();
             PlayCue(rewardClaimClip, 0.86f);
             if (secondRewardReadyRead != null)
