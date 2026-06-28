@@ -640,7 +640,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.6, y: 0.38, z: 0.32}
   m_Center: {x: 0, y: 0, z: 0}
@@ -812,6 +812,7 @@ GameObject:
   - component: {fileID: 1110865540784885918}
   - component: {fileID: 7339134470347491027}
   - component: {fileID: 5539650172229489433}
+  - component: {fileID: 7735284976573692284}
   m_Layer: 0
   m_Name: PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0
   m_TagString: Untagged
@@ -878,6 +879,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.3000001, y: 0.8024999, z: 1.3699999}
   m_Center: {x: 0, y: 0.3612499, z: 0.18499994}
+--- !u!114 &7735284976573692284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4958396161798221207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a357dc4a27d4256bb844c5fa6b3d49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FourfoldEchoes.Product.MeleeShardlingAnimationEventRelay
+  forwardHitbox: {fileID: 6388847557244640883}
 --- !u!1 &5733279341450564147
 GameObject:
   m_ObjectHideFlags: 0
