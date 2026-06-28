@@ -25,6 +25,7 @@ namespace FourfoldEchoes.Product
         private string feedbackRead = string.Empty;
 
         public string ToolRead { get; private set; }
+        public string ActionRead { get; private set; }
         public string EnemyRead { get; private set; }
         public string RewardRead { get; private set; }
         public string ProgressRead { get; private set; }
@@ -45,6 +46,7 @@ namespace FourfoldEchoes.Product
         public void RefreshNow()
         {
             ToolRead = BuildToolRead();
+            ActionRead = BuildActionRead();
             EnemyRead = BuildEnemyRead();
             RewardRead = BuildRewardRead();
             ProgressRead = BuildProgressRead();
@@ -61,14 +63,15 @@ namespace FourfoldEchoes.Product
             EnsureStyles();
             RefreshNow();
 
-            var rect = new Rect(18f, 18f, 270f, 150f);
+            var rect = new Rect(18f, 18f, 270f, 172f);
             GUI.Box(rect, GUIContent.none, boxStyle);
             GUI.Label(new Rect(rect.x + 14f, rect.y + 10f, 240f, 24f), RoomTitleText, titleStyle);
             GUI.Label(new Rect(rect.x + 14f, rect.y + 36f, 240f, 22f), ToolRead, lineStyle);
-            GUI.Label(new Rect(rect.x + 14f, rect.y + 58f, 240f, 22f), EnemyRead, lineStyle);
-            GUI.Label(new Rect(rect.x + 14f, rect.y + 80f, 240f, 22f), RewardRead, lineStyle);
-            GUI.Label(new Rect(rect.x + 14f, rect.y + 102f, 240f, 22f), ProgressRead, lineStyle);
-            GUI.Label(new Rect(rect.x + 14f, rect.y + 124f, 240f, 22f), PromptRead, lineStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 58f, 240f, 22f), ActionRead, lineStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 80f, 240f, 22f), EnemyRead, lineStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 102f, 240f, 22f), RewardRead, lineStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 124f, 240f, 22f), ProgressRead, lineStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 146f, 240f, 22f), PromptRead, lineStyle);
         }
 
         private string BuildToolRead()
@@ -85,6 +88,27 @@ namespace FourfoldEchoes.Product
 
             var readyPercent = Mathf.RoundToInt((1f - tool.Cooldown01) * 100f);
             return $"Tool {Mathf.Clamp(readyPercent, 0, 99)}%";
+        }
+
+        private string BuildActionRead()
+        {
+            if (player == null)
+            {
+                player = Object.FindFirstObjectByType<D020PlayerController>();
+            }
+
+            if (player == null)
+            {
+                return "Action --";
+            }
+
+            var attackRead = player.AttackCooldown01 <= 0f
+                ? "Atk Ready"
+                : $"Atk {Mathf.Clamp(Mathf.RoundToInt((1f - player.AttackCooldown01) * 100f), 0, 99)}%";
+            var dodgeRead = player.DodgeCooldown01 <= 0f
+                ? "Dodge Ready"
+                : $"Dodge {Mathf.Clamp(Mathf.RoundToInt((1f - player.DodgeCooldown01) * 100f), 0, 99)}%";
+            return $"{attackRead} / {dodgeRead}";
         }
 
         private string BuildEnemyRead()
