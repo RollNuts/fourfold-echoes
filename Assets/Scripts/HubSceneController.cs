@@ -9,10 +9,13 @@ namespace FourfoldEchoes.Product
         public Transform player;
         public Transform returnSpawn;
         public Transform d020RegionGate;
+        public Transform r02RegionGate;
         public Camera fixedCamera;
 
         [Header("Region")]
         public string regionSceneName = FourfoldGameIds.UnitySceneD020VerticalSlice;
+        public string regionR02SceneName = FourfoldGameIds.UnitySceneR02CinderCanal;
+        public bool regionR02Playable;
 
         [Header("Input")]
         public KeyCode interactKey = KeyCode.E;
@@ -54,6 +57,7 @@ namespace FourfoldEchoes.Product
         private const int LoadoutMenuCount = 3;
         private const int SettingsCount = 6;
         private const float AxisRepeatDelay = 0.24f;
+        private const float HubHudPanelHeight = 318f;
 
         private Vector3 facing = Vector3.forward;
         private FourfoldProgressData progressData;
@@ -74,6 +78,8 @@ namespace FourfoldEchoes.Product
         private int selectedLoadoutIndex;
         private int selectedSettingIndex;
         private float axisRepeatTimer;
+        private float regionMessageTimer;
+        private string regionMessage = string.Empty;
 
         public static bool LayoutFitsResolution(int screenWidth, int screenHeight, bool pauseOpen, out string reason)
         {
@@ -84,7 +90,7 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
-            var topPanel = new Rect(18f, 18f, Mathf.Min(760f, screenWidth - 36f), 270f);
+            var topPanel = new Rect(18f, 18f, Mathf.Min(760f, screenWidth - 36f), HubHudPanelHeight);
             if (topPanel.xMax > screenWidth - 18f || topPanel.yMax > screenHeight - 18f)
             {
                 reason = $"hub status text exceeds safe area at {screenWidth}x{screenHeight}: {topPanel}";
@@ -238,6 +244,7 @@ namespace FourfoldEchoes.Product
             MovePlayer(Time.deltaTime);
             UpdateCamera();
             UpdateResetInput(Time.deltaTime);
+            regionMessageTimer = Mathf.Max(0f, regionMessageTimer - Time.deltaTime);
 
             if (Pressed(interactKey, gamepadInteractKey))
             {
@@ -245,6 +252,11 @@ namespace FourfoldEchoes.Product
                 {
                     PlayUiConfirm();
                     OpenMissionBriefing();
+                }
+                else if (CanInspectR02Region())
+                {
+                    PlayUiConfirm();
+                    TryEnterR02Region();
                 }
             }
         }
@@ -255,6 +267,7 @@ namespace FourfoldEchoes.Product
             progressData.currentScene = FourfoldGameIds.SceneHubCrossroads;
             progressData.hubUnlocked = true;
             progressData.regionD020Unlocked = true;
+            progressData.regionR02Unlocked = progressData.regionR02Unlocked || progressData.regionD020Cleared || progressData.d020Cleared;
             progressData.lumenRodUnlocked = true;
             FourfoldProgressSave.Save(progressData);
             runSummaryOpen = ShouldOpenRunSummary(progressData);
@@ -287,6 +300,7 @@ namespace FourfoldEchoes.Product
             progressData.currentScene = FourfoldGameIds.SceneD020VerticalSlice;
             progressData.hubUnlocked = true;
             progressData.regionD020Unlocked = true;
+            progressData.regionR02Unlocked = progressData.regionR02Unlocked || progressData.regionD020Cleared || progressData.d020Cleared;
             progressData.lumenRodUnlocked = true;
             FourfoldProgressSave.Save(progressData);
 
@@ -298,12 +312,54 @@ namespace FourfoldEchoes.Product
             return true;
         }
 
+        public bool TryEnterR02Region()
+        {
+            progressData = FourfoldProgressSave.Load();
+            progressData.regionR02Unlocked = progressData.regionR02Unlocked || progressData.regionD020Cleared || progressData.d020Cleared;
+            FourfoldProgressSave.Save(progressData);
+
+            if (!CanInspectR02Region())
+            {
+                return false;
+            }
+
+            if (!progressData.regionR02Unlocked)
+            {
+                ShowRegionMessage(FourfoldLanguage.T(progressData, "R02 locked: clear Region 01 and return to the hub.", "R02未解放: 地域01をクリアしてハブへ帰還。"));
+                return false;
+            }
+
+            if (!regionR02Playable)
+            {
+                ShowRegionMessage(FourfoldLanguage.T(progressData, "R02 unlocked: Cinder Canal opens when the next region scene lands.", "R02解放済み: 次の地域シーン実装後に開通。"));
+                return false;
+            }
+
+            missionBriefingOpen = false;
+            runSummaryOpen = false;
+            failureSummaryOpen = false;
+            resetConfirmOpen = false;
+            settingsOpen = false;
+            loadoutOpen = false;
+            paused = false;
+            progressData.currentScene = FourfoldGameIds.SceneR02CinderCanal;
+            FourfoldProgressSave.Save(progressData);
+
+            if (Application.isPlaying)
+            {
+                SceneManager.LoadScene(regionR02SceneName);
+            }
+
+            return true;
+        }
+
         public bool TryReturnToTitle()
         {
             progressData = FourfoldProgressSave.Load();
             progressData.currentScene = FourfoldGameIds.SceneHubCrossroads;
             progressData.hubUnlocked = true;
             progressData.regionD020Unlocked = true;
+            progressData.regionR02Unlocked = progressData.regionR02Unlocked || progressData.regionD020Cleared || progressData.d020Cleared;
             progressData.lumenRodUnlocked = true;
             FourfoldProgressSave.Save(progressData);
             paused = false;
@@ -564,6 +620,22 @@ namespace FourfoldEchoes.Product
             }
 
             return FlatDistance(player.position, d020RegionGate.position) <= InteractionRange;
+        }
+
+        public bool CanInspectR02Region()
+        {
+            if (player == null || r02RegionGate == null)
+            {
+                return false;
+            }
+
+            return FlatDistance(player.position, r02RegionGate.position) <= InteractionRange;
+        }
+
+        private void ShowRegionMessage(string message)
+        {
+            regionMessage = message ?? string.Empty;
+            regionMessageTimer = 3.0f;
         }
 
         private void PlacePlayerAtHubSpawn()
@@ -1295,7 +1367,9 @@ namespace FourfoldEchoes.Product
                 ? "--"
                 : Mathf.CeilToInt(progressData.d020BestClearTimeSeconds).ToString() + "s";
             var canStartRegion = CanEnterD020Region();
-            var panel = new Rect(18f, 18f, Mathf.Min(760f, Screen.width - 36f), 270f);
+            var canInspectR02 = CanInspectR02Region();
+            var r02Unlocked = progressData != null && progressData.regionR02Unlocked;
+            var panel = new Rect(18f, 18f, Mathf.Min(760f, Screen.width - 36f), HubHudPanelHeight);
             FourfoldRuntimeUi.DrawPanel(panel);
             var header = FourfoldRuntimeUi.SubheadStyle(Screen.height, uiScale);
             var body = FourfoldRuntimeUi.BodyStyle(Screen.height, uiScale);
@@ -1316,15 +1390,24 @@ namespace FourfoldEchoes.Product
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 142f, panel.width - 36f, 34f), FourfoldLanguage.T(progressData, $"Equipped reward skills {equippedRewards}/{rewards}: {LoadoutEffectText(progressData)}", $"装備中報酬スキル {equippedRewards}/{rewards}: {LoadoutEffectText(progressData)}"), new Color(0.62f, 0.44f, 1.0f), muted);
             var prompt = canStartRegion
                 ? FourfoldInputPrompts.HubStartReady(progressData)
-                : FourfoldLanguage.T(progressData, "PREP: move to the gold gate when you are ready to start.", "準備: 開始できる状態になったら金色のゲートへ。");
+                : canInspectR02
+                    ? (r02Unlocked
+                        ? FourfoldLanguage.T(progressData, "R02: unlocked. Cinder Canal is staged as the next region gate.", "R02: 解放済み。次の地域ゲートとして灰渠が準備中。")
+                        : FourfoldLanguage.T(progressData, "R02: locked until Region 01 is cleared and banked.", "R02: 地域01をクリアして保存すると解放。"))
+                    : FourfoldLanguage.T(progressData, "PREP: move to the gold gate when you are ready to start.", "準備: 開始できる状態になったら金色のゲートへ。");
             var next = cleared
-                ? FourfoldLanguage.T(progressData, "RESULT OPTIONS: replay Region 01, compare best time, or return to title from Pause.", "結果の選択: 地域01再挑戦、最速タイム比較、またはポーズからタイトルへ。")
+                ? FourfoldLanguage.T(progressData, "RESULT OPTIONS: replay Region 01, inspect the R02 gate, or return to title from Pause.", "結果の選択: 地域01再挑戦、R02ゲート確認、またはポーズからタイトルへ。")
                 : FourfoldLanguage.T(progressData, "RUN PLAN: tune loadout, open route, beat boss, claim skills, return.", "攻略手順: 装備調整、道を開く、ボス撃破、スキル獲得、帰還。");
             FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 184f, panel.width - 36f, 34f), prompt, canStartRegion ? new Color(0.34f, 0.90f, 0.52f) : new Color(0.25f, 0.68f, 1.0f), muted);
             GUI.Label(new Rect(panel.x + 18f, panel.y + 226f, panel.width - 36f, 24f), next, muted);
             if (progressData == null || progressData.showControlHints)
             {
                 GUI.Label(new Rect(panel.x + 18f, panel.y + 250f, panel.width - 36f, 20f), FourfoldInputPrompts.HubHud(progressData, resetHoldSeconds > 0f), muted);
+            }
+
+            if (regionMessageTimer > 0f && !string.IsNullOrWhiteSpace(regionMessage))
+            {
+                FourfoldRuntimeUi.DrawChip(new Rect(panel.x + 18f, panel.y + 274f, panel.width - 36f, 34f), regionMessage, r02Unlocked ? new Color(0.42f, 0.78f, 1.0f) : new Color(1.0f, 0.46f, 0.22f), muted);
             }
 
             DrawObjectiveMarker(body);

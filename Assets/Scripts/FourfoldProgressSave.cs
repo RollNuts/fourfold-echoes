@@ -14,6 +14,8 @@ namespace FourfoldEchoes.Product
         public bool hubUnlocked;
         public bool regionD020Unlocked;
         public bool regionD020Cleared;
+        public bool regionR02Unlocked;
+        public bool regionR02Cleared;
         public bool lumenRodUnlocked;
         public bool d020Cleared;
         public bool d020BossDefeated;
@@ -32,6 +34,9 @@ namespace FourfoldEchoes.Product
         public float d020BestClearTimeSeconds;
         public float d020LastClearTimeSeconds;
         public bool d020LastClearWasBest;
+        public bool r02BossDefeated;
+        public int r02ClearCount;
+        public int r02FailureCount;
         public bool settingsInitialized;
         public float masterVolume = 1f;
         public float musicVolume = 1f;
@@ -43,7 +48,7 @@ namespace FourfoldEchoes.Product
 
     public static class FourfoldProgressSave
     {
-        public const int CurrentVersion = 1;
+        public const int CurrentVersion = 2;
         private const string FileName = "fourfold_progress_v1.json";
 
         public static bool HasSaveFile()
@@ -199,6 +204,15 @@ namespace FourfoldEchoes.Product
 
             data.d020LastClearTimeSeconds = Mathf.Max(0f, data.d020LastClearTimeSeconds);
             data.d020LastClearWasBest = data.d020LastClearTimeSeconds > 0f && data.d020LastClearWasBest;
+            data.regionD020Cleared = data.regionD020Cleared || data.d020Cleared;
+            data.regionR02Unlocked = data.regionR02Unlocked || data.regionD020Cleared || data.d020Cleared;
+            data.r02ClearCount = Mathf.Max(0, data.r02ClearCount);
+            data.r02FailureCount = Mathf.Max(0, data.r02FailureCount);
+            if (!data.regionR02Cleared)
+            {
+                data.r02BossDefeated = false;
+            }
+
             if (!data.d020LoadoutInitialized)
             {
                 data.d020EdgeEquipped = data.d020RewardClaimed;

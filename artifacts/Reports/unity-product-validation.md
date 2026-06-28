@@ -1,13 +1,13 @@
 # Unity Product Validation
 
-Generated UTC: `2026-06-27T00:53:04.5080970Z`
+Generated UTC: `2026-06-28T00:46:13.1154260Z`
 
 ## Metrics
 
 | Metric | Value |
 | --- | ---: |
-| Active scene objects | 533 |
-| Renderers | 508 |
+| Active scene objects | 517 |
+| Renderers | 492 |
 | AudioSources | 2 |
 | LODGroups | 0 |
 | Missing material slots | 0 |
@@ -15,7 +15,7 @@ Generated UTC: `2026-06-27T00:53:04.5080970Z`
 | Negative scale objects | 0 |
 | Material assets | 75 |
 | Texture assets | 0 |
-| AudioClip assets | 9 |
+| AudioClip assets | 11 |
 | Mesh assets | 35 |
 | Prefab assets | 33 |
 | Prefabs with LODGroup | 0 |
@@ -23,13 +23,13 @@ Generated UTC: `2026-06-27T00:53:04.5080970Z`
 
 ## Findings
 
-- **info** `d022.contract`: D022 product contract validated: current top-down adventure MVP pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, and stale player-facing copy is blocked.
+- **info** `d022.contract`: D022 product contract validated: current top-down adventure MVP pack is present, AGENTS points to it, UI/UX layouts fit 1280x800/1080p, Title/Hub/Region menu SFX hooks are present, Region tool target-state HUD is present, and stale player-facing copy is blocked.
 - **info** `render.pipeline`: Built-in render pipeline is active.
 - **info** `save.service`: Versioned local save validated with settings defaults, language preference, UI scale/control-hint preferences, settings preservation across reset, roundtrip persistence, backup recovery, and corrupt-save fallback.
-- **info** `r01.verdant_steps`: R01 Verdant Steps evidence path generated and validated with one exploration tool, sealed-route and shortcut interactions, two normal enemy types, elite guard, boss, boss tool-opening attack window, combat feedback text, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX, objective marker, progression rail, dodge state HUD, reward-effect notice UX, confirmation before abandoning unsaved rewards, two distinct saved reward skills, Lumen Link combined-skill recovery, return gate, required SFX, two BGM clips, and hub-return reward persistence.
+- **info** `r01.verdant_steps`: R01 Verdant Steps evidence path generated and validated with one exploration tool, sealed-route and shortcut interactions, explicit tool target/no-target/cooldown feedback, two normal enemy types, elite guard, boss, boss tool-opening attack window, combat feedback text, basic-attack enemy defeat, enemy-hit failure, failure result/retry/hub-return UX, title return, shared pause/settings/language UX with menu SFX, objective marker, progression rail, build-slot HUD, dodge state HUD, reward-effect notice UX, confirmation before abandoning unsaved rewards, two distinct saved reward skills, Lumen Link combined-skill recovery, return gate, required SFX, two BGM clips, and hub-return reward persistence.
 - **info** `art.production_p3`: Production P3 model pack imported and validated with 28 prefabs, renderer/mesh/material references, and sane bounds.
-- **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with an R01 region gate, mission briefing/start confirmation, reward-skill synergy and loss-risk briefing, returned-run summary/replay UX, objective marker, progress initialization, pause/settings/language UX, reset confirmation, and return-to-title persistence.
-- **info** `title.entry`: Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, Quit request, and Build Settings order Title -> HubCrossroads -> R01.
+- **info** `hub.crossroads`: Hub Crossroads generated and validated as the playable hub with an R01 region gate, staged R02 future gate, mission briefing/start confirmation, reward-skill synergy and loss-risk briefing, returned-run summary/replay UX with last-clear/new-best timing, failed-return summary UX, objective marker, progress initialization, pause/settings/language UX with menu SFX, reset confirmation, and return-to-title persistence.
+- **info** `title.entry`: Title scene generated and validated with New Game overwrite confirmation, Continue resume-or-hub choice for in-progress runs, Settings volume/language persistence, menu SFX hooks, Quit request, and Build Settings order Title -> HubCrossroads -> R01.
 - **info** `steam_deck.readiness`: Title, Hub, and R01 validated for 1280x800/1080p HUD safe areas, legacy movement axes, and controller-critical bindings.
 - **info** `prototype.gate_a`: Legacy Gate A generation skipped. Set FOURFOLD_INCLUDE_LEGACY_GATE_A=1 to validate the old harness explicitly.
 - **warn** `texture.assets`: No production texture assets found. Store-quality art pass has not started.

@@ -55,6 +55,33 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Hub gameplay verifier failed: clean hub-start progress unexpectedly opened the run summary.");
                 }
 
+                if (controller.r02RegionGate == null)
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: R02 future gate reference is missing.");
+                }
+
+                if (hubProgress.regionR02Unlocked)
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: clean hub-start progress unlocked R02 before Region 01 was cleared.");
+                }
+
+                controller.player.position = controller.r02RegionGate.position;
+                if (!controller.CanInspectR02Region() || controller.CanEnterD020Region())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: R02 future gate is not independently inspectable from the D-020 gate.");
+                }
+
+                if (controller.TryEnterR02Region())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: locked R02 future gate allowed region entry.");
+                }
+
+                var lockedR02Progress = FourfoldProgressSave.Load();
+                if (lockedR02Progress.currentScene != FourfoldGameIds.SceneHubCrossroads || lockedR02Progress.regionR02Unlocked)
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: locked R02 inspection changed scene or unlocked R02.");
+                }
+
                 var returnedProgress = FourfoldProgressSave.Load();
                 returnedProgress.currentScene = FourfoldGameIds.SceneHubCrossroads;
                 returnedProgress.hubSpawnId = FourfoldGameIds.HubSpawnReturnGate;
@@ -76,6 +103,34 @@ namespace FourfoldEchoes.Editor
                 if (!controller.IsRunSummaryOpen())
                 {
                     throw new InvalidOperationException("Hub gameplay verifier failed: returned D-020 progress did not open the banked run summary.");
+                }
+
+                var unlockedR02Progress = FourfoldProgressSave.Load();
+                if (!unlockedR02Progress.regionR02Unlocked)
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: returned D-020 clear did not unlock the R02 future gate.");
+                }
+
+                controller.player.position = controller.r02RegionGate.position;
+                if (!controller.CanInspectR02Region() || controller.CanEnterD020Region())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: staged R02 gate overlaps D-020 start interaction.");
+                }
+
+                if (controller.TryEnterR02Region())
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: non-playable R02 future gate loaded an unfinished region scene.");
+                }
+
+                var stagedR02Progress = FourfoldProgressSave.Load();
+                if (stagedR02Progress.currentScene != FourfoldGameIds.SceneHubCrossroads
+                    || !stagedR02Progress.regionR02Unlocked
+                    || stagedR02Progress.regionR02Cleared
+                    || stagedR02Progress.r02BossDefeated
+                    || stagedR02Progress.r02ClearCount != 0
+                    || stagedR02Progress.r02FailureCount != 0)
+                {
+                    throw new InvalidOperationException("Hub gameplay verifier failed: staged R02 inspection changed scene target, completion, or counters.");
                 }
 
                 if (controller.IsFailureSummaryOpen())
@@ -163,7 +218,16 @@ namespace FourfoldEchoes.Editor
 
                 controller.ResetProgressForNewGame();
                 var resetProgress = FourfoldProgressSave.Load();
-                if (resetProgress.currentScene != FourfoldGameIds.SceneHubCrossroads || !resetProgress.hubUnlocked || !resetProgress.regionD020Unlocked || resetProgress.d020Cleared || resetProgress.d020ClearCount != 0)
+                if (resetProgress.currentScene != FourfoldGameIds.SceneHubCrossroads
+                    || !resetProgress.hubUnlocked
+                    || !resetProgress.regionD020Unlocked
+                    || resetProgress.d020Cleared
+                    || resetProgress.d020ClearCount != 0
+                    || resetProgress.regionR02Unlocked
+                    || resetProgress.regionR02Cleared
+                    || resetProgress.r02BossDefeated
+                    || resetProgress.r02ClearCount != 0
+                    || resetProgress.r02FailureCount != 0)
                 {
                     throw new InvalidOperationException("Hub gameplay verifier failed: reset did not return to a clean hub-start progress state.");
                 }

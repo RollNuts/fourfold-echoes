@@ -44,7 +44,8 @@ namespace FourfoldEchoes.Editor
             var returnSpawn = CreateReturnSpawn(root.transform, materials);
             var player = CreatePlayer(root.transform, materials);
             var gate = CreateD020Gate(root.transform, materials);
-            CreateRuntimeHook(player.transform, returnSpawn.transform, gate.transform, camera);
+            var r02Gate = CreateR02Gate(root.transform, materials);
+            CreateRuntimeHook(player.transform, returnSpawn.transform, gate.transform, r02Gate.transform, camera);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             ApplyBuildSettings();
@@ -65,6 +66,7 @@ namespace FourfoldEchoes.Editor
             Require("Hub Player");
             Require("Hub Player Spawn");
             Require("Hub Region Gate D020");
+            Require("Hub Region Gate R02");
             Require("Hub Top Down Camera");
             RequireComponent<HubSceneController>("Hub Runtime Hook");
             ValidateRuntimeHookReferences();
@@ -110,14 +112,24 @@ namespace FourfoldEchoes.Editor
             }
 
             var controller = hook.GetComponent<HubSceneController>();
-            if (controller == null || controller.player == null || controller.returnSpawn == null || controller.d020RegionGate == null || controller.fixedCamera == null)
+            if (controller == null || controller.player == null || controller.returnSpawn == null || controller.d020RegionGate == null || controller.r02RegionGate == null || controller.fixedCamera == null)
             {
-                throw new InvalidOperationException("Hub runtime hook is missing required player, spawn, gate, or camera references.");
+                throw new InvalidOperationException("Hub runtime hook is missing required player, spawn, region gates, or camera references.");
             }
 
             if (controller.regionSceneName != FourfoldGameIds.UnitySceneD020VerticalSlice)
             {
                 throw new InvalidOperationException("Hub runtime hook must target the D-020 Unity scene name.");
+            }
+
+            if (controller.regionR02SceneName != FourfoldGameIds.UnitySceneR02CinderCanal)
+            {
+                throw new InvalidOperationException("Hub runtime hook must stage the R02 Unity scene name.");
+            }
+
+            if (controller.regionR02Playable)
+            {
+                throw new InvalidOperationException("Hub runtime hook must keep R02 non-playable until the R02 scene lands.");
             }
         }
 
@@ -161,6 +173,7 @@ namespace FourfoldEchoes.Editor
                 player = CreateMaterial("Hub_Player", new Color(0.22f, 0.36f, 0.88f)),
                 playerAccent = CreateMaterial("Hub_Player_Accent", new Color(1.0f, 0.78f, 0.28f)),
                 gate = CreateMaterial("Hub_D020_Gate", new Color(0.95f, 0.58f, 0.16f), new Color(0.75f, 0.30f, 0.05f)),
+                gateR02 = CreateMaterial("Hub_R02_Gate", new Color(0.30f, 0.62f, 1.0f), new Color(0.05f, 0.25f, 0.72f)),
                 gateStone = CreateMaterial("Hub_Gate_Stone", new Color(0.18f, 0.17f, 0.18f)),
                 marker = CreateMaterial("Hub_Objective_Marker", new Color(0.25f, 0.76f, 1.0f), new Color(0.0f, 0.35f, 0.72f)),
                 shadow = CreateMaterial("Hub_Soft_Boundary", new Color(0.06f, 0.06f, 0.065f))
@@ -290,15 +303,32 @@ namespace FourfoldEchoes.Editor
             return gate;
         }
 
-        private static void CreateRuntimeHook(Transform player, Transform returnSpawn, Transform gate, Camera camera)
+        private static GameObject CreateR02Gate(Transform parent, GeneratedMaterials materials)
+        {
+            var gate = new GameObject("Hub Region Gate R02");
+            gate.transform.SetParent(parent);
+            gate.transform.localPosition = new Vector3(3.05f, 0f, 1.9f);
+            gate.transform.localRotation = Quaternion.Euler(0f, -42f, 0f);
+            CreateBlock(gate.transform, "Hub R02 Gate Left Pillar", materials.gateStone, new Vector3(-0.62f, 0.82f, 0f), new Vector3(0.30f, 1.64f, 0.34f));
+            CreateBlock(gate.transform, "Hub R02 Gate Right Pillar", materials.gateStone, new Vector3(0.62f, 0.82f, 0f), new Vector3(0.30f, 1.64f, 0.34f));
+            CreateBlock(gate.transform, "Hub R02 Gate Header", materials.gateStone, new Vector3(0f, 1.56f, 0f), new Vector3(1.58f, 0.24f, 0.30f));
+            CreatePrimitive(gate.transform, PrimitiveType.Cylinder, "Hub R02 Gate Ring", materials.gateR02, new Vector3(0f, 0.50f, -0.02f), new Vector3(1.02f, 0.032f, 1.02f), Quaternion.Euler(90f, 0f, 0f));
+            CreatePrimitive(gate.transform, PrimitiveType.Sphere, "Hub R02 Gate Core", materials.gateR02, new Vector3(0f, 0.82f, -0.04f), new Vector3(0.34f, 0.34f, 0.34f));
+            return gate;
+        }
+
+        private static void CreateRuntimeHook(Transform player, Transform returnSpawn, Transform gate, Transform r02Gate, Camera camera)
         {
             var hook = new GameObject("Hub Runtime Hook");
             var controller = hook.AddComponent<HubSceneController>();
             controller.player = player;
             controller.returnSpawn = returnSpawn;
             controller.d020RegionGate = gate;
+            controller.r02RegionGate = r02Gate;
             controller.fixedCamera = camera;
             controller.regionSceneName = FourfoldGameIds.UnitySceneD020VerticalSlice;
+            controller.regionR02SceneName = FourfoldGameIds.UnitySceneR02CinderCanal;
+            controller.regionR02Playable = false;
         }
 
         private static GameObject CreateBlock(Transform parent, string name, Material material, Vector3 localPosition, Vector3 localScale)
@@ -387,6 +417,7 @@ namespace FourfoldEchoes.Editor
             public Material player;
             public Material playerAccent;
             public Material gate;
+            public Material gateR02;
             public Material gateStone;
             public Material marker;
             public Material shadow;

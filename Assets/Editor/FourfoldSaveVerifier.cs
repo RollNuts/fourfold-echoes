@@ -51,7 +51,11 @@ namespace FourfoldEchoes.Editor
                     currentScene = FourfoldGameIds.SceneD020VerticalSlice,
                     hubUnlocked = true,
                     regionD020Unlocked = true,
+                    regionD020Cleared = true,
+                    regionR02Unlocked = true,
+                    regionR02Cleared = true,
                     lumenRodUnlocked = true,
+                    d020Cleared = true,
                     d020ShortcutOpened = true,
                     d020RewardClaimed = true,
                     d020SecondRewardClaimed = true,
@@ -63,6 +67,9 @@ namespace FourfoldEchoes.Editor
                     d020BestClearTimeSeconds = 87f,
                     d020LastClearTimeSeconds = 91f,
                     d020LastClearWasBest = true,
+                    r02BossDefeated = true,
+                    r02ClearCount = 2,
+                    r02FailureCount = 1,
                     settingsInitialized = true,
                     masterVolume = 0.7f,
                     musicVolume = 0.5f,
@@ -77,7 +84,11 @@ namespace FourfoldEchoes.Editor
                 if (roundtrip.currentScene != FourfoldGameIds.SceneD020VerticalSlice
                     || !roundtrip.hubUnlocked
                     || !roundtrip.regionD020Unlocked
+                    || !roundtrip.regionD020Cleared
+                    || !roundtrip.regionR02Unlocked
+                    || !roundtrip.regionR02Cleared
                     || !roundtrip.lumenRodUnlocked
+                    || !roundtrip.d020Cleared
                     || !roundtrip.d020ShortcutOpened
                     || !roundtrip.d020RewardClaimed
                     || !roundtrip.d020SecondRewardClaimed
@@ -89,6 +100,9 @@ namespace FourfoldEchoes.Editor
                     || !Approximately(roundtrip.d020BestClearTimeSeconds, 87f)
                     || !Approximately(roundtrip.d020LastClearTimeSeconds, 91f)
                     || !roundtrip.d020LastClearWasBest
+                    || !roundtrip.r02BossDefeated
+                    || roundtrip.r02ClearCount != 2
+                    || roundtrip.r02FailureCount != 1
                     || !Approximately(roundtrip.masterVolume, 0.7f)
                     || !Approximately(roundtrip.musicVolume, 0.5f)
                     || !Approximately(roundtrip.sfxVolume, 0.9f)
@@ -99,6 +113,35 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException("Save verifier failed: save/load roundtrip did not preserve progress and settings.");
                 }
 
+                File.WriteAllText(savePath, @"{
+    ""version"": 1,
+    ""currentScene"": ""scene.hub_crossroads"",
+    ""hubUnlocked"": true,
+    ""regionD020Unlocked"": true,
+    ""d020Cleared"": true,
+    ""r02BossDefeated"": true,
+    ""r02ClearCount"": -2,
+    ""r02FailureCount"": -1,
+    ""settingsInitialized"": true,
+    ""masterVolume"": 1,
+    ""musicVolume"": 1,
+    ""sfxVolume"": 1,
+    ""uiScale"": 1,
+    ""showControlHints"": true,
+    ""language"": ""en""
+}");
+                var migratedRoundtrip = FourfoldProgressSave.Load();
+                if (migratedRoundtrip.version != FourfoldProgressSave.CurrentVersion
+                    || !migratedRoundtrip.regionD020Cleared
+                    || !migratedRoundtrip.regionR02Unlocked
+                    || migratedRoundtrip.r02ClearCount != 0
+                    || migratedRoundtrip.r02FailureCount != 0
+                    || migratedRoundtrip.r02BossDefeated)
+                {
+                    throw new InvalidOperationException("Save verifier failed: legacy D-020 clear did not migrate into the R02 unlock contract safely.");
+                }
+
+                FourfoldProgressSave.Save(roundtrip);
                 var resetProgress = new FourfoldProgressData();
                 FourfoldProgressSave.CopySettings(roundtrip, resetProgress);
                 if (!Approximately(resetProgress.masterVolume, 0.7f)
@@ -106,9 +149,14 @@ namespace FourfoldEchoes.Editor
                     || !Approximately(resetProgress.sfxVolume, 0.9f)
                     || !Approximately(resetProgress.uiScale, 1.15f)
                     || resetProgress.language != FourfoldLanguage.Japanese
-                    || resetProgress.showControlHints)
+                    || resetProgress.showControlHints
+                    || resetProgress.regionR02Unlocked
+                    || resetProgress.regionR02Cleared
+                    || resetProgress.r02BossDefeated
+                    || resetProgress.r02ClearCount != 0
+                    || resetProgress.r02FailureCount != 0)
                 {
-                    throw new InvalidOperationException("Save verifier failed: settings copy did not preserve user UX preferences.");
+                    throw new InvalidOperationException("Save verifier failed: settings copy did not preserve user UX preferences or copied progression state.");
                 }
 
                 FourfoldProgressSave.Save(roundtrip);
@@ -123,7 +171,12 @@ namespace FourfoldEchoes.Editor
                     || recovered.d020FailureCount != 3
                     || recovered.d020AcknowledgedFailureCount != 2
                     || !Approximately(recovered.d020LastClearTimeSeconds, 91f)
-                    || !recovered.d020LastClearWasBest)
+                    || !recovered.d020LastClearWasBest
+                    || !recovered.regionR02Unlocked
+                    || !recovered.regionR02Cleared
+                    || !recovered.r02BossDefeated
+                    || recovered.r02ClearCount != 2
+                    || recovered.r02FailureCount != 1)
                 {
                     throw new InvalidOperationException("Save verifier failed: corrupt primary save did not recover from backup.");
                 }
@@ -134,6 +187,11 @@ namespace FourfoldEchoes.Editor
                 var fallback = FourfoldProgressSave.Load();
                 if (fallback.version != FourfoldProgressSave.CurrentVersion
                     || fallback.d020FailureCount != 0
+                    || fallback.regionR02Unlocked
+                    || fallback.regionR02Cleared
+                    || fallback.r02BossDefeated
+                    || fallback.r02ClearCount != 0
+                    || fallback.r02FailureCount != 0
                     || !fallback.settingsInitialized
                     || fallback.language != FourfoldLanguage.English)
                 {
