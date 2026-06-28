@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace FourfoldEchoes.Product
@@ -13,6 +14,7 @@ namespace FourfoldEchoes.Product
         public ExplorationNode node;
         public ExplorationNode[] nodes;
         public D020RelicReward reward;
+        public D020RelicReward[] rewards;
         public D020ProgressSave progressSave;
 
         private GUIStyle boxStyle;
@@ -24,8 +26,8 @@ namespace FourfoldEchoes.Product
         private float feedbackTimer;
         private string feedbackRead = string.Empty;
         private bool hasObservedRewardState;
-        private bool observedRewardUnlocked;
-        private bool observedRewardCollected;
+        private int observedRewardUnlockedCount;
+        private int observedRewardCollectedCount;
 
         public string ToolRead { get; private set; }
         public string RewardRead { get; private set; }
@@ -90,17 +92,32 @@ namespace FourfoldEchoes.Product
 
         private string BuildRewardRead()
         {
-            if (reward == null)
+            var rewardCount = CountRewards();
+            if (rewardCount == 0)
             {
                 return "Relic --";
             }
 
-            if (reward.IsCollected)
+            if (rewardCount == 1)
             {
-                return "Relic Claimed";
+                var singleReward = GetFirstReward();
+                if (singleReward != null && singleReward.IsCollected)
+                {
+                    return "Relic Claimed";
+                }
+
+                return singleReward != null && singleReward.IsUnlocked ? "Relic Ready" : "Relic Locked";
             }
 
-            return reward.IsUnlocked ? "Relic Ready" : "Relic Locked";
+            var collectedCount = CountCollectedRewards();
+            if (collectedCount >= rewardCount)
+            {
+                return $"Relics Claimed {collectedCount}/{rewardCount}";
+            }
+
+            return CountClaimableRewards() > 0
+                ? $"Relic Ready {collectedCount}/{rewardCount}"
+                : $"Relics Locked {collectedCount}/{rewardCount}";
         }
 
         private string BuildProgressRead()
@@ -125,17 +142,34 @@ namespace FourfoldEchoes.Product
                 return "Use tool: E / North";
             }
 
-            if (reward == null)
+            var rewardCount = CountRewards();
+            if (rewardCount == 0)
             {
                 return "Press forward";
             }
 
-            if (reward.IsCollected)
+            if (rewardCount == 1)
             {
-                return "Relic secured";
+                var singleReward = GetFirstReward();
+                if (singleReward == null)
+                {
+                    return "Press forward";
+                }
+
+                if (singleReward.IsCollected)
+                {
+                    return "Relic secured";
+                }
+
+                return singleReward.IsUnlocked ? "Claim relic: E / North" : "Defeat the enemy";
             }
 
-            return reward.IsUnlocked ? "Claim relic: E / North" : "Defeat the enemy";
+            if (CountClaimableRewards() > 0)
+            {
+                return "Claim relic: E / North";
+            }
+
+            return CountCollectedRewards() >= rewardCount ? "Relics secured" : "Defeat the enemy";
         }
 
         private bool HasUnsolvedNode()
@@ -200,41 +234,161 @@ namespace FourfoldEchoes.Product
 
         private void UpdateRewardUnlockFeedback()
         {
-            if (reward == null)
+            var rewardCount = CountRewards();
+            if (rewardCount == 0)
             {
                 hasObservedRewardState = false;
-                observedRewardUnlocked = false;
-                observedRewardCollected = false;
+                observedRewardUnlockedCount = 0;
+                observedRewardCollectedCount = 0;
                 return;
             }
 
-            var isUnlocked = reward.IsUnlocked;
-            var isCollected = reward.IsCollected;
+            var unlockedCount = CountUnlockedRewards();
+            var collectedCount = CountCollectedRewards();
             if (!hasObservedRewardState)
             {
-                CaptureRewardState(isUnlocked, isCollected);
+                CaptureRewardState(unlockedCount, collectedCount);
                 return;
             }
 
-            if (!observedRewardCollected && isCollected)
+            if (collectedCount > observedRewardCollectedCount)
             {
                 feedbackTimer = 0f;
                 feedbackRead = string.Empty;
             }
-            else if (!observedRewardUnlocked && isUnlocked && !isCollected)
+            else if (unlockedCount > observedRewardUnlockedCount && collectedCount < rewardCount)
             {
                 feedbackTimer = 1.4f;
                 feedbackRead = RelicUnlockedFeedback;
             }
 
-            CaptureRewardState(isUnlocked, isCollected);
+            CaptureRewardState(unlockedCount, collectedCount);
         }
 
-        private void CaptureRewardState(bool isUnlocked, bool isCollected)
+        private void CaptureRewardState(int unlockedCount, int collectedCount)
         {
             hasObservedRewardState = true;
-            observedRewardUnlocked = isUnlocked;
-            observedRewardCollected = isCollected;
+            observedRewardUnlockedCount = unlockedCount;
+            observedRewardCollectedCount = collectedCount;
+        }
+
+        private bool HasRewardList()
+        {
+            if (rewards == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < rewards.Length; i++)
+            {
+                if (rewards[i] != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private D020RelicReward GetFirstReward()
+        {
+            if (HasRewardList())
+            {
+                for (var i = 0; i < rewards.Length; i++)
+                {
+                    if (rewards[i] != null)
+                    {
+                        return rewards[i];
+                    }
+                }
+            }
+
+            return reward;
+        }
+
+        private int CountRewards()
+        {
+            if (!HasRewardList())
+            {
+                return reward != null ? 1 : 0;
+            }
+
+            var count = 0;
+            for (var i = 0; i < rewards.Length; i++)
+            {
+                if (rewards[i] != null)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private int CountUnlockedRewards()
+        {
+            var count = 0;
+            ForEachReward(target =>
+            {
+                if (target.IsUnlocked)
+                {
+                    count++;
+                }
+            });
+            return count;
+        }
+
+        private int CountCollectedRewards()
+        {
+            var count = 0;
+            ForEachReward(target =>
+            {
+                if (target.IsCollected)
+                {
+                    count++;
+                }
+            });
+            return count;
+        }
+
+        private int CountClaimableRewards()
+        {
+            var count = 0;
+            ForEachReward(target =>
+            {
+                if (!target.IsCollected && target.IsUnlocked)
+                {
+                    count++;
+                }
+            });
+            return count;
+        }
+
+        private void ForEachReward(Action<D020RelicReward> visit)
+        {
+            if (visit == null)
+            {
+                return;
+            }
+
+            if (HasRewardList())
+            {
+                for (var i = 0; i < rewards.Length; i++)
+                {
+                    var target = rewards[i];
+                    if (target != null)
+                    {
+                        visit(target);
+                    }
+                }
+
+                return;
+            }
+
+            if (reward != null)
+            {
+                visit(reward);
+            }
         }
 
         private void CaptureSaveCounters()
