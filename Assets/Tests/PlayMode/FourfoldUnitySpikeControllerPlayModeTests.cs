@@ -15,7 +15,7 @@ namespace FourfoldEchoes.Tests
             Assert.That(prompt, Does.Contain("Dodge B"));
             Assert.That(prompt, Does.Contain("Hold Altar Y/K"));
             Assert.That(prompt, Does.Contain("Claim Y/E"));
-            Assert.That(prompt, Does.Contain("Phase LB/RB"));
+            Assert.That(prompt, Does.Contain("Phase LB/RB/[/]"));
             Assert.That(prompt, Does.Contain("Reset Start/R"));
         }
 
