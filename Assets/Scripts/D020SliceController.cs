@@ -46,6 +46,8 @@ namespace FourfoldEchoes.Product
         public AudioClip playerDamageClip;
         public AudioClip bossImpactClip;
         public AudioClip bossDefeatClip;
+        public AudioClip bossTransitionClip;
+        public AudioClip enemyDeathClip;
         public AudioClip rewardClaimClip;
         public AudioClip rewardReadyClip;
         public AudioSource musicSource;
@@ -134,6 +136,8 @@ namespace FourfoldEchoes.Product
         private static AudioClip fallbackPlayerDamageClip;
         private static AudioClip fallbackBossImpactClip;
         private static AudioClip fallbackBossDefeatClip;
+        private static AudioClip fallbackBossTransitionClip;
+        private static AudioClip fallbackEnemyDeathClip;
         private static AudioClip fallbackRewardClaimClip;
         private static AudioClip fallbackRewardReadyClip;
         private static AudioClip fallbackToolFailClip;
@@ -525,6 +529,7 @@ namespace FourfoldEchoes.Product
             attackReadTimer = 0.11f;
             PlayCue(attackClip, 0.72f);
             var hitAny = false;
+            var enemyDeathCuePlayed = false;
             for (var i = 0; i < enemyHealth.Length; i++)
             {
                 var enemy = enemies[i];
@@ -559,6 +564,11 @@ namespace FourfoldEchoes.Product
                     if (IsBossEnemy(i))
                     {
                         RegisterBossDefeat();
+                    }
+                    else if (!enemyDeathCuePlayed)
+                    {
+                        enemyDeathCuePlayed = true;
+                        PlayCue(enemyDeathClip, 0.74f);
                     }
 
                     enemy.gameObject.SetActive(false);
@@ -1749,7 +1759,7 @@ namespace FourfoldEchoes.Product
             ShowRewardNotice(
                 FourfoldLanguage.T(progressData, "BOSS OPENING", "ボスに隙"),
                 FourfoldLanguage.T(progressData, "Tool pulse exposed the boss. Attack now for bonus damage.", "ツールでボスに隙を作った。今は攻撃ダメージが上がる。"));
-            PlayCue(rewardReadyClip, 0.70f);
+            PlayCue(bossTransitionClip, 0.80f);
             return true;
         }
 
@@ -2798,6 +2808,14 @@ namespace FourfoldEchoes.Product
             {
                 bossDefeatClip = FallbackBossDefeatClip();
             }
+            if (bossTransitionClip == null)
+            {
+                bossTransitionClip = FallbackBossTransitionClip();
+            }
+            if (enemyDeathClip == null)
+            {
+                enemyDeathClip = FallbackEnemyDeathClip();
+            }
             if (rewardClaimClip == null)
             {
                 rewardClaimClip = FallbackRewardClaimClip();
@@ -2879,6 +2897,24 @@ namespace FourfoldEchoes.Product
                 new ProceduralToneSegment(185f, 0.080f, 0.18f),
                 new ProceduralToneSegment(370f, 0.100f, 0.15f),
                 new ProceduralToneSegment(740f, 0.125f, 0.12f)));
+        }
+
+        private static AudioClip FallbackBossTransitionClip()
+        {
+            return fallbackBossTransitionClip ?? (fallbackBossTransitionClip = BuildToneClip(
+                "D020_BossTransition_Fallback",
+                new ProceduralToneSegment(132f, 0.070f, 0.18f),
+                new ProceduralToneSegment(264f, 0.080f, 0.15f),
+                new ProceduralToneSegment(198f, 0.070f, 0.12f)));
+        }
+
+        private static AudioClip FallbackEnemyDeathClip()
+        {
+            return fallbackEnemyDeathClip ?? (fallbackEnemyDeathClip = BuildToneClip(
+                "D020_EnemyDeath_Fallback",
+                new ProceduralToneSegment(310f, 0.050f, 0.15f),
+                new ProceduralToneSegment(185f, 0.070f, 0.13f),
+                new ProceduralToneSegment(92f, 0.060f, 0.09f)));
         }
 
         private static AudioClip FallbackRewardClaimClip()
