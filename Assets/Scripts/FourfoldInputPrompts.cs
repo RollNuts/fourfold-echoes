@@ -171,8 +171,8 @@ namespace FourfoldEchoes.Product
         public static string RegionReturnGateObjective(FourfoldProgressData data)
         {
             return PreferGamepad()
-                ? FourfoldLanguage.T(data, "CLEAR: return to hub to save rewards. Press Y at the return gate.", "クリア: 報酬保存のためハブへ帰還。帰還ゲートでY。")
-                : FourfoldLanguage.T(data, "CLEAR: return to hub to save rewards. Press E at the return gate.", "クリア: 報酬保存のためハブへ帰還。帰還ゲートでE。");
+                ? FourfoldLanguage.T(data, "CLEAR: follow the blue RETURN marker to save rewards. Press Y at the return gate.", "クリア: 青いRETURNマーカーを追って報酬を保存。帰還ゲートでY。")
+                : FourfoldLanguage.T(data, "CLEAR: follow the blue RETURN marker to save rewards. Press E at the return gate.", "クリア: 青いRETURNマーカーを追って報酬を保存。帰還ゲートでE。");
         }
 
         public static string RegionRetryObjective(FourfoldProgressData data)
