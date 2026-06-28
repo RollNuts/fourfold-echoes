@@ -25,6 +25,8 @@ namespace FourfoldEchoes.Product
         public Color telegraphGroundMarkerColor = new Color(1f, 0.22f, 0.08f, 0.72f);
         public Color telegraphGroundMarkerAttackColor = new Color(1f, 0.05f, 0.02f, 0.92f);
         public float telegraphGroundMarkerHeight = 0.035f;
+        [Min(1f)]
+        public float telegraphGroundMarkerWarningScale = 1.22f;
         [Min(0.05f)]
         public float telegraphGroundMarkerPrefabSourceDiameter = 1f;
 
@@ -514,19 +516,36 @@ namespace FourfoldEchoes.Product
             var markerPosition = transform.position + forward * Mathf.Max(0f, definition.attackRange);
             markerPosition.y = transform.position.y + Mathf.Max(0.005f, telegraphGroundMarkerHeight);
             var markerDiameter = Mathf.Max(0.15f, definition.attackRadius * 2f);
+            var warningScale = Mathf.Lerp(1f, Mathf.Max(1f, telegraphGroundMarkerWarningScale), TelegraphWarningProgress());
+            var readableDiameter = markerDiameter * warningScale;
 
             telegraphGroundMarkerInstance.transform.position = markerPosition;
             telegraphGroundMarkerInstance.transform.rotation = Quaternion.identity;
             if (telegraphGroundMarkerPrefab != null)
             {
-                var prefabScale = markerDiameter / Mathf.Max(0.05f, telegraphGroundMarkerPrefabSourceDiameter);
+                var prefabScale = readableDiameter / Mathf.Max(0.05f, telegraphGroundMarkerPrefabSourceDiameter);
                 telegraphGroundMarkerInstance.transform.localScale = Vector3.one * prefabScale;
             }
             else
             {
-                telegraphGroundMarkerInstance.transform.localScale = new Vector3(markerDiameter, 0.02f, markerDiameter);
+                telegraphGroundMarkerInstance.transform.localScale = new Vector3(readableDiameter, 0.02f, readableDiameter);
             }
             ApplyTelegraphGroundMarkerColor();
+        }
+
+        private float TelegraphWarningProgress()
+        {
+            if (currentState == EnemyState.Attack)
+            {
+                return 1f;
+            }
+
+            if (currentState != EnemyState.Telegraph || definition == null)
+            {
+                return 0f;
+            }
+
+            return Mathf.Clamp01(stateTimer / Mathf.Max(0.01f, definition.telegraphTime));
         }
 
         private void ApplyTelegraphGroundMarkerColor()

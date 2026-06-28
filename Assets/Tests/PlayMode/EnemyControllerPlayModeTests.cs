@@ -135,6 +135,41 @@ namespace FourfoldEchoes.Tests
         }
 
         [UnityTest]
+        public IEnumerator EnemyController_GroundMarkerGrowsAsStrikeNears()
+        {
+            var definition = CreateDefinition("test_ground_marker_warning_scale");
+            definition.attackRange = 1.2f;
+            definition.attackRadius = 0.4f;
+            definition.telegraphTime = 0.3f;
+            definition.activeTime = 0.08f;
+            definition.recoveryTime = 0.12f;
+            definition.retreatAfterAttack = false;
+
+            var target = CreateTarget(new Vector3(0.8f, 0f, 0f), 100f);
+            var controller = CreateEnemy(Vector3.zero, definition, target.transform);
+            controller.telegraphGroundMarkerWarningScale = 1.25f;
+
+            controller.Tick(0.01f);
+            controller.Tick(0.01f);
+            Assert.AreEqual(EnemyState.Telegraph, controller.CurrentState);
+
+            var marker = controller.TelegraphGroundMarkerInstance;
+            Assert.IsNotNull(marker);
+            var startScale = marker.transform.localScale.x;
+            Assert.That(startScale, Is.EqualTo(definition.attackRadius * 2f).Within(0.01f));
+
+            controller.Tick(definition.telegraphTime * 0.5f);
+            Assert.That(marker.transform.localScale.x, Is.GreaterThan(startScale));
+            Assert.That(marker.transform.localScale.x, Is.LessThan(definition.attackRadius * 2f * controller.telegraphGroundMarkerWarningScale));
+
+            controller.Tick(definition.telegraphTime);
+            Assert.AreEqual(EnemyState.Attack, controller.CurrentState);
+            Assert.That(marker.transform.localScale.x, Is.EqualTo(definition.attackRadius * 2f * controller.telegraphGroundMarkerWarningScale).Within(0.01f));
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator Damageable_ShowsHitFlashWhenDamaged()
         {
             var target = CreateTarget(Vector3.zero, 100f);
@@ -187,6 +222,125 @@ namespace FourfoldEchoes.Tests
 
             yield return new WaitForSeconds(0.08f);
             Assert.IsFalse(flash.activeSelf);
+        }
+
+        [UnityTest]
+        public IEnumerator Damageable_EmphasizesHeavyNonLethalDamage()
+        {
+            var target = CreateTarget(Vector3.zero, 100f);
+            var damageable = target.GetComponent<Damageable>();
+            damageable.hitFlashDuration = 0.04f;
+            damageable.hitFlashScale = 0.4f;
+            damageable.heavyHitFlashThreshold = 0.35f;
+            damageable.heavyHitFlashDurationMultiplier = 2f;
+            damageable.heavyHitFlashScaleMultiplier = 1.25f;
+            damageable.heavyHitFlashColor = new Color(1f, 0.5f, 0.02f, 0.97f);
+
+            Assert.IsTrue(damageable.ApplyDamage(40f, null, new Vector3(0.2f, 0f, 0f)));
+
+            var flash = damageable.HitFlashInstance;
+            Assert.IsNotNull(flash);
+            Assert.IsTrue(damageable.IsAlive);
+            Assert.That(damageable.Health01, Is.EqualTo(0.6f).Within(0.01f));
+            Assert.IsTrue(flash.activeSelf);
+            Assert.That(flash.transform.localScale.x, Is.EqualTo(0.5f).Within(0.01f));
+            AssertColorApproximately(damageable.heavyHitFlashColor, ReadTint(flash.GetComponentInChildren<Renderer>()));
+
+            yield return new WaitForSeconds(0.05f);
+            Assert.IsTrue(flash.activeSelf);
+
+            yield return new WaitForSeconds(0.05f);
+            Assert.IsFalse(flash.activeSelf);
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Damageable_ExtendsLowHealthFlashForEmergencyRead()
+        {
+            var target = CreateTarget(Vector3.zero, 100f);
+            var damageable = target.GetComponent<Damageable>();
+            damageable.hitFlashDuration = 0.04f;
+            damageable.hitFlashScale = 0.4f;
+            damageable.lowHealthHitFlashThreshold = 0.3f;
+            damageable.lowHealthHitFlashDurationMultiplier = 2.2f;
+            damageable.lowHealthHitFlashScaleMultiplier = 1.5f;
+
+            Assert.IsTrue(damageable.ApplyDamage(75f, null, new Vector3(0.2f, 0f, 0f)));
+
+            var flash = damageable.HitFlashInstance;
+            Assert.IsNotNull(flash);
+            Assert.IsTrue(flash.activeSelf);
+
+            yield return new WaitForSeconds(0.05f);
+            Assert.IsTrue(flash.activeSelf);
+
+            yield return new WaitForSeconds(0.06f);
+            Assert.IsFalse(flash.activeSelf);
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Damageable_EmphasizesLowHealthNonLethalDamage()
+        {
+            var target = CreateTarget(Vector3.zero, 100f);
+            var damageable = target.GetComponent<Damageable>();
+            damageable.hitFlashScale = 0.4f;
+            damageable.lowHealthHitFlashThreshold = 0.3f;
+            damageable.lowHealthHitFlashScaleMultiplier = 1.5f;
+            damageable.lowHealthHitFlashColor = new Color(1f, 0.12f, 0.05f, 0.96f);
+
+            Assert.IsTrue(damageable.ApplyDamage(75f, null, new Vector3(0.2f, 0f, 0f)));
+
+            var flash = damageable.HitFlashInstance;
+            Assert.IsNotNull(flash);
+            Assert.IsTrue(damageable.IsAlive);
+            Assert.That(damageable.Health01, Is.EqualTo(0.25f).Within(0.01f));
+            Assert.IsTrue(flash.activeSelf);
+            Assert.That(flash.transform.localScale.x, Is.EqualTo(0.6f).Within(0.01f));
+            AssertColorApproximately(damageable.lowHealthHitFlashColor, ReadTint(flash.GetComponentInChildren<Renderer>()));
+
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator EnemyAttackDriver_ShowsOwnerHitConfirmWhenAttackConnects()
+        {
+            var definition = CreateDefinition("test_hit_confirm");
+            definition.attackDamage = 7f;
+            definition.attackRange = 0.75f;
+            definition.attackRadius = 0.35f;
+            definition.attackArcDegrees = 120f;
+
+            var attacker = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            cleanup.Add(attacker);
+            attacker.name = "AI Test Hit Confirm Attacker";
+            attacker.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
+            var ownerDamageable = attacker.AddComponent<Damageable>();
+            ownerDamageable.hitConfirmFlashDuration = 0.05f;
+            ownerDamageable.hitConfirmFlashScale = 0.33f;
+            ownerDamageable.hitConfirmFlashColor = new Color(0.2f, 0.9f, 1f, 0.95f);
+            var attackDriver = attacker.AddComponent<EnemyAttackDriver>();
+
+            var target = CreateTarget(new Vector3(0.7f, 0f, 0f), 100f);
+            Physics.SyncTransforms();
+
+            var hitCount = attackDriver.ResolveHit(definition, attacker);
+
+            Assert.AreEqual(1, hitCount);
+            Assert.That(target.GetComponent<Damageable>().CurrentHealth, Is.EqualTo(93f).Within(0.01f));
+            Assert.IsTrue(ownerDamageable.IsAlive);
+
+            var confirm = ownerDamageable.HitFlashInstance;
+            Assert.IsNotNull(confirm);
+            Assert.IsTrue(confirm.activeSelf);
+            Assert.That(confirm.transform.position.x, Is.EqualTo(definition.attackRange).Within(0.01f));
+            Assert.That(confirm.transform.localScale.x, Is.EqualTo(ownerDamageable.hitConfirmFlashScale).Within(0.01f));
+            AssertColorApproximately(ownerDamageable.hitConfirmFlashColor, ReadTint(confirm.GetComponentInChildren<Renderer>()));
+
+            yield return new WaitForSeconds(0.08f);
+            Assert.IsFalse(confirm.activeSelf);
         }
 
         [UnityTest]

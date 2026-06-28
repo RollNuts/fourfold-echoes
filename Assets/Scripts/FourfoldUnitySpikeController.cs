@@ -12,6 +12,10 @@ namespace FourfoldEchoes.Spike
 
     public sealed class FourfoldUnitySpikeController : MonoBehaviour
     {
+        public const string ControlPromptText = "Move LS/WASD | Attack A/X/J | Dodge B/Space | Hold Altar Y/K | Claim Y/E | Phase LB/RB/[/] | Reset Start/R";
+        public const string DownedPromptText = "Downed - press Start/R to reset the room";
+        public const string CriticalHealthPromptText = "Critical HP - dodge through the tell and create space";
+
         [Header("Scene")]
         public Transform player;
         public Transform enemy;
@@ -64,6 +68,8 @@ namespace FourfoldEchoes.Spike
         private const float EnemyDeathVisibleDuration = 0.85f;
         private const float EnemyKnockbackDamping = 9f;
         private const float PlayerMaxHealth = 100f;
+        private const float CriticalHealthThreshold = 0.3f;
+        private const float CriticalHealthOverlayAlpha = 0.08f;
         private const float PlayerInvulnerableDuration = 0.55f;
         private const float GateOpenPulseDuration = 1.1f;
         private const float RewardPickupDuration = 1.65f;
@@ -370,7 +376,9 @@ namespace FourfoldEchoes.Spike
             playerHealth = Mathf.Max(0f, playerHealth - EnemyDamage);
             playerInvulnerableTimer = PlayerInvulnerableDuration;
             playerHitFlashTimer = 0.28f;
-            lastEvent = playerHealth <= 0f ? "Downed by hollow strike" : "Hollow hit - read the tell";
+            lastEvent = playerHealth <= 0f
+                ? "Downed by hollow strike"
+                : IsCriticalHealth(playerHealth, PlayerMaxHealth) ? CriticalHealthPromptText : "Hollow hit - read the tell";
             proofAudio.Play(FourfoldProofAudioCue.PlayerHit, 0.32f);
         }
 
@@ -1025,12 +1033,20 @@ namespace FourfoldEchoes.Spike
             var altarState = IsAltarBlocked() ? "Locked" : gateOpen ? "Opened" : "Ready";
             var gateState = IsGateClaimReady() ? "Ready" : gateOpen ? "Open" : "Sealed";
 
-            if (playerHitFlashTimer > 0f || playerHealth <= 0f || roomCompleteTimer > 0f)
+            var shouldShowDangerOverlay = playerHitFlashTimer > 0f
+                || IsCriticalHealth(playerHealth, PlayerMaxHealth)
+                || playerHealth <= 0f
+                || roomCompleteTimer > 0f;
+            if (shouldShowDangerOverlay)
             {
                 var previousColor = GUI.color;
                 GUI.color = roomCompleteTimer > 0f
                     ? new Color(1f, 0.68f, 0.08f, 0.18f)
-                    : new Color(0.7f, 0.02f, 0f, playerHealth <= 0f ? 0.28f : 0.15f);
+                    : new Color(
+                        0.7f,
+                        0.02f,
+                        0f,
+                        CriticalHealthOverlayAlphaFor(playerHealth, PlayerMaxHealth, playerHitFlashTimer));
                 GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
                 GUI.color = previousColor;
             }
@@ -1060,9 +1076,33 @@ namespace FourfoldEchoes.Spike
             }
             if (playerHealth <= 0f)
             {
-                GUI.Label(new Rect(24, 226, 720, 32), "Downed - press R to reset the room", style);
+                GUI.Label(new Rect(24, 226, 720, 32), DownedPromptText, style);
             }
-            GUI.Label(new Rect(24, Screen.height - 42, Screen.width - 48, 32), "Move WASD/Arrows/Stick | Attack J/Click/Pad | Dodge Space/Pad | Altar K/Pad | Claim E/Right/Pad | Reset R/Start", controlStyle);
+            else if (IsCriticalHealth(playerHealth, PlayerMaxHealth))
+            {
+                GUI.Label(new Rect(24, 226, 720, 32), CriticalHealthPromptText, style);
+            }
+            GUI.Label(new Rect(24, Screen.height - 42, Screen.width - 48, 32), ControlPromptText, controlStyle);
+        }
+
+        internal static bool IsCriticalHealth(float currentHealth, float maxHealth)
+        {
+            return currentHealth > 0f
+                && maxHealth > 0f
+                && Mathf.Clamp01(currentHealth / maxHealth) <= CriticalHealthThreshold;
+        }
+
+        internal static float CriticalHealthOverlayAlphaFor(float currentHealth, float maxHealth, float hitFlashTimer)
+        {
+            if (currentHealth <= 0f)
+            {
+                return 0.28f;
+            }
+            if (hitFlashTimer > 0f)
+            {
+                return 0.15f;
+            }
+            return IsCriticalHealth(currentHealth, maxHealth) ? CriticalHealthOverlayAlpha : 0f;
         }
 
         private string ObjectiveText()
