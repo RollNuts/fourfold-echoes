@@ -88,6 +88,15 @@ namespace FourfoldEchoes.Tests
                 Require(enemy.IsCriticalHealth, "Enemy did not expose a critical health read on its final hit.");
                 Require(objects[7].transform.localScale.x > healthyTellScale, "Critical health read did not enlarge the enemy tell ring.");
 
+                var hud = objects[0].AddComponent<D020HudController>();
+                hud.enemy = enemy;
+                hud.RefreshNow();
+                Require(hud.EnemyRead.Contains("Critical"), "D-020 HUD did not surface the enemy critical read.");
+
+                enemy.TakeHit(1);
+                hud.RefreshNow();
+                Require(hud.EnemyRead.Contains("Down"), "D-020 HUD did not surface the defeated enemy read.");
+
                 shortcutNode.SetSolved(true);
                 rewardLensNode.SetSolved(true);
                 reward.SetCollected(true);

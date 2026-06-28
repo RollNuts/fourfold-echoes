@@ -296,13 +296,14 @@ namespace FourfoldEchoes.Editor
         private static void DrawHudOverlay(Texture2D texture, D020HudController hud)
         {
             hud.RefreshNow();
-            FillRect(texture, 18, 18, 302, 132, new Color32(10, 14, 20, 224));
-            DrawRect(texture, 18, 18, 302, 132, new Color32(230, 204, 124, 255));
+            FillRect(texture, 18, 18, 302, 154, new Color32(10, 14, 20, 224));
+            DrawRect(texture, 18, 18, 302, 154, new Color32(230, 204, 124, 255));
             DrawText(texture, 34, 32, D020HudController.RoomTitleText, new Color32(240, 214, 132, 255), 3);
             DrawText(texture, 34, 62, hud.ToolRead, new Color32(234, 240, 248, 255), 2);
-            DrawText(texture, 34, 84, hud.RewardRead, new Color32(234, 240, 248, 255), 2);
-            DrawText(texture, 34, 106, hud.ProgressRead, new Color32(234, 240, 248, 255), 2);
-            DrawText(texture, 34, 128, hud.PromptRead, new Color32(176, 224, 255, 255), 2);
+            DrawText(texture, 34, 84, hud.EnemyRead, new Color32(234, 240, 248, 255), 2);
+            DrawText(texture, 34, 106, hud.RewardRead, new Color32(234, 240, 248, 255), 2);
+            DrawText(texture, 34, 128, hud.ProgressRead, new Color32(234, 240, 248, 255), 2);
+            DrawText(texture, 34, 150, hud.PromptRead, new Color32(176, 224, 255, 255), 2);
             texture.Apply();
         }
 
@@ -371,9 +372,11 @@ namespace FourfoldEchoes.Editor
                 case 'D': return new[] { "110", "101", "101", "101", "110" };
                 case 'E': return new[] { "111", "100", "110", "100", "111" };
                 case 'G': return new[] { "111", "100", "101", "101", "111" };
+                case 'H': return new[] { "101", "101", "111", "101", "101" };
                 case 'I': return new[] { "111", "010", "010", "010", "111" };
                 case 'L': return new[] { "100", "100", "100", "100", "111" };
                 case 'M': return new[] { "101", "111", "111", "101", "101" };
+                case 'N': return new[] { "101", "111", "111", "111", "101" };
                 case 'O': return new[] { "111", "101", "101", "101", "111" };
                 case 'P': return new[] { "110", "101", "110", "100", "100" };
                 case 'R': return new[] { "110", "101", "110", "101", "101" };
@@ -381,6 +384,7 @@ namespace FourfoldEchoes.Editor
                 case 'T': return new[] { "111", "010", "010", "010", "010" };
                 case 'U': return new[] { "101", "101", "101", "101", "111" };
                 case 'V': return new[] { "101", "101", "101", "101", "010" };
+                case 'W': return new[] { "101", "101", "111", "111", "101" };
                 case 'Y': return new[] { "101", "101", "010", "010", "010" };
                 case '0': return new[] { "111", "101", "101", "101", "111" };
                 case '1': return new[] { "010", "110", "010", "010", "111" };
