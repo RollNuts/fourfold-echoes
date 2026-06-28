@@ -814,6 +814,7 @@ GameObject:
   - component: {fileID: 5539650172229489433}
   - component: {fileID: 7735284976573692284}
   - component: {fileID: 1568363017347182830}
+  - component: {fileID: 5265405910635946338}
   m_Layer: 0
   m_Name: PF_Enemy_MeleeShardling_SealedLockRelic_v0.1.0
   m_TagString: Untagged
@@ -922,6 +923,46 @@ MonoBehaviour:
   - CastRelease
   - Interact
   crossFadeSeconds: 0.05
+--- !u!114 &5265405910635946338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4958396161798221207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74af207f5d1f4b8386088d9e5c6df7be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FourfoldEchoes.Product.MeleeShardlingSocketRegistry
+  sockets:
+  - role: 0
+    socketName: SOCKET_Ground
+    socketTransform: {fileID: 8079037804805765169}
+  - role: 1
+    socketName: SOCKET_ChestCore
+    socketTransform: {fileID: 3637683254919628445}
+  - role: 2
+    socketName: SOCKET_WeakPoint
+    socketTransform: {fileID: 6419785528273859514}
+  - role: 3
+    socketName: SOCKET_Back
+    socketTransform: {fileID: 6198480451658567336}
+  - role: 4
+    socketName: SOCKET_AttackOrigin
+    socketTransform: {fileID: 6614582530527021247}
+  - role: 5
+    socketName: SOCKET_ForwardHit
+    socketTransform: {fileID: 1019002618576329904}
+  - role: 6
+    socketName: SOCKET_RedSeamVFX
+    socketTransform: {fileID: 2879534547085897006}
+  - role: 7
+    socketName: SOCKET_Cast
+    socketTransform: {fileID: 4481593290601929083}
+  - role: 8
+    socketName: SOCKET_HitVfx
+    socketTransform: {fileID: 189403538845462692}
 --- !u!1 &5733279341450564147
 GameObject:
   m_ObjectHideFlags: 0
