@@ -14,7 +14,7 @@ namespace FourfoldEchoes.Spike
     {
         public const string ControlPromptText = "Move LS/WASD | Attack A/X/J | Dodge B/Space | Hold Altar Y/K | Claim Y/E | Phase LB/RB/[/] | Reset Start/R";
         public const string DownedPromptText = "Downed - press Start/R to reset the room";
-        public const string CriticalHealthPromptText = "Critical HP - dodge through the tell and create space";
+        public const string CriticalHealthPromptText = "Critical HP - press B/Space through the tell, then create space";
 
         [Header("Scene")]
         public Transform player;
