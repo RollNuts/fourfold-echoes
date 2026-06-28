@@ -12,7 +12,8 @@ namespace FourfoldEchoes.Spike
 
     public sealed class FourfoldUnitySpikeController : MonoBehaviour
     {
-        public const string ControlPromptText = "Move LS/WASD | Attack A/X/J | Dodge B/Space | Altar/Claim Y/E | Phase LB/RB | Reset Start/R";
+        public const string ControlPromptText = "Move LS/WASD | Attack A/X/J | Dodge B/Space | Hold Altar Y/K | Claim Y/E | Phase LB/RB | Reset Start/R";
+        public const string DownedPromptText = "Downed - press Start/R to reset the room";
         public const string NextRoomBeaconName = "Next Room Route Beacon";
         public const string NextRoomObjectiveText = "Follow the amber arrow toward the next room";
 
@@ -1124,7 +1125,7 @@ namespace FourfoldEchoes.Spike
             }
             if (playerHealth <= 0f)
             {
-                GUI.Label(new Rect(24, 226, 720, 32), "Downed - press R to reset the room", style);
+                GUI.Label(new Rect(24, 226, 720, 32), DownedPromptText, style);
             }
             GUI.Label(new Rect(24, Screen.height - 42, Screen.width - 48, 32), ControlPromptText, controlStyle);
         }
