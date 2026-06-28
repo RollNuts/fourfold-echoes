@@ -538,6 +538,7 @@ namespace FourfoldEchoes.Editor
             RequireAudioClip(controller.playerDamageClip, "D020SliceController.playerDamageClip");
             RequireAudioClip(controller.bossImpactClip, "D020SliceController.bossImpactClip");
             RequireAudioClip(controller.bossDefeatClip, "D020SliceController.bossDefeatClip");
+            RequireAudioClip(controller.enemyDeathClip, "D020SliceController.enemyDeathClip");
             RequireAudioClip(controller.rewardClaimClip, "D020SliceController.rewardClaimClip");
             RequireAudioClip(controller.rewardReadyClip, "D020SliceController.rewardReadyClip");
             RequireAudioClip(controller.explorationMusicClip, "D020SliceController.explorationMusicClip");
