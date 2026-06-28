@@ -25,6 +25,7 @@ namespace FourfoldEchoes.Editor
         public static void Build()
         {
             EnsureFolders();
+            FourfoldMeshwrightPreviewPropVerifier.BuildGrasslandPreviewPrefab();
             var materials = CreateMaterials();
             var library = new PrefabLibrary();
 
@@ -91,6 +92,7 @@ namespace FourfoldEchoes.Editor
             RequirePrefab("PCS Reward Chest - FE_PROP_COMMON_RelicChest_01", "FE_PROP_COMMON_RelicChest_01");
             RequirePrefab("PCS Exploration Tool Read - FE_PROP_COMMON_ExplorationTool_01", "FE_PROP_COMMON_ExplorationTool_01");
             RequirePrefab("PCS Revealed Shortcut Bridge - FE_ENV_R01_ShortcutBridge_01", "FE_ENV_R01_ShortcutBridge_01");
+            RequirePrefab(FourfoldMeshwrightPreviewPropVerifier.SceneObjectName, "FE_PROP_R01_MeshwrightGrasslandPropKit_01");
 
             var controller = RequireComponent<ProductionCombatSliceController>("PCS Runtime Hook");
             var tool = RequireComponent<ExplorationTool>("PCS Exploration Tool Runtime");
@@ -258,6 +260,7 @@ namespace FourfoldEchoes.Editor
             Place(library.WoodBridge, parent, "PCS Wood Bridge Reward Route", new Vector3(3.15f, 0.06f, 2.9f), Quaternion.Euler(0f, 72f, 0f), Vector3.one);
             Place(library.WaterEdge, parent, "PCS Water Edge Read", new Vector3(-1.85f, 0.04f, 4.65f), Quaternion.identity, Vector3.one);
             Place(library.HazardFloor, parent, "PCS Hazard Floor Read", new Vector3(0.7f, 0.035f, 2.65f), Quaternion.identity, Vector3.one);
+            Place(library.MeshwrightGrasslandPropKit, parent, FourfoldMeshwrightPreviewPropVerifier.SceneObjectName, new Vector3(-2.75f, 0.08f, -4.65f), Quaternion.Euler(0f, 22f, 0f), Vector3.one * 0.62f);
         }
 
         private static ExplorationNode CreateExplorationProof(Transform parent, PrefabLibrary library, Transform player)
@@ -574,6 +577,7 @@ namespace FourfoldEchoes.Editor
             public readonly GameObject FlowerClump = Load("P1", "FE_PROP_R01_FlowerClump_01");
             public readonly GameObject ShortGrass = Load("P1", "FE_PROP_R01_ShortGrass_01");
             public readonly GameObject ToolMirror = Load("P1", "FE_PROP_R01_ToolMirror_01");
+            public readonly GameObject MeshwrightGrasslandPropKit = Load("P1", "FE_PROP_R01_MeshwrightGrasslandPropKit_01");
             public readonly GameObject BossSpawnAnchor = Load("P1", "FE_PROP_BOSS_SpawnAnchor_01");
             public readonly GameObject BossRewardExit = Load("P1", "FE_PROP_BOSS_RewardExit_01");
             public readonly GameObject FurnaceWarden = Load("P2", "FE_BOSS_02_FurnaceWarden");

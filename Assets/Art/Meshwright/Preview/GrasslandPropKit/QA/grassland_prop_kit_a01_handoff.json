@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "asset_id": "grassland_prop_kit_a01",
+  "manifest": "docs/arpg_starter_manifest.yaml",
+  "category": "environment_props",
+  "animation_requirement": "none",
+  "collider_type": "box",
+  "lod_targets": {
+    "LOD0": 6000,
+    "LOD1": 3000,
+    "LOD2": 1500
+  },
+  "unity_paths": {
+    "model": "Assets/Art/Generated/Models/grassland_prop_kit_a01/grassland_prop_kit_a01.fbx",
+    "material": "Assets/Art/Generated/Materials/M_grassland_prop_kit_a01.mat",
+    "prefab": "Assets/Art/Generated/Prefabs/PF_grassland_prop_kit_a01.prefab",
+    "metadata": "Assets/Art/Generated/Metadata/grassland_prop_kit_a01.json"
+  },
+  "texture_bindings": {
+    "BaseColor": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_BaseColor.png",
+    "Normal": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_Normal.png",
+    "MetallicRoughness": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_MetallicRoughness.png"
+  },
+  "material_policy": {
+    "shader_preference": [
+      "Universal Render Pipeline/Lit",
+      "Standard"
+    ],
+    "material_name": "M_grassland_prop_kit_a01",
+    "base_color_map": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_BaseColor.png",
+    "normal_map": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_Normal.png",
+    "metallic_roughness_map": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_MetallicRoughness.png",
+    "default_metallic": 0.0,
+    "default_smoothness": 0.35
+  },
+  "prefab_policy": {
+    "prefab_name": "PF_grassland_prop_kit_a01",
+    "pivot": "bottom-center",
+    "lod_renderer_names": [
+      "grassland_prop_kit_a01_LOD0",
+      "grassland_prop_kit_a01_LOD1",
+      "grassland_prop_kit_a01_LOD2"
+    ],
+    "lod_screen_relative_heights": [
+      0.6,
+      0.3,
+      0.1
+    ],
+    "collider_type": "box"
+  },
+  "unity_execution": {
+    "menu": "Tools/Low-Poly Asset Pipeline/Build Prefabs",
+    "batchmode_hint": "-quit -batchmode -projectPath <project> -executeMethod BatchPrefabBuilder.BuildAllPrefabs"
+  },
+  "input_checks": {
+    "model_exists": true,
+    "textures_exist": true
+  }
+}

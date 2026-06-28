@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "asset_id": "grassland_prop_kit_a01",
+  "source": "fallback_postprocess",
+  "policy": {
+    "max_tris_by_lod": {
+      "LOD0": 6000,
+      "LOD1": 3000,
+      "LOD2": 1500
+    },
+    "max_tris_over_budget_ratio": 1.1,
+    "min_lod0_tris_for_reduction_check": 500,
+    "lod1_max_ratio_of_lod0": 0.7,
+    "lod2_max_ratio_of_lod1": 0.7,
+    "max_material_slots": 2,
+    "max_submeshes": 2,
+    "max_bones": 0,
+    "max_weights_per_vertex": 4,
+    "require_uv0": true,
+    "require_uv1_for_static": true,
+    "allow_placeholder_fallback": true,
+    "max_convex_collider_tris": 255
+  },
+  "lod_metrics": {
+    "LOD0": {
+      "objects": [
+        {
+          "name": "grassland_prop_kit_a01_LOD0",
+          "vertices": 40,
+          "triangles": 60,
+          "ngons": 0,
+          "degenerate_faces": 0,
+          "loose_vertices": 0,
+          "boundary_edges": 0,
+          "overconnected_edges": 0,
+          "uv0_exists": false,
+          "material_slots": 1,
+          "bounds_meters": {
+            "width": 3.68,
+            "depth": 1.29,
+            "height": 2.44
+          }
+        }
+      ],
+      "triangles": 60,
+      "vertices": 40,
+      "target_triangles": 6000
+    },
+    "LOD1": {
+      "objects": [
+        {
+          "name": "grassland_prop_kit_a01_LOD1",
+          "vertices": 40,
+          "triangles": 60,
+          "ngons": 0,
+          "degenerate_faces": 0,
+          "loose_vertices": 0,
+          "boundary_edges": 0,
+          "overconnected_edges": 0,
+          "uv0_exists": false,
+          "material_slots": 1,
+          "bounds_meters": {
+            "width": 3.68,
+            "depth": 1.29,
+            "height": 2.44
+          }
+        }
+      ],
+      "triangles": 60,
+      "vertices": 40,
+      "target_triangles": 3000
+    },
+    "LOD2": {
+      "objects": [
+        {
+          "name": "grassland_prop_kit_a01_LOD2",
+          "vertices": 40,
+          "triangles": 60,
+          "ngons": 0,
+          "degenerate_faces": 0,
+          "loose_vertices": 0,
+          "boundary_edges": 0,
+          "overconnected_edges": 0,
+          "uv0_exists": false,
+          "material_slots": 1,
+          "bounds_meters": {
+            "width": 3.68,
+            "depth": 1.29,
+            "height": 2.44
+          }
+        }
+      ],
+      "triangles": 60,
+      "vertices": 40,
+      "target_triangles": 1500
+    }
+  },
+  "checks": [
+    {
+      "name": "LOD0_exists",
+      "status": "pass",
+      "detail": "Fallback FBX writes named LOD nodes."
+    },
+    {
+      "name": "LOD0_triangle_budget",
+      "status": "pass",
+      "detail": "60 tris, target <= 6000 with 1.10 tolerance."
+    },
+    {
+      "name": "LOD0_loose_vertices",
+      "status": "pass",
+      "detail": "0 loose vertex/vertices."
+    },
+    {
+      "name": "LOD0_ngons",
+      "status": "pass",
+      "detail": "0 n-gon face(s)."
+    },
+    {
+      "name": "LOD0_uv0",
+      "status": "warn",
+      "detail": "Fallback ASCII FBX has no UV0; use Blender/provider export for final assets."
+    },
+    {
+      "name": "LOD0_material_slots",
+      "status": "pass",
+      "detail": "1 material slot, max 2."
+    },
+    {
+      "name": "LOD1_exists",
+      "status": "pass",
+      "detail": "Fallback FBX writes named LOD nodes."
+    },
+    {
+      "name": "LOD1_triangle_budget",
+      "status": "pass",
+      "detail": "60 tris, target <= 3000 with 1.10 tolerance."
+    },
+    {
+      "name": "LOD1_loose_vertices",
+      "status": "pass",
+      "detail": "0 loose vertex/vertices."
+    },
+    {
+      "name": "LOD1_ngons",
+      "status": "pass",
+      "detail": "0 n-gon face(s)."
+    },
+    {
+      "name": "LOD1_uv0",
+      "status": "warn",
+      "detail": "Fallback ASCII FBX has no UV0; use Blender/provider export for final assets."
+    },
+    {
+      "name": "LOD1_material_slots",
+      "status": "pass",
+      "detail": "1 material slot, max 2."
+    },
+    {
+      "name": "LOD2_exists",
+      "status": "pass",
+      "detail": "Fallback FBX writes named LOD nodes."
+    },
+    {
+      "name": "LOD2_triangle_budget",
+      "status": "pass",
+      "detail": "60 tris, target <= 1500 with 1.10 tolerance."
+    },
+    {
+      "name": "LOD2_loose_vertices",
+      "status": "pass",
+      "detail": "0 loose vertex/vertices."
+    },
+    {
+      "name": "LOD2_ngons",
+      "status": "pass",
+      "detail": "0 n-gon face(s)."
+    },
+    {
+      "name": "LOD2_uv0",
+      "status": "warn",
+      "detail": "Fallback ASCII FBX has no UV0; use Blender/provider export for final assets."
+    },
+    {
+      "name": "LOD2_material_slots",
+      "status": "pass",
+      "detail": "1 material slot, max 2."
+    },
+    {
+      "name": "lod_reduction_small_mesh",
+      "status": "pass",
+      "detail": "LOD0=60; reduction gate skipped for tiny fallback mesh."
+    }
+  ],
+  "summary": {
+    "pass": 16,
+    "warn": 3,
+    "fail": 0,
+    "ready_for_unity": true
+  }
+}
