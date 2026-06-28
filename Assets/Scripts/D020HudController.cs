@@ -4,6 +4,8 @@ namespace FourfoldEchoes.Product
 {
     public sealed class D020HudController : MonoBehaviour
     {
+        public const string RoomTitleText = "D020 Vertical Slice";
+
         public bool showHud = true;
         public D020PlayerController player;
         public ExplorationTool tool;
@@ -58,7 +60,7 @@ namespace FourfoldEchoes.Product
 
             var rect = new Rect(18f, 18f, 270f, 128f);
             GUI.Box(rect, GUIContent.none, boxStyle);
-            GUI.Label(new Rect(rect.x + 14f, rect.y + 10f, 240f, 24f), "D-020 Room", titleStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 10f, 240f, 24f), RoomTitleText, titleStyle);
             GUI.Label(new Rect(rect.x + 14f, rect.y + 36f, 240f, 22f), ToolRead, lineStyle);
             GUI.Label(new Rect(rect.x + 14f, rect.y + 58f, 240f, 22f), RewardRead, lineStyle);
             GUI.Label(new Rect(rect.x + 14f, rect.y + 80f, 240f, 22f), ProgressRead, lineStyle);
