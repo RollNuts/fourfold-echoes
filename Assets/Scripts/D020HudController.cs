@@ -11,6 +11,7 @@ namespace FourfoldEchoes.Product
         public ExplorationTool tool;
         public ExplorationNode node;
         public ExplorationNode[] nodes;
+        public D020EnemyDummy enemy;
         public D020RelicReward reward;
         public D020ProgressSave progressSave;
 
@@ -24,6 +25,7 @@ namespace FourfoldEchoes.Product
         private string feedbackRead = string.Empty;
 
         public string ToolRead { get; private set; }
+        public string EnemyRead { get; private set; }
         public string RewardRead { get; private set; }
         public string ProgressRead { get; private set; }
         public string PromptRead { get; private set; }
@@ -43,6 +45,7 @@ namespace FourfoldEchoes.Product
         public void RefreshNow()
         {
             ToolRead = BuildToolRead();
+            EnemyRead = BuildEnemyRead();
             RewardRead = BuildRewardRead();
             ProgressRead = BuildProgressRead();
             PromptRead = BuildPromptRead();
@@ -58,13 +61,14 @@ namespace FourfoldEchoes.Product
             EnsureStyles();
             RefreshNow();
 
-            var rect = new Rect(18f, 18f, 270f, 128f);
+            var rect = new Rect(18f, 18f, 270f, 150f);
             GUI.Box(rect, GUIContent.none, boxStyle);
             GUI.Label(new Rect(rect.x + 14f, rect.y + 10f, 240f, 24f), RoomTitleText, titleStyle);
             GUI.Label(new Rect(rect.x + 14f, rect.y + 36f, 240f, 22f), ToolRead, lineStyle);
-            GUI.Label(new Rect(rect.x + 14f, rect.y + 58f, 240f, 22f), RewardRead, lineStyle);
-            GUI.Label(new Rect(rect.x + 14f, rect.y + 80f, 240f, 22f), ProgressRead, lineStyle);
-            GUI.Label(new Rect(rect.x + 14f, rect.y + 102f, 240f, 22f), PromptRead, lineStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 58f, 240f, 22f), EnemyRead, lineStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 80f, 240f, 22f), RewardRead, lineStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 102f, 240f, 22f), ProgressRead, lineStyle);
+            GUI.Label(new Rect(rect.x + 14f, rect.y + 124f, 240f, 22f), PromptRead, lineStyle);
         }
 
         private string BuildToolRead()
@@ -81,6 +85,26 @@ namespace FourfoldEchoes.Product
 
             var readyPercent = Mathf.RoundToInt((1f - tool.Cooldown01) * 100f);
             return $"Tool {Mathf.Clamp(readyPercent, 0, 99)}%";
+        }
+
+        private string BuildEnemyRead()
+        {
+            if (enemy == null)
+            {
+                enemy = Object.FindFirstObjectByType<D020EnemyDummy>();
+            }
+
+            if (enemy == null)
+            {
+                return "Enemy --";
+            }
+
+            if (enemy.IsDefeated)
+            {
+                return "Enemy Down";
+            }
+
+            return enemy.IsCriticalHealth ? "Enemy Critical" : $"Enemy HP {enemy.CurrentHealth}";
         }
 
         private string BuildRewardRead()
