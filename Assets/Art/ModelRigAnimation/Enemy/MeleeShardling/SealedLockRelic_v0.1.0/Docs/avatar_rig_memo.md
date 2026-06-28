@@ -58,6 +58,7 @@ Asset: MDL_Enemy_MeleeShardling_SealedLockRelic_v0.1.0
 - Generated preview scene: `Runtime/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity`.
 - Prefab root starts at `(0, 0, 0)` and keeps `Animator.applyRootMotion = false`.
 - The prefab root includes `MeleeShardlingSocketRegistry`; gameplay and VFX can resolve all 9 `SOCKET_*` transforms by role or exact socket name.
+- The preview scene includes non-colliding `MARKER_SOCKET_*` spheres parented to every socket for hit/cast/VFX placement review.
 - The prefab root includes `MeleeShardlingAnimationStateDriver`; gameplay can request `MeleeShardlingAnimationAction` values with a 0.05 second fixed cross fade.
 - The preview scene prefab instance includes `MeleeShardlingAnimationPreviewDriver`, cycling all 14 runtime states every 0.75 seconds in Play Mode.
 - The prefab includes a root BoxCollider and a trigger hitbox at `SOCKET_ForwardHit/HITBOX_ForwardPreview`.
