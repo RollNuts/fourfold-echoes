@@ -57,6 +57,7 @@
     "runtime_preview_scene": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/Scenes/SCN_Enemy_MeleeShardling_SealedLockRelic_RuntimePreview_v0.1.0.unity",
     "runtime_preview_driver": "Assets/Scripts/MeleeShardlingAnimationPreviewDriver.cs",
     "runtime_animation_state_driver": "Assets/Scripts/MeleeShardlingAnimationStateDriver.cs",
+    "runtime_socket_registry": "Assets/Scripts/MeleeShardlingSocketRegistry.cs",
     "runtime_binding_qc": "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/Runtime/runtime_binding_qc.json"
   },
   "rig": {
@@ -602,6 +603,9 @@
     "animation_state_driver_state_count": 14,
     "animation_state_driver_cross_fade_seconds": 0.05,
     "animation_state_driver_policy": "Gameplay scripts can request standard actions through MeleeShardlingAnimationAction without hard-coding Animator state names.",
+    "socket_registry": "Assets/Scripts/MeleeShardlingSocketRegistry.cs",
+    "socket_registry_count": 9,
+    "socket_registry_policy": "Gameplay and VFX scripts can resolve SOCKET_* transforms by MeleeShardlingSocketRole or exact socket name from the prefab root.",
     "event_runtime_policy": "AnimationEvent methods are received on the prefab root and may toggle the forward hitbox or record gameplay cues.",
     "vfx_sockets": [
       "SOCKET_RedSeamVFX",
@@ -613,7 +617,7 @@
       "SOCKET_ForwardHit",
       "SOCKET_WeakPoint"
     ],
-    "sample_scene_setup": "Generated runtime preview scene contains the animated prefab at world origin, runtime animation state driver, preview animation driver, camera, key light, and floor."
+    "sample_scene_setup": "Generated runtime preview scene contains the animated prefab at world origin, socket registry, runtime animation state driver, preview animation driver, camera, key light, and floor."
   },
   "qc": {
     "generated_at": "2026-06-27T07:25:00Z",

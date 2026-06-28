@@ -268,6 +268,7 @@ namespace FourfoldEchoes.Editor
                 var forwardHitbox = AddForwardHitbox(instance);
                 AddEventRelay(instance, forwardHitbox);
                 AddAnimationStateDriver(instance, animator);
+                AddSocketRegistry(instance);
 
                 PrefabUtility.SaveAsPrefabAsset(instance, PrefabPath, out var success);
                 if (!success)
@@ -438,6 +439,30 @@ namespace FourfoldEchoes.Editor
             EditorUtility.SetDirty(stateDriver);
         }
 
+        private static void AddSocketRegistry(GameObject root)
+        {
+            var registry = root.GetComponent<MeleeShardlingSocketRegistry>();
+            if (registry == null)
+            {
+                registry = root.AddComponent<MeleeShardlingSocketRegistry>();
+            }
+
+            var bindings = new List<MeleeShardlingSocketBinding>();
+            foreach (var socketName in RequiredSockets)
+            {
+                var socket = root.GetComponentsInChildren<Transform>(true).FirstOrDefault(transform => transform.name == socketName);
+                if (socket == null)
+                {
+                    throw new InvalidOperationException($"Prefab is missing {socketName}.");
+                }
+
+                bindings.Add(new MeleeShardlingSocketBinding(SocketRoleFor(socketName), socketName, socket));
+            }
+
+            registry.ConfigureForRuntime(bindings.ToArray());
+            EditorUtility.SetDirty(registry);
+        }
+
         private static void VerifyController(AnimatorController controller, List<string> errors)
         {
             var layer = controller.layers.FirstOrDefault();
@@ -513,6 +538,7 @@ namespace FourfoldEchoes.Editor
             }
 
             var transforms = prefab.GetComponentsInChildren<Transform>(true).Select(transform => transform.name).ToHashSet();
+            VerifySocketRegistry(prefab, errors);
             foreach (var socket in RequiredSockets)
             {
                 if (!transforms.Contains(socket))
@@ -607,6 +633,11 @@ namespace FourfoldEchoes.Editor
                 {
                     errors.Add("Preview scene prefab instance is missing MeleeShardlingAnimationStateDriver.");
                 }
+
+                if (previewInstance.GetComponent<MeleeShardlingSocketRegistry>() == null)
+                {
+                    errors.Add("Preview scene prefab instance is missing MeleeShardlingSocketRegistry.");
+                }
             }
 
             if (!roots.Any(root => root.GetComponent<Camera>() != null))
@@ -622,6 +653,35 @@ namespace FourfoldEchoes.Editor
             if (!string.IsNullOrEmpty(previousScene) && previousScene != ScenePath)
             {
                 EditorSceneManager.OpenScene(previousScene, OpenSceneMode.Single);
+            }
+        }
+
+        private static void VerifySocketRegistry(GameObject prefab, List<string> errors)
+        {
+            var registry = prefab.GetComponent<MeleeShardlingSocketRegistry>();
+            if (registry == null)
+            {
+                errors.Add("Runtime prefab is missing MeleeShardlingSocketRegistry.");
+                return;
+            }
+
+            if (registry.SocketCount != RequiredSockets.Length)
+            {
+                errors.Add($"Socket registry must bind {RequiredSockets.Length.ToString(CultureInfo.InvariantCulture)} sockets.");
+            }
+
+            foreach (var socketName in RequiredSockets)
+            {
+                var expectedRole = SocketRoleFor(socketName);
+                if (!registry.TryGetSocket(socketName, out var byName) || byName == null || byName.name != socketName)
+                {
+                    errors.Add($"Socket registry could not resolve {socketName} by name.");
+                }
+
+                if (!registry.TryGetSocket(expectedRole, out var byRole) || byRole == null || byRole.name != socketName)
+                {
+                    errors.Add($"Socket registry could not resolve {socketName} by role {expectedRole}.");
+                }
             }
         }
 
@@ -662,6 +722,33 @@ namespace FourfoldEchoes.Editor
                 {
                     errors.Add($"State driver could not resolve {action} to {expectedState}.");
                 }
+            }
+        }
+
+        private static MeleeShardlingSocketRole SocketRoleFor(string socketName)
+        {
+            switch (socketName)
+            {
+                case "SOCKET_Ground":
+                    return MeleeShardlingSocketRole.Ground;
+                case "SOCKET_ChestCore":
+                    return MeleeShardlingSocketRole.ChestCore;
+                case "SOCKET_WeakPoint":
+                    return MeleeShardlingSocketRole.WeakPoint;
+                case "SOCKET_Back":
+                    return MeleeShardlingSocketRole.Back;
+                case "SOCKET_AttackOrigin":
+                    return MeleeShardlingSocketRole.AttackOrigin;
+                case "SOCKET_ForwardHit":
+                    return MeleeShardlingSocketRole.ForwardHit;
+                case "SOCKET_RedSeamVFX":
+                    return MeleeShardlingSocketRole.RedSeamVfx;
+                case "SOCKET_Cast":
+                    return MeleeShardlingSocketRole.Cast;
+                case "SOCKET_HitVfx":
+                    return MeleeShardlingSocketRole.HitVfx;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(socketName), socketName, "Unknown Melee Shardling socket.");
             }
         }
 
@@ -820,7 +907,10 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine("    \"animation_state_driver\": \"MeleeShardlingAnimationStateDriver\",");
             builder.AppendLine($"    \"animation_state_driver_state_count\": {Actions.Length.ToString(CultureInfo.InvariantCulture)},");
             builder.AppendLine($"    \"animation_state_driver_cross_fade_seconds\": {StateDriverCrossFadeSeconds.ToString(CultureInfo.InvariantCulture)},");
-            builder.AppendLine($"    \"animation_state_driver_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\"");
+            builder.AppendLine($"    \"animation_state_driver_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\",");
+            builder.AppendLine("    \"socket_registry\": \"MeleeShardlingSocketRegistry\",");
+            builder.AppendLine($"    \"socket_registry_count\": {RequiredSockets.Length.ToString(CultureInfo.InvariantCulture)},");
+            builder.AppendLine($"    \"socket_registry_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\"");
             builder.AppendLine("  },");
             builder.AppendLine("  \"errors\": [");
             AppendJsonArray(builder, errors, "    ");
