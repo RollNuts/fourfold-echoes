@@ -12,6 +12,8 @@ namespace FourfoldEchoes.Editor
     {
         public const string ScenePath = "Assets/Scenes/Title.unity";
         private const string MaterialFolder = "Assets/Art/Generated/Title/Materials";
+        private const string TitleIntroMusicPath = "Assets/Audio/Generated/BGM_Title_Inviting_AIntro_078_v0.1.0.ogg";
+        private const string TitleLoopMusicPath = "Assets/Audio/Generated/BGM_Title_Inviting_ALoop_078_v0.1.0.ogg";
 
         public static void BuildAndValidate()
         {
@@ -113,6 +115,17 @@ namespace FourfoldEchoes.Editor
             if (controller == null || controller.titleCamera == null)
             {
                 throw new InvalidOperationException("Title runtime hook is missing a controller or camera reference.");
+            }
+
+            if (!controller.HasTitleMusicBinding)
+            {
+                throw new InvalidOperationException("Title runtime hook is missing the generated title BGM intro/loop binding.");
+            }
+
+            var sources = hook.GetComponents<AudioSource>();
+            if (sources.Length < 3 || controller.musicSource == sources[0] || controller.musicLoopSource == sources[0])
+            {
+                throw new InvalidOperationException("Title runtime hook must keep UI SFX, title BGM intro, and title BGM loop on separate AudioSources.");
             }
         }
 
@@ -231,8 +244,45 @@ namespace FourfoldEchoes.Editor
         private static void CreateRuntimeHook(Camera camera)
         {
             var hook = new GameObject("Title Runtime Hook");
+            var uiSource = hook.AddComponent<AudioSource>();
+            uiSource.playOnAwake = false;
+            uiSource.loop = false;
+            uiSource.spatialBlend = 0f;
+            uiSource.dopplerLevel = 0f;
+            uiSource.ignoreListenerPause = true;
+
+            var musicSource = CreateTitleMusicSource(hook, false);
+            var musicLoopSource = CreateTitleMusicSource(hook, true);
+
             var controller = hook.AddComponent<TitleSceneController>();
             controller.titleCamera = camera;
+            controller.musicSource = musicSource;
+            controller.musicLoopSource = musicLoopSource;
+            controller.titleIntroMusicClip = LoadRequiredAudioClip(TitleIntroMusicPath);
+            controller.titleLoopMusicClip = LoadRequiredAudioClip(TitleLoopMusicPath);
+        }
+
+        private static AudioSource CreateTitleMusicSource(GameObject owner, bool loop)
+        {
+            var source = owner.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.loop = loop;
+            source.spatialBlend = 0f;
+            source.dopplerLevel = 0f;
+            source.ignoreListenerPause = true;
+            source.volume = 0.22f;
+            return source;
+        }
+
+        private static AudioClip LoadRequiredAudioClip(string path)
+        {
+            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            if (clip == null)
+            {
+                throw new FileNotFoundException($"Required title BGM clip is missing or not imported: {path}");
+            }
+
+            return clip;
         }
 
         private static GameObject CreateBlock(Transform parent, string name, Material material, Vector3 localPosition, Vector3 localScale)
