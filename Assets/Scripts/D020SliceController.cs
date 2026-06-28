@@ -46,6 +46,7 @@ namespace FourfoldEchoes.Product
         public AudioClip playerDamageClip;
         public AudioClip bossImpactClip;
         public AudioClip bossDefeatClip;
+        public AudioClip bossTransitionClip;
         public AudioClip enemyDeathClip;
         public AudioClip rewardClaimClip;
         public AudioClip rewardReadyClip;
@@ -135,6 +136,7 @@ namespace FourfoldEchoes.Product
         private static AudioClip fallbackPlayerDamageClip;
         private static AudioClip fallbackBossImpactClip;
         private static AudioClip fallbackBossDefeatClip;
+        private static AudioClip fallbackBossTransitionClip;
         private static AudioClip fallbackEnemyDeathClip;
         private static AudioClip fallbackRewardClaimClip;
         private static AudioClip fallbackRewardReadyClip;
@@ -1757,7 +1759,7 @@ namespace FourfoldEchoes.Product
             ShowRewardNotice(
                 FourfoldLanguage.T(progressData, "BOSS OPENING", "ボスに隙"),
                 FourfoldLanguage.T(progressData, "Tool pulse exposed the boss. Attack now for bonus damage.", "ツールでボスに隙を作った。今は攻撃ダメージが上がる。"));
-            PlayCue(rewardReadyClip, 0.70f);
+            PlayCue(bossTransitionClip, 0.80f);
             return true;
         }
 
@@ -2806,6 +2808,10 @@ namespace FourfoldEchoes.Product
             {
                 bossDefeatClip = FallbackBossDefeatClip();
             }
+            if (bossTransitionClip == null)
+            {
+                bossTransitionClip = FallbackBossTransitionClip();
+            }
             if (enemyDeathClip == null)
             {
                 enemyDeathClip = FallbackEnemyDeathClip();
@@ -2891,6 +2897,15 @@ namespace FourfoldEchoes.Product
                 new ProceduralToneSegment(185f, 0.080f, 0.18f),
                 new ProceduralToneSegment(370f, 0.100f, 0.15f),
                 new ProceduralToneSegment(740f, 0.125f, 0.12f)));
+        }
+
+        private static AudioClip FallbackBossTransitionClip()
+        {
+            return fallbackBossTransitionClip ?? (fallbackBossTransitionClip = BuildToneClip(
+                "D020_BossTransition_Fallback",
+                new ProceduralToneSegment(132f, 0.070f, 0.18f),
+                new ProceduralToneSegment(264f, 0.080f, 0.15f),
+                new ProceduralToneSegment(198f, 0.070f, 0.12f)));
         }
 
         private static AudioClip FallbackEnemyDeathClip()
