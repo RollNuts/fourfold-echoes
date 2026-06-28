@@ -151,6 +151,37 @@ namespace FourfoldEchoes.Editor
                         throw new InvalidOperationException("D-020 full-loop verifier failed: first reward flag was not set.");
                     }
 
+                    if (D020SliceController.SecondRouteCueObjectiveText.IndexOf("follow the gold route", StringComparison.Ordinal) < 0
+                        || D020SliceController.SecondRouteCueObjectiveText.IndexOf("shortcut seal", StringComparison.Ordinal) < 0)
+                    {
+                        throw new InvalidOperationException("D-020 full-loop verifier failed: second route objective copy does not clearly point from the first reward to the shortcut seal.");
+                    }
+
+                    if (!D020SliceController.ShouldShowSecondRouteCue(false, true, false)
+                        || D020SliceController.ShouldShowSecondRouteCue(false, true, true)
+                        || D020SliceController.SecondRouteCuePulse(0f) <= 1f)
+                    {
+                        throw new InvalidOperationException("D-020 full-loop verifier failed: second route cue helper did not expose the expected active/pulse states.");
+                    }
+
+                    if (controller.secondRouteLockedRead == null)
+                    {
+                        throw new InvalidOperationException("D-020 full-loop verifier failed: second route read reference is missing after the first reward.");
+                    }
+
+                    var secondRouteBaseScale = controller.secondRouteLockedRead.transform.localScale;
+                    InvokePrivate(controller, "UpdateTraversalReads");
+                    if (!controller.secondRouteLockedRead.activeSelf)
+                    {
+                        throw new InvalidOperationException("D-020 full-loop verifier failed: first reward did not activate the second route read.");
+                    }
+
+                    if (controller.secondRouteLockedRead.transform.localScale.x <= secondRouteBaseScale.x
+                        || controller.secondRouteLockedRead.transform.localScale.z <= secondRouteBaseScale.z)
+                    {
+                        throw new InvalidOperationException("D-020 full-loop verifier failed: second route read did not grow into a visible next-route cue after the first reward.");
+                    }
+
                     if (GetPrivateBool(controller, "runCleared"))
                     {
                         throw new InvalidOperationException("D-020 full-loop verifier failed: run cleared before the second node and second reward.");
@@ -171,11 +202,12 @@ namespace FourfoldEchoes.Editor
                     }
 
                     var runRiskText = InvokePrivateString(controller, "RunRiskStateText");
-                    if (runRiskText.IndexOf("Lumen Edge", StringComparison.Ordinal) < 0
-                        || runRiskText.IndexOf("Lumen Ward", StringComparison.Ordinal) < 0
-                        || runRiskText.IndexOf("Lumen Link", StringComparison.Ordinal) < 0)
+                    if (runRiskText.IndexOf("AT RISK", StringComparison.Ordinal) < 0
+                        || runRiskText.IndexOf("Rare Edge", StringComparison.Ordinal) < 0
+                        || runRiskText.IndexOf("Rare Ward", StringComparison.Ordinal) < 0
+                        || runRiskText.IndexOf("Epic Link", StringComparison.Ordinal) < 0)
                     {
-                        throw new InvalidOperationException("D-020 full-loop verifier failed: risk UI did not name the unbanked Lumen reward skills.");
+                        throw new InvalidOperationException("D-020 full-loop verifier failed: risk UI did not name the unsaved rare reward skills and Epic Link state.");
                     }
 
                     SetPrivate(controller, "runTimerSeconds", 91f);
