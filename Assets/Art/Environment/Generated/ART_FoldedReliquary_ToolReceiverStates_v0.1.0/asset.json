@@ -1,0 +1,155 @@
+{
+  "asset_id": "art.environment.tool_receiver_states.v0_1_0",
+  "family": "FoldedReliquary",
+  "subject": "ToolReceiverState",
+  "version": "0.1.0",
+  "adopted_concept": "Transparent 2D and 3D-facing tool receiver state decals for first gimmick pedestal, locks, relays, and receiver pads.",
+  "status": "production-intent draft",
+  "source_strategy": "repository-authored procedural raster generation",
+  "brand_line_id": "folded_reliquary",
+  "product_line_role": "Tool Receiver / Gimmick Pedestal state read",
+  "required_shape_tokens": [
+    "low folded receiver slab",
+    "input slit/socket",
+    "fourfold inlay",
+    "chunk tabs",
+    "single functional signal thread"
+  ],
+  "motif_limit_policy": "State changes stay in socket opening, tab expansion, signal placement, and material temperature; no text, runic letters, magic circles, generic UI symbols, or external-IP motifs.",
+  "asset_request": {
+    "source": "inferred because no visual asset_request.yaml for this tool receiver state family was present in the checkout",
+    "out_of_scope_asset_requests": [
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/asset_request.yaml is a model/rig animation request and was not used for this receiver-state decal request."
+    ],
+    "usage_context": "FOURFOLD ECHOES first gimmick pedestal, tool relay, lock receiver, reward receiver pad, and state-material prototyping",
+    "target_platforms": [
+      "Steam Windows",
+      "Steam Deck-oriented PC handheld readability"
+    ],
+    "constraints": {
+      "size_px": [
+        64,
+        128,
+        256,
+        512
+      ],
+      "texture_budget": "512px atlas for BaseColor/Mask/Normal/Emissive plus 256px per-state maps and 128px transparent state decals",
+      "background": "transparent outside receiver silhouette",
+      "text": "none",
+      "tile_mode": "not a loop tile; clamp transparent decals"
+    }
+  },
+  "style_ref": [
+    "docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md",
+    "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+    "docs/Art/NEXT_ASSET_BATCH.md",
+    "docs/Product/MVP_BLUEPRINT.md"
+  ],
+  "style_tokens": [
+    "folded_reliquary",
+    "tool_receiver",
+    "gimmick_pedestal",
+    "input_socket",
+    "state_read",
+    "fourfold_inlay",
+    "chunk_tabs",
+    "signal_thread",
+    "transparent_decal",
+    "pbr_intent"
+  ],
+  "tags": [
+    "environment",
+    "tool-receiver",
+    "gimmick",
+    "pedestal",
+    "relay",
+    "lock",
+    "state-decal",
+    "transparent-png",
+    "folded-reliquary",
+    "runtime-art",
+    "pbr-intent",
+    "controller-first-readability"
+  ],
+  "license_spdx": "LicenseRef-RepositoryAuthored-Proprietary",
+  "prompt_hash": "674b6a7d5a904d3df4f3bc8a83703bc407ff3ab0c78aa2c1a4500aeaf65d929b",
+  "prompt_contract": "Use case: stylized-concept\nAsset type: Unity 2D transparent receiver-state decals plus 3D material atlas maps\nPrimary request: compact FOURFOLD ECHOES folded reliquary tool receiver states for first gimmick pedestal, no text, no decorative background\nStyle/medium: procedural 2D raster, transparent top-down decal and PBR-intent texture maps in the folded reliquary miniature product line\nSubject: four tool receiver states built from low folded slabs, fourfold inlay seams, chunky tabs, input slit/socket, and one functional signal thread\nComposition/framing: centered top-down silhouette, generous transparent padding, readable at 64px/128px/256px, 512px atlas quadrants\nColor palette: ivory stone, warm gold, cool blue tool signal, resolved green signal, muted dormant stone; saturated but not neon\nMaterials/textures: broad color planes, bevel-like normal detail, sparse signal emission, no photoreal dirt, no noisy scan texture\nConstraints: PNG maps, transparent outside silhouette, no labels, no letters, no watermark, no external IP style names, variations differ by silhouette/socket opening/tab shape/material temperature/signal placement rather than color alone\nAvoid: generic magic circle, UI letters, inventory/crafting/quest symbols, thin wires, dense rune noise, photoreal grime, external-IP motif",
+  "library_path_proposal": "unity-game-asset-library/Runtime/Art/Environment/ToolReceivers/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/",
+  "unity_runtime_path": "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/",
+  "unity_import": {
+    "texture_type": "Sprite (2D and UI) for transparent state decals; Default for BaseColor/Mask/Emissive; Normal Map for Normal textures",
+    "pixels_per_unit": 100,
+    "max_texture_size": 512,
+    "alpha_is_transparency": true,
+    "wrap_mode": "Clamp",
+    "filter_mode": "Bilinear"
+  },
+  "texture_maps": {
+    "BaseColor": "ART_FoldedReliquary_ToolReceiverStateAtlas_BaseColor_v0.1.0.png",
+    "Mask": "ART_FoldedReliquary_ToolReceiverStateAtlas_Mask_v0.1.0.png",
+    "Normal": "ART_FoldedReliquary_ToolReceiverStateAtlas_Normal_v0.1.0.png",
+    "Emissive": "ART_FoldedReliquary_ToolReceiverStateAtlas_Emissive_v0.1.0.png",
+    "Mask_channels": "R=occlusion/silhouette depth, G=roughness group, B=emissive mask, A=alpha/coverage"
+  },
+  "variants": [
+    {
+      "name": "Dormant",
+      "difference": "muted stone, closed input slit, compact silhouette"
+    },
+    {
+      "name": "Ready",
+      "difference": "open receiver socket, cool blue ready slit, warm gold inlay"
+    },
+    {
+      "name": "Active",
+      "difference": "expanded side latches, bright tool contact core, pulsing signal thread"
+    },
+    {
+      "name": "Solved",
+      "difference": "settled open basin, return-green resolved signal, low calm silhouette"
+    }
+  ],
+  "files": [
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Dormant_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Dormant128_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Dormant_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Dormant_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Dormant_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Dormant_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Ready_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Ready128_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Ready_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Ready_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Ready_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Ready_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Active_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Active128_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Active_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Active_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Active_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Active_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Solved_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Solved128_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Solved_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Solved_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Solved_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverState_Solved_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverStateAtlas_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverStateAtlas_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverStateAtlas_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/ART_FoldedReliquary_ToolReceiverStateAtlas_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_ToolReceiverStates_v0.1.0/preview.png"
+  ],
+  "qc": {
+    "transparent_corners": true,
+    "no_text_or_background": true,
+    "min_canvas_margin_px_256": 16,
+    "readability_checks": [
+      "64px preview row included in preview.png",
+      "128px and 256px transparent decals exported",
+      "512px atlas maps exported"
+    ],
+    "edge_bleed": "transparent outside silhouette; no colored pixels on image border",
+    "tile_seam": "not applicable; clamp transparent decals, not loop tiles"
+  }
+}
