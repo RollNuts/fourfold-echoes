@@ -5,6 +5,7 @@ namespace FourfoldEchoes.Product
     public sealed class D020HudController : MonoBehaviour
     {
         public const string RoomTitleText = "D020 Vertical Slice";
+        private const string RelicUnlockedFeedback = "Relic Unlocked";
 
         public bool showHud = true;
         public D020PlayerController player;
@@ -22,6 +23,9 @@ namespace FourfoldEchoes.Product
         private int observedLoadCount = -1;
         private float feedbackTimer;
         private string feedbackRead = string.Empty;
+        private bool hasObservedRewardState;
+        private bool observedRewardUnlocked;
+        private bool observedRewardCollected;
 
         public string ToolRead { get; private set; }
         public string RewardRead { get; private set; }
@@ -42,6 +46,7 @@ namespace FourfoldEchoes.Product
 
         public void RefreshNow()
         {
+            UpdateRewardUnlockFeedback();
             ToolRead = BuildToolRead();
             RewardRead = BuildRewardRead();
             ProgressRead = BuildProgressRead();
@@ -181,13 +186,55 @@ namespace FourfoldEchoes.Product
             else if (progressSave.SaveCount != observedSaveCount)
             {
                 observedSaveCount = progressSave.SaveCount;
-                feedbackTimer = 1.4f;
-                feedbackRead = "Progress Saved";
+                if (feedbackTimer <= 0f || feedbackRead != RelicUnlockedFeedback)
+                {
+                    feedbackTimer = 1.4f;
+                    feedbackRead = "Progress Saved";
+                }
             }
             else if (feedbackTimer > 0f)
             {
                 feedbackTimer = Mathf.Max(0f, feedbackTimer - Mathf.Max(0f, deltaTime));
             }
+        }
+
+        private void UpdateRewardUnlockFeedback()
+        {
+            if (reward == null)
+            {
+                hasObservedRewardState = false;
+                observedRewardUnlocked = false;
+                observedRewardCollected = false;
+                return;
+            }
+
+            var isUnlocked = reward.IsUnlocked;
+            var isCollected = reward.IsCollected;
+            if (!hasObservedRewardState)
+            {
+                CaptureRewardState(isUnlocked, isCollected);
+                return;
+            }
+
+            if (!observedRewardCollected && isCollected)
+            {
+                feedbackTimer = 0f;
+                feedbackRead = string.Empty;
+            }
+            else if (!observedRewardUnlocked && isUnlocked && !isCollected)
+            {
+                feedbackTimer = 1.4f;
+                feedbackRead = RelicUnlockedFeedback;
+            }
+
+            CaptureRewardState(isUnlocked, isCollected);
+        }
+
+        private void CaptureRewardState(bool isUnlocked, bool isCollected)
+        {
+            hasObservedRewardState = true;
+            observedRewardUnlocked = isUnlocked;
+            observedRewardCollected = isCollected;
         }
 
         private void CaptureSaveCounters()

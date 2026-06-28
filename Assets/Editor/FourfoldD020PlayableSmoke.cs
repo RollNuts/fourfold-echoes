@@ -103,7 +103,7 @@ namespace FourfoldEchoes.Editor
             Require(reward.IsUnlocked, "Reward did not unlock after enemy defeat and both one-tool responses.");
             hud.RefreshNow();
             Require(hud.ToolRead == "Tool Ready", "HUD should expose ready tool state when smoke disables cooldown.");
-            Require(hud.ProgressRead == "Progress S2 R0", "HUD did not expose both solved one-tool nodes before reward pickup.");
+            Require(hud.ProgressRead == "Relic Unlocked", "HUD did not expose the relic unlock moment before reward pickup.");
 
             player.ResetForSmoke(reward.transform.position + new Vector3(0f, 0f, -0.55f));
             hud.RefreshNow();
