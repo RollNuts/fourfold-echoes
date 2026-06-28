@@ -69,6 +69,8 @@ namespace FourfoldEchoes.Spike
         private const float EnemyKnockbackDamping = 9f;
         private const float PlayerMaxHealth = 100f;
         private const float CriticalHealthThreshold = 0.3f;
+        private const float CriticalHealthRingMinScale = 1.02f;
+        private const float CriticalHealthRingMaxScale = 1.34f;
         private const float PlayerInvulnerableDuration = 0.55f;
         private const float GateOpenPulseDuration = 1.1f;
         private const float RewardPickupDuration = 1.65f;
@@ -121,6 +123,7 @@ namespace FourfoldEchoes.Spike
         private Transform enemyRecoveryRing;
         private Transform dodgeReadyRing;
         private Transform playerInvulnerableHalo;
+        private Transform playerCriticalHealthRing;
         private Transform attackArc;
         private Transform enemyHitBurst;
         private Transform enemyDeathBurst;
@@ -555,6 +558,7 @@ namespace FourfoldEchoes.Spike
             enemyRecoveryRing = CreateIndicator("Enemy Recovery Window", PrimitiveType.Cylinder, tideMaterial, new Vector3(1.15f, 0.02f, 1.15f));
             dodgeReadyRing = CreateIndicator("Dodge Cooldown Ring", PrimitiveType.Cylinder, tideMaterial, new Vector3(0.75f, 0.018f, 0.75f));
             playerInvulnerableHalo = CreateIndicator("Player Invulnerability Halo", PrimitiveType.Cylinder, gateReadyMaterial, new Vector3(0.92f, 0.02f, 0.92f));
+            playerCriticalHealthRing = CreateIndicator("Player Critical Health Ring", PrimitiveType.Cylinder, enemyMaterial, new Vector3(1.08f, 0.018f, 1.08f));
             attackArc = CreateIndicator("Player Attack Arc", PrimitiveType.Cube, CurrentPhaseMaterial(), new Vector3(1.05f, 0.055f, 0.32f));
             enemyHitBurst = CreateIndicator("Enemy Hit Burst", PrimitiveType.Sphere, gateReadyMaterial, new Vector3(0.8f, 0.2f, 0.8f));
             enemyDeathBurst = CreateIndicator("Enemy Death Burst", PrimitiveType.Cylinder, enemyDeadMaterial, new Vector3(0.9f, 0.035f, 0.9f));
@@ -628,6 +632,21 @@ namespace FourfoldEchoes.Spike
                     var pulse = 0.08f * Mathf.Sin(Time.time * 34f);
                     playerInvulnerableHalo.position = new Vector3(player.position.x, 0.052f, player.position.z);
                     playerInvulnerableHalo.localScale = new Vector3(0.82f + pulse, 0.02f, 0.82f + pulse);
+                }
+            }
+
+            if (playerCriticalHealthRing != null)
+            {
+                var showCriticalHealth = IsCriticalHealth(playerHealth, PlayerMaxHealth);
+                playerCriticalHealthRing.gameObject.SetActive(showCriticalHealth);
+                if (showCriticalHealth)
+                {
+                    var urgency = CriticalHealthUrgency01(playerHealth, PlayerMaxHealth);
+                    var pulse = 0.12f * Mathf.Sin(Time.time * Mathf.Lerp(12f, 24f, urgency));
+                    var size = Mathf.Lerp(CriticalHealthRingMinScale, CriticalHealthRingMaxScale, urgency) + pulse;
+                    playerCriticalHealthRing.position = new Vector3(player.position.x, 0.041f, player.position.z);
+                    playerCriticalHealthRing.localScale = new Vector3(size, 0.018f, size);
+                    playerCriticalHealthRing.GetComponent<Renderer>().sharedMaterial = enemyMaterial != null ? enemyMaterial : gateReadyMaterial;
                 }
             }
 
@@ -1081,6 +1100,17 @@ namespace FourfoldEchoes.Spike
             return currentHealth > 0f
                 && maxHealth > 0f
                 && Mathf.Clamp01(currentHealth / maxHealth) <= CriticalHealthThreshold;
+        }
+
+        public static float CriticalHealthUrgency01(float currentHealth, float maxHealth)
+        {
+            if (!IsCriticalHealth(currentHealth, maxHealth))
+            {
+                return 0f;
+            }
+
+            var health01 = Mathf.Clamp01(currentHealth / maxHealth);
+            return 1f - Mathf.Clamp01(health01 / CriticalHealthThreshold);
         }
 
         private string ObjectiveText()

@@ -43,5 +43,14 @@ namespace FourfoldEchoes.Tests
             Assert.IsTrue(FourfoldUnitySpikeController.IsCriticalHealth(30f, 100f));
             Assert.IsTrue(FourfoldUnitySpikeController.IsCriticalHealth(1f, 100f));
         }
+
+        [Test]
+        public void CriticalHealthUrgency01_RisesAsHealthGetsLower()
+        {
+            Assert.That(FourfoldUnitySpikeController.CriticalHealthUrgency01(31f, 100f), Is.EqualTo(0f));
+            Assert.That(FourfoldUnitySpikeController.CriticalHealthUrgency01(30f, 100f), Is.EqualTo(0f).Within(0.01f));
+            Assert.That(FourfoldUnitySpikeController.CriticalHealthUrgency01(15f, 100f), Is.EqualTo(0.5f).Within(0.01f));
+            Assert.That(FourfoldUnitySpikeController.CriticalHealthUrgency01(1f, 100f), Is.GreaterThan(0.95f));
+        }
     }
 }
