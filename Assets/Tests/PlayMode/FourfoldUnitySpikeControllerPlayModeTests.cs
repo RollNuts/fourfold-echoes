@@ -43,5 +43,22 @@ namespace FourfoldEchoes.Tests
             Assert.IsTrue(FourfoldUnitySpikeController.IsCriticalHealth(30f, 100f));
             Assert.IsTrue(FourfoldUnitySpikeController.IsCriticalHealth(1f, 100f));
         }
+
+        [Test]
+        public void CriticalHealthOverlayAlphaFor_KeepsWarningVisibleUntilRecoveredOrDowned()
+        {
+            Assert.That(
+                FourfoldUnitySpikeController.CriticalHealthOverlayAlphaFor(25f, 100f, 0f),
+                Is.EqualTo(0.08f).Within(0.001f));
+            Assert.That(
+                FourfoldUnitySpikeController.CriticalHealthOverlayAlphaFor(25f, 100f, 0.1f),
+                Is.EqualTo(0.15f).Within(0.001f));
+            Assert.That(
+                FourfoldUnitySpikeController.CriticalHealthOverlayAlphaFor(0f, 100f, 0f),
+                Is.EqualTo(0.28f).Within(0.001f));
+            Assert.That(
+                FourfoldUnitySpikeController.CriticalHealthOverlayAlphaFor(60f, 100f, 0f),
+                Is.EqualTo(0f).Within(0.001f));
+        }
     }
 }

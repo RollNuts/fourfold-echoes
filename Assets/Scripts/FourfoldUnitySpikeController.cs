@@ -69,6 +69,7 @@ namespace FourfoldEchoes.Spike
         private const float EnemyKnockbackDamping = 9f;
         private const float PlayerMaxHealth = 100f;
         private const float CriticalHealthThreshold = 0.3f;
+        private const float CriticalHealthOverlayAlpha = 0.08f;
         private const float PlayerInvulnerableDuration = 0.55f;
         private const float GateOpenPulseDuration = 1.1f;
         private const float RewardPickupDuration = 1.65f;
@@ -1032,12 +1033,20 @@ namespace FourfoldEchoes.Spike
             var altarState = IsAltarBlocked() ? "Locked" : gateOpen ? "Opened" : "Ready";
             var gateState = IsGateClaimReady() ? "Ready" : gateOpen ? "Open" : "Sealed";
 
-            if (playerHitFlashTimer > 0f || playerHealth <= 0f || roomCompleteTimer > 0f)
+            var shouldShowDangerOverlay = playerHitFlashTimer > 0f
+                || IsCriticalHealth(playerHealth, PlayerMaxHealth)
+                || playerHealth <= 0f
+                || roomCompleteTimer > 0f;
+            if (shouldShowDangerOverlay)
             {
                 var previousColor = GUI.color;
                 GUI.color = roomCompleteTimer > 0f
                     ? new Color(1f, 0.68f, 0.08f, 0.18f)
-                    : new Color(0.7f, 0.02f, 0f, playerHealth <= 0f ? 0.28f : 0.15f);
+                    : new Color(
+                        0.7f,
+                        0.02f,
+                        0f,
+                        CriticalHealthOverlayAlphaFor(playerHealth, PlayerMaxHealth, playerHitFlashTimer));
                 GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
                 GUI.color = previousColor;
             }
@@ -1076,11 +1085,24 @@ namespace FourfoldEchoes.Spike
             GUI.Label(new Rect(24, Screen.height - 42, Screen.width - 48, 32), ControlPromptText, controlStyle);
         }
 
-        public static bool IsCriticalHealth(float currentHealth, float maxHealth)
+        internal static bool IsCriticalHealth(float currentHealth, float maxHealth)
         {
             return currentHealth > 0f
                 && maxHealth > 0f
                 && Mathf.Clamp01(currentHealth / maxHealth) <= CriticalHealthThreshold;
+        }
+
+        internal static float CriticalHealthOverlayAlphaFor(float currentHealth, float maxHealth, float hitFlashTimer)
+        {
+            if (currentHealth <= 0f)
+            {
+                return 0.28f;
+            }
+            if (hitFlashTimer > 0f)
+            {
+                return 0.15f;
+            }
+            return IsCriticalHealth(currentHealth, maxHealth) ? CriticalHealthOverlayAlpha : 0f;
         }
 
         private string ObjectiveText()
