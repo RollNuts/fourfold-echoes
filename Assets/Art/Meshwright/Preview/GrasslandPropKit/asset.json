@@ -1,0 +1,31 @@
+{
+  "asset_id": "grassland_prop_kit_a01",
+  "runtime_name": "FE_PROP_R01_MeshwrightGrasslandPropKit_01",
+  "classification": "preview_only",
+  "source_tool": "Meshwright",
+  "game_use": "Region 1 set dressing near the ProductionCombatSlice exploration route",
+  "world_space_ui": false,
+  "screen_space_ui": false,
+  "mvp_scope": "environment prop only; no new gameplay system",
+  "files": {
+    "model": "Assets/Art/Meshwright/Preview/GrasslandPropKit/Models/grassland_prop_kit_a01.fbx",
+    "base_color": "Assets/Art/Meshwright/Preview/GrasslandPropKit/Textures/T_grassland_prop_kit_a01_BaseColor.png",
+    "normal": "Assets/Art/Meshwright/Preview/GrasslandPropKit/Textures/T_grassland_prop_kit_a01_Normal.png",
+    "metallic_roughness": "Assets/Art/Meshwright/Preview/GrasslandPropKit/Textures/T_grassland_prop_kit_a01_MetallicRoughness.png",
+    "prefab": "Assets/Prefabs/Production/P1/FE_PROP_R01_MeshwrightGrasslandPropKit_01.prefab"
+  },
+  "qa": {
+    "visual_qa": "pass=8 warn=0 fail=0",
+    "mesh_qa": "pass=16 warn=3 fail=0",
+    "preflight": "pass=27 warn=1 fail=0",
+    "known_warnings": [
+      "Fallback ASCII FBX has no UV0; replace with Blender/provider export before final art lock.",
+      "Tiny fallback mesh skipped the LOD reduction gate.",
+      "Unity preview import may collapse named fallback LOD nodes into one preview LOD.",
+      "Unity preview prefab can rebuild renderers from imported Mesh subassets when the fallback FBX has no renderer hierarchy.",
+      "If the fallback FBX imports without Unity geometry, runtime preview uses the approved Meshwright preview PNG as a ground plaque instead of gameplay-binding the model."
+    ]
+  },
+  "atlas_group": "not_applicable",
+  "localization": "not_applicable"
+}

@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "asset_id": "grassland_prop_kit_a01",
+  "manifest": "docs/arpg_starter_manifest.yaml",
+  "generated_root": "Assets/Art/Generated",
+  "handoff": "Assets/Art/Generated/Handoff/grassland_prop_kit_a01.json",
+  "mesh_qa": "Assets/Art/Generated/MeshQA/grassland_prop_kit_a01.json",
+  "visual_qa": "Assets/Art/Generated/VisualQA/grassland_prop_kit_a01.json",
+  "unity_targets": {
+    "model": "Assets/Art/Generated/Models/grassland_prop_kit_a01/grassland_prop_kit_a01.fbx",
+    "material": "Assets/Art/Generated/Materials/M_grassland_prop_kit_a01.mat",
+    "prefab": "Assets/Art/Generated/Prefabs/PF_grassland_prop_kit_a01.prefab"
+  },
+  "checks": [
+    {
+      "name": "model_exists",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/Models/grassland_prop_kit_a01/grassland_prop_kit_a01.fbx"
+    },
+    {
+      "name": "lod_renderer_names",
+      "status": "pass",
+      "detail": "LOD renderer names found."
+    },
+    {
+      "name": "lod_targets",
+      "status": "pass",
+      "detail": "LOD0, LOD1, and LOD2 targets are present."
+    },
+    {
+      "name": "manifest_texture_resolution",
+      "status": "pass",
+      "detail": "Expected manifest texture_resolution to be 1024 or 2048, got 2048."
+    },
+    {
+      "name": "mesh_qa_exists",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/MeshQA/grassland_prop_kit_a01.json"
+    },
+    {
+      "name": "mesh_qa_readable",
+      "status": "pass",
+      "detail": "MeshQA JSON can be parsed."
+    },
+    {
+      "name": "mesh_qa_ready",
+      "status": "pass",
+      "detail": "pass=16 warn=3 fail=0"
+    },
+    {
+      "name": "mesh_qa_warnings",
+      "status": "warn",
+      "detail": "3 MeshQA warning(s)."
+    },
+    {
+      "name": "visual_qa_exists",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/VisualQA/grassland_prop_kit_a01.json"
+    },
+    {
+      "name": "visual_qa_readable",
+      "status": "pass",
+      "detail": "VisualQA JSON can be parsed."
+    },
+    {
+      "name": "visual_qa_ready",
+      "status": "pass",
+      "detail": "pass=8 warn=0 fail=0"
+    },
+    {
+      "name": "visual_qa_warnings",
+      "status": "pass",
+      "detail": "0 VisualQA warning(s)."
+    },
+    {
+      "name": "texture_BaseColor_exists",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_BaseColor.png"
+    },
+    {
+      "name": "texture_BaseColor_png_format",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_BaseColor.png"
+    },
+    {
+      "name": "texture_BaseColor_resolution",
+      "status": "pass",
+      "detail": "2048x2048, expected 2048x2048."
+    },
+    {
+      "name": "texture_Normal_exists",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_Normal.png"
+    },
+    {
+      "name": "texture_Normal_png_format",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_Normal.png"
+    },
+    {
+      "name": "texture_Normal_resolution",
+      "status": "pass",
+      "detail": "2048x2048, expected 2048x2048."
+    },
+    {
+      "name": "texture_MetallicRoughness_exists",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_MetallicRoughness.png"
+    },
+    {
+      "name": "texture_MetallicRoughness_png_format",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/Textures/grassland_prop_kit_a01/T_grassland_prop_kit_a01_MetallicRoughness.png"
+    },
+    {
+      "name": "texture_MetallicRoughness_resolution",
+      "status": "pass",
+      "detail": "2048x2048, expected 2048x2048."
+    },
+    {
+      "name": "handoff_exists",
+      "status": "pass",
+      "detail": "Assets/Art/Generated/Handoff/grassland_prop_kit_a01.json"
+    },
+    {
+      "name": "handoff_readable",
+      "status": "pass",
+      "detail": "Handoff JSON can be parsed."
+    },
+    {
+      "name": "handoff_model_input",
+      "status": "pass",
+      "detail": "True"
+    },
+    {
+      "name": "handoff_texture_inputs",
+      "status": "pass",
+      "detail": "True"
+    },
+    {
+      "name": "pivot_bottom_center",
+      "status": "pass",
+      "detail": "pivot=bottom-center"
+    },
+    {
+      "name": "collider_policy",
+      "status": "pass",
+      "detail": "collider_type=box"
+    },
+    {
+      "name": "character_rig_policy",
+      "status": "pass",
+      "detail": "none"
+    }
+  ],
+  "summary": {
+    "pass": 27,
+    "warn": 1,
+    "fail": 0,
+    "ready_for_unity": true
+  }
+}
