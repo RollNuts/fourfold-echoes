@@ -63,6 +63,13 @@ namespace FourfoldEchoes.Product
                 return false;
             }
 
+            var buildInfoRect = BuildInfoRect(screenWidth, screenHeight);
+            if (buildInfoRect.x < 24f || buildInfoRect.y < 24f || buildInfoRect.xMax > screenWidth - 24f || buildInfoRect.yMax > screenHeight - 8f)
+            {
+                reason = $"title build info exceeds safe area at {screenWidth}x{screenHeight}: {buildInfoRect}";
+                return false;
+            }
+
             var labelFont = Mathf.Clamp(screenHeight / 38, 18, 26);
             if (labelFont < 18)
             {
@@ -675,6 +682,25 @@ namespace FourfoldEchoes.Product
             {
                 DrawMenu(rect, labelStyle);
             }
+
+            DrawBuildInfo(mutedStyle);
+        }
+
+        private static Rect BuildInfoRect(int screenWidth, int screenHeight)
+        {
+            var width = Mathf.Min(520f, screenWidth - 48f);
+            return new Rect(screenWidth - width - 24f, screenHeight - 30f, width, 20f);
+        }
+
+        private void DrawBuildInfo(GUIStyle baseStyle)
+        {
+            var style = new GUIStyle(baseStyle)
+            {
+                alignment = TextAnchor.MiddleRight,
+                fontSize = Mathf.Max(11, baseStyle.fontSize - 2)
+            };
+            style.normal.textColor = new Color(1f, 1f, 1f, 0.58f);
+            GUI.Label(BuildInfoRect(Screen.width, Screen.height), FourfoldBuildInfo.TitleBuildLine(progressData), style);
         }
 
         private void DrawMenu(Rect rect, GUIStyle style)

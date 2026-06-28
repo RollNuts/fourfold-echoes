@@ -166,6 +166,15 @@ namespace FourfoldEchoes.Editor
             RequireContains(titleCopy, "FourfoldUiAudio.PlaySelect", "Title menu select SFX");
             RequireContains(titleCopy, "FourfoldUiAudio.PlayConfirm", "Title menu confirm SFX");
             RequireContains(titleCopy, "FourfoldUiAudio.PlayBack", "Title menu back SFX");
+            RequireContains(titleCopy, "FourfoldBuildInfo.TitleBuildLine", "Title build version and commit display");
+
+            var buildInfo = Read("Assets/Scripts/FourfoldBuildInfo.cs");
+            RequireContains(buildInfo, "Build {BuildVersion} / commit {ShortCommitSha}", "runtime build info copy");
+
+            var unityBuild = Read("Assets/Editor/FourfoldUnityBuild.cs");
+            RequireContains(unityBuild, "FOURFOLD_BUILD_VERSION", "build version override");
+            RequireContains(unityBuild, "FOURFOLD_COMMIT_SHA", "build commit SHA override");
+            RequireContains(unityBuild, "FourfoldBuildInfo.txt", "build info Resources asset");
 
             var hubCopy = Read("Assets/Scripts/HubSceneController.cs");
             RequireContains(hubCopy, "HUB: Crossroads", "Hub identity");
