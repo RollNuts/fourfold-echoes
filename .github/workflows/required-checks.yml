@@ -1,0 +1,68 @@
+name: required-checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  public-hygiene:
+    name: public-hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Public repo hygiene
+        run: node Scripts/Validation/check_public_repo_hygiene.mjs
+
+  repo-validation:
+    name: repo-validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Repository validation
+        run: node Scripts/Validation/validate_repo.mjs
+
+  forge-check:
+    name: forge-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Forge contract check
+        run: node tools/forge/check.mjs
+
+  diff-whitespace:
+    name: diff-whitespace
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check diff whitespace
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git diff --check "origin/${{ github.base_ref }}...HEAD"
+          else
+            git diff --check HEAD^..HEAD
+          fi
+
+  script-syntax:
+    name: script-syntax
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node syntax checks
+        run: |
+          node --check Scripts/Validation/check_public_repo_hygiene.mjs
+          node --check Scripts/Validation/validate_repo.mjs
+          node --check tools/forge/check.mjs
