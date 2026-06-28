@@ -1,0 +1,144 @@
+{
+  "asset_id": "art.environment.surface_material_swatches.v0_1_0",
+  "family": "FoldedReliquary",
+  "subject": "SurfaceMaterialSwatch",
+  "version": "0.1.0",
+  "adopted_concept": "3D environment surface material swatches for hub and three region folded-reliquary floors, low walls, route edges, and gate panels.",
+  "status": "production-intent draft",
+  "source_strategy": "repository-authored procedural raster generation",
+  "brand_line_id": "folded_reliquary",
+  "product_line_role": "Route Surface / Low Boundary material reference",
+  "required_shape_tokens": [
+    "folded slab planes",
+    "fourfold inlay",
+    "chunk tabs",
+    "functional signal socket",
+    "seam-safe broad border"
+  ],
+  "motif_limit_policy": "Regional hints remain material-state differences; no standalone plant, pipe, gear, crystal forest, crown, text, or external-IP motif.",
+  "asset_request": {
+    "source": "inferred because no visual asset_request.yaml was present in the checkout for this 3D material swatch family",
+    "out_of_scope_asset_requests": [
+      "Assets/Art/ModelRigAnimation/Enemy/MeleeShardling/SealedLockRelic_v0.1.0/asset_request.yaml is a model/rig animation request and was not used for this surface material request."
+    ],
+    "usage_context": "FOURFOLD ECHOES 3D environment material reference for hub floor/low boundary and R01/R02/R03 route surfaces, gates, and tool receiver panels",
+    "target_platforms": [
+      "Steam Windows",
+      "Steam Deck-oriented PC handheld readability"
+    ],
+    "constraints": {
+      "size_px": [
+        256,
+        512
+      ],
+      "texture_budget": "512px atlas for BaseColor/Mask/Normal/Emissive plus 256px per-variant map exports",
+      "background": "none; texture maps are the surface itself and preview canvas is transparent",
+      "text": "none",
+      "tile_mode": "seam-safe optional tiling with uniform borders"
+    }
+  },
+  "style_ref": [
+    "docs/Art/FOLDED_RELIQUARY_STYLE_BIBLE.md",
+    "docs/Art/COMPACT_ACTION_ART_DIRECTION.md",
+    "docs/Product/MVP_BLUEPRINT.md",
+    "docs/Product/VERTICAL_SLICE_CONTENT.md"
+  ],
+  "style_tokens": [
+    "folded_reliquary",
+    "route_surface",
+    "low_boundary",
+    "fourfold_inlay",
+    "chunk_tabs",
+    "regional_restraint",
+    "stylized_pbr",
+    "low_noise",
+    "seam_safe"
+  ],
+  "tags": [
+    "environment",
+    "material",
+    "surface",
+    "floor",
+    "low-boundary",
+    "route-surface",
+    "hub",
+    "region-01",
+    "region-02",
+    "region-03",
+    "folded-reliquary",
+    "runtime-art",
+    "pbr-intent"
+  ],
+  "license_spdx": "LicenseRef-RepositoryAuthored-Proprietary",
+  "prompt_hash": "fd3ce86aa32a115e5d534fd5baa81d64d4dc0c07f4830d676305c3925c53388c",
+  "prompt_contract": "Use case: stylized-concept\nAsset type: Unity 3D environment material swatch atlas with BaseColor, Mask, Normal, and Emissive maps\nPrimary request: compact FOURFOLD ECHOES folded reliquary surface material swatches for hub and three regions, no text, no decorative background\nStyle/medium: procedural 2D raster PBR-intent texture, folded reliquary miniature product line\nSubject: four low surface material swatches built from broad folded slab planes, fourfold inlays, chunky chipped tabs, and restrained functional signal threads\nComposition/framing: square 256px swatches and 512px atlas quadrants, central readable motif, seamless-safe edges for optional tiled use\nColor palette: polished ivory hub, moss-weathered R01, scorched charcoal/rust R02, cold blue-violet R03, shared warm gold and restrained functional signals\nMaterials/textures: stylized PBR intent, broad color planes, sparse bevel-like normal detail, no photoreal grime, no noisy scan texture\nConstraints: PNG maps, no labels, no letters, no watermark, no external IP style names, variations differ by silhouette inlay layout, material temperature, chip shape, and signal placement rather than color alone\nAvoid: generic tiled floor noise, dense moss carpet, pipes/gears as primary motif, crystal forest, text/runic letters, photoreal dirt, fine decorative clutter",
+  "library_path_proposal": "unity-game-asset-library/Runtime/Art/Environment/SurfaceMaterials/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/",
+  "unity_runtime_path": "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/",
+  "unity_import": {
+    "texture_type": "Default for BaseColor/Mask/Emissive; Normal Map for Normal textures",
+    "pixels_per_unit": 100,
+    "max_texture_size": 512,
+    "alpha_is_transparency": false,
+    "wrap_mode": "Repeat for material maps; Clamp for preview",
+    "filter_mode": "Bilinear"
+  },
+  "texture_maps": {
+    "BaseColor": "ART_FoldedReliquary_SurfaceMaterialSwatchAtlas_BaseColor_v0.1.0.png",
+    "Mask": "ART_FoldedReliquary_SurfaceMaterialSwatchAtlas_Mask_v0.1.0.png",
+    "Normal": "ART_FoldedReliquary_SurfaceMaterialSwatchAtlas_Normal_v0.1.0.png",
+    "Emissive": "ART_FoldedReliquary_SurfaceMaterialSwatchAtlas_Emissive_v0.1.0.png",
+    "Mask_channels": "R=occlusion/silhouette depth, G=roughness group, B=emissive mask, A=alpha/coverage"
+  },
+  "variants": [
+    {
+      "name": "HubPolished",
+      "difference": "clean quartered ivory slabs, straight warm inlay seams, soft blue return signal socket"
+    },
+    {
+      "name": "R01Weathered",
+      "difference": "rounded chipped slabs, low weathered growth tabs under 15% motif budget, green tool signal slit"
+    },
+    {
+      "name": "R02Scorched",
+      "difference": "scorched folded plate, bent heavy tabs, amber heat-route signal and darker charcoal mass"
+    },
+    {
+      "name": "R03Cold",
+      "difference": "cold sharp chips, violet split inlay, pale blue lens signal with darker cool base plane"
+    }
+  ],
+  "files": [
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatchAtlas_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatchAtlas_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatchAtlas_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatchAtlas_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_HubPolished_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_HubPolished_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_HubPolished_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_HubPolished_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R01Weathered_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R01Weathered_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R01Weathered_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R01Weathered_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R02Scorched_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R02Scorched_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R02Scorched_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R02Scorched_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R03Cold_BaseColor_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R03Cold_Emissive_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R03Cold_Mask_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/ART_FoldedReliquary_SurfaceMaterialSwatch_R03Cold_Normal_v0.1.0.png",
+    "Assets/Art/Environment/Generated/ART_FoldedReliquary_SurfaceMaterialSwatches_v0.1.0/preview.png"
+  ],
+  "qc": {
+    "transparent_preview_corners": true,
+    "no_text_or_labels": true,
+    "edge_bleed": "none detected on preview; material map borders are uniform for seam safety",
+    "tile_seam": "left/right and top/bottom border pixels match for each 256px material map",
+    "readability_checks": [
+      "64px preview sample included in preview.png",
+      "256px per-variant material maps exported",
+      "512px atlas maps exported"
+    ]
+  }
+}
