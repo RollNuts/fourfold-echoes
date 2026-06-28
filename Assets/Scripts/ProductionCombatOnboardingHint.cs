@@ -127,12 +127,17 @@ namespace FourfoldEchoes.Product
             GUI.Label(new Rect(rect.x + 16f, rect.y + 12f, rect.width - 32f, 22f), "Controls", titleStyle);
             GUI.Label(
                 new Rect(rect.x + 16f, rect.y + 38f, rect.width - 32f, 64f),
-                "Move: Left Stick / WASD    Attack: South Button / J / Mouse\n"
-                + "Echo Tool / Claim: North Button / E / Right Mouse    Pause: Menu / Esc / P\n"
-                + "Retry after defeat: R",
+                BuildControlBodyText(),
                 bodyStyle);
 
             GUI.color = previousColor;
+        }
+
+        public static string BuildControlBodyText()
+        {
+            return "Move: Left Stick / WASD    Attack: South Button / J / Mouse\n"
+                + "Echo Tool / Claim: North Button / E / Right Mouse    Pause: Menu / Esc / P\n"
+                + "Retry after defeat: South Button / Enter / R";
         }
 
         public static bool ShouldResetTimer(ProductionCombatRunState previous, ProductionCombatRunState current)

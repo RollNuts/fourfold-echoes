@@ -236,7 +236,7 @@ namespace FourfoldEchoes.Product
             var overlay = BuildOverlay("PCS Retry Screen");
             var panel = BuildOverlayPanel();
             panel.Add(MakeLabel("Hero Down", 34, FontStyle.Bold));
-            panel.Add(MakeBodyLabel("Restart the room from its initial state."));
+            panel.Add(MakeBodyLabel(BuildRetryBodyText()));
             AddButton(panel, retryButtons, "Retry", () => controller?.RetryRun());
             AddButton(panel, retryButtons, "Title", () => controller?.ReturnToTitle());
             WireButtons(retryButtons);
@@ -399,7 +399,7 @@ namespace FourfoldEchoes.Product
                 return;
             }
 
-            if (controller.State == ProductionCombatRunState.PlayerDown && Input.GetKeyDown(KeyCode.R))
+            if (controller.State == ProductionCombatRunState.PlayerDown && ProductionCombatSliceController.RetryPressed())
             {
                 controller.RetryRun();
                 return;
@@ -533,6 +533,11 @@ namespace FourfoldEchoes.Product
             }
 
             return "Progress saved. Returning later will restore the cleared reward.";
+        }
+
+        internal static string BuildRetryBodyText()
+        {
+            return "South Button / Enter / R restarts the room from its initial state.";
         }
 
         public static ThemeStyleSheet CreateRuntimeThemeStyleSheet(string name)
