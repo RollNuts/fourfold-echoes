@@ -31,13 +31,17 @@ namespace FourfoldEchoes.Product
         public bool showHitFlash = true;
         public GameObject hitFlashPrefab;
         public Color hitFlashColor = new Color(1f, 0.92f, 0.28f, 0.95f);
+        public Color lowHealthHitFlashColor = new Color(1f, 0.28f, 0.12f, 0.98f);
         public Color defeatFlashColor = new Color(1f, 0.36f, 0.14f, 1f);
         public bool showHitConfirmFlash = true;
         public Color hitConfirmFlashColor = new Color(0.42f, 0.88f, 1f, 0.9f);
+        [Range(0.01f, 1f)]
+        public float lowHealthHitFlashThreshold = 0.3f;
         public float hitFlashDuration = 0.16f;
         public float defeatFlashDuration = 0.28f;
         public float hitConfirmFlashDuration = 0.1f;
         public float hitFlashScale = 0.36f;
+        public float lowHealthHitFlashScaleMultiplier = 1.28f;
         public float defeatFlashScaleMultiplier = 1.55f;
         public float hitConfirmFlashScale = 0.28f;
         public float hitFlashHeight = 0.55f;
@@ -120,9 +124,16 @@ namespace FourfoldEchoes.Product
             var info = new DamageInfo(applied, source, point);
             if (showHitFlash)
             {
-                var flashScale = hitFlashScale * (defeated ? Mathf.Max(1f, defeatFlashScaleMultiplier) : 1f);
+                var lowHealthHit = !defeated && Health01 <= lowHealthHitFlashThreshold;
+                var flashColor = defeated
+                    ? defeatFlashColor
+                    : (lowHealthHit ? lowHealthHitFlashColor : hitFlashColor);
+                var scaleMultiplier = defeated
+                    ? Mathf.Max(1f, defeatFlashScaleMultiplier)
+                    : (lowHealthHit ? Mathf.Max(1f, lowHealthHitFlashScaleMultiplier) : 1f);
+                var flashScale = hitFlashScale * scaleMultiplier;
                 var flashDuration = defeated ? defeatFlashDuration : hitFlashDuration;
-                TriggerFlash(point, defeated ? defeatFlashColor : hitFlashColor, flashScale, flashDuration);
+                TriggerFlash(point, flashColor, flashScale, flashDuration);
             }
             Damaged?.Invoke(this, info);
 
