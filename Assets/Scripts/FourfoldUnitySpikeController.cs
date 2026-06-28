@@ -13,6 +13,8 @@ namespace FourfoldEchoes.Spike
     public sealed class FourfoldUnitySpikeController : MonoBehaviour
     {
         public const string ControlPromptText = "Move LS/WASD | Attack A/X/J | Dodge B/Space | Altar/Claim Y/E | Phase LB/RB | Reset Start/R";
+        public const string NextRoomBeaconName = "Next Room Route Beacon";
+        public const string NextRoomObjectiveText = "Follow the amber arrow toward the next room";
 
         [Header("Scene")]
         public Transform player;
@@ -127,6 +129,7 @@ namespace FourfoldEchoes.Spike
         private Transform altarGateLink;
         private Transform hollowGateLock;
         private Transform rewardPickupBurst;
+        private Transform nextRoomBeacon;
         private FourfoldProofAudio proofAudio;
         private float nextAltarHeatAudio;
 
@@ -559,6 +562,7 @@ namespace FourfoldEchoes.Spike
             altarGateLink = CreateIndicator("Altar Opens Gate Link", PrimitiveType.Cube, gateReadyMaterial, new Vector3(2.15f, 0.035f, 0.16f));
             hollowGateLock = CreateIndicator("Hollow Gate Lock", PrimitiveType.Cube, enemyMaterial, new Vector3(4.6f, 0.035f, 0.12f));
             rewardPickupBurst = CreateIndicator("Reward Pickup Burst", PrimitiveType.Sphere, gateReadyMaterial, new Vector3(0.6f, 0.6f, 0.6f));
+            nextRoomBeacon = CreateNextRoomBeacon(gateReadyMaterial);
         }
 
         private static Transform CreateIndicator(string name, PrimitiveType type, Material material, Vector3 scale)
@@ -578,6 +582,52 @@ namespace FourfoldEchoes.Spike
             }
             indicator.SetActive(false);
             return indicator.transform;
+        }
+
+        public static Mesh CreateNextRoomBeaconMesh()
+        {
+            var mesh = new Mesh
+            {
+                name = NextRoomBeaconName + " Mesh"
+            };
+            mesh.vertices = new[]
+            {
+                new Vector3(-0.55f, 0f, -0.18f),
+                new Vector3(0.1f, 0f, -0.18f),
+                new Vector3(0.1f, 0f, -0.36f),
+                new Vector3(0.65f, 0f, 0f),
+                new Vector3(0.1f, 0f, 0.36f),
+                new Vector3(0.1f, 0f, 0.18f),
+                new Vector3(-0.55f, 0f, 0.18f)
+            };
+            mesh.uv = new[]
+            {
+                new Vector2(0f, 0.3f),
+                new Vector2(0.55f, 0.3f),
+                new Vector2(0.55f, 0f),
+                new Vector2(1f, 0.5f),
+                new Vector2(0.55f, 1f),
+                new Vector2(0.55f, 0.7f),
+                new Vector2(0f, 0.7f)
+            };
+            mesh.triangles = new[] { 0, 5, 1, 0, 6, 5, 2, 4, 3 };
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        private static Transform CreateNextRoomBeacon(Material material)
+        {
+            var beacon = new GameObject(NextRoomBeaconName);
+            var meshFilter = beacon.AddComponent<MeshFilter>();
+            meshFilter.sharedMesh = CreateNextRoomBeaconMesh();
+            var renderer = beacon.AddComponent<MeshRenderer>();
+            if (material != null)
+            {
+                renderer.sharedMaterial = material;
+            }
+            beacon.SetActive(false);
+            return beacon.transform;
         }
 
         private void UpdatePresentation()
@@ -863,6 +913,18 @@ namespace FourfoldEchoes.Spike
                     rewardPickupBurst.localScale = Vector3.one * size;
                 }
             }
+
+            if (nextRoomBeacon != null)
+            {
+                nextRoomBeacon.gameObject.SetActive(rewardClaimed);
+                if (rewardClaimed)
+                {
+                    var pulse = 0.08f * Mathf.Sin(Time.time * 8f);
+                    nextRoomBeacon.position = new Vector3(4.55f, 0.12f, GateCenterZ);
+                    nextRoomBeacon.rotation = Quaternion.Euler(0f, 0f, 0f);
+                    nextRoomBeacon.localScale = new Vector3(1.35f + pulse, 1f, 1.35f + pulse);
+                }
+            }
         }
 
         private bool IsGateClaimReady()
@@ -1075,7 +1137,7 @@ namespace FourfoldEchoes.Spike
             }
             if (rewardClaimed)
             {
-                return "Room complete";
+                return NextRoomObjectiveText;
             }
             if (IsGateClaimReady())
             {

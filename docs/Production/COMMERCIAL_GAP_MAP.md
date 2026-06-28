@@ -24,8 +24,8 @@ accepted runtime evidence.
 
 | Rank | Gap | Player-visible next move | MVP-safe constraint |
 | --- | --- | --- | --- |
-| P0-01 | Gate A must be controller-first from first glance, not only technically joystick-readable. | Show concrete controller button prompts in the runtime HUD. | No input system swap, no new menu, no settings screen. |
-| P0-02 | Accepted `main` still proves one Gate A room, not a 20-30 minute commercial slice. | Extend the same one-tool loop through one more accepted room beat only after the current room is readable. | No inventory, quest log, open world, or second tool. |
+| P0-01 | Gate A must be controller-first from first glance, not only technically joystick-readable. | Done on `main`: concrete controller prompts are visible in the runtime HUD. | No input system swap, no new menu, no settings screen. |
+| P0-02 | Accepted `main` still proves one Gate A room, not a 20-30 minute commercial slice. | Show an in-room next-route beacon after clear, then extend the same one-tool loop through one more accepted room beat. | No inventory, quest log, open world, or second tool. |
 | P0-03 | Steam-first needs a current Windows clean-launch result. | Produce a sanitized Windows build smoke result or record the exact missing-module blocker. | Build/QA lane only; no gameplay changes. |
 | P0-04 | Store capture cannot use ambiguous placeholder presentation. | Add a no-placeholder capture gate for current visible HUD, VFX, audio, and primitive art status. | Validator/report first; asset import only after provenance is clear. |
 | P0-05 | Save/restart proof is not accepted on `main`. | Add focused local progress proof for the current playable loop. | Local save only; no cloud or platform service. |
@@ -36,10 +36,11 @@ accepted runtime evidence.
 
 ## Active Top Gap
 
-This PR addresses P0-01. The runtime already reads joystick buttons, but the HUD
-only says `Pad`, which is weak evidence for a controller-first Steam experience.
-The smallest player-visible fix is to show concrete gamepad labels directly in
-the Gate A prompt line while preserving the existing keyboard and mouse path.
+This PR addresses P0-02. The accepted room should not end as a static
+`Room complete` state; it should point the player toward the next room/region
+beat without adding a new system. The smallest player-visible fix is a
+Meshwright-guided, repository-authored low-poly route beacon that appears after
+the reward is claimed.
 
 ## PR Operating Rule
 
