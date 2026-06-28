@@ -190,6 +190,29 @@ namespace FourfoldEchoes.Tests
         }
 
         [UnityTest]
+        public IEnumerator Damageable_EmphasizesHeavyNonLethalDamage()
+        {
+            var target = CreateTarget(Vector3.zero, 100f);
+            var damageable = target.GetComponent<Damageable>();
+            damageable.hitFlashScale = 0.4f;
+            damageable.heavyHitFlashThreshold = 0.35f;
+            damageable.heavyHitFlashScaleMultiplier = 1.25f;
+            damageable.heavyHitFlashColor = new Color(1f, 0.5f, 0.02f, 0.97f);
+
+            Assert.IsTrue(damageable.ApplyDamage(40f, null, new Vector3(0.2f, 0f, 0f)));
+
+            var flash = damageable.HitFlashInstance;
+            Assert.IsNotNull(flash);
+            Assert.IsTrue(damageable.IsAlive);
+            Assert.That(damageable.Health01, Is.EqualTo(0.6f).Within(0.01f));
+            Assert.IsTrue(flash.activeSelf);
+            Assert.That(flash.transform.localScale.x, Is.EqualTo(0.5f).Within(0.01f));
+            AssertColorApproximately(damageable.heavyHitFlashColor, ReadTint(flash.GetComponentInChildren<Renderer>()));
+
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator Damageable_EmphasizesLowHealthNonLethalDamage()
         {
             var target = CreateTarget(Vector3.zero, 100f);
