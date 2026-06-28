@@ -7,6 +7,8 @@ namespace FourfoldEchoes.Product
 {
     public sealed class D020SliceController : MonoBehaviour
     {
+        public const string SecondRouteCueObjectiveText = "Step 4/6: follow the gold route, then use the tool to open the shortcut seal.";
+
         [Header("Scene")]
         public Transform player;
         public Transform[] enemies;
@@ -182,6 +184,7 @@ namespace FourfoldEchoes.Product
         private GameObject rewardClaimRead;
         private GameObject secondRewardClaimRead;
         private GameObject returnGateClaimRead;
+        private Vector3 secondRouteLockedReadBaseScale;
         private Material attackMaterial;
         private Material enemyAttackMaterial;
         private Material rewardMaterial;
@@ -281,6 +284,10 @@ namespace FourfoldEchoes.Product
             EnsureExplorationReferences();
             initialPlayerPosition = player.position;
             initialPlayerRotation = player.rotation;
+            if (secondRouteLockedRead != null)
+            {
+                secondRouteLockedReadBaseScale = secondRouteLockedRead.transform.localScale;
+            }
             enemyHealth = new float[enemies == null ? 0 : enemies.Length];
             enemyAttackTimer = new float[enemyHealth.Length];
             enemyWindupTimer = new float[enemyHealth.Length];
@@ -989,8 +996,36 @@ namespace FourfoldEchoes.Product
 
             if (secondRouteLockedRead != null)
             {
-                secondRouteLockedRead.SetActive((previousRewardLoaded || firstRewardClaimedThisRun) && !SecondToolGateSolved());
+                if (secondRouteLockedReadBaseScale == Vector3.zero)
+                {
+                    secondRouteLockedReadBaseScale = secondRouteLockedRead.transform.localScale;
+                }
+
+                var showSecondRouteCue = ShouldShowSecondRouteCue(previousRewardLoaded, firstRewardClaimedThisRun, SecondToolGateSolved());
+                secondRouteLockedRead.SetActive(showSecondRouteCue);
+                if (showSecondRouteCue)
+                {
+                    var pulse = SecondRouteCuePulse(Time.time);
+                    secondRouteLockedRead.transform.localScale = new Vector3(
+                        secondRouteLockedReadBaseScale.x * pulse,
+                        secondRouteLockedReadBaseScale.y * pulse,
+                        secondRouteLockedReadBaseScale.z * pulse);
+                }
+                else
+                {
+                    secondRouteLockedRead.transform.localScale = secondRouteLockedReadBaseScale;
+                }
             }
+        }
+
+        public static bool ShouldShowSecondRouteCue(bool previousRewardLoaded, bool firstRewardClaimedThisRun, bool secondRouteSolved)
+        {
+            return (previousRewardLoaded || firstRewardClaimedThisRun) && !secondRouteSolved;
+        }
+
+        public static float SecondRouteCuePulse(float timeSeconds)
+        {
+            return 1.12f + Mathf.Sin(timeSeconds * 5.2f) * 0.10f;
         }
 
         private void ResetRun()
@@ -2803,7 +2838,7 @@ namespace FourfoldEchoes.Product
                         : !firstRewardClaimedThisRun
                         ? FourfoldInputPrompts.RegionClaimEdgeObjective(progressData)
                         : !SecondToolGateSolved()
-                        ? FourfoldLanguage.T(progressData, "Step 4/6: use the tool to open the shortcut seal.", "手順4/6: ツールで近道の封印を開く。")
+                        ? FourfoldLanguage.T(progressData, SecondRouteCueObjectiveText, "手順4/6: 金色の道を追い、ツールで近道の封印を開く。")
                         : !secondRewardClaimedThisRun
                         ? FourfoldInputPrompts.RegionClaimWardObjective(progressData)
                         : FourfoldLanguage.T(progressData, "Step 6/6: return to hub to save this clear.", "手順6/6: ハブへ帰還して今回のクリアを保存。");
