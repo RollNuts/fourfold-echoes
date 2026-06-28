@@ -13,6 +13,7 @@ namespace FourfoldEchoes.Spike
     public sealed class FourfoldUnitySpikeController : MonoBehaviour
     {
         public const string ControlPromptText = "Move LS/WASD | Attack A/X/J | Dodge B/Space | Altar/Claim Y/E | Phase LB/RB | Reset Start/R";
+        public const string CriticalHealthWarningText = "Critical HP - dodge and create space";
 
         [Header("Scene")]
         public Transform player;
@@ -66,6 +67,7 @@ namespace FourfoldEchoes.Spike
         private const float EnemyDeathVisibleDuration = 0.85f;
         private const float EnemyKnockbackDamping = 9f;
         private const float PlayerMaxHealth = 100f;
+        private const float CriticalHealthThreshold01 = 0.3f;
         private const float PlayerInvulnerableDuration = 0.55f;
         private const float GateOpenPulseDuration = 1.1f;
         private const float RewardPickupDuration = 1.65f;
@@ -118,6 +120,7 @@ namespace FourfoldEchoes.Spike
         private Transform enemyRecoveryRing;
         private Transform dodgeReadyRing;
         private Transform playerInvulnerableHalo;
+        private Transform playerCriticalHealthRing;
         private Transform attackArc;
         private Transform enemyHitBurst;
         private Transform enemyDeathBurst;
@@ -550,6 +553,7 @@ namespace FourfoldEchoes.Spike
             enemyRecoveryRing = CreateIndicator("Enemy Recovery Window", PrimitiveType.Cylinder, tideMaterial, new Vector3(1.15f, 0.02f, 1.15f));
             dodgeReadyRing = CreateIndicator("Dodge Cooldown Ring", PrimitiveType.Cylinder, tideMaterial, new Vector3(0.75f, 0.018f, 0.75f));
             playerInvulnerableHalo = CreateIndicator("Player Invulnerability Halo", PrimitiveType.Cylinder, gateReadyMaterial, new Vector3(0.92f, 0.02f, 0.92f));
+            playerCriticalHealthRing = CreateIndicator("Player Critical Health Ring", PrimitiveType.Cylinder, enemyMaterial, new Vector3(1.08f, 0.018f, 1.08f));
             attackArc = CreateIndicator("Player Attack Arc", PrimitiveType.Cube, CurrentPhaseMaterial(), new Vector3(1.05f, 0.055f, 0.32f));
             enemyHitBurst = CreateIndicator("Enemy Hit Burst", PrimitiveType.Sphere, gateReadyMaterial, new Vector3(0.8f, 0.2f, 0.8f));
             enemyDeathBurst = CreateIndicator("Enemy Death Burst", PrimitiveType.Cylinder, enemyDeadMaterial, new Vector3(0.9f, 0.035f, 0.9f));
@@ -623,6 +627,22 @@ namespace FourfoldEchoes.Spike
                     var pulse = 0.08f * Mathf.Sin(Time.time * 34f);
                     playerInvulnerableHalo.position = new Vector3(player.position.x, 0.052f, player.position.z);
                     playerInvulnerableHalo.localScale = new Vector3(0.82f + pulse, 0.02f, 0.82f + pulse);
+                }
+            }
+
+            if (playerCriticalHealthRing != null)
+            {
+                var health01 = playerHealth / PlayerMaxHealth;
+                var showCriticalHealth = playerHealth > 0f && health01 <= CriticalHealthThreshold01;
+                playerCriticalHealthRing.gameObject.SetActive(showCriticalHealth);
+                if (showCriticalHealth)
+                {
+                    var urgency = 1f - Mathf.Clamp01(health01 / CriticalHealthThreshold01);
+                    var pulse = 0.12f * Mathf.Sin(Time.time * Mathf.Lerp(12f, 24f, urgency));
+                    var size = Mathf.Lerp(1.02f, 1.34f, urgency) + pulse;
+                    playerCriticalHealthRing.position = new Vector3(player.position.x, 0.041f, player.position.z);
+                    playerCriticalHealthRing.localScale = new Vector3(size, 0.018f, size);
+                    playerCriticalHealthRing.GetComponent<Renderer>().sharedMaterial = enemyMaterial != null ? enemyMaterial : gateReadyMaterial;
                 }
             }
 
@@ -1059,6 +1079,10 @@ namespace FourfoldEchoes.Spike
             else if (rewardPickupTimer > 0f)
             {
                 GUI.Label(new Rect(24, 194, 720, 32), "Ember Afterglow acquired", style);
+            }
+            else if (playerHealth > 0f && playerHealth / PlayerMaxHealth <= CriticalHealthThreshold01)
+            {
+                GUI.Label(new Rect(24, 194, 720, 32), CriticalHealthWarningText, style);
             }
             if (playerHealth <= 0f)
             {

@@ -17,5 +17,15 @@ namespace FourfoldEchoes.Tests
             Assert.That(prompt, Does.Contain("Phase LB/RB"));
             Assert.That(prompt, Does.Contain("Reset Start/R"));
         }
+
+        [Test]
+        public void CriticalHealthWarningText_NamesImmediateDefensiveAction()
+        {
+            var warning = FourfoldUnitySpikeController.CriticalHealthWarningText;
+
+            Assert.That(warning, Does.Contain("Critical HP"));
+            Assert.That(warning, Does.Contain("dodge"));
+            Assert.That(warning, Does.Contain("create space"));
+        }
     }
 }
