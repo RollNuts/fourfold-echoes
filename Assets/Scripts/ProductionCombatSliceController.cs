@@ -19,6 +19,8 @@ namespace FourfoldEchoes.Product
         public const KeyCode RewardClaimKeyboardKey = KeyCode.E;
         public const KeyCode RewardClaimControllerButton = KeyCode.JoystickButton3;
         public const int RewardClaimMouseButton = 1;
+        public const KeyCode RetryKeyboardKey = KeyCode.R;
+        public const KeyCode RetryControllerButton = KeyCode.JoystickButton7;
 
         public static Func<LocalSaveService> SaveServiceFactory { get; set; } = LocalSaveService.CreateDefault;
 
@@ -134,7 +136,7 @@ namespace FourfoldEchoes.Product
 
             if (runState == ProductionCombatRunState.PlayerDown || runState == ProductionCombatRunState.Completed)
             {
-                if (Input.GetKeyDown(KeyCode.R))
+                if (RetryPressed(includeControllerStart: true))
                 {
                     RetryRun();
                     return;
@@ -147,7 +149,7 @@ namespace FourfoldEchoes.Product
             attackCooldown = Mathf.Max(0f, attackCooldown - dt);
             playerInvulnerableTimer = Mathf.Max(0f, playerInvulnerableTimer - dt);
 
-            if (Input.GetKeyDown(KeyCode.R))
+            if (RetryPressed(includeControllerStart: false))
             {
                 RetryRun();
                 return;
@@ -687,11 +689,22 @@ namespace FourfoldEchoes.Product
             return keyCode == RewardClaimKeyboardKey || keyCode == RewardClaimControllerButton;
         }
 
+        public static bool IsRetryKey(KeyCode keyCode)
+        {
+            return keyCode == RetryKeyboardKey || keyCode == RetryControllerButton;
+        }
+
         private static bool InteractPressed()
         {
             return Input.GetKeyDown(RewardClaimKeyboardKey)
                 || Input.GetMouseButtonDown(RewardClaimMouseButton)
                 || Input.GetKeyDown(RewardClaimControllerButton);
+        }
+
+        private static bool RetryPressed(bool includeControllerStart)
+        {
+            return Input.GetKeyDown(RetryKeyboardKey)
+                || (includeControllerStart && Input.GetKeyDown(RetryControllerButton));
         }
 
         private static void ApplyFirstRendererMaterial(Transform root, Material material)

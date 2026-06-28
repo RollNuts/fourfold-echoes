@@ -22,6 +22,22 @@ namespace FourfoldEchoes.Tests.EditMode
         }
 
         [Test]
+        public void Gameplay_RetryInput_MatchesKeyboardAndControllerPrompt()
+        {
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.R), Is.True);
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.JoystickButton7), Is.True);
+        }
+
+        [Test]
+        public void Gameplay_RetryInput_DoesNotStealAttackOrRewardButtons()
+        {
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.J), Is.False);
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.JoystickButton0), Is.False);
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.E), Is.False);
+            Assert.That(ProductionCombatSliceController.IsRetryKey(KeyCode.JoystickButton3), Is.False);
+        }
+
+        [Test]
         public void UI_RewardClaimPrompt_ShowsOnlyNearOpenReward()
         {
             var reward = Vector3.zero;
