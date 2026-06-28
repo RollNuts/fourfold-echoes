@@ -38,14 +38,22 @@ namespace FourfoldEchoes.Tests.EditMode
         {
             Assert.That(
                 BuildPrompt(ProductionCombatRunState.Playing, wardensHealth01: 0.5f),
-                Is.EqualTo("South Button / J: Attack"));
+                Is.EqualTo("South Button / J / Mouse: Attack"));
             Assert.That(
                 BuildPrompt(ProductionCombatRunState.Playing, wardensHealth01: 0f, shortcutOpen: false, toolReady01: 1f),
-                Is.EqualTo("North Button / E: Echo Tool"));
+                Is.EqualTo("North Button / E / RMB: Echo Tool"));
             Assert.That(
                 BuildPrompt(ProductionCombatRunState.Playing, gateOpen: true),
-                Is.EqualTo("North Button / E: Claim reward"));
+                Is.EqualTo("North Button / E / RMB: Claim reward"));
             Assert.That(BuildPrompt(ProductionCombatRunState.Paused), Is.Empty);
+        }
+
+        [Test]
+        public void UI_ObjectiveCue_ShowsMouseAttackPromptForBoss()
+        {
+            Assert.That(
+                BuildPrompt(ProductionCombatRunState.Playing, wardensHealth01: 0f, shortcutOpen: true, bossUnlocked: true, bossHealth01: 0.7f),
+                Is.EqualTo("South Button / J / Mouse: Attack boss"));
         }
 
         [Test]
