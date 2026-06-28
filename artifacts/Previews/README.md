@@ -4,6 +4,7 @@ Tracked files in this directory are limited to the current D-020 evidence lane:
 
 - `d020-slice-camera.png`
 - `d020-tool-node-read.png`
+- `d020-reward-lens-read.png`
 - `d020-reward-read.png`
 - `d020-playable-attack-read.png`
 - `d020-hud-reward-save.png`

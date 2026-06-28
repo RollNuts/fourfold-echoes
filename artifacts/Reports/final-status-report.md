@@ -1,6 +1,6 @@
 # Final Status Report
 
-Generated UTC: `2026-06-27T07:54:12.988Z`
+Generated UTC: `2026-06-27T08:45:29.092Z`
 
 ## Final Product Definition
 
@@ -16,10 +16,11 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 | D-020 slice scene | `Assets/Scenes/D020VerticalSlice.unity` |
 | D-020 slice screenshot | `artifacts/Previews/d020-slice-camera.png` |
 | D-020 tool screenshot | `artifacts/Previews/d020-tool-node-read.png` |
+| D-020 reward-lens screenshot | `artifacts/Previews/d020-reward-lens-read.png` |
 | D-020 reward screenshot | `artifacts/Previews/d020-reward-read.png` |
 | D-020 playable attack screenshot | `artifacts/Previews/d020-playable-attack-read.png` |
 | D-020 HUD reward/save screenshot | `artifacts/Previews/d020-hud-reward-save.png` |
-| Visual evidence shots | 5 generated |
+| Visual evidence shots | 6 generated |
 | Performance snapshot | `artifacts/Reports/performance-snapshot.json` |
 | Audio inventory | `artifacts/Reports/audio-inventory.json` |
 | D-020 tool runtime | `Assets/Scripts/ExplorationTool.cs` |
@@ -34,15 +35,15 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 ## Blockers
 
 - No top-down hub/region/boss vertical slice exists.
-- No two gimmick rooms prove repeated use of the single exploration tool.
+- D-020 now has two one-tool responses, but not a complete authored second gimmick room with route flow.
 - Production hero/tool/enemy/boss silhouettes are not approved.
 - Final music and release-quality core SFX are not implemented.
 - No measured frame-time profiler scenario exists.
-- Steam screenshot set is not production-ready.
+- Steam screenshot set is not production-ready and still has fewer than 8 runtime candidates.
 
 ## Exact Next Highest-Leverage Work
 
-- Add a second gimmick room that reuses the same ExplorationTool differently without adding a new system.
+- Promote the second one-tool response into a compact authored second gimmick room with route flow.
 - Replace pilot hero/tool/enemy with production-intent stylized silhouettes and turnaround evidence.
 - Add a non-placeholder tool pulse SFX, target-hit SFX, attack hit SFX, enemy tell SFX, and discovery stinger.
 - Extend the automated runtime smoke to cover SFX wiring and a build-level input replay.
