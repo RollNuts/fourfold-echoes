@@ -10,6 +10,7 @@ namespace FourfoldEchoes.Product
         public GameObject tellRead;
         public float slowChaseSpeed = 0.55f;
         public float keepDistance = 1.4f;
+        public int criticalHealthThreshold = 1;
 
         private int currentHealth;
         private float pulseTime;
@@ -17,6 +18,7 @@ namespace FourfoldEchoes.Product
         public int CurrentHealth => currentHealth;
         public int HitCount { get; private set; }
         public bool IsDefeated => currentHealth <= 0;
+        public bool IsCriticalHealth => !IsDefeated && currentHealth <= Mathf.Max(1, criticalHealthThreshold);
 
         private void Awake()
         {
@@ -38,7 +40,10 @@ namespace FourfoldEchoes.Product
             pulseTime += Mathf.Max(0f, deltaTime);
             if (tellRead != null)
             {
-                var pulse = 1f + Mathf.Sin(pulseTime * 5.4f) * 0.08f;
+                var pulseSpeed = IsCriticalHealth ? 8.2f : 5.4f;
+                var pulseCenter = IsCriticalHealth ? 1.16f : 1f;
+                var pulseAmplitude = IsCriticalHealth ? 0.16f : 0.08f;
+                var pulse = pulseCenter + Mathf.Sin(pulseTime * pulseSpeed) * pulseAmplitude;
                 tellRead.transform.localScale = new Vector3(0.95f * pulse, 0.025f, 0.95f * pulse);
             }
 

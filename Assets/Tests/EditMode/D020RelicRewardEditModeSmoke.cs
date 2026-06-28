@@ -9,7 +9,7 @@ namespace FourfoldEchoes.Tests
     {
         public static void Run()
         {
-            var objects = new GameObject[6];
+            var objects = new GameObject[8];
             try
             {
                 objects[0] = new GameObject("D020 Test Collector");
@@ -18,6 +18,9 @@ namespace FourfoldEchoes.Tests
                 objects[3] = new GameObject("D020 Test Reward Lens Node");
                 objects[4] = new GameObject("D020 Test Shortcut Reward");
                 objects[5] = new GameObject("D020 Test Progress Save");
+                objects[6] = new GameObject("D020 Test Critical Enemy");
+                objects[7] = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                objects[7].name = "D020 Test Critical Tell";
 
                 objects[0].transform.position = new Vector3(0f, 0f, 0.35f);
                 var reward = objects[1].AddComponent<D020RelicReward>();
@@ -68,6 +71,23 @@ namespace FourfoldEchoes.Tests
                 Require(D020HudController.RoomTitleText.Contains("D020"), "D-020 HUD title must identify the active vertical slice.");
                 Require(!D020HudController.RoomTitleText.Contains("Gate A"), "D-020 HUD title must not regress to legacy Gate A copy.");
 
+                var enemy = objects[6].AddComponent<D020EnemyDummy>();
+                enemy.maxHealth = 3;
+                enemy.criticalHealthThreshold = 1;
+                enemy.tellRead = objects[7];
+                enemy.ResetEnemy();
+                enemy.Tick(0.1f);
+                var healthyTellScale = objects[7].transform.localScale.x;
+                Require(!enemy.IsCriticalHealth, "Enemy started in critical health read.");
+
+                enemy.TakeHit(1);
+                Require(!enemy.IsCriticalHealth, "Enemy entered critical health before the final readable hit.");
+
+                enemy.TakeHit(1);
+                enemy.Tick(0.1f);
+                Require(enemy.IsCriticalHealth, "Enemy did not expose a critical health read on its final hit.");
+                Require(objects[7].transform.localScale.x > healthyTellScale, "Critical health read did not enlarge the enemy tell ring.");
+
                 shortcutNode.SetSolved(true);
                 rewardLensNode.SetSolved(true);
                 reward.SetCollected(true);
@@ -107,7 +127,7 @@ namespace FourfoldEchoes.Tests
                 }
             }
 
-            Debug.Log("FOURFOLD D-020 reward edit-mode smoke passed: reward unlock requires every configured one-tool node and progress save restores two reward flags without adding packages.");
+            Debug.Log("FOURFOLD D-020 reward edit-mode smoke passed: reward unlock requires every configured one-tool node, enemy critical health read is preserved, and progress save restores two reward flags without adding packages.");
         }
 
         private static void Require(bool condition, string message)
