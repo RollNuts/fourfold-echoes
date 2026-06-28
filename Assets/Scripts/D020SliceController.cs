@@ -44,6 +44,7 @@ namespace FourfoldEchoes.Product
         public AudioClip dodgeClip;
         public AudioClip enemyTellClip;
         public AudioClip playerDamageClip;
+        public AudioClip bossImpactClip;
         public AudioClip bossDefeatClip;
         public AudioClip rewardClaimClip;
         public AudioClip rewardReadyClip;
@@ -131,6 +132,7 @@ namespace FourfoldEchoes.Product
         private static AudioClip fallbackDodgeClip;
         private static AudioClip fallbackEnemyTellClip;
         private static AudioClip fallbackPlayerDamageClip;
+        private static AudioClip fallbackBossImpactClip;
         private static AudioClip fallbackBossDefeatClip;
         private static AudioClip fallbackRewardClaimClip;
         private static AudioClip fallbackRewardReadyClip;
@@ -683,7 +685,8 @@ namespace FourfoldEchoes.Product
                 player.position += knockback.normalized * 0.42f;
             }
 
-            PlayCue(playerDamageClip, 0.78f);
+            var bossImpact = IsBossEnemy(index);
+            PlayCue(bossImpact ? bossImpactClip : playerDamageClip, bossImpact ? 0.86f : 0.78f);
             if (playerHealth <= 0f)
             {
                 RegisterRunFailure();
@@ -2787,6 +2790,10 @@ namespace FourfoldEchoes.Product
             {
                 playerDamageClip = FallbackPlayerDamageClip();
             }
+            if (bossImpactClip == null)
+            {
+                bossImpactClip = FallbackBossImpactClip();
+            }
             if (bossDefeatClip == null)
             {
                 bossDefeatClip = FallbackBossDefeatClip();
@@ -2854,6 +2861,15 @@ namespace FourfoldEchoes.Product
                 "D020_PlayerDamage_Fallback",
                 new ProceduralToneSegment(96f, 0.080f, 0.19f),
                 new ProceduralToneSegment(72f, 0.075f, 0.14f)));
+        }
+
+        private static AudioClip FallbackBossImpactClip()
+        {
+            return fallbackBossImpactClip ?? (fallbackBossImpactClip = BuildToneClip(
+                "D020_BossImpact_Fallback",
+                new ProceduralToneSegment(58f, 0.075f, 0.22f),
+                new ProceduralToneSegment(116f, 0.080f, 0.16f),
+                new ProceduralToneSegment(174f, 0.060f, 0.11f)));
         }
 
         private static AudioClip FallbackBossDefeatClip()
