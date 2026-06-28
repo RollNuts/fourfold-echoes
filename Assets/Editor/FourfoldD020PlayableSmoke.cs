@@ -25,6 +25,9 @@ namespace FourfoldEchoes.Editor
             var rewardNode = rewardNodeObject != null ? rewardNodeObject.GetComponent<ExplorationNode>() : null;
             var shortcut = FindSceneObject("D020 Shortcut Route");
             var rewardResponse = FindSceneObject("D020 Reward Lens Response");
+            var rewardChamber = FindSceneObject("D020 Reward Lens Chamber");
+            var rewardChamberPath = FindSceneObject("D020 Reward Lens Chamber Path");
+            var rewardIdleRead = FindSceneObject("D020 Reward Lens Chamber Idle Read");
             var camera = Camera.main;
 
             Require(player != null, "D-020 smoke requires a D020PlayerController.");
@@ -37,6 +40,9 @@ namespace FourfoldEchoes.Editor
             Require(hud != null, "D-020 smoke requires a minimal HUD component.");
             Require(shortcut != null, "D-020 smoke requires one shortcut response object.");
             Require(rewardResponse != null, "D-020 smoke requires one reward-lens response object.");
+            Require(rewardChamber != null, "D-020 smoke requires a second gimmick chamber.");
+            Require(rewardChamberPath != null, "D-020 smoke requires a second gimmick chamber path response.");
+            Require(rewardIdleRead != null, "D-020 smoke requires a second gimmick closed/idle read.");
             Require(tool.nodes != null && tool.nodes.Length == 2, "D-020 exploration tool must bind exactly two one-tool nodes.");
             Require(progressSave.nodes != null && progressSave.nodes.Length == 2, "D-020 progress save must track both one-tool nodes.");
             Require(camera != null && camera.orthographic, "D-020 smoke requires a fixed orthographic top-down camera.");
@@ -79,6 +85,8 @@ namespace FourfoldEchoes.Editor
             reward.ResetReward();
             Require(!shortcut.activeSelf, "Shortcut response should start hidden before tool use.");
             Require(!rewardResponse.activeSelf, "Reward-lens response should start hidden before tool use.");
+            Require(!rewardChamberPath.activeInHierarchy, "Reward-lens chamber path should start hidden before tool use.");
+            Require(rewardIdleRead.activeInHierarchy, "Reward-lens chamber idle read should start visible before tool use.");
             player.ResetForSmoke(node.transform.position + new Vector3(0f, 0f, 0.55f));
             Require(tool.TryUse(), "Exploration tool did not activate the nearby node.");
             Require(node.IsSolved, "Exploration node was not solved by the tool.");
@@ -89,6 +97,8 @@ namespace FourfoldEchoes.Editor
             Require(tool.TryUse(), "Exploration tool did not activate the reward-lens node.");
             Require(rewardNode.IsSolved, "Reward-lens node was not solved by the tool.");
             Require(rewardNode.responseTarget != null && rewardNode.responseTarget.activeSelf, "Exploration tool did not reveal the reward-lens response.");
+            Require(rewardChamberPath.activeInHierarchy, "Exploration tool did not reveal the reward-lens chamber path.");
+            Require(!rewardIdleRead.activeInHierarchy, "Exploration tool did not hide the reward-lens closed/idle read.");
             Require(rewardNode.activeRead != null && rewardNode.activeRead.activeSelf, "Exploration tool did not reveal the reward-lens active read.");
             Require(reward.IsUnlocked, "Reward did not unlock after enemy defeat and both one-tool responses.");
             hud.RefreshNow();

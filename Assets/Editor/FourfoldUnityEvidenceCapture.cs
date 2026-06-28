@@ -58,9 +58,9 @@ namespace FourfoldEchoes.Editor
             CaptureCameraFromPose(
                 camera,
                 Path.Combine(outputDirectory, "d020-reward-lens-read.png"),
-                new Vector3(6.1f, 6.35f, -4.65f),
-                new Vector3(2.72f, 0.42f, -1.0f),
-                3.15f);
+                new Vector3(6.35f, 6.9f, -5.30f),
+                new Vector3(2.66f, 0.42f, -1.20f),
+                3.55f);
             CaptureCameraFromPose(
                 camera,
                 Path.Combine(outputDirectory, "d020-reward-read.png"),

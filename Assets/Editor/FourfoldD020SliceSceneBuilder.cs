@@ -72,6 +72,9 @@ namespace FourfoldEchoes.Editor
             Require("D020 Relic Chest");
             Require("D020 Exploration Tool Node");
             Require("D020 Reward Lens Node");
+            Require("D020 Reward Lens Chamber");
+            Require("D020 Reward Lens Chamber Path");
+            Require("D020 Reward Lens Chamber Idle Read");
             Require("D020 Shortcut Route");
             Require("D020 Reward Lens Response");
             Require("D020 Top Down Camera");
@@ -218,6 +221,21 @@ namespace FourfoldEchoes.Editor
             CreateBlock(room.transform, "D020 Shortcut Gap Right", assets.floorDark, new Vector3(-4.55f, 0.28f, -1.15f), new Vector3(0.28f, 0.56f, 1.1f));
             CreateBlock(room.transform, "D020 Main Path Line A", assets.route, new Vector3(-1.2f, 0.025f, -1.6f), new Vector3(1.2f, 0.05f, 0.14f), Quaternion.Euler(0f, 16f, 0f));
             CreateBlock(room.transform, "D020 Main Path Line B", assets.route, new Vector3(0.2f, 0.025f, -1.25f), new Vector3(1.2f, 0.05f, 0.14f), Quaternion.Euler(0f, -8f, 0f));
+            CreateRewardLensChamber(room.transform, assets);
+        }
+
+        private static void CreateRewardLensChamber(Transform room, GeneratedAssets assets)
+        {
+            var chamber = new GameObject("D020 Reward Lens Chamber");
+            chamber.transform.SetParent(room);
+
+            CreateBlock(chamber.transform, "D020 Reward Lens Chamber Entrance", assets.route, new Vector3(1.25f, 0.028f, -1.02f), new Vector3(1.1f, 0.055f, 0.16f), Quaternion.Euler(0f, -18f, 0f));
+            CreateBlock(chamber.transform, "D020 Reward Lens Chamber Left Rail", assets.floorDark, new Vector3(1.85f, 0.30f, -2.15f), new Vector3(1.18f, 0.58f, 0.20f), Quaternion.Euler(0f, 28f, 0f));
+            CreateBlock(chamber.transform, "D020 Reward Lens Chamber Right Rail", assets.floorDark, new Vector3(3.75f, 0.30f, -0.48f), new Vector3(1.10f, 0.58f, 0.20f), Quaternion.Euler(0f, 27f, 0f));
+            CreateBlock(chamber.transform, "D020 Reward Lens Chamber Back Rail", assets.floorDark, new Vector3(3.52f, 0.32f, -2.32f), new Vector3(1.28f, 0.60f, 0.22f), Quaternion.Euler(0f, -18f, 0f));
+            CreatePrimitive(chamber.transform, PrimitiveType.Cylinder, "D020 Reward Lens Chamber Problem Ring", assets.relic, new Vector3(2.35f, 0.032f, -0.72f), new Vector3(0.82f, 0.026f, 0.82f));
+            CreateBlock(chamber.transform, "D020 Reward Lens Chamber Locked Thread A", assets.floorDark, new Vector3(2.55f, 0.045f, -1.34f), new Vector3(0.95f, 0.055f, 0.12f), Quaternion.Euler(0f, 42f, 0f));
+            CreateBlock(chamber.transform, "D020 Reward Lens Chamber Locked Thread B", assets.floorDark, new Vector3(2.98f, 0.048f, -1.15f), new Vector3(0.82f, 0.055f, 0.12f), Quaternion.Euler(0f, -24f, 0f));
         }
 
         private static GameObject CreatePlayer(Transform root, GeneratedAssets assets)
@@ -331,6 +349,13 @@ namespace FourfoldEchoes.Editor
             var rewardResponse = new GameObject("D020 Reward Lens Response");
             rewardResponse.transform.SetParent(proof.transform);
             rewardResponse.transform.position = Vector3.zero;
+            var chamberPath = new GameObject("D020 Reward Lens Chamber Path");
+            chamberPath.transform.SetParent(rewardResponse.transform);
+            chamberPath.transform.localPosition = Vector3.zero;
+            CreateBlock(chamberPath.transform, "D020 Reward Lens Chamber Path A", assets.route, new Vector3(2.10f, 0.074f, -0.92f), new Vector3(0.92f, 0.062f, 0.18f), Quaternion.Euler(0f, -24f, 0f));
+            CreateBlock(chamberPath.transform, "D020 Reward Lens Chamber Path B", assets.route, new Vector3(2.62f, 0.078f, -1.20f), new Vector3(0.86f, 0.062f, 0.18f), Quaternion.Euler(0f, 44f, 0f));
+            CreateBlock(chamberPath.transform, "D020 Reward Lens Chamber Path C", assets.route, new Vector3(3.15f, 0.082f, -1.42f), new Vector3(0.72f, 0.062f, 0.18f), Quaternion.Euler(0f, -18f, 0f));
+            CreatePrimitive(chamberPath.transform, PrimitiveType.Sphere, "D020 Reward Lens Gate Open Read", assets.tool, new Vector3(2.98f, 0.42f, -1.18f), new Vector3(0.20f, 0.20f, 0.20f));
             CreatePrimitive(rewardResponse.transform, PrimitiveType.Cylinder, "D020 Reward Lens Open Ring", assets.relic, new Vector3(3.05f, 0.072f, -1.55f), new Vector3(1.22f, 0.032f, 1.22f));
             CreateBlock(rewardResponse.transform, "D020 Reward Lens Beam A", assets.tool, new Vector3(2.54f, 0.13f, -0.78f), new Vector3(0.08f, 0.05f, 1.18f), Quaternion.Euler(0f, -34f, 0f));
             CreateBlock(rewardResponse.transform, "D020 Reward Lens Beam B", assets.tool, new Vector3(3.08f, 0.14f, -0.98f), new Vector3(0.08f, 0.05f, 1.24f), Quaternion.Euler(0f, 18f, 0f));
@@ -341,7 +366,12 @@ namespace FourfoldEchoes.Editor
             var rewardNodeObject = new GameObject("D020 Reward Lens Node");
             rewardNodeObject.transform.SetParent(proof.transform);
             rewardNodeObject.transform.position = new Vector3(2.35f, 0.1f, -0.72f);
-            var rewardFootprint = CreatePrimitive(rewardNodeObject.transform, PrimitiveType.Cylinder, "D020 Reward Lens Footprint", assets.tool, Vector3.zero, new Vector3(0.58f, 0.026f, 0.58f));
+            var rewardIdleRead = new GameObject("D020 Reward Lens Chamber Idle Read");
+            rewardIdleRead.transform.SetParent(rewardNodeObject.transform);
+            rewardIdleRead.transform.localPosition = Vector3.zero;
+            CreatePrimitive(rewardIdleRead.transform, PrimitiveType.Cylinder, "D020 Reward Lens Footprint", assets.tool, Vector3.zero, new Vector3(0.58f, 0.026f, 0.58f));
+            CreateBlock(rewardIdleRead.transform, "D020 Reward Lens Closed Gate Read", assets.floorDark, new Vector3(0.72f, 0.16f, -0.78f), new Vector3(0.74f, 0.30f, 0.12f), Quaternion.Euler(0f, 34f, 0f));
+            CreateBlock(rewardIdleRead.transform, "D020 Reward Lens Closed Thread Read", assets.tool, new Vector3(0.52f, 0.35f, -0.54f), new Vector3(0.10f, 0.38f, 0.06f), Quaternion.Euler(0f, 0f, -30f));
             CreateBlock(rewardNodeObject.transform, "D020 Reward Lens Pedestal", assets.floorDark, new Vector3(0f, 0.18f, 0f), new Vector3(0.42f, 0.32f, 0.42f));
             CreateBlock(rewardNodeObject.transform, "D020 Reward Lens Signal", assets.relic, new Vector3(0f, 0.52f, 0.02f), new Vector3(0.12f, 0.38f, 0.08f), Quaternion.Euler(0f, 0f, -38f));
             var rewardActiveRead = CreatePrimitive(rewardNodeObject.transform, PrimitiveType.Sphere, "D020 Reward Lens Active Read", assets.relic, new Vector3(0f, 0.78f, 0.02f), new Vector3(0.16f, 0.16f, 0.16f));
@@ -351,7 +381,7 @@ namespace FourfoldEchoes.Editor
             var rewardNode = rewardNodeObject.AddComponent<ExplorationNode>();
             rewardNode.activationRadius = 2.25f;
             rewardNode.responseTarget = rewardResponse;
-            rewardNode.idleRead = rewardFootprint;
+            rewardNode.idleRead = rewardIdleRead;
             rewardNode.activeRead = rewardActiveRead;
             rewardNode.highlightRenderers = rewardResponse.GetComponentsInChildren<Renderer>(true);
             rewardNode.ResetNode();
