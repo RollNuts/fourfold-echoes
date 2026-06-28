@@ -14,6 +14,9 @@ namespace FourfoldEchoes.Editor
     {
         public const string ScenePath = "Assets/Scenes/ProductionCombatSlice.unity";
         private const string MaterialFolder = "Assets/Art/Generated/ProductionSlice/Materials";
+        private const string RewardRelicPickupFolder = "Assets/Art/Environment/Generated/ART_FoldedReliquary_RewardRelicPickups_v0.1.0";
+        private const string RewardIdleTexturePath = RewardRelicPickupFolder + "/ART_FoldedReliquary_RewardRelicPickup_EmberSeedIdle128_v0.1.0.png";
+        private const string RewardClaimTexturePath = RewardRelicPickupFolder + "/ART_FoldedReliquary_RewardRelicPickup_EmberSeedClaim128_v0.1.0.png";
         private const string RootName = "Production Combat Slice World";
 
         public static void BuildAndValidate()
@@ -58,9 +61,13 @@ namespace FourfoldEchoes.Editor
             var gateClaimBadge = Place(library.EmberSeed, interactables.transform, "PCS Gate Claim Badge - FE_RELIC_EmberSeed_01", new Vector3(3.45f, 1.72f, 0f), Quaternion.identity, Vector3.one);
             var rewardChest = Place(library.RelicChest, interactables.transform, "PCS Reward Chest - FE_PROP_COMMON_RelicChest_01", new Vector3(5.05f, 0.1f, 2.95f), Quaternion.Euler(0f, -18f, 0f), Vector3.one);
             var rewardPad = Place(library.RewardPad, interactables.transform, "PCS Reward Receiver Pad - FE_PROP_COMMON_RewardReceiverPad_01", new Vector3(4.25f, 0.08f, 2.35f), Quaternion.identity, Vector3.one);
+            var rewardIdleRead = CreateRewardPickupRead(interactables.transform, "PCS Reward Relic Pickup Idle Read", RewardIdleTexturePath, new Vector3(4.72f, 0.16f, 2.63f), 1.05f);
+            var rewardClaimRead = CreateRewardPickupRead(interactables.transform, "PCS Reward Relic Pickup Claim Read", RewardClaimTexturePath, new Vector3(4.72f, 0.18f, 2.63f), 1.16f);
+            rewardIdleRead.SetActive(false);
+            rewardClaimRead.SetActive(false);
 
             var node = CreateExplorationProof(interactables.transform, library, player.transform);
-            CreateRuntimeHook(root.transform, player.transform, enemy.transform, rangedEnemy.transform, boss.transform, altarCore.transform, altarGlow.transform, gateLeft.transform, gateRight.transform, gateClaimBadge.transform, rewardChest, rewardPad, camera, materials, node);
+            CreateRuntimeHook(root.transform, player.transform, enemy.transform, rangedEnemy.transform, boss.transform, altarCore.transform, altarGlow.transform, gateLeft.transform, gateRight.transform, gateClaimBadge.transform, rewardChest, rewardPad, rewardIdleRead, rewardClaimRead, camera, materials, node);
             CreateAssetYard(libraryYard.transform, library);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -90,6 +97,8 @@ namespace FourfoldEchoes.Editor
             RequirePrefab("PCS Altar Core - FE_PROP_R01_GimmickPedestal_01", "FE_PROP_R01_GimmickPedestal_01");
             RequirePrefab("PCS Gate Left - FE_PROP_R01_RootGate_01", "FE_PROP_R01_RootGate_01");
             RequirePrefab("PCS Reward Chest - FE_PROP_COMMON_RelicChest_01", "FE_PROP_COMMON_RelicChest_01");
+            var rewardIdleRead = Require("PCS Reward Relic Pickup Idle Read");
+            var rewardClaimRead = Require("PCS Reward Relic Pickup Claim Read");
             RequirePrefab("PCS Exploration Tool Read - FE_PROP_COMMON_ExplorationTool_01", "FE_PROP_COMMON_ExplorationTool_01");
             RequirePrefab("PCS Revealed Shortcut Bridge - FE_ENV_R01_ShortcutBridge_01", "FE_ENV_R01_ShortcutBridge_01");
             RequirePrefab(FourfoldMeshwrightPreviewPropVerifier.SceneObjectName, "FE_PROP_R01_MeshwrightGrasslandPropKit_01");
@@ -101,6 +110,10 @@ namespace FourfoldEchoes.Editor
             if (controller.enemies == null || controller.enemies.Length < 2 || controller.boss == null || controller.rewardChest == null || controller.rewardPad == null)
             {
                 throw new InvalidOperationException("Production combat slice controller is not wired to two enemies, boss, and reward objects.");
+            }
+            if (controller.rewardIdleRead == null || controller.rewardClaimRead == null || controller.rewardIdleRead != rewardIdleRead || controller.rewardClaimRead != rewardClaimRead)
+            {
+                throw new InvalidOperationException("Production combat slice reward relic pickup reads are not wired to the controller.");
             }
 
             RequireCollider<CapsuleCollider>(player, "player hero");
@@ -294,7 +307,7 @@ namespace FourfoldEchoes.Editor
             return node;
         }
 
-        private static void CreateRuntimeHook(Transform root, Transform player, Transform enemy, Transform rangedEnemy, Transform boss, Transform altarCore, Transform altarGlow, Transform gateLeft, Transform gateRight, Transform gateClaimBadge, GameObject rewardChest, GameObject rewardPad, Camera camera, SliceMaterials materials, ExplorationNode node)
+        private static void CreateRuntimeHook(Transform root, Transform player, Transform enemy, Transform rangedEnemy, Transform boss, Transform altarCore, Transform altarGlow, Transform gateLeft, Transform gateRight, Transform gateClaimBadge, GameObject rewardChest, GameObject rewardPad, GameObject rewardIdleRead, GameObject rewardClaimRead, Camera camera, SliceMaterials materials, ExplorationNode node)
         {
             var hook = new GameObject("PCS Runtime Hook");
             hook.transform.SetParent(root);
@@ -308,6 +321,8 @@ namespace FourfoldEchoes.Editor
             controller.gateClaimBadge = gateClaimBadge;
             controller.rewardChest = rewardChest;
             controller.rewardPad = rewardPad;
+            controller.rewardIdleRead = rewardIdleRead;
+            controller.rewardClaimRead = rewardClaimRead;
             controller.fixedCamera = camera;
             controller.downMaterial = materials.enemyDead;
             controller.gateClosedMaterial = materials.gateClosed;
@@ -443,6 +458,60 @@ namespace FourfoldEchoes.Editor
                 material.DisableKeyword("_EMISSION");
                 material.SetColor("_EmissionColor", Color.black);
             }
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        private static GameObject CreateRewardPickupRead(Transform parent, string name, string texturePath, Vector3 position, float size)
+        {
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+            if (texture == null)
+            {
+                throw new InvalidOperationException($"Reward relic pickup texture is missing: {texturePath}");
+            }
+
+            var read = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            read.name = name;
+            read.transform.SetParent(parent);
+            read.transform.position = position;
+            read.transform.rotation = Quaternion.Euler(90f, -18f, 0f);
+            read.transform.localScale = new Vector3(size, size, 1f);
+            var collider = read.GetComponent<Collider>();
+            if (collider != null)
+            {
+                UnityEngine.Object.DestroyImmediate(collider);
+            }
+
+            var renderer = read.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = CreateTransparentTextureMaterial(name + " Material", texture);
+            return read;
+        }
+
+        private static Material CreateTransparentTextureMaterial(string name, Texture2D texture)
+        {
+            var materialName = name.Replace(' ', '_');
+            var path = $"{MaterialFolder}/{materialName}.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                var shader = Shader.Find("Unlit/Transparent");
+                if (shader == null)
+                {
+                    shader = Shader.Find("Sprites/Default");
+                }
+
+                if (shader == null)
+                {
+                    shader = Shader.Find("Standard");
+                }
+
+                material = new Material(shader);
+                AssetDatabase.CreateAsset(material, path);
+            }
+
+            material.name = materialName;
+            material.mainTexture = texture;
+            material.renderQueue = (int)RenderQueue.Transparent;
             EditorUtility.SetDirty(material);
             return material;
         }

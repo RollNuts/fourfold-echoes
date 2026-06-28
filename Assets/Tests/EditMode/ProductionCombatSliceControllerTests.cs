@@ -21,5 +21,16 @@ namespace FourfoldEchoes.Tests.EditMode
                 ProductionCombatSliceController.BuildDamageEventText(0f),
                 Is.EqualTo("Hero down - choose Retry"));
         }
+
+        [Test]
+        public void VIS_RewardPickupRead_SwitchesFromIdleToClaimedState()
+        {
+            Assert.That(ProductionCombatSliceController.ShouldShowRewardPickupRead(false, false, false), Is.False);
+            Assert.That(ProductionCombatSliceController.ShouldShowRewardPickupRead(false, true, true), Is.False);
+            Assert.That(ProductionCombatSliceController.ShouldShowRewardPickupRead(true, false, false), Is.True);
+            Assert.That(ProductionCombatSliceController.ShouldShowRewardPickupRead(true, false, true), Is.False);
+            Assert.That(ProductionCombatSliceController.ShouldShowRewardPickupRead(true, true, false), Is.False);
+            Assert.That(ProductionCombatSliceController.ShouldShowRewardPickupRead(true, true, true), Is.True);
+        }
     }
 }

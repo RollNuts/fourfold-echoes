@@ -36,6 +36,8 @@ namespace FourfoldEchoes.Product
         public Transform gateClaimBadge;
         public GameObject rewardChest;
         public GameObject rewardPad;
+        public GameObject rewardIdleRead;
+        public GameObject rewardClaimRead;
         public Camera fixedCamera;
 
         [Header("Materials")]
@@ -645,10 +647,25 @@ namespace FourfoldEchoes.Product
                 ApplyFirstRendererMaterial(rewardPad.transform, gateOpen ? rewardMaterial : null);
             }
 
+            if (rewardIdleRead != null)
+            {
+                rewardIdleRead.SetActive(ShouldShowRewardPickupRead(gateOpen, rewardClaimed, false));
+            }
+
+            if (rewardClaimRead != null)
+            {
+                rewardClaimRead.SetActive(ShouldShowRewardPickupRead(gateOpen, rewardClaimed, true));
+            }
+
             if (rewardChest != null && rewardClaimed)
             {
                 rewardChest.transform.localScale = Vector3.Lerp(rewardChest.transform.localScale, Vector3.one * 1.16f, Mathf.Clamp01(dt * 8f));
             }
+        }
+
+        internal static bool ShouldShowRewardPickupRead(bool gateOpen, bool rewardClaimed, bool claimRead)
+        {
+            return gateOpen && rewardClaimed == claimRead;
         }
 
         private bool IsAlive(int index)
