@@ -114,6 +114,7 @@ namespace FourfoldEchoes.Product
         public float ToolReady01 => explorationTool == null ? 1f : 1f - explorationTool.Cooldown01;
         public float MasterVolume01 => currentSettings.masterVolume;
         public int MasterVolumePercent => Mathf.RoundToInt(MasterVolume01 * 100f);
+        public bool FullscreenEnabled => currentSettings.fullscreen;
         public bool CanPause => runState == ProductionCombatRunState.Playing || runState == ProductionCombatRunState.Paused;
 
         private void Awake()
@@ -240,6 +241,21 @@ namespace FourfoldEchoes.Product
             if (SaveSettingsIfEnabled())
             {
                 lastEvent = $"Master volume {MasterVolumePercent}%";
+            }
+        }
+
+        public void ToggleFullscreen()
+        {
+            SetFullscreen(!currentSettings.fullscreen);
+        }
+
+        public void SetFullscreen(bool fullscreen)
+        {
+            currentSettings.fullscreen = fullscreen;
+            ApplySettings(currentSettings);
+            if (SaveSettingsIfEnabled())
+            {
+                lastEvent = fullscreen ? "Fullscreen on" : "Windowed mode";
             }
         }
 
@@ -966,6 +982,7 @@ namespace FourfoldEchoes.Product
         {
             currentSettings = CloneSettings(settings);
             AudioListener.volume = currentSettings.masterVolume;
+            Screen.fullScreen = currentSettings.fullscreen;
         }
 
         private static FourfoldSaveSettings CloneSettings(FourfoldSaveSettings settings)

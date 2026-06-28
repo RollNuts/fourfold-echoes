@@ -53,6 +53,7 @@ namespace FourfoldEchoes.Product
         private Label toolLabel;
         private Label saveLabel;
         private Label settingsVolumeLabel;
+        private Label settingsDisplayLabel;
         private Button titleContinueButton;
         private readonly List<Button> titleButtons = new List<Button>();
         private readonly List<Button> pauseButtons = new List<Button>();
@@ -243,6 +244,13 @@ namespace FourfoldEchoes.Product
             panel.Add(settingsVolumeLabel);
             AddButton(panel, settingsButtons, "Master -", () => controller?.AdjustMasterVolume(-0.1f));
             AddButton(panel, settingsButtons, "Master +", () => controller?.AdjustMasterVolume(0.1f));
+            panel.Add(MakeBodyLabel("Display"));
+            settingsDisplayLabel = MakeLabel("Fullscreen", 22, FontStyle.Bold);
+            settingsDisplayLabel.style.color = AccentColor;
+            settingsDisplayLabel.style.marginTop = 2f;
+            settingsDisplayLabel.style.marginBottom = 12f;
+            panel.Add(settingsDisplayLabel);
+            AddButton(panel, settingsButtons, "Toggle Fullscreen", () => controller?.ToggleFullscreen());
             AddButton(panel, settingsButtons, "Back", CloseSettings);
             WireButtons(settingsButtons);
             overlay.Add(panel);
@@ -474,6 +482,11 @@ namespace FourfoldEchoes.Product
             if (settingsVolumeLabel != null)
             {
                 settingsVolumeLabel.text = $"{controller.MasterVolumePercent}%";
+            }
+
+            if (settingsDisplayLabel != null)
+            {
+                settingsDisplayLabel.text = controller.FullscreenEnabled ? "Fullscreen" : "Windowed";
             }
         }
 

@@ -102,6 +102,7 @@ namespace FourfoldEchoes.Tests.EditMode
         public void UI_ProductionCombatSettings_MasterVolumeClampsAppliesAndSaves()
         {
             var originalVolume = AudioListener.volume;
+            var originalFullscreen = Screen.fullScreen;
             var tempDirectory = CreateTempDirectory();
             var savePath = Path.Combine(tempDirectory, LocalSaveService.DefaultFileName);
             var service = new LocalSaveService(savePath);
@@ -128,6 +129,43 @@ namespace FourfoldEchoes.Tests.EditMode
             finally
             {
                 AudioListener.volume = originalVolume;
+                Screen.fullScreen = originalFullscreen;
+                ProductionCombatSliceController.SaveServiceFactory = LocalSaveService.CreateDefault;
+                UnityEngine.Object.DestroyImmediate(controllerObject);
+                Directory.Delete(tempDirectory, true);
+            }
+        }
+
+        [Test]
+        public void UI_ProductionCombatSettings_FullscreenTogglesAndSaves()
+        {
+            var originalFullscreen = Screen.fullScreen;
+            var tempDirectory = CreateTempDirectory();
+            var savePath = Path.Combine(tempDirectory, LocalSaveService.DefaultFileName);
+            var service = new LocalSaveService(savePath);
+            var controllerObject = new GameObject("Display Settings Controller");
+            ProductionCombatSliceController.SaveServiceFactory = () => new LocalSaveService(savePath);
+
+            try
+            {
+                var controller = controllerObject.AddComponent<ProductionCombatSliceController>();
+
+                controller.SetFullscreen(false);
+
+                Assert.That(controller.FullscreenEnabled, Is.False);
+                Assert.That(controller.SaveStatus, Is.EqualTo("Settings saved"));
+                Assert.That(service.TryLoad(out var saved), Is.True);
+                Assert.That(saved.settings.fullscreen, Is.False);
+
+                controller.ToggleFullscreen();
+
+                Assert.That(controller.FullscreenEnabled, Is.True);
+                Assert.That(service.TryLoad(out saved), Is.True);
+                Assert.That(saved.settings.fullscreen, Is.True);
+            }
+            finally
+            {
+                Screen.fullScreen = originalFullscreen;
                 ProductionCombatSliceController.SaveServiceFactory = LocalSaveService.CreateDefault;
                 UnityEngine.Object.DestroyImmediate(controllerObject);
                 Directory.Delete(tempDirectory, true);
