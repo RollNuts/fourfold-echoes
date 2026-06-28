@@ -1,6 +1,6 @@
 # Final Status Report
 
-Generated UTC: `2026-06-25T18:49:38.552Z`
+Generated UTC: `2026-06-28T15:13:36.193Z`
 
 ## Final Product Definition
 
@@ -20,8 +20,9 @@ Canonical hook: Leave one hub, explore three compact handcrafted regions, master
 | Visual evidence shots | 3 generated |
 | Performance snapshot | `artifacts/Reports/performance-snapshot.json` |
 | Audio inventory | `artifacts/Reports/audio-inventory.json` |
+| Version display report | `artifacts/test-results/version-display.json` |
 | D-020 tool runtime | `Assets/Scripts/ExplorationTool.cs` |
-| Build artifact | `Build/D020Slice/macos/FourfoldEchoesD020Slice.app` |
+| Build artifact | `missing` |
 
 ## Market Ready Status
 

@@ -8,6 +8,8 @@
 !screenshots/.gitkeep
 !logs/.gitkeep
 !test-results/.gitkeep
+!test-results/*.md
+!test-results/*.json
 !Reports/.gitkeep
 !Reports/*.md
 !Reports/*.json

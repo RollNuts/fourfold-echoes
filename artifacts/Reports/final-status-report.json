@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAtUtc": "2026-06-25T18:49:38.552Z",
+  "generatedAtUtc": "2026-06-28T15:13:36.193Z",
   "finalProductDefinition": "Steam-first, buy-to-play, single-player top-down classic action-adventure.",
   "canonicalHook": "Leave one hub, explore three compact handcrafted regions, master one exploration tool, open shortcuts, earn relic rewards, and defeat four bosses.",
   "currentEvidence": {
@@ -16,8 +16,9 @@
     ],
     "performanceSnapshot": "artifacts/Reports/performance-snapshot.json",
     "audioInventory": "artifacts/Reports/audio-inventory.json",
+    "versionDisplayReport": "artifacts/test-results/version-display.json",
     "d020ToolRuntime": "Assets/Scripts/ExplorationTool.cs",
-    "buildArtifact": "Build/D020Slice/macos/FourfoldEchoesD020Slice.app"
+    "buildArtifact": null
   },
   "marketReadyStatus": "not_market_ready",
   "blockers": [

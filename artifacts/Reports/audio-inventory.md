@@ -1,6 +1,6 @@
 # Audio Inventory
 
-Generated UTC: `2026-06-27T02:11:36.179Z`
+Generated UTC: `2026-06-28T15:13:36.193Z`
 
 Imported AudioClip count from Unity validation: `9`
 
@@ -47,18 +47,23 @@ Imported AudioClip count from Unity validation: `9`
 | `audio.sfx.system_save` | SFX | needed | TBD | TBD | not_started |
 | `audio.sfx.system_load_continue` | SFX | needed | TBD | TBD | not_started |
 | `audio.sfx.settings_apply` | SFX | needed | TBD | TBD | not_started |
+| `audio.music.bgm_title` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/BGM_Title_Inviting_ALoop_078_v0.1.0.ogg | d020_pilot |
 | `audio.music.bgm_hub` | Music | needed | TBD | TBD | not_started |
-| `audio.music.bgm_region01` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/d020_exploration_loop.wav | d020_pilot |
+| `audio.music.bgm_region01` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/BGM_Region01_Contemplative_ALoop_090_v0.1.0.ogg | d020_pilot |
 | `audio.music.bgm_region02` | Music | needed | TBD | TBD | not_started |
 | `audio.music.bgm_region03` | Music | needed | TBD | TBD | not_started |
-| `audio.music.bgm_normal_combat` | Music | needed | TBD | TBD | not_started |
-| `audio.music.bgm_boss` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/d020_boss_loop.wav | d020_pilot |
+| `audio.music.bgm_normal_combat` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/BGM_Battle_Tense_ALoop_112_v0.1.0.ogg | d020_pilot |
+| `audio.music.bgm_boss` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/BGM_BossPhase1_Ominous_ALoop_104_v0.1.0.ogg | d020_pilot |
+| `audio.music.bgm_boss_phase2` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/BGM_BossPhase2_Urgent_ALoop_128_v0.1.0.ogg | d020_pilot |
+| `audio.music.bgm_rest_room` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/BGM_RestRoom_Warm_ALoop_072_v0.1.0.ogg | d020_pilot |
+| `audio.music.bgm_victory_stinger` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/BGM_VictoryStinger_Resolute_A_120_v0.1.0.ogg | d020_pilot |
+| `audio.music.bgm_defeat_stinger` | Music | generated_pilot | repository-authored | Assets/Audio/Generated/BGM_DefeatStinger_Somber_A_084_v0.1.0.ogg | d020_pilot |
 
 ## File Audit
 
-- Repository audio files: 9
+- Repository audio files: 23
 - Registered paths missing on disk: 0
-- Unregistered audio files: 0
+- Unregistered audio files: 8
 
 ### Missing Registered Files
 
@@ -66,16 +71,24 @@ Imported AudioClip count from Unity validation: `9`
 
 ### Unregistered Audio Files
 
-- None
+- `Assets/Audio/Generated/BGM_Battle_Tense_AIntro_112_v0.1.0.ogg`
+- `Assets/Audio/Generated/BGM_BossPhase1_Ominous_AIntro_104_v0.1.0.ogg`
+- `Assets/Audio/Generated/BGM_BossPhase2_Urgent_AIntro_128_v0.1.0.ogg`
+- `Assets/Audio/Generated/BGM_Region01_Contemplative_AIntro_090_v0.1.0.ogg`
+- `Assets/Audio/Generated/BGM_RestRoom_Warm_AIntro_072_v0.1.0.ogg`
+- `Assets/Audio/Generated/BGM_Title_Inviting_AIntro_078_v0.1.0.ogg`
+- `Assets/Audio/Generated/d020_boss_loop.wav`
+- `Assets/Audio/Generated/d020_exploration_loop.wav`
 
 ## License Coverage
 
-- Registered cues: 45
-- Cues with known license: 14
-- Cues with Unity paths: 9
+- Registered cues: 50
+- Cues with known license: 20
+- Cues with Unity paths: 15
 - License document mentions audio: true
 
 ## Known Gaps
 
-- audio.sfx.footstep_common, audio.sfx.player_landing, audio.sfx.armor_hit, audio.sfx.player_damage, audio.sfx.enemy_death, audio.sfx.enemy_notice, audio.sfx.tool_target_hit, audio.sfx.tool_fail, audio.sfx.enemy_tell, audio.sfx.enemy_attack, audio.sfx.enemy_damage, audio.sfx.boss_intro_hit, audio.sfx.boss_tell, audio.sfx.boss_impact, audio.sfx.boss_transition, audio.sfx.boss_defeat, audio.sfx.tool_equip_ready, audio.sfx.tool_near_response, audio.sfx.tool_cooldown_ready, audio.sfx.pedestal_wake, audio.sfx.mechanism_move, audio.sfx.chest_open, audio.sfx.relic_appear, audio.sfx.pickup, audio.sfx.system_save, audio.sfx.system_load_continue, audio.sfx.settings_apply, audio.music.bgm_hub, audio.music.bgm_region02, audio.music.bgm_region03, audio.music.bgm_normal_combat remain registered but not implemented.
+- 8 audio file(s) exist under Assets/Audio without an audio register row.
+- audio.sfx.footstep_common, audio.sfx.player_landing, audio.sfx.armor_hit, audio.sfx.player_damage, audio.sfx.enemy_death, audio.sfx.enemy_notice, audio.sfx.tool_target_hit, audio.sfx.tool_fail, audio.sfx.enemy_tell, audio.sfx.enemy_attack, audio.sfx.enemy_damage, audio.sfx.boss_intro_hit, audio.sfx.boss_tell, audio.sfx.boss_impact, audio.sfx.boss_transition, audio.sfx.boss_defeat, audio.sfx.tool_equip_ready, audio.sfx.tool_near_response, audio.sfx.tool_cooldown_ready, audio.sfx.pedestal_wake, audio.sfx.mechanism_move, audio.sfx.chest_open, audio.sfx.relic_appear, audio.sfx.pickup, audio.sfx.system_save, audio.sfx.system_load_continue, audio.sfx.settings_apply, audio.music.bgm_hub, audio.music.bgm_region02, audio.music.bgm_region03 remain registered but not implemented.
 - Generated/prototype SFX are asset inventory evidence only until D-020 gameplay events or scene AudioSources wire them in.
