@@ -1,0 +1,78 @@
+{
+  "asset_id": "audio.music.bgm_defeat_stinger",
+  "qc_status": "pass_with_notes",
+  "checks": [
+    {
+      "name": "one_shot_duration_recorded",
+      "status": "pass",
+      "detail": "one_shot_end_sample=252000"
+    },
+    {
+      "name": "one_shot_tail_release",
+      "status": "pass",
+      "detail": "last 1024 sample peak 0.000000"
+    },
+    {
+      "name": "low_end_control",
+      "status": "pass",
+      "detail": "20-160 Hz energy ratio 0.1984"
+    },
+    {
+      "name": "dialogue_band_control",
+      "status": "pass",
+      "detail": "1-4 kHz energy ratio 0.0002"
+    },
+    {
+      "name": "headroom",
+      "status": "pass",
+      "detail": "peak -7.39 dBFS"
+    },
+    {
+      "name": "sfx_space",
+      "status": "pass",
+      "detail": "No low boom or hit replacement; player damage and retry UI SFX outrank it."
+    }
+  ],
+  "metrics": {
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "channels": 2,
+    "bpm": 84,
+    "duration_seconds": 5.714285714285714,
+    "total_samples": 252000,
+    "looping": false,
+    "one_shot_start_sample": 0,
+    "one_shot_end_sample": 252000,
+    "one_shot_length_seconds": 5.714285714285714,
+    "peak_dbfs": -7.39285298341673,
+    "rms_dbfs": -24.199998976266357,
+    "tail_peak": 0.0,
+    "low_energy_ratio_20_160hz": 0.19841469021967864,
+    "dialogue_band_ratio_1_4khz": 0.0002046172562600886,
+    "runtime_bytes": {
+      "one_shot": 28015
+    },
+    "stem_metrics": {
+      "rhythm": {
+        "peak_dbfs": -240.0,
+        "rms_dbfs": -240.0
+      },
+      "harmony": {
+        "peak_dbfs": -9.613926743947607,
+        "rms_dbfs": -24.79366745593703
+      },
+      "lead": {
+        "peak_dbfs": -10.419540006997941,
+        "rms_dbfs": -33.39164781048994
+      },
+      "percussion": {
+        "peak_dbfs": -25.074840037090876,
+        "rms_dbfs": -62.11983142208833
+      }
+    }
+  },
+  "notes": [
+    "Procedural pilot only; requires listening review in scene before Steam capture.",
+    "Runtime loops are split into intro and loop clips; stingers are one-shot runtime clips."
+  ]
+}

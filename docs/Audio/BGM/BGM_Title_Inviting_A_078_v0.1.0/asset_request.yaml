@@ -1,0 +1,28 @@
+asset_id: audio.music.bgm_title
+title: Fourfold Echo
+scene_type: title
+mood: inviting
+bpm_target: 78
+loop_requirement:
+  intro_bars: 2
+  loop_bars: 12
+  seamless_loop: true
+  full_master_loop_start_sample: 271384
+  full_master_loop_end_sample: 1899688
+  runtime_intro_clip: Assets/Audio/Generated/BGM_Title_Inviting_AIntro_078_v0.1.0.ogg
+  runtime_loop_clip: Assets/Audio/Generated/BGM_Title_Inviting_ALoop_078_v0.1.0.ogg
+stems_requirement:
+  - rhythm
+  - harmony
+  - lead
+  - percussion
+target_platforms:
+  - Steam PC
+  - future console portable
+source_strategy: repository-authored deterministic procedural synthesis
+license: repository-authored
+status: generated_pilot
+notes:
+  - Menu select and confirm SFX should remain clearly above the music.
+  - Main motif appears briefly, then leaves space for title UI movement.
+  - No baked loop fade. Optional engine fade-in 250-500 ms on title entry.

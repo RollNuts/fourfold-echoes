@@ -1,0 +1,5 @@
+stem,path,role
+rhythm,Stems/BGM_VictoryStinger_Resolute_ARhythm_120_v0.1.0.wav,soft pulse or spacing layer; never masks UI/combat attacks
+harmony,Stems/BGM_VictoryStinger_Resolute_AHarmony_120_v0.1.0.wav,main bed with restrained low root energy
+lead,Stems/BGM_VictoryStinger_Resolute_ALead_120_v0.1.0.wav,short motif only when the cue needs identity
+percussion,Stems/BGM_VictoryStinger_Resolute_APercussion_120_v0.1.0.wav,small ticks only; no impact replacement

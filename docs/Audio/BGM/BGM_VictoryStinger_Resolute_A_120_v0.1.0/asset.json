@@ -1,0 +1,113 @@
+{
+  "asset_id": "audio.music.bgm_victory_stinger",
+  "title": "Thread Rejoined",
+  "scene": "VictoryStinger",
+  "scene_type": "victory stinger",
+  "mood": "Resolute",
+  "variant": "A",
+  "bpm": 120,
+  "version": "0.1.0",
+  "status": "generated_pilot",
+  "source_strategy": "repository-authored deterministic procedural synthesis",
+  "license": "repository-authored",
+  "target_platforms": [
+    "Steam PC",
+    "future console portable"
+  ],
+  "library_root_relative": "Runtime/Audio/BGM/BGM_VictoryStinger_Resolute_A_120_v0.1.0",
+  "paths": {
+    "master_wav": "BGM_VictoryStinger_Resolute_A_120_v0.1.0.wav",
+    "cue_sheet": "cue_sheet.csv",
+    "asset_request": "asset_request.yaml",
+    "qc_result": "qc_result.json",
+    "stems": {
+      "rhythm": "Stems/BGM_VictoryStinger_Resolute_ARhythm_120_v0.1.0.wav",
+      "harmony": "Stems/BGM_VictoryStinger_Resolute_AHarmony_120_v0.1.0.wav",
+      "lead": "Stems/BGM_VictoryStinger_Resolute_ALead_120_v0.1.0.wav",
+      "percussion": "Stems/BGM_VictoryStinger_Resolute_APercussion_120_v0.1.0.wav"
+    },
+    "runtime_ogg": "Assets/Audio/Generated/BGM_VictoryStinger_Resolute_A_120_v0.1.0.ogg"
+  },
+  "loop": {
+    "looping": false,
+    "one_shot_start_sample": 0,
+    "one_shot_end_sample": 176400,
+    "one_shot_length_seconds": 4.0,
+    "playback_instruction": "Play BGM_VictoryStinger_Resolute_A_120_v0.1.0.ogg once. Do not loop."
+  },
+  "mix_notes": {
+    "loudness_note": "Peak -5.80 dBFS, RMS -23.92 dBFS.",
+    "fade_note": "One-shot tail is baked. Do not loop; allow tail to finish or duck under result UI.",
+    "sfx_space_note": "No impact-heavy transient; victory SFX and UI confirms can sit above it.",
+    "low_end_note": "No sub/kick layer; root notes are gain-limited and leave room for SFX.",
+    "melody_note": "Lead resolves upward once, then releases."
+  },
+  "stems": [
+    {
+      "name": "rhythm",
+      "file": "Stems/BGM_VictoryStinger_Resolute_ARhythm_120_v0.1.0.wav",
+      "peak_dbfs": -240.0,
+      "rms_dbfs": -240.0
+    },
+    {
+      "name": "harmony",
+      "file": "Stems/BGM_VictoryStinger_Resolute_AHarmony_120_v0.1.0.wav",
+      "peak_dbfs": -8.866462475113902,
+      "rms_dbfs": -24.545190850026202
+    },
+    {
+      "name": "lead",
+      "file": "Stems/BGM_VictoryStinger_Resolute_ALead_120_v0.1.0.wav",
+      "peak_dbfs": -10.027861072011051,
+      "rms_dbfs": -32.56346827366487
+    },
+    {
+      "name": "percussion",
+      "file": "Stems/BGM_VictoryStinger_Resolute_APercussion_120_v0.1.0.wav",
+      "peak_dbfs": -22.057363984526933,
+      "rms_dbfs": -57.06830125532499
+    }
+  ],
+  "planned_companion_cues": [
+    {
+      "structure": "title",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_title"
+    },
+    {
+      "structure": "field exploration",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_region01"
+    },
+    {
+      "structure": "battle",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_normal_combat"
+    },
+    {
+      "structure": "boss phase1",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_boss"
+    },
+    {
+      "structure": "boss phase2",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_boss_phase2"
+    },
+    {
+      "structure": "rest room",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_rest_room"
+    },
+    {
+      "structure": "victory stinger",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_victory_stinger"
+    },
+    {
+      "structure": "defeat stinger",
+      "status": "generated_pilot",
+      "asset_id": "audio.music.bgm_defeat_stinger"
+    }
+  ]
+}
