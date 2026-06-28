@@ -63,6 +63,7 @@ Asset: MDL_Enemy_MeleeShardling_SealedLockRelic_v0.1.0
 - The preview scene prefab instance includes `MeleeShardlingAnimationPreviewDriver`, cycling all 14 runtime states every 0.75 seconds in Play Mode.
 - The prefab includes a root BoxCollider and a trigger hitbox at `SOCKET_ForwardHit/HITBOX_ForwardPreview`.
 - The prefab root includes `MeleeShardlingAnimationEventRelay` so AnimationEvents such as `hit_active_start`, `hit_active_end`, and `projectile_release` have receiver methods.
+- `MeleeShardlingAnimationEventRelay.CueRaised` dispatches typed cue payloads for all 22 AnimationEvents, allowing gameplay, VFX, and audio subscribers to bind without parsing strings.
 - `HITBOX_ForwardPreview` starts disabled and is enabled only between `hit_active_start` and `hit_active_end`.
 - The runtime verifier calls relay methods directly to confirm hitbox toggling, cast release counting, and interaction event recording.
 - Attach red seam VFX to `SOCKET_RedSeamVFX`, projectile/cast VFX to `SOCKET_Cast`, and impact VFX to `SOCKET_HitVfx`.

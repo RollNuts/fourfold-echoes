@@ -141,6 +141,7 @@ namespace FourfoldEchoes.Editor
             }
 
             VerifyRelayBehavior(errors);
+            VerifyRelayCueDispatch(errors);
 
             if (!File.Exists(ScenePath))
             {
@@ -423,13 +424,13 @@ namespace FourfoldEchoes.Editor
 
         private static void EnsureSocketPreviewMarkers(GameObject instance, Material markerMaterial)
         {
-            var staleMarkers = instance.GetComponentsInChildren<Transform>(true)
+            var existingMarkers = instance.GetComponentsInChildren<Transform>(true)
                 .Where(transform => transform.name.StartsWith(SocketMarkerPrefix, StringComparison.Ordinal))
-                .Select(transform => transform.gameObject)
                 .ToArray();
-            foreach (var marker in staleMarkers)
+            var expectedMarkerNames = RequiredSockets.Select(socketName => SocketMarkerPrefix + socketName).ToHashSet();
+            foreach (var marker in existingMarkers.Where(marker => !expectedMarkerNames.Contains(marker.name)))
             {
-                UnityEngine.Object.DestroyImmediate(marker);
+                UnityEngine.Object.DestroyImmediate(marker.gameObject);
             }
 
             foreach (var socketName in RequiredSockets)
@@ -440,8 +441,14 @@ namespace FourfoldEchoes.Editor
                     throw new InvalidOperationException($"Preview instance is missing {socketName}.");
                 }
 
-                var marker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                marker.name = SocketMarkerPrefix + socketName;
+                var markerName = SocketMarkerPrefix + socketName;
+                var marker = existingMarkers.FirstOrDefault(transform => transform.name == markerName)?.gameObject;
+                if (marker == null)
+                {
+                    marker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    marker.name = markerName;
+                }
+
                 marker.transform.SetParent(socket, false);
                 marker.transform.localPosition = Vector3.zero;
                 marker.transform.localRotation = Quaternion.identity;
@@ -867,6 +874,59 @@ namespace FourfoldEchoes.Editor
             }
         }
 
+        private static MeleeShardlingAnimationCue CueForEventName(string eventName)
+        {
+            switch (eventName)
+            {
+                case "base_contact_left":
+                    return MeleeShardlingAnimationCue.BaseContactLeft;
+                case "base_contact_right":
+                    return MeleeShardlingAnimationCue.BaseContactRight;
+                case "attack_windup":
+                    return MeleeShardlingAnimationCue.AttackWindup;
+                case "hit_active_start":
+                    return MeleeShardlingAnimationCue.HitActiveStart;
+                case "hit_peak":
+                    return MeleeShardlingAnimationCue.HitPeak;
+                case "hit_active_end":
+                    return MeleeShardlingAnimationCue.HitActiveEnd;
+                case "loop_pressure_pulse":
+                    return MeleeShardlingAnimationCue.LoopPressurePulse;
+                case "recover":
+                    return MeleeShardlingAnimationCue.Recover;
+                case "hit_vfx":
+                    return MeleeShardlingAnimationCue.HitVfx;
+                case "armor_clack":
+                    return MeleeShardlingAnimationCue.ArmorClack;
+                case "ground_contact":
+                    return MeleeShardlingAnimationCue.GroundContact;
+                case "stun_open":
+                    return MeleeShardlingAnimationCue.StunOpen;
+                case "death_start":
+                    return MeleeShardlingAnimationCue.DeathStart;
+                case "death_vfx":
+                    return MeleeShardlingAnimationCue.DeathVfx;
+                case "hide_allowed":
+                    return MeleeShardlingAnimationCue.HideAllowed;
+                case "cast_charge":
+                    return MeleeShardlingAnimationCue.CastCharge;
+                case "cast_ready":
+                    return MeleeShardlingAnimationCue.CastReady;
+                case "channel_pulse":
+                    return MeleeShardlingAnimationCue.ChannelPulse;
+                case "projectile_release":
+                    return MeleeShardlingAnimationCue.ProjectileRelease;
+                case "cast_recover":
+                    return MeleeShardlingAnimationCue.CastRecover;
+                case "interact_contact":
+                    return MeleeShardlingAnimationCue.InteractContact;
+                case "interact_vfx":
+                    return MeleeShardlingAnimationCue.InteractVfx;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(eventName), eventName, "Unknown Melee Shardling AnimationEvent.");
+            }
+        }
+
         private static void VerifyAnimationEvents(List<string> errors)
         {
             var emittedEvents = new HashSet<string>(StringComparer.Ordinal);
@@ -923,40 +983,95 @@ namespace FourfoldEchoes.Editor
                 }
 
                 relay.hit_active_start();
-                if (!hitbox.enabled || relay.HitActiveCount != 1 || relay.LastEventName != "hit_active_start")
+                if (!hitbox.enabled || relay.HitActiveCount != 1 || relay.LastCue != MeleeShardlingAnimationCue.HitActiveStart || relay.LastEventName != "hit_active_start")
                 {
                     errors.Add("Relay hit_active_start must enable the forward hitbox and record the hit event.");
                 }
 
                 relay.hit_peak();
-                if (!hitbox.enabled || relay.LastEventName != "hit_peak")
+                if (!hitbox.enabled || relay.LastCue != MeleeShardlingAnimationCue.HitPeak || relay.LastEventName != "hit_peak")
                 {
                     errors.Add("Relay hit_peak must preserve the active hitbox and record the peak event.");
                 }
 
                 relay.hit_active_end();
-                if (hitbox.enabled || relay.LastEventName != "hit_active_end")
+                if (hitbox.enabled || relay.LastCue != MeleeShardlingAnimationCue.HitActiveEnd || relay.LastEventName != "hit_active_end")
                 {
                     errors.Add("Relay hit_active_end must disable the forward hitbox and record the end event.");
                 }
 
                 hitbox.enabled = true;
                 relay.recover();
-                if (hitbox.enabled || relay.LastEventName != "recover")
+                if (hitbox.enabled || relay.LastCue != MeleeShardlingAnimationCue.Recover || relay.LastEventName != "recover")
                 {
                     errors.Add("Relay recover must disable the forward hitbox.");
                 }
 
                 relay.projectile_release();
-                if (relay.CastReleaseCount != 1 || relay.LastEventName != "projectile_release")
+                if (relay.CastReleaseCount != 1 || relay.LastCue != MeleeShardlingAnimationCue.ProjectileRelease || relay.LastEventName != "projectile_release")
                 {
                     errors.Add("Relay projectile_release must record the cast release event.");
                 }
 
                 relay.interact_contact();
-                if (relay.EventCount < 6 || relay.LastEventName != "interact_contact")
+                if (relay.EventCount < 6 || relay.LastCue != MeleeShardlingAnimationCue.InteractContact || relay.LastEventName != "interact_contact")
                 {
                     errors.Add("Relay interact_contact must record an interaction event after combat/cast events.");
+                }
+
+                if (!relay.HasRaisedCue)
+                {
+                    errors.Add("Relay must mark that it has raised at least one cue after AnimationEvent methods run.");
+                }
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        private static void VerifyRelayCueDispatch(List<string> errors)
+        {
+            var root = new GameObject("MeleeShardlingAnimationCueDispatch_Verifier");
+            var hitboxObject = new GameObject("Verifier_ForwardHitbox");
+            try
+            {
+                hitboxObject.transform.SetParent(root.transform, false);
+                var hitbox = hitboxObject.AddComponent<BoxCollider>();
+                hitbox.isTrigger = true;
+
+                var relay = root.AddComponent<MeleeShardlingAnimationEventRelay>();
+                relay.BindForwardHitbox(hitbox);
+
+                var dispatched = new List<MeleeShardlingAnimationCueEvent>();
+                relay.CueRaised += dispatched.Add;
+                var relayType = typeof(MeleeShardlingAnimationEventRelay);
+                foreach (var eventName in RequiredAnimationEvents)
+                {
+                    var method = relayType.GetMethod(eventName, Type.EmptyTypes);
+                    if (method == null)
+                    {
+                        errors.Add($"MeleeShardlingAnimationEventRelay is missing receiver method {eventName}().");
+                        continue;
+                    }
+
+                    method.Invoke(relay, null);
+                }
+
+                if (dispatched.Count != RequiredAnimationEvents.Length)
+                {
+                    errors.Add($"Relay must dispatch {RequiredAnimationEvents.Length.ToString(CultureInfo.InvariantCulture)} animation cues.");
+                }
+
+                for (var index = 0; index < Math.Min(dispatched.Count, RequiredAnimationEvents.Length); index++)
+                {
+                    var expectedEventName = RequiredAnimationEvents[index];
+                    var expectedCue = CueForEventName(expectedEventName);
+                    var cueEvent = dispatched[index];
+                    if (cueEvent.EventName != expectedEventName || cueEvent.Cue != expectedCue || cueEvent.EventCount != index + 1)
+                    {
+                        errors.Add($"Relay cue dispatch mismatch for {expectedEventName}.");
+                    }
                 }
             }
             finally
@@ -1015,6 +1130,9 @@ namespace FourfoldEchoes.Editor
             builder.AppendLine("    \"animation_event_relay\": \"MeleeShardlingAnimationEventRelay\",");
             builder.AppendLine($"    \"animation_event_receiver_count\": {RequiredAnimationEvents.Length.ToString(CultureInfo.InvariantCulture)},");
             builder.AppendLine($"    \"animation_event_relay_behavior\": \"{(errors.Count == 0 ? "pass" : "fail")}\",");
+            builder.AppendLine("    \"animation_event_cue_dispatcher\": \"MeleeShardlingAnimationEventRelay.CueRaised\",");
+            builder.AppendLine($"    \"animation_event_cue_dispatch_count\": {RequiredAnimationEvents.Length.ToString(CultureInfo.InvariantCulture)},");
+            builder.AppendLine($"    \"animation_event_cue_dispatch_status\": \"{(errors.Count == 0 ? "pass" : "fail")}\",");
             builder.AppendLine("    \"preview_driver\": \"MeleeShardlingAnimationPreviewDriver\",");
             builder.AppendLine($"    \"preview_driver_state_count\": {Actions.Length.ToString(CultureInfo.InvariantCulture)},");
             builder.AppendLine($"    \"preview_seconds_per_state\": {PreviewSecondsPerState.ToString(CultureInfo.InvariantCulture)},");
