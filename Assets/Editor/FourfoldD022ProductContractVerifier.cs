@@ -243,6 +243,7 @@ namespace FourfoldEchoes.Editor
             RequireContains(inputPrompts, "No tool target", "Region no-target tool prompt");
             RequireContains(inputPrompts, "Tool cooling down", "Region tool cooldown prompt");
             RequireContains(inputPrompts, "Tool routes solved", "Region tool solved prompt");
+            RequireContains(inputPrompts, "LOW HP", "Region low-health tactical prompt");
             RequireContains(inputPrompts, "Press Start, A, or Y", "Region controller retry prompt");
             RequireContains(inputPrompts, "HubStartReady", "Hub start prompt helper");
         }
