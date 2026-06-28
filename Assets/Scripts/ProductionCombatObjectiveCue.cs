@@ -209,25 +209,25 @@ namespace FourfoldEchoes.Product
 
             if (gateOpen)
             {
-                return "North Button / E: Claim reward";
+                return "North Button / E / RMB: Claim reward";
             }
 
             if (bossUnlocked)
             {
                 return bossHealth01 > 0.001f
-                    ? "South Button / J: Attack boss"
+                    ? "South Button / J / Mouse: Attack boss"
                     : "Move through the open gate";
             }
 
             if (wardensHealth01 > 0.001f)
             {
-                return "South Button / J: Attack";
+                return "South Button / J / Mouse: Attack";
             }
 
             if (!shortcutOpen)
             {
                 return toolReady01 >= 0.99f
-                    ? "North Button / E: Echo Tool"
+                    ? "North Button / E / RMB: Echo Tool"
                     : "Stay close until the tool is ready";
             }
 
