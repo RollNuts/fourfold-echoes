@@ -42,6 +42,7 @@ namespace FourfoldEchoes.Product
         public AudioClip attackClip;
         public AudioClip hitClip;
         public AudioClip dodgeClip;
+        public AudioClip enemyTellClip;
         public AudioClip rewardClaimClip;
         public AudioClip rewardReadyClip;
         public AudioSource musicSource;
@@ -126,6 +127,7 @@ namespace FourfoldEchoes.Product
         private static AudioClip fallbackAttackClip;
         private static AudioClip fallbackHitClip;
         private static AudioClip fallbackDodgeClip;
+        private static AudioClip fallbackEnemyTellClip;
         private static AudioClip fallbackRewardClaimClip;
         private static AudioClip fallbackRewardReadyClip;
         private static AudioClip fallbackToolFailClip;
@@ -620,6 +622,7 @@ namespace FourfoldEchoes.Product
                     if (enemyWindupTimer[i] <= 0f)
                     {
                         enemyAttackAimDirections[i] = desired;
+                        PlayCue(enemyTellClip, IsBossEnemy(i) ? 0.78f : 0.56f);
                     }
                     enemyWindupTimer[i] += dt;
                     if (enemyWindupTimer[i] >= attackWindup)
@@ -2772,6 +2775,10 @@ namespace FourfoldEchoes.Product
             {
                 dodgeClip = FallbackDodgeClip();
             }
+            if (enemyTellClip == null)
+            {
+                enemyTellClip = FallbackEnemyTellClip();
+            }
             if (rewardClaimClip == null)
             {
                 rewardClaimClip = FallbackRewardClaimClip();
@@ -2819,6 +2826,14 @@ namespace FourfoldEchoes.Product
                 "D020_Dodge_Fallback",
                 new ProceduralToneSegment(620f, 0.040f, 0.12f),
                 new ProceduralToneSegment(410f, 0.060f, 0.10f)));
+        }
+
+        private static AudioClip FallbackEnemyTellClip()
+        {
+            return fallbackEnemyTellClip ?? (fallbackEnemyTellClip = BuildToneClip(
+                "D020_EnemyTell_Fallback",
+                new ProceduralToneSegment(150f, 0.070f, 0.15f),
+                new ProceduralToneSegment(112f, 0.055f, 0.12f)));
         }
 
         private static AudioClip FallbackRewardClaimClip()
