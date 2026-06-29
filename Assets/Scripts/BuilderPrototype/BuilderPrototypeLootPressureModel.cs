@@ -135,7 +135,9 @@ namespace FourfoldEchoes.BuilderPrototype
     {
         internal BuilderPrototypeExtractionResult(
             BuilderPrototypeExtractionOutcome outcome,
-            int riskPercent,
+            int rawRiskPercent,
+            int adjustedRiskPercent,
+            int riskReductionPercent,
             int safetyRollPercent,
             int bankedValue,
             int lostValue,
@@ -143,7 +145,10 @@ namespace FourfoldEchoes.BuilderPrototype
             int lostItemCount)
         {
             Outcome = outcome;
-            RiskPercent = riskPercent;
+            RawRiskPercent = rawRiskPercent;
+            AdjustedRiskPercent = adjustedRiskPercent;
+            RiskReductionPercent = riskReductionPercent;
+            RiskPercent = adjustedRiskPercent;
             SafetyRollPercent = safetyRollPercent;
             BankedValue = bankedValue;
             LostValue = lostValue;
@@ -152,6 +157,9 @@ namespace FourfoldEchoes.BuilderPrototype
         }
 
         public BuilderPrototypeExtractionOutcome Outcome { get; }
+        public int RawRiskPercent { get; }
+        public int AdjustedRiskPercent { get; }
+        public int RiskReductionPercent { get; }
         public int RiskPercent { get; }
         public int SafetyRollPercent { get; }
         public int BankedValue { get; }
@@ -216,15 +224,22 @@ namespace FourfoldEchoes.BuilderPrototype
             PressureScore = Clamp(AddClamped(PressureScore, amount), 0, MaxPressureScore);
         }
 
-        public BuilderPrototypeExtractionResult AttemptExtraction(int safetyRollPercent)
+        public int CalculateAdjustedExtractionRiskPercent(int riskReductionPercent)
+        {
+            return AdjustExtractionRiskPercent(ExtractionRiskPercent, riskReductionPercent);
+        }
+
+        public BuilderPrototypeExtractionResult AttemptExtraction(int safetyRollPercent, int riskReductionPercent = 0)
         {
             var roll = Clamp(safetyRollPercent, 0, 100);
             if (!HasCarriedLoot)
             {
-                return new BuilderPrototypeExtractionResult(BuilderPrototypeExtractionOutcome.NoCarriedLoot, 0, roll, 0, 0, 0, 0);
+                return new BuilderPrototypeExtractionResult(BuilderPrototypeExtractionOutcome.NoCarriedLoot, 0, 0, 0, roll, 0, 0, 0, 0);
             }
 
-            var risk = ExtractionRiskPercent;
+            var rawRisk = ExtractionRiskPercent;
+            var reduction = NormalizeRiskReductionPercent(riskReductionPercent);
+            var risk = AdjustExtractionRiskPercent(rawRisk, reduction);
             var itemCount = CarriedItemCount;
             var lootValue = CarriedLootValue;
             var powerBudget = CarriedPowerBudget;
@@ -235,11 +250,11 @@ namespace FourfoldEchoes.BuilderPrototype
                 BankedLootValue = AddClamped(BankedLootValue, lootValue);
                 BankedPowerBudget = AddClamped(BankedPowerBudget, powerBudget);
                 ClearCarriedRun();
-                return new BuilderPrototypeExtractionResult(BuilderPrototypeExtractionOutcome.Extracted, risk, roll, lootValue, 0, itemCount, 0);
+                return new BuilderPrototypeExtractionResult(BuilderPrototypeExtractionOutcome.Extracted, rawRisk, risk, reduction, roll, lootValue, 0, itemCount, 0);
             }
 
             ClearCarriedRun();
-            return new BuilderPrototypeExtractionResult(BuilderPrototypeExtractionOutcome.Lost, risk, roll, 0, lootValue, 0, itemCount);
+            return new BuilderPrototypeExtractionResult(BuilderPrototypeExtractionOutcome.Lost, rawRisk, risk, reduction, roll, 0, lootValue, 0, itemCount);
         }
 
         public void LoseCarriedLootAndResetPressure()
@@ -277,6 +292,17 @@ namespace FourfoldEchoes.BuilderPrototype
 
             var risk = 8 + (PressureScore / 2) + (CarriedRiskWeight * 2) + (CarriedItemCount * 2);
             return Clamp(risk, 5, MaxExtractionRiskPercent);
+        }
+
+        private static int AdjustExtractionRiskPercent(int rawRiskPercent, int riskReductionPercent)
+        {
+            var risk = Clamp(rawRiskPercent, 0, MaxExtractionRiskPercent);
+            return Clamp(risk - NormalizeRiskReductionPercent(riskReductionPercent), 0, MaxExtractionRiskPercent);
+        }
+
+        private static int NormalizeRiskReductionPercent(int riskReductionPercent)
+        {
+            return Clamp(riskReductionPercent, 0, MaxExtractionRiskPercent);
         }
 
         private void ClearCarriedRun()

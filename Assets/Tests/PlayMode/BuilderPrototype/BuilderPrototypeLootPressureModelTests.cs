@@ -100,6 +100,41 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
         }
 
         [Test]
+        public void ExtractionRiskReduction_LowersAdjustedRiskAndAttemptUsesAdjustedRisk()
+        {
+            var item = new BuilderPrototypeLootItem("guarded-cache", BuilderPrototypeLootRarity.Rare, 12, 2);
+            var unguarded = new BuilderPrototypeLootPressureModel();
+            unguarded.CollectLoot(item);
+            var rawRisk = unguarded.ExtractionRiskPercent;
+            var guardedRisk = rawRisk - 2;
+
+            Assert.That(rawRisk, Is.GreaterThan(2));
+            Assert.That(unguarded.CalculateAdjustedExtractionRiskPercent(0), Is.EqualTo(rawRisk));
+            Assert.That(unguarded.CalculateAdjustedExtractionRiskPercent(-5), Is.EqualTo(rawRisk));
+            Assert.That(unguarded.CalculateAdjustedExtractionRiskPercent(2), Is.EqualTo(guardedRisk));
+            Assert.That(unguarded.CalculateAdjustedExtractionRiskPercent(999), Is.EqualTo(0));
+
+            var unguardedResult = unguarded.AttemptExtraction(rawRisk - 1);
+
+            Assert.That(unguardedResult.Outcome, Is.EqualTo(BuilderPrototypeExtractionOutcome.Lost));
+            Assert.That(unguardedResult.RawRiskPercent, Is.EqualTo(rawRisk));
+            Assert.That(unguardedResult.AdjustedRiskPercent, Is.EqualTo(rawRisk));
+            Assert.That(unguardedResult.RiskPercent, Is.EqualTo(rawRisk));
+            Assert.That(unguardedResult.RiskReductionPercent, Is.EqualTo(0));
+
+            var guarded = new BuilderPrototypeLootPressureModel();
+            guarded.CollectLoot(item);
+
+            var guardedResult = guarded.AttemptExtraction(rawRisk - 1, 2);
+
+            Assert.That(guardedResult.Outcome, Is.EqualTo(BuilderPrototypeExtractionOutcome.Extracted));
+            Assert.That(guardedResult.RawRiskPercent, Is.EqualTo(rawRisk));
+            Assert.That(guardedResult.AdjustedRiskPercent, Is.EqualTo(guardedRisk));
+            Assert.That(guardedResult.RiskPercent, Is.EqualTo(guardedRisk));
+            Assert.That(guardedResult.RiskReductionPercent, Is.EqualTo(2));
+        }
+
+        [Test]
         public void FailedExtraction_LosesCarriedLootWithoutChangingExistingBank()
         {
             var model = new BuilderPrototypeLootPressureModel();
