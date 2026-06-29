@@ -99,6 +99,16 @@ namespace FourfoldEchoes.Product
         private const float BossToolOpeningDamageBonus = 18f;
         private const float CombatTextDuration = 0.90f;
         private const int MaxCombatTexts = 10;
+        private const float HitStreakWindowDuration = 2.15f;
+        private const float ChaosDecayPerSecond = 0.16f;
+        private const float ChaosHitGain = 0.10f;
+        private const float ChaosDefeatGain = 0.22f;
+        private const float ChaosBossOpeningGain = 0.30f;
+        private const float ChaosPlayerHitGain = 0.20f;
+        private const float CameraShakeDecay = 1.85f;
+        private const float CameraShakeHit = 0.08f;
+        private const float CameraShakeDefeat = 0.13f;
+        private const float CameraShakeDanger = 0.18f;
         private const int RewardMaskEdge = 1;
         private const int RewardMaskWard = 2;
         private const string SaveKeyCleared = "fourfold.d020.slice.cleared";
@@ -174,6 +184,13 @@ namespace FourfoldEchoes.Product
         private string rewardNoticeTitle = string.Empty;
         private string rewardNoticeBody = string.Empty;
         private float bossDefeatTimer;
+        private int hitStreak;
+        private float hitStreakTimer;
+        private float chaos01;
+        private float cameraShakeTrauma;
+        private Vector3 fixedCameraBasePosition;
+        private Quaternion fixedCameraBaseRotation;
+        private bool fixedCameraBaseCaptured;
         private bool firstRewardClaimedThisRun;
         private bool secondRewardClaimedThisRun;
         private bool returnedToHubThisRun;
@@ -286,6 +303,7 @@ namespace FourfoldEchoes.Product
             EnsureExplorationReferences();
             initialPlayerPosition = player.position;
             initialPlayerRotation = player.rotation;
+            CaptureCameraBaseIfNeeded();
             if (secondRouteLockedRead != null)
             {
                 secondRouteLockedReadBaseScale = secondRouteLockedRead.transform.localScale;
@@ -410,6 +428,7 @@ namespace FourfoldEchoes.Product
 
             if (runFailed)
             {
+                UpdateActionFeel(Time.unscaledDeltaTime);
                 UpdateFailureInput();
                 return;
             }
@@ -424,6 +443,7 @@ namespace FourfoldEchoes.Product
             bossDefeatTimer = Mathf.Max(0f, bossDefeatTimer - dt);
             UpdateCombatTexts(dt);
             UpdateBossOpenings(dt);
+            UpdateActionFeel(dt);
             if (!runFailed && !returnedToHubThisRun)
             {
                 runTimerSeconds += dt;
@@ -516,6 +536,9 @@ namespace FourfoldEchoes.Product
             attackReadTimer = 0.11f;
             PlayCue(attackClip, 0.72f);
             var hitAny = false;
+            var hitsThisAttack = 0;
+            var defeatsThisAttack = 0;
+            var hitBossOpening = false;
             for (var i = 0; i < enemyHealth.Length; i++)
             {
                 var enemy = enemies[i];
@@ -538,6 +561,8 @@ namespace FourfoldEchoes.Product
                 }
 
                 hitAny = true;
+                hitsThisAttack += 1;
+                hitBossOpening |= BossOpeningActive(i);
                 var damage = CurrentAttackDamage(i);
                 enemyHealth[i] -= damage;
                 AddCombatText(enemy.position, $"-{Mathf.CeilToInt(damage)}", BossOpeningActive(i) ? new Color(1.0f, 0.72f, 0.24f) : new Color(1.0f, 0.94f, 0.62f));
@@ -546,6 +571,7 @@ namespace FourfoldEchoes.Product
                 TryTriggerBossEnrage(i, enemy);
                 if (enemyHealth[i] <= 0f)
                 {
+                    defeatsThisAttack += 1;
                     AddCombatText(enemy.position, FourfoldLanguage.T(progressData, "DOWN", "撃破"), new Color(0.82f, 0.32f, 1.0f));
                     if (IsBossEnemy(i))
                     {
@@ -562,8 +588,9 @@ namespace FourfoldEchoes.Product
 
             if (hitAny)
             {
+                RegisterAttackImpact(hitsThisAttack, defeatsThisAttack, hitBossOpening);
                 ApplyLumenLinkRecovery();
-                PlayCue(hitClip, 0.86f);
+                PlayCue(hitClip, 0.86f, HitConfirmPitch(hitsThisAttack, defeatsThisAttack));
             }
 
             if (!hitAny && attackRead != null)
@@ -667,6 +694,7 @@ namespace FourfoldEchoes.Product
             var damage = EnemyDamageFor(index);
             playerHealth = Mathf.Max(0f, playerHealth - damage);
             AddCombatText(player.position, $"-{Mathf.CeilToInt(damage)}", new Color(1.0f, 0.28f, 0.18f));
+            RegisterPlayerDamageJuice();
             playerInvulnerableTimer = InvulnerableAfterHit;
             var knockback = (player.position - enemy.position);
             knockback.y = 0f;
@@ -675,7 +703,7 @@ namespace FourfoldEchoes.Product
                 player.position += knockback.normalized * 0.42f;
             }
 
-            PlayCue(hitClip, 0.62f);
+            PlayCue(hitClip, 0.66f, 0.82f);
             if (playerHealth <= 0f)
             {
                 RegisterRunFailure();
@@ -698,7 +726,7 @@ namespace FourfoldEchoes.Product
 
             attackRead.transform.localPosition = facing.normalized * 0.86f + new Vector3(0f, 0.06f, 0f);
             var relicBoost = AnyRelicActive() ? 0.22f : 0f;
-            var pulse = 1.16f + relicBoost + Mathf.Sin(Time.time * 36f) * 0.08f;
+            var pulse = 1.16f + relicBoost + chaos01 * 0.16f + Mathf.Sin(Time.time * 36f) * 0.08f;
             attackRead.transform.localScale = new Vector3(pulse, 0.025f, pulse);
         }
 
@@ -1059,6 +1087,229 @@ namespace FourfoldEchoes.Product
             return $"BOSS DOWN: defeat {remaining} remaining {noun} to unlock rewards.";
         }
 
+        public static string ChaosStateText(int hitStreak, float hitStreakTimer, float chaos01, bool bossOpeningActive, bool lowHealth)
+        {
+            if (bossOpeningActive)
+            {
+                return "BREAK WINDOW: commit now.";
+            }
+
+            if (lowHealth)
+            {
+                return "DANGER: dodge lanes matter.";
+            }
+
+            if (hitStreak > 1 && hitStreakTimer > 0f)
+            {
+                return $"STREAK x{Mathf.Clamp(hitStreak, 2, 99)}  CHAOS {Mathf.RoundToInt(Mathf.Clamp01(chaos01) * 100f)}%";
+            }
+
+            if (chaos01 >= 0.68f)
+            {
+                return "CHAOS HIGH: keep moving.";
+            }
+
+            if (chaos01 >= 0.34f)
+            {
+                return "CHAOS RISING: read tells.";
+            }
+
+            return "FLOW: read, strike, dodge.";
+        }
+
+        public static string ChaosStateTextJa(int hitStreak, float hitStreakTimer, float chaos01, bool bossOpeningActive, bool lowHealth)
+        {
+            if (bossOpeningActive)
+            {
+                return "崩し: 今すぐ攻撃。";
+            }
+
+            if (lowHealth)
+            {
+                return "危険: 回避ルートを読む。";
+            }
+
+            if (hitStreak > 1 && hitStreakTimer > 0f)
+            {
+                return $"連撃 x{Mathf.Clamp(hitStreak, 2, 99)}  カオス {Mathf.RoundToInt(Mathf.Clamp01(chaos01) * 100f)}%";
+            }
+
+            if (chaos01 >= 0.68f)
+            {
+                return "カオス高: 止まるな。";
+            }
+
+            if (chaos01 >= 0.34f)
+            {
+                return "カオス上昇: 予兆を見る。";
+            }
+
+            return "流れ: 読む、斬る、避ける。";
+        }
+
+        public static Color ChaosHudColor(float chaos01, bool bossOpeningActive, bool lowHealth)
+        {
+            if (bossOpeningActive)
+            {
+                return new Color(1.0f, 0.72f, 0.24f);
+            }
+
+            if (lowHealth)
+            {
+                return new Color(1.0f, 0.22f, 0.16f);
+            }
+
+            var chaos = Mathf.Clamp01(chaos01);
+            return Color.Lerp(new Color(0.34f, 0.90f, 0.52f), new Color(0.95f, 0.28f, 1.0f), chaos);
+        }
+
+        public static float HitConfirmPitch(int hitCount, int defeatCount)
+        {
+            return Mathf.Clamp(1.0f + Mathf.Max(0, hitCount - 1) * 0.04f + Mathf.Max(0, defeatCount) * 0.08f, 0.92f, 1.22f);
+        }
+
+        public static string HitStreakImpactText(int hitStreak, bool defeated, bool bossOpeningHit)
+        {
+            var streak = Mathf.Clamp(hitStreak, 0, 99);
+            if (bossOpeningHit)
+            {
+                return $"BREAK x{Mathf.Max(1, streak)}";
+            }
+
+            if (defeated)
+            {
+                return $"CHAIN x{Mathf.Max(1, streak)}";
+            }
+
+            return streak >= 3 ? $"STREAK x{streak}" : string.Empty;
+        }
+
+        private void CaptureCameraBaseIfNeeded()
+        {
+            if (fixedCamera == null || fixedCameraBaseCaptured)
+            {
+                return;
+            }
+
+            fixedCameraBasePosition = fixedCamera.transform.position;
+            fixedCameraBaseRotation = fixedCamera.transform.rotation;
+            fixedCameraBaseCaptured = true;
+        }
+
+        private void RegisterAttackImpact(int hitCount, int defeatCount, bool bossOpeningHit)
+        {
+            if (hitCount <= 0)
+            {
+                return;
+            }
+
+            if (hitStreakTimer <= 0f)
+            {
+                hitStreak = 0;
+            }
+
+            hitStreak = Mathf.Clamp(hitStreak + hitCount + Mathf.Max(0, defeatCount), 1, 99);
+            hitStreakTimer = HitStreakWindowDuration;
+            var defeated = defeatCount > 0;
+            chaos01 = Mathf.Clamp01(
+                chaos01
+                + hitCount * ChaosHitGain
+                + defeatCount * ChaosDefeatGain
+                + (bossOpeningHit ? ChaosBossOpeningGain * 0.45f : 0f));
+            cameraShakeTrauma = Mathf.Clamp01(
+                cameraShakeTrauma
+                + hitCount * CameraShakeHit
+                + defeatCount * CameraShakeDefeat
+                + (bossOpeningHit ? CameraShakeDanger : 0f));
+
+            var impactText = HitStreakImpactText(hitStreak, defeated, bossOpeningHit);
+            if (!string.IsNullOrEmpty(impactText))
+            {
+                AddCombatText(player.position + facing.normalized * 1.05f, impactText, bossOpeningHit ? new Color(1.0f, 0.72f, 0.24f) : new Color(0.64f, 0.90f, 1.0f));
+            }
+        }
+
+        private void RegisterPlayerDamageJuice()
+        {
+            hitStreak = 0;
+            hitStreakTimer = 0f;
+            chaos01 = Mathf.Clamp01(chaos01 + ChaosPlayerHitGain);
+            cameraShakeTrauma = Mathf.Clamp01(cameraShakeTrauma + CameraShakeDanger);
+            if (playerHealth <= PlayerMaxHealth * 0.35f && playerHealth > 0f)
+            {
+                AddCombatText(player.position, FourfoldLanguage.T(progressData, "DANGER", "危険"), new Color(1.0f, 0.20f, 0.12f));
+            }
+        }
+
+        private void RegisterBossOpeningJuice(Vector3 worldPosition)
+        {
+            chaos01 = Mathf.Clamp01(chaos01 + ChaosBossOpeningGain);
+            cameraShakeTrauma = Mathf.Clamp01(cameraShakeTrauma + CameraShakeDanger);
+            hitStreakTimer = Mathf.Max(hitStreakTimer, HitStreakWindowDuration * 0.65f);
+            AddCombatText(worldPosition, FourfoldLanguage.T(progressData, "BREAK!", "崩し!"), new Color(1.0f, 0.72f, 0.24f));
+        }
+
+        private void UpdateActionFeel(float deltaTime)
+        {
+            if (hitStreakTimer > 0f)
+            {
+                hitStreakTimer = Mathf.Max(0f, hitStreakTimer - deltaTime);
+                if (hitStreakTimer <= 0f)
+                {
+                    hitStreak = 0;
+                }
+            }
+            else
+            {
+                hitStreak = 0;
+            }
+
+            chaos01 = Mathf.Max(0f, chaos01 - ChaosDecayPerSecond * deltaTime);
+            cameraShakeTrauma = Mathf.Max(0f, cameraShakeTrauma - CameraShakeDecay * deltaTime);
+            UpdateCameraShake();
+        }
+
+        private void UpdateCameraShake()
+        {
+            CaptureCameraBaseIfNeeded();
+            if (fixedCamera == null || !fixedCameraBaseCaptured)
+            {
+                return;
+            }
+
+            if (cameraShakeTrauma <= 0.001f)
+            {
+                fixedCamera.transform.position = fixedCameraBasePosition;
+                fixedCamera.transform.rotation = fixedCameraBaseRotation;
+                return;
+            }
+
+            var strength = cameraShakeTrauma * cameraShakeTrauma;
+            var offset = new Vector3(
+                Mathf.Sin(Time.time * 73.1f),
+                Mathf.Sin(Time.time * 91.7f) * 0.16f,
+                Mathf.Cos(Time.time * 67.3f)) * (0.13f * strength);
+            fixedCamera.transform.position = fixedCameraBasePosition + offset;
+            fixedCamera.transform.rotation = fixedCameraBaseRotation * Quaternion.Euler(
+                Mathf.Sin(Time.time * 83.0f) * 0.34f * strength,
+                0f,
+                Mathf.Cos(Time.time * 79.0f) * 0.34f * strength);
+        }
+
+        private void ResetActionFeel()
+        {
+            hitStreak = 0;
+            hitStreakTimer = 0f;
+            chaos01 = 0f;
+            cameraShakeTrauma = 0f;
+            CaptureCameraBaseIfNeeded();
+            if (fixedCamera != null && fixedCameraBaseCaptured)
+            {
+                fixedCamera.transform.position = fixedCameraBasePosition;
+                fixedCamera.transform.rotation = fixedCameraBaseRotation;
+            }
+        }
+
         private void ResetRun()
         {
             pendingExitAction = PendingExitAction.None;
@@ -1080,6 +1331,7 @@ namespace FourfoldEchoes.Product
             lastLostRelicsOnFailure = 0;
             lastLostRelicMask = 0;
             bossDefeatTimer = 0f;
+            ResetActionFeel();
             rewardNoticeTimer = 0f;
             rewardNoticeTitle = string.Empty;
             rewardNoticeBody = string.Empty;
@@ -1174,7 +1426,9 @@ namespace FourfoldEchoes.Product
 
             bossDefeatedThisRun = true;
             bossDefeatTimer = 2.8f;
-            PlayCue(rewardReadyClip, 0.82f);
+            chaos01 = Mathf.Clamp01(chaos01 + ChaosDefeatGain);
+            cameraShakeTrauma = Mathf.Clamp01(cameraShakeTrauma + CameraShakeDefeat + CameraShakeHit);
+            PlayCue(rewardReadyClip, 0.82f, 1.12f);
         }
 
         private void RegisterRunFailure()
@@ -1795,6 +2049,7 @@ namespace FourfoldEchoes.Product
             ShowRewardNotice(
                 FourfoldLanguage.T(progressData, "BOSS OPENING", "ボスに隙"),
                 FourfoldLanguage.T(progressData, "Tool pulse exposed the boss. Attack now for bonus damage.", "ツールでボスに隙を作った。今は攻撃ダメージが上がる。"));
+            RegisterBossOpeningJuice(enemies[index].position);
             PlayCue(rewardReadyClip, 0.70f);
             return true;
         }
@@ -1888,7 +2143,10 @@ namespace FourfoldEchoes.Product
                 player.position = ResolveBlockedMove(player.position, pushed);
             }
 
-            PlayCue(rewardReadyClip, 0.70f);
+            chaos01 = Mathf.Clamp01(chaos01 + ChaosPlayerHitGain);
+            cameraShakeTrauma = Mathf.Clamp01(cameraShakeTrauma + CameraShakeDanger);
+            AddCombatText(enemy.position, FourfoldLanguage.T(progressData, "ENRAGED", "激昂"), new Color(1.0f, 0.22f, 0.16f));
+            PlayCue(rewardReadyClip, 0.70f, 0.84f);
         }
 
         private Vector3 EnemyHitScale(int index, bool defeated)
@@ -2782,6 +3040,11 @@ namespace FourfoldEchoes.Product
 
         private void PlayCue(AudioClip clip, float volume)
         {
+            PlayCue(clip, volume, 1f);
+        }
+
+        private void PlayCue(AudioClip clip, float volume, float pitch)
+        {
             if (clip == null)
             {
                 return;
@@ -2794,6 +3057,7 @@ namespace FourfoldEchoes.Product
 
             if (audioSource != null)
             {
+                audioSource.pitch = Mathf.Clamp(pitch, 0.62f, 1.36f);
                 audioSource.PlayOneShot(clip, Mathf.Clamp01(volume * SfxVolumeScale()));
             }
         }
@@ -2858,6 +3122,7 @@ namespace FourfoldEchoes.Product
             var uiScale = FourfoldRuntimeUi.SafeUiScale(progressData);
             var rect = PrimaryHudRect(Screen.width);
             var width = rect.width;
+            DrawActionFeelOverlay();
             FourfoldRuntimeUi.DrawPanel(rect);
 
             var style = new GUIStyle(GUI.skin.label)
@@ -2929,8 +3194,15 @@ namespace FourfoldEchoes.Product
                 ? new Color(1.0f, 0.46f, 0.22f)
                 : new Color(0.34f, 0.90f, 0.52f);
             FourfoldRuntimeUi.DrawChip(new Rect(30f, 206f, width - 56f, 34f), RunRiskStateText(), riskColor, mutedStyle);
-            DrawBuildSlots(new Rect(30f, 248f, width - 56f, 34f), mutedStyle);
-            GUI.Label(new Rect(30f, 288f, width - 56f, 26f), $"{resultState}  {timeState}", mutedStyle);
+            var lowHealth = playerHealth <= PlayerMaxHealth * 0.35f && !runCleared && !returnedToHubThisRun;
+            var openingActive = AnyBossOpeningActive();
+            var chaosText = FourfoldLanguage.T(
+                progressData,
+                ChaosStateText(hitStreak, hitStreakTimer, chaos01, openingActive, lowHealth),
+                ChaosStateTextJa(hitStreak, hitStreakTimer, chaos01, openingActive, lowHealth));
+            FourfoldRuntimeUi.DrawChip(new Rect(30f, 248f, width - 56f, 34f), chaosText, ChaosHudColor(chaos01, openingActive, lowHealth), mutedStyle);
+            DrawBuildSlots(new Rect(30f, 290f, width - 56f, 34f), mutedStyle);
+            GUI.Label(new Rect(30f, 330f, width - 56f, 26f), $"{resultState}  {timeState}", mutedStyle);
             DrawObjectiveMarker(style);
             DrawRewardNotice(style, mutedStyle);
             DrawCombatTexts(style);
@@ -3060,6 +3332,34 @@ namespace FourfoldEchoes.Product
             FourfoldRuntimeUi.DrawPanel(panelRect);
             GUI.Label(new Rect(panelRect.x + 22f, panelRect.y + 16f, panelWidth - 44f, 28f), rewardNoticeTitle, style);
             GUI.Label(new Rect(panelRect.x + 22f, panelRect.y + 50f, panelWidth - 44f, 42f), rewardNoticeBody, mutedStyle);
+        }
+
+        private void DrawActionFeelOverlay()
+        {
+            var color = Color.clear;
+            if (playerInvulnerableTimer > 0f && !runFailed)
+            {
+                color = new Color(1.0f, 0.08f, 0.02f, Mathf.Clamp01(playerInvulnerableTimer / InvulnerableAfterHit) * 0.10f);
+            }
+            else if (AnyBossOpeningActive())
+            {
+                var pulse = 0.55f + Mathf.Sin(Time.time * 16f) * 0.45f;
+                color = new Color(1.0f, 0.66f, 0.05f, 0.035f + pulse * 0.035f);
+            }
+            else if (hitStreak > 2 && hitStreakTimer > 0f)
+            {
+                color = new Color(0.38f, 0.78f, 1.0f, Mathf.Clamp01(hitStreakTimer / HitStreakWindowDuration) * 0.035f);
+            }
+
+            if (color.a <= 0f)
+            {
+                return;
+            }
+
+            var previous = GUI.color;
+            GUI.color = color;
+            GUI.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), Texture2D.whiteTexture);
+            GUI.color = previous;
         }
 
         private void DrawBuildSlots(Rect rect, GUIStyle style)
@@ -3442,7 +3742,7 @@ namespace FourfoldEchoes.Product
 
         private static Rect PrimaryHudRect(int screenWidth)
         {
-            return new Rect(16f, 16f, Mathf.Min(600f, screenWidth - 32f), 326f);
+            return new Rect(16f, 16f, Mathf.Min(600f, screenWidth - 32f), 368f);
         }
 
         private static Rect BossHudRect(int screenWidth)
