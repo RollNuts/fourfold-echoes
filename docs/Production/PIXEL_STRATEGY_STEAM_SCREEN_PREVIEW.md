@@ -23,6 +23,9 @@ needs a game screen that can sell the decision at thumbnail size:
 - the board carries a FOURFOLD-specific visual read: four corner sigils, echo
   shadows behind changed cells, a carry-loot rail, gate danger frames, and a
   four-beat seal counter.
+- each A/B/C card has a one-step tradeoff forecast: baiting the chosen hero
+  raises loot and threat, cutting to the gate opens extraction while cracking
+  pressure, and greed relics spike loot while pushing the exit away.
 
 The screen also bakes in the latest premise read: a "chosen" adventurer starts
 with a wood stick and a few coins, then gets shoved toward an absurd threat.
