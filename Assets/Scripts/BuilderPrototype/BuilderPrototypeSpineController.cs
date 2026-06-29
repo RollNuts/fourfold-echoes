@@ -6,7 +6,7 @@ namespace FourfoldEchoes.BuilderPrototype
 {
     public sealed class BuilderPrototypeSpineController : MonoBehaviour
     {
-        public const string SceneContractText = "PR-07A stat hooks: build capacity, cursor tempo, combat edge, and loot pressure.";
+        public const string SceneContractText = "PR-08A extraction guard: defensive stats reduce carried-loot extraction risk.";
         public const string ControlPromptText = "Move LS/WASD | Build X/B | Combat Y/C | Loot LB/L | Extract RB/E | Reset Start/R";
         public const string BuildHookPromptText = "Build: move cursor LS/arrows | Place A/J | Remove X/K | Exit B/Tab";
         public const string CombatHookPromptText = "Combat preview: read telegraphs, safe lanes, and flank/rear bonus | Exit B/Tab";
@@ -37,6 +37,10 @@ namespace FourfoldEchoes.BuilderPrototype
         private const double BuilderPowerBlockBonusStartsAt = 10d;
         private const double BuilderPowerPerBonusBlock = 4d;
         private const double StrikerDamageEdgeStartsAt = 10d;
+        private const double SentinelGuardRiskReductionStartsAt = 10d;
+        private const double SentinelGuardPerRiskReduction = 5d;
+        private const double VitalityRiskReductionStartsAt = 100d;
+        private const double VitalityPerRiskReduction = 20d;
         private const int FlankCombatEdgeBonus = 2;
         private const int RearCombatEdgeBonus = 4;
 
@@ -104,7 +108,14 @@ namespace FourfoldEchoes.BuilderPrototype
         public int BankedLootItemCount => lootPressure.BankedItemCount;
         public int PressureScore => lootPressure.PressureScore;
         public BuilderPrototypePressureBand PressureBand => lootPressure.PressureBand;
-        public int ExtractionRiskPercent => lootPressure.ExtractionRiskPercent;
+        public int RawExtractionRiskPercent => lootPressure.ExtractionRiskPercent;
+        public int ExtractionRiskPercent => RawExtractionRiskPercent;
+        public int ExtractionGuardRiskReduction => ExtractionGuardRiskReductionFor(
+            characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.SentinelGuard),
+            characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.Vitality));
+        public int AdjustedExtractionRiskPercent => lootPressure.CalculateAdjustedExtractionRiskPercent(ExtractionGuardRiskReduction);
+        public string ExtractionRiskHudText => FormatExtractionRiskHud();
+        public string ExtractionGuardHudText => FormatExtractionGuardHud();
         public int DangerTier => PressureTierForHud(lootPressure.PressureScore);
         public string LastLootRunEvent => lastLootRunEvent;
         public bool HasRequiredHookAnchors => buildHookAnchor != null && combatHookAnchor != null && lootHookAnchor != null && extractHookAnchor != null;
@@ -765,14 +776,14 @@ namespace FourfoldEchoes.BuilderPrototype
 
         private BuilderPrototypeExtractionResult AttemptPrototypeExtractionForPreview(int safetyRollPercent)
         {
-            lastExtractionResult = lootPressure.AttemptExtraction(safetyRollPercent);
+            lastExtractionResult = lootPressure.AttemptExtraction(safetyRollPercent, ExtractionGuardRiskReduction);
             switch (lastExtractionResult.Outcome)
             {
                 case BuilderPrototypeExtractionOutcome.Extracted:
-                    lastLootRunEvent = $"Extracted {lastExtractionResult.BankedValue} value ({lastExtractionResult.BankedItemCount} item), risk {lastExtractionResult.RiskPercent}%, roll {lastExtractionResult.SafetyRollPercent}";
+                    lastLootRunEvent = $"Extracted {lastExtractionResult.BankedValue} value ({lastExtractionResult.BankedItemCount} item), risk {FormatExtractionRiskTransition(lastExtractionResult.RawRiskPercent, lastExtractionResult.AdjustedRiskPercent)}, roll {lastExtractionResult.SafetyRollPercent}";
                     break;
                 case BuilderPrototypeExtractionOutcome.Lost:
-                    lastLootRunEvent = $"Lost {lastExtractionResult.LostValue} value ({lastExtractionResult.LostItemCount} item), risk {lastExtractionResult.RiskPercent}%, roll {lastExtractionResult.SafetyRollPercent}";
+                    lastLootRunEvent = $"Lost {lastExtractionResult.LostValue} value ({lastExtractionResult.LostItemCount} item), risk {FormatExtractionRiskTransition(lastExtractionResult.RawRiskPercent, lastExtractionResult.AdjustedRiskPercent)}, roll {lastExtractionResult.SafetyRollPercent}";
                     break;
                 default:
                     lastLootRunEvent = "No carried loot to extract";
@@ -909,7 +920,9 @@ namespace FourfoldEchoes.BuilderPrototype
                 + " Break "
                 + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.BreakerPower))
                 + " Guard "
-                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.SentinelGuard));
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.SentinelGuard))
+                + " Vit "
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.Vitality));
         }
 
         private string FormatCharacterBuildPressureHud()
@@ -920,9 +933,8 @@ namespace FourfoldEchoes.BuilderPrototype
                 + BuilderPrototypeLootPressureModel.MaxPressureScore
                 + " "
                 + lootPressure.PressureBand
-                + " | Risk "
-                + lootPressure.ExtractionRiskPercent
-                + "%";
+                + " | "
+                + ExtractionRiskHudText;
         }
 
         private string FormatCharacterBuildGameplayHud()
@@ -977,6 +989,27 @@ namespace FourfoldEchoes.BuilderPrototype
             return value.ToString("0.##", CultureInfo.InvariantCulture);
         }
 
+        private string FormatExtractionRiskHud()
+        {
+            return "Risk " + FormatExtractionRiskTransition(RawExtractionRiskPercent, AdjustedExtractionRiskPercent);
+        }
+
+        private string FormatExtractionGuardHud()
+        {
+            return "Guard Buffer -"
+                + ExtractionGuardRiskReduction
+                + "% (SentinelGuard "
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.SentinelGuard))
+                + " + Vitality "
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.Vitality))
+                + ")";
+        }
+
+        private static string FormatExtractionRiskTransition(int rawRiskPercent, int adjustedRiskPercent)
+        {
+            return rawRiskPercent + "% -> " + adjustedRiskPercent + "%";
+        }
+
         private static int BuildBlockBonusForBuilderPower(double builderPower)
         {
             var bonusBlocks = Mathf.FloorToInt((float)((builderPower - BuilderPowerBlockBonusStartsAt) / BuilderPowerPerBonusBlock));
@@ -1015,6 +1048,22 @@ namespace FourfoldEchoes.BuilderPrototype
             }
         }
 
+        private static int ExtractionGuardRiskReductionFor(double sentinelGuard, double vitality)
+        {
+            return RiskReductionFromStat(sentinelGuard, SentinelGuardRiskReductionStartsAt, SentinelGuardPerRiskReduction)
+                + RiskReductionFromStat(vitality, VitalityRiskReductionStartsAt, VitalityPerRiskReduction);
+        }
+
+        private static int RiskReductionFromStat(double value, double startsAt, double perReduction)
+        {
+            if (value <= startsAt || perReduction <= 0d || double.IsNaN(value) || double.IsInfinity(value))
+            {
+                return 0;
+            }
+
+            return Mathf.Max(0, Mathf.FloorToInt((float)((value - startsAt) / perReduction)));
+        }
+
         private static bool Pressed(KeyCode keyboard, KeyCode gamepad)
         {
             return Input.GetKeyDown(keyboard) || Input.GetKeyDown(gamepad);
@@ -1047,12 +1096,13 @@ namespace FourfoldEchoes.BuilderPrototype
                 return;
             }
 
-            GUILayout.BeginArea(new Rect(16f, 16f, 720f, 300f), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16f, 16f, 720f, 340f), GUI.skin.box);
             GUILayout.Label(SceneContractText);
             GUILayout.Label("Mode: " + BuilderPrototypeRunState.LabelFor(runState.Mode));
             GUILayout.Label(CharacterBuildIdentityHudText);
             GUILayout.Label(CharacterBuildStatsHudText);
             GUILayout.Label(CharacterBuildPressureHudText);
+            GUILayout.Label(ExtractionGuardHudText);
             GUILayout.Label(CharacterBuildSourceHudText);
             GUILayout.Label(CharacterBuildGameplayHudText);
             GUILayout.Label("Build Blocks: " + BuildBlocksAvailable + "/" + StartingBuildBlockCapacity + " | Placed: " + PlacedBlockCount + " | Cursor: " + FormatCell(SelectedBuildCell));
@@ -1064,7 +1114,7 @@ namespace FourfoldEchoes.BuilderPrototype
             else if (runState.Mode == BuilderPrototypeMode.LootHook || runState.Mode == BuilderPrototypeMode.ExtractHook)
             {
                 GUILayout.Label("Carried Loot: " + lootPressure.CarriedLootValue + " value | " + lootPressure.CarriedItemCount + " item");
-                GUILayout.Label("Pressure: " + lootPressure.PressureScore + "/" + BuilderPrototypeLootPressureModel.MaxPressureScore + " " + lootPressure.PressureBand + " | Extract Risk: " + lootPressure.ExtractionRiskPercent + "%");
+                GUILayout.Label("Pressure: " + lootPressure.PressureScore + "/" + BuilderPrototypeLootPressureModel.MaxPressureScore + " " + lootPressure.PressureBand + " | Extract " + ExtractionRiskHudText);
                 GUILayout.Label("Banked Loot: " + lootPressure.BankedLootValue + " value | " + lootPressure.BankedItemCount + " item");
                 GUILayout.Label("Loot Event: " + lastLootRunEvent);
             }
