@@ -46,8 +46,10 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
             Assert.That(controller.CombatPreviewTelegraphCount, Is.EqualTo(2));
             Assert.That(controller.CombatPreviewSafety, Is.EqualTo(BuilderPrototypePositionSafety.Threatened));
             Assert.That(controller.CombatPreviewPositionalBonus, Is.EqualTo(BuilderPrototypePositionalBonus.Rear));
+            Assert.That(controller.CombatBuildEdge, Is.EqualTo(12));
             Assert.That(controller.CombatPreviewHudText, Does.Contain("Threatened"));
             Assert.That(controller.CombatPreviewHudText, Does.Contain("Bonus: Rear"));
+            Assert.That(controller.CombatPreviewHudText, Does.Contain("Combat Edge: +12"));
             Assert.That(controller.CombatPreviewHudText, Does.Contain("Telegraphs: 2"));
             Assert.IsTrue(GameObject.Find("Combat Hook Tactical Preview").activeInHierarchy);
             Assert.IsNotNull(GameObject.Find("Combat Telegraph Circle"));
@@ -79,8 +81,10 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
 
             Assert.That(controller.CombatPreviewSafety, Is.EqualTo(BuilderPrototypePositionSafety.Safe));
             Assert.That(controller.CombatPreviewPositionalBonus, Is.EqualTo(BuilderPrototypePositionalBonus.None));
+            Assert.That(controller.CombatBuildEdge, Is.EqualTo(8));
             Assert.That(controller.CombatPreviewHudText, Does.Contain("Combat Preview: Safe"));
             Assert.That(controller.CombatPreviewHudText, Does.Contain("Bonus: None"));
+            Assert.That(controller.CombatPreviewHudText, Does.Contain("Combat Edge: +8"));
         }
 
         private BuilderPrototypeSpineController CreateControllerHarness(Vector3 playerPosition, Vector3 combatAnchorPosition)

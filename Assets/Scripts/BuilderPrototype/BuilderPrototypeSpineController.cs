@@ -32,6 +32,13 @@ namespace FourfoldEchoes.BuilderPrototype
         public Vector3 buildBlockScale = new Vector3(0.9f, 0.56f, 0.9f);
 
         private const float CursorMoveRepeatDuration = 0.18f;
+        private const float MinimumCursorMoveRepeatDuration = 0.08f;
+        private const float MaximumCursorMoveRepeatDuration = 0.3f;
+        private const double BuilderPowerBlockBonusStartsAt = 10d;
+        private const double BuilderPowerPerBonusBlock = 4d;
+        private const double StrikerDamageEdgeStartsAt = 10d;
+        private const int FlankCombatEdgeBonus = 2;
+        private const int RearCombatEdgeBonus = 4;
 
         [Header("Combat Preview")]
         public Material combatTelegraphMaterial;
@@ -111,7 +118,14 @@ namespace FourfoldEchoes.BuilderPrototype
             extractGateReadyMaterial != null &&
             extractGateBankedMaterial != null &&
             extractGateLostMaterial != null;
-        public int BuildBlocksAvailable => buildGrid?.BlocksAvailable ?? startingBuildBlocks;
+        public int BuilderPowerBuildBlockBonus => BuildBlockBonusForBuilderPower(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.BuilderPower));
+        public int StartingBuildBlockCapacity => Mathf.Max(0, startingBuildBlocks) + BuilderPowerBuildBlockBonus;
+        public float BuildCursorRepeatDuration => CursorRepeatDurationForBuildSpeed(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.BuildSpeed));
+        public int BuildSpeedCursorRepeatMilliseconds => Mathf.RoundToInt(BuildCursorRepeatDuration * 1000f);
+        public int CombatBuildEdge => CombatBuildEdgeFor(
+            characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.StrikerDamage),
+            combatPositionalBonus);
+        public int BuildBlocksAvailable => buildGrid?.BlocksAvailable ?? StartingBuildBlockCapacity;
         public int PlacedBlockCount => buildGrid?.PlacedBlockCount ?? 0;
         public Vector2Int SelectedBuildCell => buildGrid?.SelectedCell ?? Vector2Int.zero;
         public int CombatPreviewTelegraphCount => tacticalModel.TelegraphZoneCount;
@@ -125,6 +139,7 @@ namespace FourfoldEchoes.BuilderPrototype
         public string CharacterBuildStatsHudText => FormatCharacterBuildStatsHud();
         public string CharacterBuildPressureHudText => FormatCharacterBuildPressureHud();
         public string CharacterBuildSourceHudText => FormatCharacterBuildSourceHud();
+        public string CharacterBuildGameplayHudText => FormatCharacterBuildGameplayHud();
 
         public void Awake()
         {
@@ -174,7 +189,7 @@ namespace FourfoldEchoes.BuilderPrototype
             buildGrid = new BuilderPrototypeBuildGrid(
                 BuilderPrototypeBuildGrid.DefaultWidth,
                 BuilderPrototypeBuildGrid.DefaultDepth,
-                startingBuildBlocks,
+                StartingBuildBlockCapacity,
                 buildMaxStackHeight);
             EnsureBuildCursor();
             UpdateBuildCursor();
@@ -338,7 +353,7 @@ namespace FourfoldEchoes.BuilderPrototype
             if (cursorDelta != Vector2Int.zero)
             {
                 buildGrid.MoveSelection(cursorDelta.x, cursorDelta.y);
-                cursorMoveRepeatTimer = CursorMoveRepeatDuration;
+                cursorMoveRepeatTimer = BuildCursorRepeatDuration;
             }
 
             if (Pressed(KeyCode.J, KeyCode.JoystickButton0))
@@ -840,6 +855,8 @@ namespace FourfoldEchoes.BuilderPrototype
                 + combatEvaluation.Safety
                 + " | Bonus: "
                 + FormatPositionalBonus(combatPositionalBonus)
+                + " | Combat Edge: +"
+                + CombatBuildEdge
                 + " | Telegraphs: "
                 + tacticalModel.TelegraphZoneCount
                 + " | Unsafe in: "
@@ -908,6 +925,17 @@ namespace FourfoldEchoes.BuilderPrototype
                 + "%";
         }
 
+        private string FormatCharacterBuildGameplayHud()
+        {
+            return "Hooks: Blocks "
+                + StartingBuildBlockCapacity
+                + " (+"
+                + BuilderPowerBuildBlockBonus
+                + " BuilderPower) | Cursor Repeat "
+                + BuildCursorRepeatDuration.ToString("0.00", CultureInfo.InvariantCulture)
+                + "s BuildSpeed";
+        }
+
         private string FormatCharacterBuildSourceHud()
         {
             if (characterBuildSnapshot.AffixBudgets.Count == 0)
@@ -949,6 +977,44 @@ namespace FourfoldEchoes.BuilderPrototype
             return value.ToString("0.##", CultureInfo.InvariantCulture);
         }
 
+        private static int BuildBlockBonusForBuilderPower(double builderPower)
+        {
+            var bonusBlocks = Mathf.FloorToInt((float)((builderPower - BuilderPowerBlockBonusStartsAt) / BuilderPowerPerBonusBlock));
+            return Mathf.Max(0, bonusBlocks);
+        }
+
+        private static float CursorRepeatDurationForBuildSpeed(double buildSpeed)
+        {
+            if (buildSpeed <= 0d || double.IsNaN(buildSpeed) || double.IsInfinity(buildSpeed))
+            {
+                return CursorMoveRepeatDuration;
+            }
+
+            return Mathf.Clamp(
+                CursorMoveRepeatDuration / (float)buildSpeed,
+                MinimumCursorMoveRepeatDuration,
+                MaximumCursorMoveRepeatDuration);
+        }
+
+        private static int CombatBuildEdgeFor(double strikerDamage, BuilderPrototypePositionalBonus positionalBonus)
+        {
+            var strikerEdge = Mathf.Max(0, Mathf.RoundToInt((float)(strikerDamage - StrikerDamageEdgeStartsAt)));
+            return strikerEdge + PositionalCombatEdgeBonus(positionalBonus);
+        }
+
+        private static int PositionalCombatEdgeBonus(BuilderPrototypePositionalBonus positionalBonus)
+        {
+            switch (positionalBonus)
+            {
+                case BuilderPrototypePositionalBonus.Rear:
+                    return RearCombatEdgeBonus;
+                case BuilderPrototypePositionalBonus.Flank:
+                    return FlankCombatEdgeBonus;
+                default:
+                    return 0;
+            }
+        }
+
         private static bool Pressed(KeyCode keyboard, KeyCode gamepad)
         {
             return Input.GetKeyDown(keyboard) || Input.GetKeyDown(gamepad);
@@ -988,7 +1054,8 @@ namespace FourfoldEchoes.BuilderPrototype
             GUILayout.Label(CharacterBuildStatsHudText);
             GUILayout.Label(CharacterBuildPressureHudText);
             GUILayout.Label(CharacterBuildSourceHudText);
-            GUILayout.Label("Build Blocks: " + BuildBlocksAvailable + " | Placed: " + PlacedBlockCount + " | Cursor: " + FormatCell(SelectedBuildCell));
+            GUILayout.Label(CharacterBuildGameplayHudText);
+            GUILayout.Label("Build Blocks: " + BuildBlocksAvailable + "/" + StartingBuildBlockCapacity + " | Placed: " + PlacedBlockCount + " | Cursor: " + FormatCell(SelectedBuildCell));
             GUILayout.Label("Build Event: " + lastBuildEvent);
             if (runState.Mode == BuilderPrototypeMode.CombatHook)
             {
