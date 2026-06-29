@@ -35,8 +35,10 @@ namespace FourfoldEchoes.Tests
             Assert.That(state.Cards[1].Selected, Is.True);
             Assert.That(state.Cards[2].Choice, Is.EqualTo(PixelStrategySteamChoiceKind.GreedRelic));
             Assert.That(state.Cards[2].Tone, Is.EqualTo(PixelStrategySteamScreenCardTone.Doom));
-            Assert.That(state.Cards[0].Title, Does.Contain("CHOSEN"));
+            Assert.That(state.Cards[0].Title, Does.Contain("CHOSEN DEBT"));
             Assert.That(state.Cards[0].FooterText, Does.Contain("wood stick"));
+            Assert.That(state.Cards[1].RewardText, Is.EqualTo("GATE 86%"));
+            Assert.That(state.Cards[2].Title, Is.EqualTo("CLAIM RELIC"));
             Assert.That(state.Cards[2].RiskText, Is.EqualTo("DOOM"));
         }
 
@@ -169,7 +171,7 @@ namespace FourfoldEchoes.Tests
         }
 
         [Test]
-        public void FirstSteamScreenSample_ExposesEdgeHudPressureAndExtractionRead()
+        public void FirstSteamScreenSample_ExposesEdgeHudOathAndGateRead()
         {
             var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();
 

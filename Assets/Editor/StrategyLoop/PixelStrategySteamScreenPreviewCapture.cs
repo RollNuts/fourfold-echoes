@@ -73,16 +73,16 @@ namespace FourfoldEchoes.Editor.StrategyLoop
 
         private static void CreateEdgeHud(PixelStrategySteamScreenPreviewState state)
         {
-            CreatePanel("Loop Bag HUD", new Vector3(-4.95f, 3.05f, 0.1f), new Vector2(2.65f, 0.55f), new Color32(16, 27, 34, 255), 12);
-            CreatePanel("Loop Bag HUD Border", new Vector3(-4.95f, 3.05f, 0.05f), new Vector2(2.72f, 0.62f), new Color32(230, 207, 114, 255), 11);
-            CreateLabel("LOOP", new Vector3(-6.08f, 3.12f, -0.2f), 0.034f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 30);
+            CreatePanel("Echo Debt HUD", new Vector3(-4.95f, 3.05f, 0.1f), new Vector2(2.65f, 0.55f), new Color32(16, 27, 34, 255), 12);
+            CreatePanel("Echo Debt HUD Border", new Vector3(-4.95f, 3.05f, 0.05f), new Vector2(2.72f, 0.62f), new Color32(230, 207, 114, 255), 11);
+            CreateLabel("ECHO", new Vector3(-6.08f, 3.12f, -0.2f), 0.034f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 30);
             CreateLabel(state.LoopNumber.ToString("00"), new Vector3(-5.32f, 3.04f, -0.2f), 0.058f, new Color32(255, 241, 190, 255), TextAnchor.MiddleLeft, 30);
-            CreateLabel("BAG", new Vector3(-4.54f, 3.12f, -0.2f), 0.034f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 30);
+            CreateLabel("DEBT", new Vector3(-4.54f, 3.12f, -0.2f), 0.034f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 30);
             CreateLabel(state.BagValue.ToString(), new Vector3(-3.98f, 3.04f, -0.2f), 0.056f, new Color32(255, 215, 91, 255), TextAnchor.MiddleLeft, 30);
 
             CreatePanel("Pressure HUD Border", new Vector3(0f, 3.05f, 0.05f), new Vector2(4.75f, 0.62f), new Color32(230, 207, 114, 255), 11);
             CreatePanel("Pressure HUD", new Vector3(0f, 3.05f, 0.1f), new Vector2(4.62f, 0.55f), new Color32(16, 27, 34, 255), 12);
-            CreateLabel("PRESSURE", new Vector3(-2.13f, 3.13f, -0.2f), 0.034f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 30);
+            CreateLabel("OATH", new Vector3(-2.13f, 3.13f, -0.2f), 0.034f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 30);
             CreatePanel("Pressure Bar Back", new Vector3(0.88f, 3.04f, -0.05f), new Vector2(2.45f, 0.18f), new Color32(38, 52, 58, 255), 20);
             CreatePanel("Pressure Bar Safe", new Vector3(0.15f, 3.04f, -0.08f), new Vector2(0.88f, 0.18f), new Color32(96, 190, 116, 255), 21);
             CreatePanel("Pressure Bar Risk", new Vector3(0.98f, 3.04f, -0.08f), new Vector2(0.78f, 0.18f), new Color32(232, 201, 74, 255), 21);
@@ -143,14 +143,14 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             CreateSprite("Hero Token", CreateHeroToken(), CellToWorld(origin, state.HeroCell) + new Vector3(0f, 0.13f, -0.25f), 40, new Vector2(0.74f, 0.74f));
             CreateSprite("Extract Gate", CreateExtractToken(), CellToWorld(origin, state.ExtractCell) + new Vector3(0.08f, 0.08f, -0.24f), 39, new Vector2(0.74f, 0.74f));
             CreateSprite("Threat Boss", CreateBossThreatToken(), CellToWorld(origin, new Vector2Int(13, 2)) + new Vector3(0.36f, 0.17f, -0.22f), 38, new Vector2(0.88f, 0.88f));
-            CreateTileHand();
+            CreateSealHand();
         }
 
         private static void CreateStarterRead(PixelStrategySteamScreenPreviewState state)
         {
-            CreatePanel("Starter Kit Border", new Vector3(-5.1f, -1.7f, 0.02f), new Vector2(2.1f, 0.72f), new Color32(54, 67, 74, 255), 42);
-            CreatePanel("Starter Kit", new Vector3(-5.1f, -1.7f, 0f), new Vector2(2.0f, 0.63f), new Color32(16, 27, 34, 255), 43);
-            CreateLabel("STARTER KIT", new Vector3(-5.95f, -1.5f, -0.2f), 0.026f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 65);
+            CreatePanel("Royal Kit Border", new Vector3(-5.1f, -1.7f, 0.02f), new Vector2(2.1f, 0.72f), new Color32(54, 67, 74, 255), 42);
+            CreatePanel("Royal Kit", new Vector3(-5.1f, -1.7f, 0f), new Vector2(2.0f, 0.63f), new Color32(16, 27, 34, 255), 43);
+            CreateLabel("ROYAL KIT", new Vector3(-5.95f, -1.5f, -0.2f), 0.026f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 65);
             CreateLabel(state.StarterWeapon, new Vector3(-5.95f, -1.74f, -0.2f), 0.03f, new Color32(255, 241, 190, 255), TextAnchor.MiddleLeft, 65);
             CreateLabel(state.StarterCoins + "G", new Vector3(-4.48f, -1.74f, -0.2f), 0.036f, new Color32(255, 215, 91, 255), TextAnchor.MiddleLeft, 65);
             CreateSprite("Starter Stick Icon", CreateStickToken(), new Vector3(-4.98f, -1.72f, -0.18f), 66, new Vector2(0.42f, 0.42f));
@@ -226,14 +226,14 @@ namespace FourfoldEchoes.Editor.StrategyLoop
 
         private static void CreateCarryLootBar(IReadOnlyList<string> carriedLoot)
         {
-            CreatePanel("Carry Loot Bar Rim", new Vector3(5.36f, 0.68f, -0.18f), new Vector2(0.66f, 1.74f), new Color32(240, 216, 121, 220), 30);
-            CreatePanel("Carry Loot Bar", new Vector3(5.36f, 0.68f, -0.19f), new Vector2(0.56f, 1.63f), new Color32(16, 27, 34, 245), 31);
+            CreatePanel("Carry Relic Bar Rim", new Vector3(5.36f, 0.68f, -0.18f), new Vector2(0.66f, 1.74f), new Color32(240, 216, 121, 220), 30);
+            CreatePanel("Carry Relic Bar", new Vector3(5.36f, 0.68f, -0.19f), new Vector2(0.56f, 1.63f), new Color32(16, 27, 34, 245), 31);
 
             for (var index = 0; index < carriedLoot.Count && index < 4; index++)
             {
                 var y = 1.25f - index * 0.38f;
-                CreatePanel("Carry Loot Slot", new Vector3(5.36f, y, -0.22f), new Vector2(0.38f, 0.3f), new Color32(30, 42, 42, 255), 32);
-                CreateSprite("Carry Loot " + carriedLoot[index], CreateCarryLootToken(carriedLoot[index]), new Vector3(5.36f, y, -0.28f), 35, new Vector2(0.28f, 0.28f));
+                CreatePanel("Carry Relic Slot", new Vector3(5.36f, y, -0.22f), new Vector2(0.38f, 0.3f), new Color32(30, 42, 42, 255), 32);
+                CreateSprite("Carry Relic " + carriedLoot[index], CreateCarryLootToken(carriedLoot[index]), new Vector3(5.36f, y, -0.28f), 35, new Vector2(0.28f, 0.28f));
             }
         }
 
@@ -350,11 +350,11 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             }
         }
 
-        private static void CreateTileHand()
+        private static void CreateSealHand()
         {
-            CreatePanel("Tile Hand", new Vector3(-4.2f, 1.55f, -0.1f), new Vector2(1.85f, 0.74f), new Color32(16, 27, 34, 255), 35);
-            CreatePanel("Tile Hand Border", new Vector3(-4.2f, 1.55f, -0.12f), new Vector2(1.94f, 0.83f), new Color32(46, 59, 64, 255), 34);
-            CreateLabel("TILE HAND", new Vector3(-5.03f, 1.72f, -0.25f), 0.032f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 50);
+            CreatePanel("Seal Hand", new Vector3(-4.2f, 1.55f, -0.1f), new Vector2(1.85f, 0.74f), new Color32(16, 27, 34, 255), 35);
+            CreatePanel("Seal Hand Border", new Vector3(-4.2f, 1.55f, -0.12f), new Vector2(1.94f, 0.83f), new Color32(46, 59, 64, 255), 34);
+            CreateLabel("SEAL HAND", new Vector3(-5.03f, 1.72f, -0.25f), 0.032f, new Color32(232, 217, 156, 255), TextAnchor.MiddleLeft, 50);
             CreatePanel("Hand Danger", new Vector3(-4.83f, 1.38f, -0.15f), new Vector2(0.38f, 0.22f), new Color32(223, 81, 68, 255), 50);
             CreatePanel("Hand Reward", new Vector3(-4.25f, 1.38f, -0.15f), new Vector2(0.38f, 0.22f), new Color32(241, 200, 77, 255), 50);
             CreatePanel("Hand Gate", new Vector3(-3.67f, 1.38f, -0.15f), new Vector2(0.38f, 0.22f), new Color32(89, 197, 214, 255), 50);
@@ -384,11 +384,11 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             switch (delta.Choice)
             {
                 case PixelStrategySteamChoiceKind.BaitLair:
-                    return "A " + Signed(delta.Loot) + "L " + Signed(delta.Threat) + "T " + Signed(delta.Extract) + "X";
+                    return "A " + Signed(delta.Loot) + "R " + Signed(delta.Threat) + "O " + Signed(delta.Extract) + "G";
                 case PixelStrategySteamChoiceKind.CutToGate:
-                    return "B " + Signed(delta.Gate) + "G " + Signed(delta.Pressure) + "P " + Signed(delta.Extract) + "X";
+                    return "B " + Signed(delta.Gate) + "G " + Signed(delta.Pressure) + "O " + Signed(delta.Extract) + "S";
                 case PixelStrategySteamChoiceKind.GreedRelic:
-                    return "C " + Signed(delta.Loot) + "L " + Signed(delta.Gate) + "G " + Signed(delta.Extract) + "X";
+                    return "C " + Signed(delta.Loot) + "R " + Signed(delta.Gate) + "G " + Signed(delta.Extract) + "S";
                 default:
                     return "?";
             }
@@ -428,7 +428,7 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             CreatePanel("Pressure Crack Rim", position + new Vector3(0f, 0f, 0.03f), new Vector2(3.6f, 0.42f), new Color32(255, 82, 73, 220), 57);
             CreatePanel("Pressure Crack Back", position + new Vector3(0f, 0f, 0.02f), new Vector2(3.48f, 0.32f), new Color32(30, 20, 24, 245), 58);
             CreateLabel(
-                "CRACK LV+" + crack.ChosenLevel + "  NEXT " + PressureEventText(crack.QueuedEvent),
+                "OATH CRACK +" + crack.ChosenLevel + "  " + PressureEventText(crack.QueuedEvent),
                 position + new Vector3(-1.55f, 0.01f, -0.2f),
                 0.024f,
                 new Color32(255, 183, 160, 255),
@@ -443,9 +443,9 @@ namespace FourfoldEchoes.Editor.StrategyLoop
                 case PixelStrategySteamPressureEventKind.Ambush:
                     return "AMBUSH";
                 case PixelStrategySteamPressureEventKind.SealGate:
-                    return "SEAL GATE";
+                    return "GATE SEAL";
                 case PixelStrategySteamPressureEventKind.ExtractionHeat:
-                    return "EXTRACTION HEAT";
+                    return "RELIC HEAT";
                 default:
                     return "ACCIDENT";
             }

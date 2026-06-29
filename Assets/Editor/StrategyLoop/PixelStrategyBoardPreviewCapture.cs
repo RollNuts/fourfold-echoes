@@ -47,7 +47,7 @@ namespace FourfoldEchoes.Editor.StrategyLoop
         private static void CreateBoard(PixelStrategyBoardPreviewState state)
         {
             CreatePanel("Board Backplate", new Vector3(-2.35f, 0.05f, 0.4f), new Vector2(7.0f, 5.8f), new Color32(28, 40, 43, 255));
-            CreateLabel("LOOP BOARD", new Vector3(-5.55f, 2.65f, -0.3f), 0.052f, new Color32(255, 239, 194, 255), TextAnchor.MiddleLeft);
+            CreateLabel("FOURFOLD SEAL", new Vector3(-5.55f, 2.65f, -0.3f), 0.052f, new Color32(255, 239, 194, 255), TextAnchor.MiddleLeft);
 
             var origin = new Vector3(-5.25f, -2.1f, 0f);
             foreach (var cell in state.BuildCells())
@@ -77,7 +77,7 @@ namespace FourfoldEchoes.Editor.StrategyLoop
 
         private static void DrawRouteLine(PixelStrategyBoardPreviewState state, Vector3 origin)
         {
-            var routeObject = new GameObject("Route Loop Read");
+            var routeObject = new GameObject("Seal Route Read");
             var line = routeObject.AddComponent<LineRenderer>();
             line.positionCount = state.Route.Count + 1;
             line.loop = false;
@@ -100,16 +100,29 @@ namespace FourfoldEchoes.Editor.StrategyLoop
         private static void CreateHud(PixelStrategyBoardPreviewState state)
         {
             CreatePanel("HUD Backplate", new Vector3(3.35f, 0.05f, 0.35f), new Vector2(4.25f, 5.8f), new Color32(248, 230, 180, 255));
-            CreateLabel("EXTRACT READY", new Vector3(1.55f, 2.55f, -0.2f), 0.056f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
-            CreateLabel("Loop " + state.Run.CompletedLoops + "  Steps " + state.Run.StepsTaken, new Vector3(1.55f, 2.12f, -0.2f), 0.036f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
+            CreateLabel("GATE READY", new Vector3(1.55f, 2.55f, -0.2f), 0.056f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
+            CreateLabel("Echo " + state.Run.CompletedLoops + "  Steps " + state.Run.StepsTaken, new Vector3(1.55f, 2.12f, -0.2f), 0.036f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
 
-            CreateMeter("Loot", state.Run.Loot, 12, new Vector3(1.55f, 1.45f, -0.1f), new Color32(246, 198, 75, 255));
-            CreateMeter("Threat", state.Run.Threat, 20, new Vector3(1.55f, 0.75f, -0.1f), new Color32(232, 77, 63, 255));
-            CreateMeter("Bag", state.Run.BagPressure, 12, new Vector3(1.55f, 0.05f, -0.1f), new Color32(88, 205, 126, 255));
+            CreateMeter("Relic", state.Run.Loot, 12, new Vector3(1.55f, 1.45f, -0.1f), new Color32(246, 198, 75, 255));
+            CreateMeter("Oath", state.Run.Threat, 20, new Vector3(1.55f, 0.75f, -0.1f), new Color32(232, 77, 63, 255));
+            CreateMeter("Debt", state.Run.BagPressure, 12, new Vector3(1.55f, 0.05f, -0.1f), new Color32(88, 205, 126, 255));
 
-            CreateLabel("Decision: " + state.Run.Decision, new Vector3(1.55f, -0.78f, -0.2f), 0.048f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
-            CreateLabel("Bag is hot. Bank it now.", new Vector3(1.55f, -1.18f, -0.2f), 0.034f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
-            CreateLabel("Route, lair, loot, hazard, exit.", new Vector3(1.55f, -1.55f, -0.2f), 0.034f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
+            CreateLabel("Decision: " + DecisionText(state.Run.Decision), new Vector3(1.55f, -0.78f, -0.2f), 0.048f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
+            CreateLabel("Debt is hot. Cut to gate.", new Vector3(1.55f, -1.18f, -0.2f), 0.034f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
+            CreateLabel("Seal, lure, relic, crack, gate.", new Vector3(1.55f, -1.55f, -0.2f), 0.034f, new Color32(42, 37, 33, 255), TextAnchor.MiddleLeft);
+        }
+
+        private static string DecisionText(PixelStrategyRunDecision decision)
+        {
+            switch (decision)
+            {
+                case PixelStrategyRunDecision.Extract:
+                    return "Gate Cut";
+                case PixelStrategyRunDecision.Retreat:
+                    return "Spare Chosen";
+                default:
+                    return decision.ToString();
+            }
         }
 
         private static void CreateMeter(string label, int value, int max, Vector3 position, Color32 fillColor)

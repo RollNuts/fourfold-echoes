@@ -23,7 +23,7 @@ namespace FourfoldEchoes.Tests
         }
 
         [Test]
-        public void StreamerReadableSample_ProducesExtractionTensionAfterOneLoop()
+        public void StreamerReadableSample_ProducesGateTensionAfterOneEcho()
         {
             var state = PixelStrategyBoardPreviewFactory.CreateStreamerReadableSample();
 

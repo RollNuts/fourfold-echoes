@@ -4,7 +4,7 @@ Status: visual evidence layer for the pixel strategy pivot.
 
 This preview adds a 16:9 Unity capture target that aims at a Steam screenshot
 read instead of a UI component sheet. It keeps the board as the main object:
-hero token, reward route, pressure trail, lair threat, extraction gate, and
+chosen pawn, relic route, oath-heat trail, lure threat, gate seal, and
 three bottom decision cards.
 
 ## Why It Exists
@@ -13,19 +13,20 @@ The prior board preview proved that the loop model could render, but it still
 read more like a compact debug board plus explanatory HUD. The new direction
 needs a game screen that can sell the decision at thumbnail size:
 
-- bag value and pressure are visible at the edge;
-- the route, gate, hero, reward, and danger are visible on the board;
+- chosen debt and oath heat are visible at the edge;
+- the seal route, gate, chosen pawn, relic, and danger are visible on the board;
 - the three decisions read as different tactical outcomes;
-- the selected safe extraction card visibly connects to the gate.
+- the selected gate-cut card visibly connects to the gate.
 - the selected `CUT TO GATE` decision visibly opens a short gate route and
   seals pressure cells on the board, so the choice reads as a board change
   rather than only a highlighted UI card.
 - the board carries a FOURFOLD-specific visual read: four corner sigils, echo
-  shadows behind changed cells, a carry-loot rail, gate danger frames, and a
+  shadows behind changed cells, a carried-relic rail, gate danger frames, and a
   four-beat seal counter.
 - each A/B/C card has a one-step tradeoff forecast: baiting the chosen hero
-  raises loot and threat, cutting to the gate opens extraction while cracking
-  pressure, and greed relics spike loot while pushing the exit away.
+  raises relic value and oath heat, cutting to the gate opens a spare route
+  while cracking pressure, and claiming relics spikes debt while pushing the
+  gate away.
 - a cracked pressure beat raises the chosen hero level and queues a next-step
   accident, so the same profitable line becomes more dangerous after repeated
   pressure spikes.
@@ -34,6 +35,13 @@ The screen also bakes in the latest premise read: a "chosen" adventurer starts
 with a wood stick and a few coins, then gets shoved toward an absurd threat.
 That unfair classic-fantasy setup should feel funny, readable, and dangerous
 without copying any protected game, character, UI, or quest text.
+
+## World Identity Guardrail
+
+Use `docs/Production/PIXEL_STRATEGY_WORLD_IDENTITY.md` as the guardrail before
+adding more rules. The market-facing screen must read as a Fourfold seal board
+about chosen debt, oath pressure, and gate cuts. It must not lead with visible
+`LOOP`, `TILE HAND`, road-expedition, camp, deck, or dungeon-management language.
 
 ## Scope Control
 

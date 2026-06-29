@@ -7,12 +7,17 @@ board read. It is not final art and does not import reusable source assets from
 the asset library. Its job is to prove that the core loop can become a
 streamer-readable screen:
 
-- route loop;
-- lair pressure;
-- on-route hazard;
-- carried reward;
-- extraction gate;
-- loot, threat, bag pressure, and extract decision HUD.
+- seal route;
+- lure pressure;
+- oath hazard;
+- carried relic;
+- gate seal;
+- relic value, oath heat, chosen debt, and gate-cut HUD.
+
+This early preview predates the world-identity pass. New market-facing captures
+must use the Fourfold seal vocabulary in
+`docs/Production/PIXEL_STRATEGY_WORLD_IDENTITY.md` and avoid visible
+`LOOP BOARD` or `TILE HAND` language.
 
 The preview is intentionally generated from code so the game repository can
 validate screen readability before committing to a larger sprite pipeline.
