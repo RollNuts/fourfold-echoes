@@ -6,7 +6,7 @@ namespace FourfoldEchoes.BuilderPrototype
 {
     public sealed class BuilderPrototypeSpineController : MonoBehaviour
     {
-        public const string SceneContractText = "PR-05B integrated preview: traversal, build edit loop, tactical telegraphs, deterministic loot, and extract HUD.";
+        public const string SceneContractText = "PR-06A build HUD preview: build identity, combat telegraphs, loot pressure, and extract.";
         public const string ControlPromptText = "Move LS/WASD | Build X/B | Combat Y/C | Loot LB/L | Extract RB/E | Reset Start/R";
         public const string BuildHookPromptText = "Build: move cursor LS/arrows | Place A/J | Remove X/K | Exit B/Tab";
         public const string CombatHookPromptText = "Combat preview: read telegraphs, safe lanes, and flank/rear bonus | Exit B/Tab";
@@ -121,6 +121,9 @@ namespace FourfoldEchoes.BuilderPrototype
         public bool IsPrototypeCharacterBuildValid => characterBuildValidation.IsValid;
         public BuilderPrototypeCharacterBuildSnapshot CharacterBuildSnapshot => characterBuildSnapshot;
         public string CharacterBuildHudText => FormatCharacterBuildHud();
+        public string CharacterBuildIdentityHudText => FormatCharacterBuildIdentityHud();
+        public string CharacterBuildStatsHudText => FormatCharacterBuildStatsHud();
+        public string CharacterBuildPressureHudText => FormatCharacterBuildPressureHud();
         public string CharacterBuildSourceHudText => FormatCharacterBuildSourceHud();
 
         public void Awake()
@@ -863,11 +866,24 @@ namespace FourfoldEchoes.BuilderPrototype
 
         private string FormatCharacterBuildHud()
         {
+            return FormatCharacterBuildIdentityHud()
+                + " | "
+                + FormatCharacterBuildStatsHud()
+                + " | "
+                + FormatCharacterBuildPressureHud();
+        }
+
+        private string FormatCharacterBuildIdentityHud()
+        {
             return "Build: "
                 + PrototypeBuildIdentityText
                 + " | Role: "
-                + FormatRoleTags(characterBuildSnapshot.RoleTags)
-                + " | Build "
+                + FormatRoleTags(characterBuildSnapshot.RoleTags);
+        }
+
+        private string FormatCharacterBuildStatsHud()
+        {
+            return "Stats: Build "
                 + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.BuilderPower))
                 + " Speed "
                 + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.BuildSpeed))
@@ -876,14 +892,18 @@ namespace FourfoldEchoes.BuilderPrototype
                 + " Break "
                 + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.BreakerPower))
                 + " Guard "
-                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.SentinelGuard))
-                + " | Press "
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.SentinelGuard));
+        }
+
+        private string FormatCharacterBuildPressureHud()
+        {
+            return "Run: Press "
                 + lootPressure.PressureScore
                 + "/"
                 + BuilderPrototypeLootPressureModel.MaxPressureScore
                 + " "
                 + lootPressure.PressureBand
-                + " Risk "
+                + " | Risk "
                 + lootPressure.ExtractionRiskPercent
                 + "%";
         }
@@ -964,7 +984,9 @@ namespace FourfoldEchoes.BuilderPrototype
             GUILayout.BeginArea(new Rect(16f, 16f, 720f, 300f), GUI.skin.box);
             GUILayout.Label(SceneContractText);
             GUILayout.Label("Mode: " + BuilderPrototypeRunState.LabelFor(runState.Mode));
-            GUILayout.Label(CharacterBuildHudText);
+            GUILayout.Label(CharacterBuildIdentityHudText);
+            GUILayout.Label(CharacterBuildStatsHudText);
+            GUILayout.Label(CharacterBuildPressureHudText);
             GUILayout.Label(CharacterBuildSourceHudText);
             GUILayout.Label("Build Blocks: " + BuildBlocksAvailable + " | Placed: " + PlacedBlockCount + " | Cursor: " + FormatCell(SelectedBuildCell));
             GUILayout.Label("Build Event: " + lastBuildEvent);
