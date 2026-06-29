@@ -50,6 +50,28 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
         }
 
         [Test]
+        public void CharacterBuildGameplayHooks_ApplyDeterministicStatsToBuildPreview()
+        {
+            var controllerObject = new GameObject("Character Build Gameplay Hook Test");
+            try
+            {
+                var controller = controllerObject.AddComponent<BuilderPrototypeSpineController>();
+
+                Assert.That(controller.BuilderPowerBuildBlockBonus, Is.EqualTo(2));
+                Assert.That(controller.StartingBuildBlockCapacity, Is.EqualTo(20));
+                Assert.That(controller.BuildBlocksAvailable, Is.EqualTo(20));
+                Assert.That(controller.BuildCursorRepeatDuration, Is.EqualTo(0.144f).Within(0.001f));
+                Assert.That(controller.BuildSpeedCursorRepeatMilliseconds, Is.EqualTo(144));
+                Assert.That(controller.CharacterBuildGameplayHudText, Is.EqualTo(
+                    "Hooks: Blocks 20 (+2 BuilderPower) | Cursor Repeat 0.14s BuildSpeed"));
+            }
+            finally
+            {
+                Object.DestroyImmediate(controllerObject);
+            }
+        }
+
+        [Test]
         public void CharacterBuildHud_UsesRunPressureWithoutPermanentProgression()
         {
             var controllerObject = new GameObject("Character Build HUD Pressure Test");
