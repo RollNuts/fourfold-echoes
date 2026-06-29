@@ -643,7 +643,7 @@ function writeGameScaleSvg(poses) {
 }
 
 function projectCombat([x, y, z]) {
-  const scale = 172;
+  const scale = 190;
   return {
     x: 890 + (x - z * 0.58) * scale,
     y: 792 - y * scale + z * 58 + x * 10,
@@ -696,50 +696,54 @@ function enemyMarkup(x, y, scale, facing = 1, hurt = false) {
 function bruteEnemyMarkup(x, y, scale) {
   return `
     <g transform="translate(${x} ${y}) scale(${scale})">
-      <ellipse cx="0" cy="104" rx="132" ry="42" fill="#03070b" opacity="0.52"/>
-      <ellipse cx="0" cy="88" rx="138" ry="64" fill="none" stroke="#ff4a28" stroke-width="12" opacity="0.64" filter="url(#redGlow)"/>
-      <path d="M -112 -8 L -188 56 L -120 83 L -68 34 Z" fill="#23161b" stroke="#0b0708" stroke-width="5"/>
-      <path d="M 96 -18 L 198 50 L 138 92 L 54 35 Z" fill="#2b1b20" stroke="#0b0708" stroke-width="5"/>
-      <path d="M -70 -74 L 0 -122 L 74 -76 L 89 46 L 42 112 L -48 108 L -92 43 Z" fill="#1d141b" stroke="#080509" stroke-width="6"/>
-      <path d="M -48 -54 L 0 -88 L 52 -54 L 58 28 L 24 72 L -28 70 L -60 24 Z" fill="#4a241f" stroke="#180b0c" stroke-width="4"/>
-      <path d="M -28 -170 L -88 -101 L -48 -82 Z" fill="#ff4a24" stroke="#771108" stroke-width="5" filter="url(#redGlow)"/>
-      <path d="M 30 -170 L 90 -101 L 48 -82 Z" fill="#ff4a24" stroke="#771108" stroke-width="5" filter="url(#redGlow)"/>
-      <rect x="-34" y="-34" width="68" height="18" fill="#ff351f" stroke="#7a1008" stroke-width="4" filter="url(#redGlow)"/>
-      <path d="M -102 36 C -30 0, 44 4, 116 40" fill="none" stroke="#f0b64c" stroke-width="12" stroke-linecap="round" opacity="0.80" filter="url(#goldGlow)"/>
-      <path d="M -154 -8 L -224 -104" stroke="#ff3824" stroke-width="9" stroke-linecap="round" filter="url(#redGlow)"/>
-      <path d="M 130 0 L 226 -96" stroke="#ff3824" stroke-width="9" stroke-linecap="round" filter="url(#redGlow)"/>
-      <text x="6" y="-130" text-anchor="middle" class="damage">37</text>
+      <ellipse cx="0" cy="108" rx="138" ry="42" fill="#03070b" opacity="0.56"/>
+      <path d="M -128 12 L -212 64 L -150 98 L -70 46 Z" fill="#223018" stroke="#090607" stroke-width="5"/>
+      <path d="M 86 -30 L 202 44 L 138 92 L 50 30 Z" fill="#342114" stroke="#0b0706" stroke-width="5"/>
+      <path d="M 118 -66 L 236 -136 L 262 -94 L 148 -30 Z" fill="#9c672e" stroke="#372011" stroke-width="7"/>
+      <path d="M 226 -146 L 292 -114 L 246 -54 L 206 -78 Z" fill="#d6ad61" stroke="#4e351a" stroke-width="6"/>
+      <path d="M -76 -80 L 0 -126 L 82 -76 L 98 42 L 42 118 L -52 114 L -98 44 Z" fill="#2c2115" stroke="#080509" stroke-width="6"/>
+      <path d="M -54 -56 L 0 -92 L 58 -54 L 64 28 L 24 78 L -30 76 L -66 24 Z" fill="#744323" stroke="#1b0c0b" stroke-width="4"/>
+      <path d="M -42 -14 C -18 -24, 16 -20, 44 -2" fill="none" stroke="#b8883d" stroke-width="5" opacity="0.48"/>
+      <path d="M -62 36 C -20 56, 28 58, 68 36" fill="none" stroke="#375438" stroke-width="7" opacity="0.62"/>
+      <path d="M -34 -174 L -100 -96 L -52 -78 Z" fill="#d74a21" stroke="#64240f" stroke-width="5"/>
+      <path d="M 34 -174 L 100 -96 L 52 -78 Z" fill="#d74a21" stroke="#64240f" stroke-width="5"/>
+      <path d="M -46 16 C -6 -8, 38 -4, 76 22" fill="none" stroke="#f0b64c" stroke-width="11" stroke-linecap="round" opacity="0.72"/>
+      <rect x="-35" y="-36" width="70" height="18" fill="#ff3b22" stroke="#6f160b" stroke-width="4" filter="url(#redGlow)"/>
+      <text x="4" y="-132" text-anchor="middle" class="damage">37</text>
     </g>`;
 }
 
 function casterEnemyMarkup(x, y, scale) {
   return `
     <g transform="translate(${x} ${y}) scale(${scale})">
-      <ellipse cx="0" cy="74" rx="88" ry="30" fill="#03070b" opacity="0.48"/>
-      <ellipse cx="0" cy="50" rx="118" ry="48" fill="none" stroke="#ff5a28" stroke-width="8" opacity="0.34" filter="url(#redGlow)"/>
-      <path d="M -52 24 L -22 -74 L 24 -74 L 58 24 L 28 70 L -28 70 Z" fill="#18131d" stroke="#080509" stroke-width="5"/>
-      <path d="M -34 -44 L 0 -84 L 35 -44 L 28 16 L -28 16 Z" fill="#302033" stroke="#120914" stroke-width="4"/>
-      <rect x="-24" y="-28" width="48" height="11" fill="#ff3b20" stroke="#751008" stroke-width="3" filter="url(#redGlow)"/>
-      <path d="M -54 -86 L -91 -132 L -64 -66 Z" fill="#ff4a24" stroke="#771108" stroke-width="4"/>
-      <path d="M 54 -86 L 91 -132 L 64 -66 Z" fill="#ff4a24" stroke="#771108" stroke-width="4"/>
-      <path d="M -72 18 C -28 4, 34 4, 78 18" fill="none" stroke="#ffb33b" stroke-width="7" stroke-linecap="round" opacity="0.72" filter="url(#goldGlow)"/>
-      <circle cx="102" cy="-24" r="22" fill="#ff3b20" opacity="0.86" filter="url(#redGlow)"/>
-      <path d="M 62 -4 L 104 -24" stroke="#ff3b20" stroke-width="8" stroke-linecap="round" filter="url(#redGlow)"/>
+      <ellipse cx="0" cy="74" rx="88" ry="30" fill="#03070b" opacity="0.46"/>
+      <path d="M -58 28 L -26 -82 L 28 -82 L 64 28 L 30 76 L -30 76 Z" fill="#1b1527" stroke="#080509" stroke-width="5"/>
+      <path d="M -38 -48 L 0 -92 L 39 -48 L 30 18 L -30 18 Z" fill="#3b2952" stroke="#160c22" stroke-width="4"/>
+      <path d="M -12 -90 L 18 -90 L 46 -34 L -42 -34 Z" fill="#245d62" opacity="0.62"/>
+      <rect x="-23" y="-30" width="46" height="10" fill="#ff4730" stroke="#751008" stroke-width="3" filter="url(#redGlow)"/>
+      <path d="M -64 -86 L -105 -132 L -72 -62 Z" fill="#9b4ac9" stroke="#3b174b" stroke-width="4"/>
+      <path d="M 64 -86 L 105 -132 L 72 -62 Z" fill="#9b4ac9" stroke="#3b174b" stroke-width="4"/>
+      <path d="M -80 20 C -32 -2, 36 -2, 84 20" fill="none" stroke="#48d9c9" stroke-width="7" stroke-linecap="round" opacity="0.76" filter="url(#cyanGlow)"/>
+      <circle cx="106" cy="-28" r="25" fill="#ff4c2e" opacity="0.88" filter="url(#redGlow)"/>
+      <circle cx="106" cy="-28" r="8" fill="#ffd266"/>
+      <path d="M 62 -4 L 104 -26" stroke="#ff5332" stroke-width="8" stroke-linecap="round" filter="url(#redGlow)"/>
     </g>`;
 }
 
 function shieldEnemyMarkup(x, y, scale) {
   return `
     <g transform="translate(${x} ${y}) scale(${scale})">
-      <ellipse cx="0" cy="94" rx="126" ry="36" fill="#03070b" opacity="0.50"/>
-      <ellipse cx="0" cy="73" rx="132" ry="62" fill="none" stroke="#ff4a28" stroke-width="10" opacity="0.42" filter="url(#redGlow)"/>
-      <path d="M -70 -52 L 0 -100 L 72 -52 L 78 46 L 36 104 L -40 100 L -80 42 Z" fill="#1a1319" stroke="#080509" stroke-width="6"/>
-      <path d="M -126 -28 L -52 -88 L -28 36 L -86 96 Z" fill="#38282f" stroke="#10090d" stroke-width="5"/>
-      <path d="M -104 -12 L -64 -50 L -48 31 L -81 60 Z" fill="#70503d" stroke="#21100d" stroke-width="4"/>
-      <path d="M 58 -10 L 166 -84" stroke="#ff3b20" stroke-width="12" stroke-linecap="round" filter="url(#redGlow)"/>
-      <rect x="-25" y="-28" width="50" height="14" fill="#ff3a1d" stroke="#711008" stroke-width="4" filter="url(#redGlow)"/>
-      <path d="M -26 -144 L -76 -84 L -42 -68 Z" fill="#ff4a24" stroke="#771108" stroke-width="5"/>
-      <path d="M 30 -144 L 80 -84 L 42 -68 Z" fill="#ff4a24" stroke="#771108" stroke-width="5"/>
+      <ellipse cx="0" cy="96" rx="128" ry="38" fill="#03070b" opacity="0.50"/>
+      <path d="M -72 -54 L 0 -102 L 74 -52 L 80 46 L 36 106 L -40 102 L -82 42 Z" fill="#171820" stroke="#080509" stroke-width="6"/>
+      <path d="M -136 -34 L -54 -96 L -24 38 L -88 106 Z" fill="#2c3440" stroke="#0c1016" stroke-width="5"/>
+      <path d="M -112 -14 L -66 -56 L -48 32 L -82 68 Z" fill="#a77b4d" stroke="#332114" stroke-width="4"/>
+      <path d="M -122 18 L -42 -58" stroke="#d7b16a" stroke-width="5" opacity="0.34"/>
+      <path d="M -100 -4 L -56 -44" stroke="#e6c47c" stroke-width="5" opacity="0.38"/>
+      <path d="M 58 -10 L 164 -82" stroke="#ce3a23" stroke-width="12" stroke-linecap="round"/>
+      <path d="M 70 -20 L 174 -92" stroke="#ff6a3b" stroke-width="5" stroke-linecap="round" filter="url(#redGlow)"/>
+      <rect x="-25" y="-29" width="50" height="14" fill="#ff3a1d" stroke="#711008" stroke-width="4" filter="url(#redGlow)"/>
+      <path d="M -28 -146 L -78 -84 L -42 -68 Z" fill="#c84624" stroke="#6b2612" stroke-width="5"/>
+      <path d="M 32 -146 L 82 -84 L 42 -68 Z" fill="#c84624" stroke="#6b2612" stroke-width="5"/>
     </g>`;
 }
 
@@ -747,37 +751,51 @@ function writeCombatScreenSvg(poses) {
   const active = poses.find((poseData) => poseData.name === "ACTIVE_SLASH");
   const combatHero = {
     ...active,
-    rootTransform: { ...active.rootTransform, x: -0.62, roll: -15 },
+    parts: active.parts.filter((partData) => !partData.name.startsWith("large_readable_slash") && !partData.name.startsWith("impact_spark")),
+    rootTransform: { ...active.rootTransform, x: -0.72, roll: -12 },
   };
   const heroPolygons = collectPosePolygons(combatHero, projectCombat);
 
-  const floorLines = [];
-  for (let i = -5; i <= 9; i += 1) {
-    const x = 960 + i * 176;
-    floorLines.push(`<path d="M ${x} 168 L ${x - 354} 1034" stroke="#334252" stroke-width="2" opacity="0.32"/>`);
-  }
-  for (let i = 0; i < 9; i += 1) {
-    const y = 222 + i * 92;
-    floorLines.push(`<path d="M 76 ${y} L 1848 ${y - 38}" stroke="#334252" stroke-width="2" opacity="0.30"/>`);
-  }
+  const floorCuts = [
+    '<path d="M 214 292 L 520 256 L 498 442 L 182 474 L 194 386" fill="#c7c2a2" opacity="0.30"/>',
+    '<path d="M 566 244 L 884 228 L 862 424 L 544 436 L 558 326" fill="#b8bea0" opacity="0.34"/>',
+    '<path d="M 934 224 L 1276 202 L 1262 420 L 914 426 L 928 310" fill="#c9c2a4" opacity="0.32"/>',
+    '<path d="M 1324 210 L 1626 208 L 1688 426 L 1300 424 L 1310 306" fill="#aeb99b" opacity="0.31"/>',
+    '<path d="M 118 526 L 490 494 L 470 722 L 78 744 L 94 622" fill="#b8b999" opacity="0.33"/>',
+    '<path d="M 534 496 L 890 478 L 878 704 L 506 716 L 520 612" fill="#c8c0a0" opacity="0.38"/>',
+    '<path d="M 928 480 L 1306 456 L 1320 694 L 900 704 L 914 586" fill="#aebaa0" opacity="0.34"/>',
+    '<path d="M 1360 462 L 1720 448 L 1792 682 L 1340 696 L 1346 580" fill="#bcc2a3" opacity="0.33"/>',
+    '<path d="M 82 798 L 464 760 L 454 962 L 54 978 L 66 888" fill="#b7b898" opacity="0.30"/>',
+    '<path d="M 516 758 L 876 744 L 876 934 L 498 956 L 508 846" fill="#c5bea1" opacity="0.35"/>',
+    '<path d="M 926 742 L 1322 724 L 1340 918 L 906 938 L 914 834" fill="#aeb99e" opacity="0.32"/>',
+    '<path d="M 1372 724 L 1786 704 L 1878 904 L 1362 922 L 1358 816" fill="#c4bea1" opacity="0.34"/>',
+  ];
+
+  const flowerDots = [
+    [648, 354], [668, 344], [680, 362], [708, 348], [1398, 304], [1420, 316],
+    [148, 648], [170, 636], [188, 658], [1138, 268], [1160, 256], [1180, 278],
+    [1454, 848], [1472, 834], [1492, 856], [410, 870], [432, 856], [452, 876],
+  ]
+    .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#f0c94c" opacity="0.82"/><circle cx="${x + 7}" cy="${y + 4}" r="3.5" fill="#fff0a1" opacity="0.62"/>`)
+    .join("\n    ");
 
   const heroMarkup = heroPolygons
-    .map((poly) => `<polygon points="${poly.points}" fill="${poly.fill}" stroke="${poly.stroke}" stroke-width="${poly.glow ? 1.3 : 1}" opacity="${poly.alpha}"${poly.glow ? ' filter="url(#cyanGlow)"' : ""}/>`)
+    .map((poly) => `<polygon points="${poly.points}" fill="${poly.fill}" stroke="${poly.stroke}" stroke-width="${poly.glow ? 1.2 : 1.15}" opacity="${poly.alpha}"${poly.glow ? ' filter="url(#cyanGlow)"' : ""}/>`)
     .join("\n      ");
 
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
   <defs>
-    <radialGradient id="arenaLight" cx="47%" cy="49%" r="70%">
-      <stop offset="0" stop-color="#223024"/>
-      <stop offset="0.36" stop-color="#192532"/>
-      <stop offset="0.62" stop-color="#121923"/>
+    <radialGradient id="arenaLight" cx="43%" cy="50%" r="72%">
+      <stop offset="0" stop-color="#304034"/>
+      <stop offset="0.34" stop-color="#203431"/>
+      <stop offset="0.64" stop-color="#121f25"/>
       <stop offset="1" stop-color="#070a0f"/>
     </radialGradient>
     <linearGradient id="stoneFace" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#39413c"/>
-      <stop offset="0.52" stop-color="#222b2d"/>
-      <stop offset="1" stop-color="#151a20"/>
+      <stop offset="0" stop-color="#343c37"/>
+      <stop offset="0.52" stop-color="#202b2b"/>
+      <stop offset="1" stop-color="#12191f"/>
     </linearGradient>
     <linearGradient id="routeGold" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#f0bb4d"/>
@@ -804,36 +822,48 @@ function writeCombatScreenSvg(poses) {
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+    <filter id="shadowLift" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="8" flood-color="#030509" flood-opacity="0.55"/>
+    </filter>
     <style>
-      .damage { fill: #ffd36a; stroke: #431e08; stroke-width: 4; paint-order: stroke; font: 900 52px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .damage { fill: #ffd36a; stroke: #431e08; stroke-width: 4; paint-order: stroke; font: 900 48px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
     </style>
   </defs>
   <rect width="1920" height="1080" fill="#070a0f"/>
   <rect x="0" y="0" width="1920" height="1080" fill="url(#arenaLight)"/>
-  <g opacity="0.92">
-    <path d="M 82 200 L 1662 142 L 1888 960 L 72 1002 Z" fill="#111922" stroke="#2c3b47" stroke-width="4"/>
-    <path d="M 138 238 L 510 212 L 480 438 L 92 470 Z" fill="url(#stoneFace)" stroke="#3d4b4d" stroke-width="3" opacity="0.74"/>
-    <path d="M 522 210 L 912 194 L 882 430 L 494 438 Z" fill="#172225" stroke="#354447" stroke-width="3" opacity="0.68"/>
-    <path d="M 924 194 L 1302 178 L 1282 416 L 896 430 Z" fill="#1f2b26" stroke="#384743" stroke-width="3" opacity="0.72"/>
-    <path d="M 1318 178 L 1642 170 L 1704 402 L 1296 416 Z" fill="#172126" stroke="#354248" stroke-width="3" opacity="0.70"/>
-    <path d="M 92 486 L 480 452 L 460 706 L 48 742 Z" fill="#172028" stroke="#34424c" stroke-width="3" opacity="0.72"/>
-    <path d="M 494 452 L 884 440 L 872 694 L 468 706 Z" fill="#1f2a28" stroke="#3b4b4d" stroke-width="3" opacity="0.76"/>
-    <path d="M 900 440 L 1288 424 L 1298 678 L 884 694 Z" fill="#17212c" stroke="#364555" stroke-width="3" opacity="0.72"/>
-    <path d="M 1304 424 L 1712 410 L 1784 660 L 1314 678 Z" fill="#1a2422" stroke="#394746" stroke-width="3" opacity="0.72"/>
-    <path d="M 48 760 L 460 722 L 452 970 L 20 986 Z" fill="#151e25" stroke="#303f48" stroke-width="3" opacity="0.70"/>
-    <path d="M 474 722 L 874 710 L 872 950 L 462 970 Z" fill="#1a2524" stroke="#394746" stroke-width="3" opacity="0.74"/>
-    <path d="M 890 710 L 1302 692 L 1324 930 L 884 950 Z" fill="#151f28" stroke="#334250" stroke-width="3" opacity="0.72"/>
-    <path d="M 1318 692 L 1794 676 L 1890 908 L 1338 930 Z" fill="#1f2524" stroke="#404846" stroke-width="3" opacity="0.76"/>
+  <g opacity="0.98">
+    <path d="M 82 200 L 1662 142 L 1888 960 L 72 1002 Z" fill="#10211c" stroke="#364a42" stroke-width="4"/>
+    <path d="M 148 238 C 412 182, 714 210, 1012 178 C 1320 146, 1580 170, 1688 232 C 1746 448, 1810 662, 1866 904 C 1430 930, 970 966, 72 1002 C 90 704, 104 446, 148 238 Z" fill="#17291f" opacity="0.66"/>
+    <g fill="url(#stoneFace)" stroke="#52645a" stroke-width="3.5" opacity="0.86">
+      ${floorCuts.join("\n      ")}
+    </g>
+    <path d="M 104 204 L 1664 148 L 1878 956 L 74 994" fill="none" stroke="#86a073" stroke-width="2" opacity="0.20"/>
+  </g>
+  <g opacity="0.46">
+    <path d="M 122 554 C 390 500, 636 536, 858 484 C 1000 450, 1118 412, 1286 430 C 1438 446, 1570 492, 1772 454" fill="none" stroke="#2f776f" stroke-width="42" stroke-linecap="round"/>
+    <path d="M 122 552 C 394 510, 654 540, 854 492 C 1008 456, 1118 426, 1284 442 C 1434 456, 1576 500, 1770 468" fill="none" stroke="#88d5c1" stroke-width="5" stroke-linecap="round" opacity="0.42" filter="url(#cyanGlow)"/>
+  </g>
+  <g fill="none" stroke-linecap="round">
+    <path d="M 56 720 C 194 590, 230 438, 392 352 C 520 286, 690 304, 844 236" stroke="#49331f" stroke-width="26" opacity="0.42"/>
+    <path d="M 70 718 C 204 602, 244 454, 404 370 C 526 306, 686 322, 836 252" stroke="#6b4b2e" stroke-width="8" opacity="0.50"/>
+    <path d="M 1762 312 C 1648 402, 1640 520, 1514 594 C 1394 666, 1252 646, 1110 722" stroke="#4d3420" stroke-width="22" opacity="0.34"/>
+    <path d="M 1748 326 C 1638 414, 1628 530, 1508 604 C 1394 674, 1256 662, 1120 734" stroke="#715033" stroke-width="7" opacity="0.44"/>
   </g>
   <g>
-    ${floorLines.join("\n    ")}
+    ${flowerDots}
   </g>
-  <g opacity="0.78">
-    <path d="M 350 628 C 585 528, 792 560, 1018 442 S 1438 300, 1744 372" fill="none" stroke="url(#routeGold)" stroke-width="28" opacity="0.20"/>
-    <path d="M 350 628 C 585 528, 792 560, 1018 442 S 1438 300, 1744 372" fill="none" stroke="#ffe08b" stroke-width="5" opacity="0.32" filter="url(#goldGlow)"/>
-    <path d="M 300 678 C 520 605, 704 650, 920 540" fill="none" stroke="#4f7f68" stroke-width="14" opacity="0.18"/>
+  <g stroke="#62706b" stroke-width="3" stroke-linecap="round" opacity="0.18">
+    <path d="M 292 350 L 384 334 L 438 366"/>
+    <path d="M 636 616 L 706 590 L 760 614 L 824 582"/>
+    <path d="M 1124 302 L 1180 278 L 1226 316"/>
+    <path d="M 1488 812 L 1542 778 L 1620 792"/>
+    <path d="M 270 880 L 334 846 L 404 856"/>
   </g>
-  <g opacity="0.78">
+  <g opacity="0.72">
+    <path d="M 360 636 C 590 540, 804 566, 1016 454 S 1418 326, 1730 392" fill="none" stroke="url(#routeGold)" stroke-width="24" opacity="0.16"/>
+    <path d="M 360 636 C 590 540, 804 566, 1016 454 S 1418 326, 1730 392" fill="none" stroke="#ffe08b" stroke-width="4" opacity="0.26" filter="url(#goldGlow)"/>
+  </g>
+  <g opacity="0.68">
     <path d="M 286 808 L 392 778 L 414 844 L 304 878 Z" fill="#2e3939" stroke="#627068" stroke-width="4"/>
     <path d="M 1514 210 L 1702 242 L 1688 292 L 1502 262 Z" fill="#2a3439" stroke="#66706c" stroke-width="4"/>
     <path d="M 1424 866 L 1622 836 L 1640 924 L 1442 954 Z" fill="#2b3636" stroke="#687269" stroke-width="4"/>
@@ -841,43 +871,52 @@ function writeCombatScreenSvg(poses) {
     <path d="M 1028 216 L 1078 300 L 1018 334 L 972 254 Z" fill="#4f4330" stroke="#867044" stroke-width="4" opacity="0.72"/>
     <path d="M 1010 248 L 1050 310" stroke="#f3b94c" stroke-width="5" opacity="0.34" filter="url(#goldGlow)"/>
   </g>
-  <g opacity="0.55">
+  <g opacity="0.50">
     <path d="M 606 300 L 694 340 L 620 372 Z" fill="#2d5c44"/>
     <path d="M 722 278 L 786 306 L 730 334 Z" fill="#315f46"/>
     <path d="M 144 616 L 220 640 L 154 670 Z" fill="#315f46"/>
     <path d="M 1292 272 L 1352 292 L 1308 326 Z" fill="#2f6044"/>
   </g>
-  <g opacity="0.82">
-    <ellipse cx="1402" cy="477" rx="220" ry="84" fill="none" stroke="#f13b22" stroke-width="10" opacity="0.46" filter="url(#redGlow)"/>
-    <ellipse cx="1580" cy="738" rx="260" ry="98" fill="none" stroke="#f13b22" stroke-width="12" opacity="0.42" filter="url(#redGlow)"/>
-    <path d="M 1474 444 L 1562 392 L 1520 518 Z" fill="#f13b22" opacity="0.36" filter="url(#redGlow)"/>
+  <g opacity="0.64">
+    <ellipse cx="1328" cy="598" rx="176" ry="72" fill="none" stroke="#f13b22" stroke-width="8" opacity="0.36" filter="url(#redGlow)"/>
+    <ellipse cx="1588" cy="758" rx="202" ry="82" fill="none" stroke="#f13b22" stroke-width="9" opacity="0.30" filter="url(#redGlow)"/>
+    <path d="M 1454 430 L 1556 374 L 1510 512 Z" fill="#f13b22" opacity="0.28" filter="url(#redGlow)"/>
   </g>
-  ${bruteEnemyMarkup(1336, 608, 0.95)}
-  ${casterEnemyMarkup(1538, 405, 0.74)}
-  ${shieldEnemyMarkup(1634, 790, 1.03)}
+  ${bruteEnemyMarkup(1294, 604, 0.92)}
+  ${casterEnemyMarkup(1508, 414, 0.72)}
+  ${shieldEnemyMarkup(1620, 786, 0.96)}
+  <g filter="url(#cyanGlow)" opacity="0.76">
+    <path d="M 642 664 C 826 732, 1082 706, 1288 594" fill="none" stroke="#e9fdff" stroke-width="12" stroke-linecap="round"/>
+    <path d="M 662 640 C 858 696, 1078 680, 1268 568" fill="none" stroke="#20d8ff" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <g opacity="0.70" filter="url(#goldGlow)">
+    <path d="M 1228 548 L 1388 494" stroke="#ffd266" stroke-width="7" stroke-linecap="round"/>
+    <path d="M 1248 616 L 1398 654" stroke="#ff5636" stroke-width="7" stroke-linecap="round"/>
+    <path d="M 1188 532 L 1302 444" stroke="#ff5636" stroke-width="5" stroke-linecap="round"/>
+  </g>
   <g>
+    <ellipse cx="742" cy="784" rx="216" ry="72" fill="#03070b" opacity="0.58"/>
+    <ellipse cx="742" cy="754" rx="232" ry="86" fill="none" stroke="#f0bd55" stroke-width="4" opacity="0.28" filter="url(#goldGlow)"/>
+  </g>
+  <g filter="url(#shadowLift)">
       ${heroMarkup}
   </g>
-  <g filter="url(#cyanGlow)" opacity="0.96">
-    <path d="M 686 660 C 900 762, 1188 744, 1410 610" fill="none" stroke="#e9fdff" stroke-width="18" stroke-linecap="round"/>
-    <path d="M 708 635 C 936 722, 1184 704, 1388 584" fill="none" stroke="#20d8ff" stroke-width="6" stroke-linecap="round"/>
-    <path d="M 1244 552 L 1444 486" stroke="#ffd266" stroke-width="11" stroke-linecap="round"/>
-    <path d="M 1272 622 L 1462 664" stroke="#ff3a20" stroke-width="9" stroke-linecap="round"/>
-    <path d="M 1178 532 L 1310 430" stroke="#ff3a20" stroke-width="7" stroke-linecap="round"/>
+  <g opacity="0.88" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 648 552 C 704 526, 754 544, 792 588" fill="none" stroke="#c51d17" stroke-width="18"/>
+    <path d="M 660 556 C 712 540, 750 556, 782 590" fill="none" stroke="#ff4a2d" stroke-width="5" filter="url(#redGlow)"/>
+    <path d="M 722 600 L 824 646 L 826 700" fill="none" stroke="#f2a522" stroke-width="7" opacity="0.72" filter="url(#goldGlow)"/>
+    <path d="M 660 640 C 720 672, 802 676, 884 646" fill="none" stroke="#c7e8ec" stroke-width="7" opacity="0.74"/>
+    <ellipse cx="660" cy="606" rx="38" ry="18" fill="none" stroke="#25d8ff" stroke-width="5" opacity="0.86" filter="url(#cyanGlow)"/>
+    <path d="M 846 682 L 992 646" stroke="#d9f7ff" stroke-width="6" opacity="0.78" filter="url(#cyanGlow)"/>
   </g>
   <g>
-    <path d="M 44 42 L 330 42 L 360 73 L 336 114 L 44 114 Z" fill="#0a1017" stroke="#6b5131" stroke-width="4"/>
-    <path d="M 64 58 L 306 58 L 320 72 L 308 86 L 64 86 Z" fill="#2b1015" stroke="#77313a" stroke-width="3"/>
-    <path d="M 70 64 L 282 64 L 282 80 L 70 80 Z" fill="#e43a28"/>
-    <path d="M 64 94 L 250 94 L 260 103 L 250 112 L 64 112 Z" fill="#092e38" stroke="#23899c" stroke-width="3"/>
-    <path d="M 70 99 L 218 99 L 218 107 L 70 107 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
-    <circle cx="394" cy="80" r="38" fill="#101f3d" stroke="#f2a522" stroke-width="6" filter="url(#goldGlow)"/>
-    <path d="M 394 47 L 416 80 L 394 114 L 372 80 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
-  </g>
-  <g opacity="0.72">
-    <path d="M 34 990 L 1886 990 L 1886 1022 L 34 1022 Z" fill="#05070b"/>
-    <path d="M 572 1002 L 1348 1002 L 1364 1011 L 1348 1020 L 572 1020 L 556 1011 Z" fill="#0b1720" stroke="#355466" stroke-width="2"/>
-    <path d="M 820 1004 L 1098 1004 L 1110 1011 L 1098 1018 L 820 1018 L 808 1011 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
+    <path d="M 42 42 L 312 42 L 356 78 L 328 118 L 42 118 Z" fill="#081017" stroke="#7d6138" stroke-width="4"/>
+    <path d="M 70 60 L 294 60 L 310 74 L 298 90 L 70 90 Z" fill="#311317" stroke="#82313a" stroke-width="3"/>
+    <path d="M 76 66 L 258 66 L 258 84 L 76 84 Z" fill="#e43a28"/>
+    <path d="M 70 96 L 238 96 L 250 106 L 238 116 L 70 116 Z" fill="#082d38" stroke="#25899c" stroke-width="3"/>
+    <path d="M 76 101 L 204 101 L 204 111 L 76 111 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
+    <circle cx="392" cy="82" r="42" fill="#101f3d" stroke="#f2a522" stroke-width="6" filter="url(#goldGlow)"/>
+    <path d="M 392 47 L 416 82 L 392 118 L 368 82 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
   </g>
 </svg>
 `;
