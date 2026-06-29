@@ -11,6 +11,12 @@ Final assets must be commercially usable, registered, validated, and visually re
 - Material Maker: procedural materials where appropriate.
 - Unity Built-in renderer for current repo; do not migrate render pipeline without a tested branch.
 
+Buyout 3D tool research and adoption gates are tracked in
+`docs/Art/BUYOUT_3D_TOOL_STACK.md`. Paid tools are allowed only when they make
+the next gameplay-camera combat screenshot more readable; they are not a
+substitute for concept approval, silhouette review, source registration, or
+Unity import validation.
+
 ## Intake Path
 
 1. Register asset in `docs/Art/ASSET_REGISTER.csv`.
