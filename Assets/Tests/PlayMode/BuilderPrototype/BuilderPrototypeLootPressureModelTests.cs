@@ -135,6 +135,44 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
         }
 
         [Test]
+        public void PreviewExtraction_ReportsAdjustedOutcomeWithoutMutatingRun()
+        {
+            var model = new BuilderPrototypeLootPressureModel();
+            var item = new BuilderPrototypeLootItem("preview-cache", BuilderPrototypeLootRarity.Rare, 12, 2);
+            model.CollectLoot(item);
+            model.AdvancePressure(6, combatNoise: 1);
+            var carriedItemCount = model.CarriedItemCount;
+            var carriedValue = model.CarriedLootValue;
+            var carriedPower = model.CarriedPowerBudget;
+            var carriedRiskWeight = model.CarriedRiskWeight;
+            var pressure = model.PressureScore;
+            var rawRisk = model.ExtractionRiskPercent;
+            var adjustedRisk = model.CalculateAdjustedExtractionRiskPercent(2);
+
+            var extractPreview = model.PreviewExtraction(adjustedRisk, 2);
+            var losePreview = model.PreviewExtraction(adjustedRisk - 1, 2);
+
+            Assert.That(extractPreview.Outcome, Is.EqualTo(BuilderPrototypeExtractionOutcome.Extracted));
+            Assert.That(extractPreview.RawRiskPercent, Is.EqualTo(rawRisk));
+            Assert.That(extractPreview.RiskPercent, Is.EqualTo(adjustedRisk));
+            Assert.That(extractPreview.RiskReductionPercent, Is.EqualTo(2));
+            Assert.That(extractPreview.BankedValue, Is.EqualTo(carriedValue));
+            Assert.That(extractPreview.BankedItemCount, Is.EqualTo(carriedItemCount));
+            Assert.That(losePreview.Outcome, Is.EqualTo(BuilderPrototypeExtractionOutcome.Lost));
+            Assert.That(losePreview.RiskPercent, Is.EqualTo(adjustedRisk));
+            Assert.That(losePreview.LostValue, Is.EqualTo(carriedValue));
+            Assert.That(losePreview.LostItemCount, Is.EqualTo(carriedItemCount));
+            Assert.That(model.CarriedItemCount, Is.EqualTo(carriedItemCount));
+            Assert.That(model.CarriedLootValue, Is.EqualTo(carriedValue));
+            Assert.That(model.CarriedPowerBudget, Is.EqualTo(carriedPower));
+            Assert.That(model.CarriedRiskWeight, Is.EqualTo(carriedRiskWeight));
+            Assert.That(model.PressureScore, Is.EqualTo(pressure));
+            Assert.That(model.BankedLootValue, Is.EqualTo(0));
+            Assert.That(model.BankedItemCount, Is.EqualTo(0));
+            Assert.IsTrue(model.HasCarriedLoot);
+        }
+
+        [Test]
         public void FailedExtraction_LosesCarriedLootWithoutChangingExistingBank()
         {
             var model = new BuilderPrototypeLootPressureModel();

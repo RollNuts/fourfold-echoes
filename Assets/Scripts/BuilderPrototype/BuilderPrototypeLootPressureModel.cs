@@ -231,6 +231,29 @@ namespace FourfoldEchoes.BuilderPrototype
 
         public BuilderPrototypeExtractionResult AttemptExtraction(int safetyRollPercent, int riskReductionPercent = 0)
         {
+            var preview = PreviewExtraction(safetyRollPercent, riskReductionPercent);
+            var powerBudget = CarriedPowerBudget;
+
+            if (preview.Outcome == BuilderPrototypeExtractionOutcome.NoCarriedLoot)
+            {
+                return preview;
+            }
+
+            if (preview.Succeeded)
+            {
+                BankedItemCount = AddClamped(BankedItemCount, preview.BankedItemCount);
+                BankedLootValue = AddClamped(BankedLootValue, preview.BankedValue);
+                BankedPowerBudget = AddClamped(BankedPowerBudget, powerBudget);
+                ClearCarriedRun();
+                return preview;
+            }
+
+            ClearCarriedRun();
+            return preview;
+        }
+
+        public BuilderPrototypeExtractionResult PreviewExtraction(int safetyRollPercent, int riskReductionPercent = 0)
+        {
             var roll = Clamp(safetyRollPercent, 0, 100);
             if (!HasCarriedLoot)
             {
@@ -242,18 +265,12 @@ namespace FourfoldEchoes.BuilderPrototype
             var risk = AdjustExtractionRiskPercent(rawRisk, reduction);
             var itemCount = CarriedItemCount;
             var lootValue = CarriedLootValue;
-            var powerBudget = CarriedPowerBudget;
 
             if (roll >= risk)
             {
-                BankedItemCount = AddClamped(BankedItemCount, itemCount);
-                BankedLootValue = AddClamped(BankedLootValue, lootValue);
-                BankedPowerBudget = AddClamped(BankedPowerBudget, powerBudget);
-                ClearCarriedRun();
                 return new BuilderPrototypeExtractionResult(BuilderPrototypeExtractionOutcome.Extracted, rawRisk, risk, reduction, roll, lootValue, 0, itemCount, 0);
             }
 
-            ClearCarriedRun();
             return new BuilderPrototypeExtractionResult(BuilderPrototypeExtractionOutcome.Lost, rawRisk, risk, reduction, roll, 0, lootValue, 0, itemCount);
         }
 

@@ -25,6 +25,42 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
                 Assert.That(controller.AdjustedExtractionRiskPercent, Is.EqualTo(controller.ExtractionRiskPercent - controller.ExtractionGuardRiskReduction));
                 Assert.That(controller.ExtractionRiskHudText, Is.EqualTo("Risk " + controller.ExtractionRiskPercent + "% -> " + controller.AdjustedExtractionRiskPercent + "%"));
                 Assert.That(controller.ExtractionGuardHudText, Is.EqualTo("Guard Buffer -2% (SentinelGuard 15 + Vitality 120)"));
+                Assert.That(controller.ExtractionRollPreviewHudText, Is.EqualTo("Roll Preview: 50 vs risk " + controller.AdjustedExtractionRiskPercent + " => Extract"));
+                Assert.That(controller.LastLootRunEvent, Does.Contain("Picked up"));
+            }
+            finally
+            {
+                Object.DestroyImmediate(controllerObject);
+            }
+        }
+
+        [Test]
+        public void ExtractRollPreview_ReportsHudWithoutBankingOrLosingLoot()
+        {
+            var controllerObject = new GameObject("Loot Preview Roll Readout Test");
+            try
+            {
+                var controller = controllerObject.AddComponent<BuilderPrototypeSpineController>();
+
+                Assert.That(controller.ExtractionRollPreviewHudText, Is.EqualTo("Roll Preview: no carried loot"));
+
+                controller.CollectPrototypeLootForPreview();
+                var carriedValue = controller.CarriedLootValue;
+                var carriedItemCount = controller.CarriedLootItemCount;
+                var pressure = controller.PressureScore;
+                var adjustedRisk = controller.AdjustedExtractionRiskPercent;
+
+                var preview = controller.ExtractionRollPreview;
+
+                Assert.That(preview.Outcome, Is.EqualTo(BuilderPrototypeExtractionOutcome.Extracted));
+                Assert.That(preview.SafetyRollPercent, Is.EqualTo(BuilderPrototypeSpineController.ExtractionPreviewRollPercent));
+                Assert.That(preview.RiskPercent, Is.EqualTo(adjustedRisk));
+                Assert.That(controller.ExtractionRollPreviewHudText, Is.EqualTo("Roll Preview: 50 vs risk " + adjustedRisk + " => Extract"));
+                Assert.That(controller.CarriedLootValue, Is.EqualTo(carriedValue));
+                Assert.That(controller.CarriedLootItemCount, Is.EqualTo(carriedItemCount));
+                Assert.That(controller.PressureScore, Is.EqualTo(pressure));
+                Assert.That(controller.BankedLootValue, Is.EqualTo(0));
+                Assert.That(controller.BankedLootItemCount, Is.EqualTo(0));
                 Assert.That(controller.LastLootRunEvent, Does.Contain("Picked up"));
             }
             finally
