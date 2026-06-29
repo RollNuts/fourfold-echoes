@@ -21,10 +21,11 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
                 Assert.That(controller.CharacterBuildHudText, Does.Contain("Role: Builder/Striker"));
                 Assert.That(controller.CharacterBuildHudText, Does.Contain("Build 18 Speed 1.25"));
                 Assert.That(controller.CharacterBuildHudText, Does.Contain("Off 18 Break 16 Guard 15 Vit 120"));
-                Assert.That(controller.CharacterBuildHudText, Does.Contain("Press 0/100 Quiet | Risk 0% -> 0% | Guard Buffer -2%"));
+                Assert.That(controller.CharacterBuildHudText, Does.Contain("Press 0/100 Quiet | Risk 0% -> 0%"));
+                Assert.That(controller.ExtractionGuardHudText, Is.EqualTo("Guard Buffer -2% (SentinelGuard 15 + Vitality 120)"));
                 Assert.That(controller.CharacterBuildIdentityHudText, Is.EqualTo("Build: Echo Forgemason | Role: Builder/Striker"));
                 Assert.That(controller.CharacterBuildStatsHudText, Is.EqualTo("Stats: Build 18 Speed 1.25 | Off 18 Break 16 Guard 15 Vit 120"));
-                Assert.That(controller.CharacterBuildPressureHudText, Is.EqualTo("Run: Press 0/100 Quiet | Risk 0% -> 0% | Guard Buffer -2% (SentinelGuard 15 + Vitality 120)"));
+                Assert.That(controller.CharacterBuildPressureHudText, Is.EqualTo("Run: Press 0/100 Quiet | Risk 0% -> 0%"));
             }
             finally
             {
@@ -83,9 +84,10 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
                 controller.CollectPrototypeLootForPreview();
 
                 Assert.That(controller.CharacterBuildHudText, Does.Contain(
-                    "Press " + prototypeLoot.PickupPressure + "/100 Quiet | Risk " + controller.ExtractionRiskPercent + "% -> " + controller.AdjustedExtractionRiskPercent + "% | Guard Buffer -2%"));
+                    "Press " + prototypeLoot.PickupPressure + "/100 Quiet | Risk " + controller.ExtractionRiskPercent + "% -> " + controller.AdjustedExtractionRiskPercent + "%"));
+                Assert.That(controller.ExtractionGuardHudText, Is.EqualTo("Guard Buffer -2% (SentinelGuard 15 + Vitality 120)"));
                 Assert.That(controller.CharacterBuildPressureHudText, Is.EqualTo(
-                    "Run: Press " + prototypeLoot.PickupPressure + "/100 Quiet | Risk " + controller.ExtractionRiskPercent + "% -> " + controller.AdjustedExtractionRiskPercent + "% | Guard Buffer -2% (SentinelGuard 15 + Vitality 120)"));
+                    "Run: Press " + prototypeLoot.PickupPressure + "/100 Quiet | Risk " + controller.ExtractionRiskPercent + "% -> " + controller.AdjustedExtractionRiskPercent + "%"));
 
                 controller.ResetPrototypeRun();
 

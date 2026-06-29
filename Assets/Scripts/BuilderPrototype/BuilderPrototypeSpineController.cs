@@ -6,7 +6,7 @@ namespace FourfoldEchoes.BuilderPrototype
 {
     public sealed class BuilderPrototypeSpineController : MonoBehaviour
     {
-        public const string SceneContractText = "PR-07A stat hooks: build capacity, cursor tempo, combat edge, and loot pressure.";
+        public const string SceneContractText = "PR-08A extraction guard: defensive stats reduce carried-loot extraction risk.";
         public const string ControlPromptText = "Move LS/WASD | Build X/B | Combat Y/C | Loot LB/L | Extract RB/E | Reset Start/R";
         public const string BuildHookPromptText = "Build: move cursor LS/arrows | Place A/J | Remove X/K | Exit B/Tab";
         public const string CombatHookPromptText = "Combat preview: read telegraphs, safe lanes, and flank/rear bonus | Exit B/Tab";
@@ -934,9 +934,7 @@ namespace FourfoldEchoes.BuilderPrototype
                 + " "
                 + lootPressure.PressureBand
                 + " | "
-                + ExtractionRiskHudText
-                + " | "
-                + ExtractionGuardHudText;
+                + ExtractionRiskHudText;
         }
 
         private string FormatCharacterBuildGameplayHud()
@@ -1098,12 +1096,13 @@ namespace FourfoldEchoes.BuilderPrototype
                 return;
             }
 
-            GUILayout.BeginArea(new Rect(16f, 16f, 720f, 300f), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16f, 16f, 720f, 340f), GUI.skin.box);
             GUILayout.Label(SceneContractText);
             GUILayout.Label("Mode: " + BuilderPrototypeRunState.LabelFor(runState.Mode));
             GUILayout.Label(CharacterBuildIdentityHudText);
             GUILayout.Label(CharacterBuildStatsHudText);
             GUILayout.Label(CharacterBuildPressureHudText);
+            GUILayout.Label(ExtractionGuardHudText);
             GUILayout.Label(CharacterBuildSourceHudText);
             GUILayout.Label(CharacterBuildGameplayHudText);
             GUILayout.Label("Build Blocks: " + BuildBlocksAvailable + "/" + StartingBuildBlockCapacity + " | Placed: " + PlacedBlockCount + " | Cursor: " + FormatCell(SelectedBuildCell));
@@ -1116,7 +1115,6 @@ namespace FourfoldEchoes.BuilderPrototype
             {
                 GUILayout.Label("Carried Loot: " + lootPressure.CarriedLootValue + " value | " + lootPressure.CarriedItemCount + " item");
                 GUILayout.Label("Pressure: " + lootPressure.PressureScore + "/" + BuilderPrototypeLootPressureModel.MaxPressureScore + " " + lootPressure.PressureBand + " | Extract " + ExtractionRiskHudText);
-                GUILayout.Label(ExtractionGuardHudText);
                 GUILayout.Label("Banked Loot: " + lootPressure.BankedLootValue + " value | " + lootPressure.BankedItemCount + " item");
                 GUILayout.Label("Loot Event: " + lastLootRunEvent);
             }
