@@ -366,6 +366,7 @@ namespace FourfoldEchoes.Editor
             VerifyCombatRemainingObjective(controller);
             VerifyRelicIdentityEffects(controller);
             VerifyBossToolOpening(controller, tool);
+            VerifyCombatJuiceFeedback(controller);
 
             for (var i = 0; i < controller.enemies.Length; i++)
             {
@@ -897,6 +898,84 @@ namespace FourfoldEchoes.Editor
                 tool.inputEnabled = originalInputEnabled;
                 tool.cooldownSeconds = originalCooldown;
                 openingTimers[bossIndex] = originalBossOpening;
+            }
+        }
+
+        private static void VerifyCombatJuiceFeedback(D020SliceController controller)
+        {
+            var enemyIndex = FindEnemyIndex(controller, "Melee");
+            if (enemyIndex < 0)
+            {
+                enemyIndex = 0;
+            }
+
+            var enemy = controller.enemies != null && enemyIndex < controller.enemies.Length ? controller.enemies[enemyIndex] : null;
+            if (enemy == null)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: combat juice test needs a valid enemy.");
+            }
+
+            var enemyHealth = GetPrivate<float[]>(controller, "enemyHealth");
+            if (enemyHealth == null || enemyIndex >= enemyHealth.Length)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: combat juice test could not access enemy health.");
+            }
+
+            enemy.gameObject.SetActive(true);
+            enemyHealth[enemyIndex] = Mathf.Max(60f, InvokePrivateFloat(controller, "InitialEnemyHealth", enemyIndex));
+            var attackDirection = Vector3.right;
+            controller.player.position = enemy.position - attackDirection * 1.0f;
+            SetPrivate(controller, "facing", attackDirection);
+            SetPrivate(controller, "attackTimer", 0f);
+            SetPrivate(controller, "hitStreak", 0);
+            SetPrivate(controller, "hitStreakTimer", 0f);
+            SetPrivate(controller, "chaos01", 0f);
+            SetPrivate(controller, "cameraShakeTrauma", 0f);
+            InvokePrivate(controller, "TryAttack");
+
+            if (GetPrivate<int>(controller, "hitStreak") < 1
+                || GetPrivate<float>(controller, "hitStreakTimer") <= 0f
+                || GetPrivate<float>(controller, "chaos01") <= 0f
+                || GetPrivate<float>(controller, "cameraShakeTrauma") <= 0f)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: player attack did not start streak, chaos, and camera feel feedback.");
+            }
+
+            if (D020SliceController.ChaosStateText(4, 1f, 0.5f, false, false).IndexOf("STREAK x4", StringComparison.Ordinal) < 0
+                || D020SliceController.ChaosStateText(0, 0f, 0.1f, true, false).IndexOf("BREAK WINDOW", StringComparison.Ordinal) < 0
+                || D020SliceController.ChaosStateText(0, 0f, 0.1f, false, true).IndexOf("DANGER", StringComparison.Ordinal) < 0
+                || D020SliceController.ChaosStateTextJa(4, 1f, 0.5f, false, false).IndexOf("連撃 x4", StringComparison.Ordinal) < 0)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: combat juice HUD copy does not expose streak, break, danger, and Japanese states.");
+            }
+
+            if (D020SliceController.HitConfirmPitch(2, 1) <= D020SliceController.HitConfirmPitch(1, 0)
+                || D020SliceController.HitStreakImpactText(4, false, false).IndexOf("STREAK x4", StringComparison.Ordinal) < 0
+                || D020SliceController.HitStreakImpactText(2, true, false).IndexOf("CHAIN x2", StringComparison.Ordinal) < 0
+                || D020SliceController.HitStreakImpactText(1, false, true).IndexOf("BREAK x1", StringComparison.Ordinal) < 0)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: combat juice helper copy or pitch scaling is not readable.");
+            }
+
+            SetPrivate(controller, "hitStreak", 5);
+            SetPrivate(controller, "hitStreakTimer", 1f);
+            SetPrivate(controller, "playerHealth", 100f);
+            SetPrivate(controller, "playerInvulnerableTimer", 0f);
+            SetPrivate(controller, "dodgeTimer", 0f);
+            SetPrivate(controller, "runFailed", false);
+            enemy.position = controller.player.position + Vector3.forward * 0.72f;
+            var toPlayer = controller.player.position - enemy.position;
+            toPlayer.y = 0f;
+            InvokePrivate(controller, "ResolveEnemyAttack", enemyIndex, enemy, toPlayer);
+
+            if (GetPrivate<float>(controller, "playerHealth") >= 100f)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: combat juice damage setup did not hit the player.");
+            }
+
+            if (GetPrivate<int>(controller, "hitStreak") != 0 || GetPrivate<float>(controller, "hitStreakTimer") > 0f)
+            {
+                throw new InvalidOperationException("D-020 combat verifier failed: player damage did not break the hit streak.");
             }
         }
 
