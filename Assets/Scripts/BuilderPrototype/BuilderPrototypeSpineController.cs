@@ -6,7 +6,7 @@ namespace FourfoldEchoes.BuilderPrototype
 {
     public sealed class BuilderPrototypeSpineController : MonoBehaviour
     {
-        public const string SceneContractText = "PR-08A extraction guard: defensive stats reduce carried-loot extraction risk.";
+        public const string SceneContractText = "PR-09A extract roll preview: deterministic roll shows extract-or-lose read.";
         public const string ControlPromptText = "Move LS/WASD | Build X/B | Combat Y/C | Loot LB/L | Extract RB/E | Reset Start/R";
         public const string BuildHookPromptText = "Build: move cursor LS/arrows | Place A/J | Remove X/K | Exit B/Tab";
         public const string CombatHookPromptText = "Combat preview: read telegraphs, safe lanes, and flank/rear bonus | Exit B/Tab";
@@ -14,6 +14,7 @@ namespace FourfoldEchoes.BuilderPrototype
         public const string ExtractHookPromptText = "Extract: bank A/J | lose X/K; deterministic rolls update the run HUD.";
         public const string PrototypeBuildIdentityText = "Echo Forgemason";
         public const string PrototypeBuildSelectedAffixesText = "+BuilderPower +BuildSpeed +StrikerDamage";
+        public const int ExtractionPreviewRollPercent = 50;
 
         [Header("Scene")]
         public Transform player;
@@ -114,8 +115,10 @@ namespace FourfoldEchoes.BuilderPrototype
             characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.SentinelGuard),
             characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.Vitality));
         public int AdjustedExtractionRiskPercent => lootPressure.CalculateAdjustedExtractionRiskPercent(ExtractionGuardRiskReduction);
+        public BuilderPrototypeExtractionResult ExtractionRollPreview => lootPressure.PreviewExtraction(ExtractionPreviewRollPercent, ExtractionGuardRiskReduction);
         public string ExtractionRiskHudText => FormatExtractionRiskHud();
         public string ExtractionGuardHudText => FormatExtractionGuardHud();
+        public string ExtractionRollPreviewHudText => FormatExtractionRollPreviewHud();
         public int DangerTier => PressureTierForHud(lootPressure.PressureScore);
         public string LastLootRunEvent => lastLootRunEvent;
         public bool HasRequiredHookAnchors => buildHookAnchor != null && combatHookAnchor != null && lootHookAnchor != null && extractHookAnchor != null;
@@ -1005,6 +1008,22 @@ namespace FourfoldEchoes.BuilderPrototype
                 + ")";
         }
 
+        private string FormatExtractionRollPreviewHud()
+        {
+            var preview = ExtractionRollPreview;
+            if (preview.Outcome == BuilderPrototypeExtractionOutcome.NoCarriedLoot)
+            {
+                return "Roll Preview: no carried loot";
+            }
+
+            return "Roll Preview: "
+                + preview.SafetyRollPercent
+                + " vs risk "
+                + preview.RiskPercent
+                + " => "
+                + (preview.Succeeded ? "Extract" : "Lose");
+        }
+
         private static string FormatExtractionRiskTransition(int rawRiskPercent, int adjustedRiskPercent)
         {
             return rawRiskPercent + "% -> " + adjustedRiskPercent + "%";
@@ -1096,7 +1115,7 @@ namespace FourfoldEchoes.BuilderPrototype
                 return;
             }
 
-            GUILayout.BeginArea(new Rect(16f, 16f, 720f, 340f), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16f, 16f, 720f, 400f), GUI.skin.box);
             GUILayout.Label(SceneContractText);
             GUILayout.Label("Mode: " + BuilderPrototypeRunState.LabelFor(runState.Mode));
             GUILayout.Label(CharacterBuildIdentityHudText);
@@ -1115,6 +1134,7 @@ namespace FourfoldEchoes.BuilderPrototype
             {
                 GUILayout.Label("Carried Loot: " + lootPressure.CarriedLootValue + " value | " + lootPressure.CarriedItemCount + " item");
                 GUILayout.Label("Pressure: " + lootPressure.PressureScore + "/" + BuilderPrototypeLootPressureModel.MaxPressureScore + " " + lootPressure.PressureBand + " | Extract " + ExtractionRiskHudText);
+                GUILayout.Label(ExtractionRollPreviewHudText);
                 GUILayout.Label("Banked Loot: " + lootPressure.BankedLootValue + " value | " + lootPressure.BankedItemCount + " item");
                 GUILayout.Label("Loot Event: " + lastLootRunEvent);
             }
