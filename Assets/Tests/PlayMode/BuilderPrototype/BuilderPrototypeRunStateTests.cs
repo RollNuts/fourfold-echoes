@@ -23,8 +23,8 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
         {
             Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.BuildHook), Does.Contain("Place A/J"));
             Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.CombatHook), Does.Contain("Combat preview"));
-            Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.LootHook), Does.Contain("reserved for PR-04"));
-            Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.ExtractHook), Does.Contain("reserved for PR-05"));
+            Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.LootHook), Does.Contain("collect prototype cache"));
+            Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.ExtractHook), Does.Contain("bank A/J"));
         }
 
         [Test]

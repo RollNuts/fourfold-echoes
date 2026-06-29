@@ -5,12 +5,12 @@ namespace FourfoldEchoes.BuilderPrototype
 {
     public sealed class BuilderPrototypeSpineController : MonoBehaviour
     {
-        public const string SceneContractText = "PR-03B combat preview: traversal, build edit loop, tactical telegraphs, and HUD readout.";
+        public const string SceneContractText = "PR-05B integrated preview: traversal, build edit loop, tactical telegraphs, deterministic loot, and extract HUD.";
         public const string ControlPromptText = "Move LS/WASD | Build X/B | Combat Y/C | Loot LB/L | Extract RB/E | Reset Start/R";
         public const string BuildHookPromptText = "Build: move cursor LS/arrows | Place A/J | Remove X/K | Exit B/Tab";
         public const string CombatHookPromptText = "Combat preview: read telegraphs, safe lanes, and flank/rear bonus | Exit B/Tab";
-        public const string LootHookPromptText = "Loot hook reserved for PR-04; no drops or affixes ship in PR-02.";
-        public const string ExtractHookPromptText = "Extract hook reserved for PR-05; no extraction reward flow ships in PR-02.";
+        public const string LootHookPromptText = "Loot: collect prototype cache A/J; deterministic pickup raises value and pressure.";
+        public const string ExtractHookPromptText = "Extract: bank A/J | lose X/K; deterministic rolls update the run HUD.";
 
         [Header("Scene")]
         public Transform player;
@@ -52,11 +52,21 @@ namespace FourfoldEchoes.BuilderPrototype
         [Header("Prototype HUD")]
         public bool showDebugHud = true;
 
+        [Header("Loot Preview")]
+        public Transform prototypeLootPickup;
+        public Transform prototypeExtractGate;
+        public Material lootPickupAvailableMaterial;
+        public Material lootPickupCollectedMaterial;
+        public Material extractGateReadyMaterial;
+        public Material extractGateBankedMaterial;
+        public Material extractGateLostMaterial;
+
         private const float CombatTelegraphResolveAt = 2.15f;
         private const float CombatTelegraphResolveDuration = 0.48f;
         private const float CombatLineTelegraphForwardOffset = 2.05f;
 
         private readonly BuilderPrototypeRunState runState = new BuilderPrototypeRunState();
+        private readonly BuilderPrototypeLootPressureModel lootPressure = new BuilderPrototypeLootPressureModel();
         private readonly Dictionary<Vector2Int, Stack<GameObject>> placedBlocks = new Dictionary<Vector2Int, Stack<GameObject>>();
         private readonly BuilderPrototypeTacticalModel tacticalModel = new BuilderPrototypeTacticalModel();
         private BuilderPrototypeBuildGrid buildGrid;
@@ -70,16 +80,32 @@ namespace FourfoldEchoes.BuilderPrototype
         private Vector3 facing = Vector3.forward;
         private Vector3 startPosition;
         private string lastBuildEvent = "Build loop ready";
+        private string lastLootRunEvent = "Loot run preview ready";
+        private BuilderPrototypeExtractionResult lastExtractionResult;
         private BuilderPrototypeTacticalEvaluation combatEvaluation = new BuilderPrototypeTacticalEvaluation(BuilderPrototypePositionSafety.Safe, 0, 0, -1f);
         private BuilderPrototypePositionalBonus combatPositionalBonus = BuilderPrototypePositionalBonus.None;
 
         public BuilderPrototypeMode CurrentMode => runState.Mode;
-        public int CarriedLootValue => runState.CarriedLootValue;
-        public int DangerTier => runState.DangerTier;
-        public int BankedLootValue => runState.BankedLootValue;
+        public int CarriedLootValue => lootPressure.CarriedLootValue;
+        public int CarriedLootItemCount => lootPressure.CarriedItemCount;
+        public int BankedLootValue => lootPressure.BankedLootValue;
+        public int BankedLootItemCount => lootPressure.BankedItemCount;
+        public int PressureScore => lootPressure.PressureScore;
+        public BuilderPrototypePressureBand PressureBand => lootPressure.PressureBand;
+        public int ExtractionRiskPercent => lootPressure.ExtractionRiskPercent;
+        public int DangerTier => PressureTierForHud(lootPressure.PressureScore);
+        public string LastLootRunEvent => lastLootRunEvent;
         public bool HasRequiredHookAnchors => buildHookAnchor != null && combatHookAnchor != null && lootHookAnchor != null && extractHookAnchor != null;
         public bool HasRequiredBuildReferences => editableBlocksRoot != null && placedBlockMaterial != null && buildCursorMaterial != null;
         public bool HasRequiredCombatPreviewReferences => combatTelegraphMaterial != null && combatSafeMarkerMaterial != null && combatThreatenedMarkerMaterial != null && combatUnsafeMarkerMaterial != null;
+        public bool HasRequiredLootPreviewReferences =>
+            prototypeLootPickup != null &&
+            prototypeExtractGate != null &&
+            lootPickupAvailableMaterial != null &&
+            lootPickupCollectedMaterial != null &&
+            extractGateReadyMaterial != null &&
+            extractGateBankedMaterial != null &&
+            extractGateLostMaterial != null;
         public int BuildBlocksAvailable => buildGrid?.BlocksAvailable ?? startingBuildBlocks;
         public int PlacedBlockCount => buildGrid?.PlacedBlockCount ?? 0;
         public Vector2Int SelectedBuildCell => buildGrid?.SelectedCell ?? Vector2Int.zero;
@@ -97,6 +123,7 @@ namespace FourfoldEchoes.BuilderPrototype
 
             ResetBuildGrid();
             ResetCombatPreview();
+            UpdateLootPreviewVisuals();
             SnapCameraToPlayer();
         }
 
@@ -105,6 +132,7 @@ namespace FourfoldEchoes.BuilderPrototype
             cursorMoveRepeatTimer = Mathf.Max(0f, cursorMoveRepeatTimer - Time.deltaTime);
             HandleModeInput();
             HandlePrototypeStateInput();
+            HandleLootPreviewInput();
             HandleBuildInput();
             MovePlayer(Time.deltaTime);
             UpdateBuildCursor();
@@ -115,11 +143,15 @@ namespace FourfoldEchoes.BuilderPrototype
         public void ResetPrototypeRun()
         {
             runState.ResetRun();
+            lootPressure.LoseCarriedLootAndResetPressure();
+            lastExtractionResult = null;
+            lastLootRunEvent = "Loot run preview reset";
             if (player != null)
             {
                 player.position = startPosition;
             }
 
+            UpdateLootPreviewVisuals();
             SnapCameraToPlayer();
             ResetCombatPreview();
         }
@@ -148,6 +180,30 @@ namespace FourfoldEchoes.BuilderPrototype
                 Mathf.Clamp(position.x, xRange.x, xRange.y),
                 position.y,
                 Mathf.Clamp(position.z, zRange.x, zRange.y));
+        }
+
+        public static BuilderPrototypeLootItem CreatePrototypeLootForPreview()
+        {
+            return new BuilderPrototypeLootItem("prototype-echo-cache", BuilderPrototypeLootRarity.Rare, 12, 2);
+        }
+
+        public void CollectPrototypeLootForPreview()
+        {
+            var item = CreatePrototypeLootForPreview();
+            lootPressure.CollectLoot(item);
+            lastExtractionResult = null;
+            lastLootRunEvent = $"Picked up {item.ItemId}: +{item.ExtractionValue} value, pressure {lootPressure.PressureScore}/{BuilderPrototypeLootPressureModel.MaxPressureScore}";
+            UpdateLootPreviewVisuals();
+        }
+
+        public BuilderPrototypeExtractionResult BankPrototypeLootForPreview()
+        {
+            return AttemptPrototypeExtractionForPreview(100);
+        }
+
+        public BuilderPrototypeExtractionResult LosePrototypeLootForPreview()
+        {
+            return AttemptPrototypeExtractionForPreview(0);
         }
 
         public static string PromptFor(BuilderPrototypeMode mode)
@@ -197,6 +253,22 @@ namespace FourfoldEchoes.BuilderPrototype
             {
                 ResetPrototypeRun();
                 ResetBuildGrid();
+            }
+        }
+
+        private void HandleLootPreviewInput()
+        {
+            if (runState.Mode == BuilderPrototypeMode.LootHook && Pressed(KeyCode.J, KeyCode.JoystickButton0))
+            {
+                CollectPrototypeLootForPreview();
+            }
+            else if (runState.Mode == BuilderPrototypeMode.ExtractHook && Pressed(KeyCode.J, KeyCode.JoystickButton0))
+            {
+                BankPrototypeLootForPreview();
+            }
+            else if (runState.Mode == BuilderPrototypeMode.ExtractHook && Pressed(KeyCode.K, KeyCode.JoystickButton2))
+            {
+                LosePrototypeLootForPreview();
             }
         }
 
@@ -621,6 +693,62 @@ namespace FourfoldEchoes.BuilderPrototype
             buildCursor.position = WorldForBuildCell(cell, topHeight + 1) + new Vector3(0f, 0.04f, 0f);
         }
 
+        private BuilderPrototypeExtractionResult AttemptPrototypeExtractionForPreview(int safetyRollPercent)
+        {
+            lastExtractionResult = lootPressure.AttemptExtraction(safetyRollPercent);
+            switch (lastExtractionResult.Outcome)
+            {
+                case BuilderPrototypeExtractionOutcome.Extracted:
+                    lastLootRunEvent = $"Extracted {lastExtractionResult.BankedValue} value ({lastExtractionResult.BankedItemCount} item), risk {lastExtractionResult.RiskPercent}%, roll {lastExtractionResult.SafetyRollPercent}";
+                    break;
+                case BuilderPrototypeExtractionOutcome.Lost:
+                    lastLootRunEvent = $"Lost {lastExtractionResult.LostValue} value ({lastExtractionResult.LostItemCount} item), risk {lastExtractionResult.RiskPercent}%, roll {lastExtractionResult.SafetyRollPercent}";
+                    break;
+                default:
+                    lastLootRunEvent = "No carried loot to extract";
+                    break;
+            }
+
+            UpdateLootPreviewVisuals();
+            return lastExtractionResult;
+        }
+
+        private void UpdateLootPreviewVisuals()
+        {
+            SetRendererMaterial(
+                prototypeLootPickup,
+                lootPressure.HasCarriedLoot ? lootPickupCollectedMaterial : lootPickupAvailableMaterial);
+
+            var gateMaterial = extractGateReadyMaterial;
+            if (lastExtractionResult != null)
+            {
+                if (lastExtractionResult.Outcome == BuilderPrototypeExtractionOutcome.Extracted)
+                {
+                    gateMaterial = extractGateBankedMaterial;
+                }
+                else if (lastExtractionResult.Outcome == BuilderPrototypeExtractionOutcome.Lost)
+                {
+                    gateMaterial = extractGateLostMaterial;
+                }
+            }
+
+            SetRendererMaterial(prototypeExtractGate, gateMaterial);
+        }
+
+        private static void SetRendererMaterial(Transform target, Material material)
+        {
+            if (target == null || material == null)
+            {
+                return;
+            }
+
+            var renderer = target.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.sharedMaterial = material;
+            }
+        }
+
         private Vector3 WorldForBuildCell(Vector2Int cell, int stackHeight)
         {
             var x = cell.x - (BuilderPrototypeBuildGrid.DefaultWidth - 1) * 0.5f;
@@ -686,6 +814,26 @@ namespace FourfoldEchoes.BuilderPrototype
             return Input.GetKeyDown(keyboard) || Input.GetKeyDown(gamepad);
         }
 
+        private static int PressureTierForHud(int pressureScore)
+        {
+            if (pressureScore >= 75)
+            {
+                return 5;
+            }
+
+            if (pressureScore >= 50)
+            {
+                return 4;
+            }
+
+            if (pressureScore >= 25)
+            {
+                return 2;
+            }
+
+            return pressureScore > 0 ? 1 : 0;
+        }
+
         private void OnGUI()
         {
             if (!showDebugHud)
@@ -693,16 +841,21 @@ namespace FourfoldEchoes.BuilderPrototype
                 return;
             }
 
-            GUILayout.BeginArea(new Rect(16f, 16f, 520f, 210f), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16f, 16f, 560f, 252f), GUI.skin.box);
             GUILayout.Label(SceneContractText);
             GUILayout.Label("Mode: " + BuilderPrototypeRunState.LabelFor(runState.Mode));
-            GUILayout.Label("Carried Loot Value: " + runState.CarriedLootValue);
-            GUILayout.Label("Danger Tier: " + runState.DangerTier + "/" + BuilderPrototypeRunState.MaxDangerTier);
             GUILayout.Label("Build Blocks: " + BuildBlocksAvailable + " | Placed: " + PlacedBlockCount + " | Cursor: " + FormatCell(SelectedBuildCell));
             GUILayout.Label("Build Event: " + lastBuildEvent);
             if (runState.Mode == BuilderPrototypeMode.CombatHook)
             {
                 GUILayout.Label(CombatPreviewHudText);
+            }
+            else if (runState.Mode == BuilderPrototypeMode.LootHook || runState.Mode == BuilderPrototypeMode.ExtractHook)
+            {
+                GUILayout.Label("Carried Loot: " + lootPressure.CarriedLootValue + " value | " + lootPressure.CarriedItemCount + " item");
+                GUILayout.Label("Pressure: " + lootPressure.PressureScore + "/" + BuilderPrototypeLootPressureModel.MaxPressureScore + " " + lootPressure.PressureBand + " | Extract Risk: " + lootPressure.ExtractionRiskPercent + "%");
+                GUILayout.Label("Banked Loot: " + lootPressure.BankedLootValue + " value | " + lootPressure.BankedItemCount + " item");
+                GUILayout.Label("Loot Event: " + lastLootRunEvent);
             }
 
             GUILayout.Label(PromptFor(runState.Mode));
