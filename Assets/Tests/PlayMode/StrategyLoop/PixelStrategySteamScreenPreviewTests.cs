@@ -52,6 +52,20 @@ namespace FourfoldEchoes.Tests
         }
 
         [Test]
+        public void FirstSteamScreenSample_CarriesFourfoldIdentityRead()
+        {
+            var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();
+
+            Assert.That(state.Identity.CornerSigils, Is.EqualTo(new[] { "BLADE", "GATE", "RELIC", "SEAL" }));
+            Assert.That(state.Identity.EchoCells, Is.EqualTo(state.Impact.OpenedGateCells));
+            Assert.That(state.Identity.DangerRingCells.Count, Is.EqualTo(4));
+            Assert.That(state.Identity.DangerRingCells, Does.Contain(new Vector2Int(12, 5)));
+            Assert.That(state.Identity.CarriedLoot, Is.EqualTo(new[] { "COIN", "KEY", "SHARD", "SEAL" }));
+            Assert.That(state.Identity.LitSealBeatCount, Is.EqualTo(1));
+            Assert.That(state.Identity.CrackedSealBeatCount, Is.EqualTo(2));
+        }
+
+        [Test]
         public void FirstSteamScreenSample_ExposesEdgeHudPressureAndExtractionRead()
         {
             var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();

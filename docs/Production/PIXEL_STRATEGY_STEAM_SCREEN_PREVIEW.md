@@ -20,6 +20,9 @@ needs a game screen that can sell the decision at thumbnail size:
 - the selected `CUT TO GATE` decision visibly opens a short gate route and
   seals pressure cells on the board, so the choice reads as a board change
   rather than only a highlighted UI card.
+- the board carries a FOURFOLD-specific visual read: four corner sigils, echo
+  shadows behind changed cells, a carry-loot rail, gate danger frames, and a
+  four-beat seal counter.
 
 The screen also bakes in the latest premise read: a "chosen" adventurer starts
 with a wood stick and a few coins, then gets shoved toward an absurd threat.

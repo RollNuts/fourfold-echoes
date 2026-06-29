@@ -32,6 +32,7 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             CreateBackground();
             CreateEdgeHud(state);
             CreateBoard(state.Board);
+            CreateFourfoldIdentity(state);
             CreateChoiceImpact(state);
             CreateStarterRead(state);
             CreateDecisionCards(state.Cards);
@@ -156,6 +157,104 @@ namespace FourfoldEchoes.Editor.StrategyLoop
         private static Vector3 CellToWorld(Vector3 origin, Vector2Int cell)
         {
             return origin + new Vector3(cell.x * BoardCellWidth, cell.y * BoardCellHeight, 0f);
+        }
+
+        private static void CreateFourfoldIdentity(PixelStrategySteamScreenPreviewState state)
+        {
+            var origin = new Vector3(-3.98f, -0.63f, 0f);
+            CreateFourfoldFrame(state.Identity.CornerSigils);
+            CreateEchoCells(origin, state.Identity.EchoCells);
+            CreateDangerRing(origin, state.Identity.DangerRingCells);
+            CreateCarryLootBar(state.Identity.CarriedLoot);
+            CreateSealBeatCounter(state.Identity);
+        }
+
+        private static void CreateFourfoldFrame(IReadOnlyList<string> cornerSigils)
+        {
+            CreatePanel("Fourfold Fold V", new Vector3(0.02f, 0.58f, -0.16f), new Vector2(0.035f, 3.08f), new Color32(117, 231, 246, 95), 26);
+            CreatePanel("Fourfold Fold H", new Vector3(0.02f, 0.58f, -0.17f), new Vector2(8.55f, 0.035f), new Color32(240, 216, 121, 95), 26);
+            CreatePanel("Fourfold Fold Core", new Vector3(0.02f, 0.58f, -0.18f), new Vector2(0.2f, 0.2f), new Color32(225, 254, 255, 145), 27);
+
+            var positions = new[]
+            {
+                new Vector3(-5.32f, 2.36f, -0.18f),
+                new Vector3(5.36f, 2.36f, -0.18f),
+                new Vector3(-5.32f, -1.16f, -0.18f),
+                new Vector3(5.36f, -1.16f, -0.18f)
+            };
+
+            for (var index = 0; index < cornerSigils.Count && index < positions.Length; index++)
+            {
+                var position = positions[index];
+                CreatePanel("Fourfold Sigil Back", position + new Vector3(0f, 0f, 0.03f), new Vector2(0.52f, 0.46f), new Color32(12, 18, 22, 245), 31);
+                CreatePanel("Fourfold Sigil Rim", position + new Vector3(0f, 0f, 0.02f), new Vector2(0.58f, 0.52f), index % 2 == 0 ? new Color32(240, 216, 121, 235) : new Color32(117, 231, 246, 235), 30);
+                CreateSprite("Fourfold Sigil " + cornerSigils[index], CreateFourfoldSigilToken(cornerSigils[index]), position + new Vector3(0f, 0f, -0.03f), 34, new Vector2(0.36f, 0.36f));
+            }
+        }
+
+        private static void CreateEchoCells(Vector3 origin, IReadOnlyList<Vector2Int> cells)
+        {
+            foreach (var cell in cells)
+            {
+                var center = CellToWorld(origin, cell);
+                CreatePanel("Echo Cell Red", center + new Vector3(-0.05f, 0.05f, -0.27f), new Vector2(BoardCellWidth * 0.8f, BoardCellHeight * 0.72f), new Color32(255, 82, 73, 65), 41);
+                CreatePanel("Echo Cell White", center + new Vector3(0.05f, -0.04f, -0.28f), new Vector2(BoardCellWidth * 0.74f, BoardCellHeight * 0.64f), new Color32(225, 254, 255, 70), 42);
+            }
+        }
+
+        private static void CreateDangerRing(Vector3 origin, IReadOnlyList<Vector2Int> cells)
+        {
+            foreach (var cell in cells)
+            {
+                CreateDangerFrame(CellToWorld(origin, cell) + new Vector3(0f, 0f, -0.19f));
+            }
+        }
+
+        private static void CreateDangerFrame(Vector3 center)
+        {
+            var red = new Color32(255, 82, 73, 190);
+            var dark = new Color32(18, 10, 14, 210);
+            CreatePanel("Danger Ring Top", center + new Vector3(0f, BoardCellHeight * 0.44f, 0f), new Vector2(BoardCellWidth, 0.035f), red, 32);
+            CreatePanel("Danger Ring Bottom", center + new Vector3(0f, -BoardCellHeight * 0.44f, 0f), new Vector2(BoardCellWidth, 0.035f), red, 32);
+            CreatePanel("Danger Ring Left", center + new Vector3(-BoardCellWidth * 0.48f, 0f, 0f), new Vector2(0.035f, BoardCellHeight), red, 32);
+            CreatePanel("Danger Ring Right", center + new Vector3(BoardCellWidth * 0.48f, 0f, 0f), new Vector2(0.035f, BoardCellHeight), red, 32);
+            CreatePanel("Danger Noise A", center + new Vector3(-0.14f, 0.1f, -0.01f), new Vector2(0.11f, 0.055f), dark, 33);
+            CreatePanel("Danger Noise B", center + new Vector3(0.15f, -0.1f, -0.01f), new Vector2(0.13f, 0.055f), dark, 33);
+        }
+
+        private static void CreateCarryLootBar(IReadOnlyList<string> carriedLoot)
+        {
+            CreatePanel("Carry Loot Bar Rim", new Vector3(5.36f, 0.68f, -0.18f), new Vector2(0.66f, 1.74f), new Color32(240, 216, 121, 220), 30);
+            CreatePanel("Carry Loot Bar", new Vector3(5.36f, 0.68f, -0.19f), new Vector2(0.56f, 1.63f), new Color32(16, 27, 34, 245), 31);
+
+            for (var index = 0; index < carriedLoot.Count && index < 4; index++)
+            {
+                var y = 1.25f - index * 0.38f;
+                CreatePanel("Carry Loot Slot", new Vector3(5.36f, y, -0.22f), new Vector2(0.38f, 0.3f), new Color32(30, 42, 42, 255), 32);
+                CreateSprite("Carry Loot " + carriedLoot[index], CreateCarryLootToken(carriedLoot[index]), new Vector3(5.36f, y, -0.28f), 35, new Vector2(0.28f, 0.28f));
+            }
+        }
+
+        private static void CreateSealBeatCounter(PixelStrategyFourfoldIdentityRead identity)
+        {
+            var startX = -0.58f;
+            for (var index = 0; index < 4; index++)
+            {
+                var position = new Vector3(startX + index * 0.36f, 2.39f, -0.2f);
+                var lit = index < identity.LitSealBeatCount;
+                var cracked = !lit && index < identity.LitSealBeatCount + identity.CrackedSealBeatCount;
+                var fill = lit ? new Color32(117, 231, 246, 245) : cracked ? new Color32(82, 39, 42, 245) : new Color32(30, 42, 42, 245);
+                var rim = lit ? new Color32(225, 254, 255, 255) : cracked ? new Color32(255, 82, 73, 225) : new Color32(76, 94, 98, 210);
+
+                CreatePanel("Seal Beat Rim", position + new Vector3(0f, 0f, 0.02f), new Vector2(0.28f, 0.28f), rim, 35);
+                CreatePanel("Seal Beat", position, new Vector2(0.22f, 0.22f), fill, 36);
+
+                if (cracked)
+                {
+                    CreatePanel("Seal Beat Crack A", position + new Vector3(0f, 0f, -0.04f), new Vector2(0.24f, 0.035f), new Color32(255, 183, 160, 255), 37);
+                    CreatePanel("Seal Beat Crack B", position + new Vector3(0f, 0f, -0.05f), new Vector2(0.035f, 0.24f), new Color32(255, 183, 160, 255), 38);
+                }
+            }
         }
 
         private static void CreateChoiceImpact(PixelStrategySteamScreenPreviewState state)
@@ -322,6 +421,40 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             CreateSprite("Arrow", Sprite.Create(texture, new Rect(0, 0, 96, 72), new Vector2(0.5f, 0.5f), PixelsPerUnit, 0, SpriteMeshType.FullRect), position, sortingOrder, scale);
         }
 
+        private static Sprite CreateFourfoldSigilToken(string sigil)
+        {
+            switch (sigil)
+            {
+                case "BLADE":
+                    return CreateBladeSigilToken();
+                case "GATE":
+                    return CreateGateSigilToken();
+                case "RELIC":
+                    return CreateRelicSigilToken();
+                case "SEAL":
+                    return CreateSealSigilToken();
+                default:
+                    return CreateSealSigilToken();
+            }
+        }
+
+        private static Sprite CreateCarryLootToken(string item)
+        {
+            switch (item)
+            {
+                case "COIN":
+                    return CreateCoinLootToken();
+                case "KEY":
+                    return CreateKeyLootToken();
+                case "SHARD":
+                    return CreateShardLootToken();
+                case "SEAL":
+                    return CreateSealSigilToken();
+                default:
+                    return CreateShardLootToken();
+            }
+        }
+
         private static void CreatePanel(string name, Vector3 position, Vector2 size, Color32 color, int sortingOrder)
         {
             var texture = NewTexture(8, 8, color);
@@ -358,6 +491,85 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             textMesh.color = color;
             var renderer = textObject.GetComponent<MeshRenderer>();
             renderer.sortingOrder = sortingOrder;
+        }
+
+        private static Sprite CreateBladeSigilToken()
+        {
+            var texture = NewTexture(40, 40, new Color32(0, 0, 0, 0));
+            DrawTriangle(texture, new Vector2Int(18, 5), new Vector2Int(22, 5), new Vector2Int(20, 1), new Color32(225, 254, 255, 255));
+            FillRect(texture, 18, 5, 5, 20, new Color32(117, 231, 246, 255));
+            FillRect(texture, 13, 24, 15, 4, new Color32(240, 216, 121, 255));
+            FillRect(texture, 18, 27, 5, 9, new Color32(91, 61, 37, 255));
+            DrawBorder(texture, 17, 4, 7, 24, new Color32(17, 22, 27, 255));
+            texture.Apply(false, false);
+            return Sprite.Create(texture, new Rect(0, 0, 40, 40), new Vector2(0.5f, 0.5f), PixelsPerUnit, 0, SpriteMeshType.FullRect);
+        }
+
+        private static Sprite CreateGateSigilToken()
+        {
+            var texture = NewTexture(40, 40, new Color32(0, 0, 0, 0));
+            FillRect(texture, 9, 9, 22, 5, new Color32(117, 231, 246, 255));
+            FillRect(texture, 10, 14, 5, 20, new Color32(117, 231, 246, 255));
+            FillRect(texture, 25, 14, 5, 20, new Color32(117, 231, 246, 255));
+            FillRect(texture, 16, 22, 8, 12, new Color32(18, 48, 68, 255));
+            FillRect(texture, 16, 22, 8, 3, new Color32(225, 254, 255, 255));
+            DrawBorder(texture, 9, 9, 22, 25, new Color32(17, 22, 27, 255));
+            texture.Apply(false, false);
+            return Sprite.Create(texture, new Rect(0, 0, 40, 40), new Vector2(0.5f, 0.5f), PixelsPerUnit, 0, SpriteMeshType.FullRect);
+        }
+
+        private static Sprite CreateRelicSigilToken()
+        {
+            var texture = NewTexture(40, 40, new Color32(0, 0, 0, 0));
+            DrawDiamond(texture, 20, 20, 15, new Color32(240, 216, 121, 255));
+            DrawDiamond(texture, 20, 20, 8, new Color32(255, 242, 173, 255));
+            DrawTriangle(texture, new Vector2Int(17, 18), new Vector2Int(22, 7), new Vector2Int(26, 18), new Color32(255, 254, 225, 255));
+            texture.Apply(false, false);
+            return Sprite.Create(texture, new Rect(0, 0, 40, 40), new Vector2(0.5f, 0.5f), PixelsPerUnit, 0, SpriteMeshType.FullRect);
+        }
+
+        private static Sprite CreateSealSigilToken()
+        {
+            var texture = NewTexture(40, 40, new Color32(0, 0, 0, 0));
+            DrawDiamond(texture, 20, 20, 13, new Color32(30, 42, 42, 255));
+            FillRect(texture, 18, 7, 4, 26, new Color32(117, 231, 246, 255));
+            FillRect(texture, 7, 18, 26, 4, new Color32(240, 216, 121, 255));
+            FillRect(texture, 14, 14, 12, 12, new Color32(16, 27, 34, 255));
+            FillRect(texture, 17, 17, 6, 6, new Color32(225, 254, 255, 255));
+            texture.Apply(false, false);
+            return Sprite.Create(texture, new Rect(0, 0, 40, 40), new Vector2(0.5f, 0.5f), PixelsPerUnit, 0, SpriteMeshType.FullRect);
+        }
+
+        private static Sprite CreateCoinLootToken()
+        {
+            var texture = NewTexture(40, 40, new Color32(0, 0, 0, 0));
+            DrawDiamond(texture, 20, 20, 14, new Color32(255, 215, 91, 255));
+            DrawDiamond(texture, 20, 20, 8, new Color32(255, 242, 173, 255));
+            FillRect(texture, 19, 9, 3, 22, new Color32(214, 160, 89, 255));
+            texture.Apply(false, false);
+            return Sprite.Create(texture, new Rect(0, 0, 40, 40), new Vector2(0.5f, 0.5f), PixelsPerUnit, 0, SpriteMeshType.FullRect);
+        }
+
+        private static Sprite CreateKeyLootToken()
+        {
+            var texture = NewTexture(40, 40, new Color32(0, 0, 0, 0));
+            DrawDiamond(texture, 14, 17, 8, new Color32(240, 216, 121, 255));
+            FillRect(texture, 20, 17, 14, 5, new Color32(240, 216, 121, 255));
+            FillRect(texture, 30, 22, 4, 6, new Color32(240, 216, 121, 255));
+            FillRect(texture, 25, 22, 4, 4, new Color32(240, 216, 121, 255));
+            FillRect(texture, 12, 15, 4, 4, new Color32(16, 27, 34, 255));
+            texture.Apply(false, false);
+            return Sprite.Create(texture, new Rect(0, 0, 40, 40), new Vector2(0.5f, 0.5f), PixelsPerUnit, 0, SpriteMeshType.FullRect);
+        }
+
+        private static Sprite CreateShardLootToken()
+        {
+            var texture = NewTexture(40, 40, new Color32(0, 0, 0, 0));
+            DrawTriangle(texture, new Vector2Int(10, 31), new Vector2Int(22, 7), new Vector2Int(31, 29), new Color32(117, 231, 246, 255));
+            DrawTriangle(texture, new Vector2Int(18, 28), new Vector2Int(22, 9), new Vector2Int(30, 28), new Color32(225, 254, 255, 255));
+            DrawBorder(texture, 10, 10, 22, 22, new Color32(17, 22, 27, 255));
+            texture.Apply(false, false);
+            return Sprite.Create(texture, new Rect(0, 0, 40, 40), new Vector2(0.5f, 0.5f), PixelsPerUnit, 0, SpriteMeshType.FullRect);
         }
 
         private static Sprite CreateHeroToken()
