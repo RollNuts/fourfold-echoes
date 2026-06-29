@@ -17,6 +17,9 @@ needs a game screen that can sell the decision at thumbnail size:
 - the route, gate, hero, reward, and danger are visible on the board;
 - the three decisions read as different tactical outcomes;
 - the selected safe extraction card visibly connects to the gate.
+- the selected `CUT TO GATE` decision visibly opens a short gate route and
+  seals pressure cells on the board, so the choice reads as a board change
+  rather than only a highlighted UI card.
 
 The screen also bakes in the latest premise read: a "chosen" adventurer starts
 with a wood stick and a few coins, then gets shoved toward an absurd threat.
