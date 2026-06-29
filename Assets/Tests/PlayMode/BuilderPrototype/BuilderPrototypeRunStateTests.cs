@@ -19,9 +19,9 @@ namespace FourfoldEchoes.Tests.BuilderPrototype
         }
 
         [Test]
-        public void HookModes_AreReservedSubsystemStatesOnly()
+        public void HookModes_KeepBuildSeparateFromLaterReservedSystems()
         {
-            Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.BuildHook), Does.Contain("reserved for PR-02"));
+            Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.BuildHook), Does.Contain("Place A/J"));
             Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.CombatHook), Does.Contain("reserved for PR-03"));
             Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.LootHook), Does.Contain("reserved for PR-04"));
             Assert.That(BuilderPrototypeSpineController.PromptFor(BuilderPrototypeMode.ExtractHook), Does.Contain("reserved for PR-05"));
