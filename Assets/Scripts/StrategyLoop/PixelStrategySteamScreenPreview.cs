@@ -67,12 +67,39 @@ namespace FourfoldEchoes.StrategyLoop
         public string BoardCallout { get; }
     }
 
+    public sealed class PixelStrategyFourfoldIdentityRead
+    {
+        public PixelStrategyFourfoldIdentityRead(
+            IReadOnlyList<string> cornerSigils,
+            IReadOnlyList<Vector2Int> echoCells,
+            IReadOnlyList<Vector2Int> dangerRingCells,
+            IReadOnlyList<string> carriedLoot,
+            int litSealBeatCount,
+            int crackedSealBeatCount)
+        {
+            CornerSigils = cornerSigils ?? throw new ArgumentNullException(nameof(cornerSigils));
+            EchoCells = echoCells ?? throw new ArgumentNullException(nameof(echoCells));
+            DangerRingCells = dangerRingCells ?? throw new ArgumentNullException(nameof(dangerRingCells));
+            CarriedLoot = carriedLoot ?? throw new ArgumentNullException(nameof(carriedLoot));
+            LitSealBeatCount = Mathf.Clamp(litSealBeatCount, 0, 4);
+            CrackedSealBeatCount = Mathf.Clamp(crackedSealBeatCount, 0, 4);
+        }
+
+        public IReadOnlyList<string> CornerSigils { get; }
+        public IReadOnlyList<Vector2Int> EchoCells { get; }
+        public IReadOnlyList<Vector2Int> DangerRingCells { get; }
+        public IReadOnlyList<string> CarriedLoot { get; }
+        public int LitSealBeatCount { get; }
+        public int CrackedSealBeatCount { get; }
+    }
+
     public sealed class PixelStrategySteamScreenPreviewState
     {
         public PixelStrategySteamScreenPreviewState(
             PixelStrategyBoardPreviewState board,
             IReadOnlyList<PixelStrategySteamScreenCard> cards,
             PixelStrategySteamChoiceImpact impact,
+            PixelStrategyFourfoldIdentityRead identity,
             int loopNumber,
             int bagValue,
             int gatePercent,
@@ -83,6 +110,7 @@ namespace FourfoldEchoes.StrategyLoop
             Board = board ?? throw new ArgumentNullException(nameof(board));
             Cards = cards ?? throw new ArgumentNullException(nameof(cards));
             Impact = impact ?? throw new ArgumentNullException(nameof(impact));
+            Identity = identity ?? throw new ArgumentNullException(nameof(identity));
             LoopNumber = Mathf.Max(1, loopNumber);
             BagValue = Mathf.Max(0, bagValue);
             GatePercent = Mathf.Clamp(gatePercent, 0, 100);
@@ -94,6 +122,7 @@ namespace FourfoldEchoes.StrategyLoop
         public PixelStrategyBoardPreviewState Board { get; }
         public IReadOnlyList<PixelStrategySteamScreenCard> Cards { get; }
         public PixelStrategySteamChoiceImpact Impact { get; }
+        public PixelStrategyFourfoldIdentityRead Identity { get; }
         public int LoopNumber { get; }
         public int BagValue { get; }
         public int GatePercent { get; }
@@ -213,10 +242,25 @@ namespace FourfoldEchoes.StrategyLoop
                 },
                 "GATE CUT OPEN");
 
+            var identity = new PixelStrategyFourfoldIdentityRead(
+                new[] { "BLADE", "GATE", "RELIC", "SEAL" },
+                impact.OpenedGateCells,
+                new[]
+                {
+                    new Vector2Int(8, 2),
+                    new Vector2Int(10, 4),
+                    new Vector2Int(11, 4),
+                    new Vector2Int(12, 5)
+                },
+                new[] { "COIN", "KEY", "SHARD", "SEAL" },
+                litSealBeatCount: 1,
+                crackedSealBeatCount: 2);
+
             return new PixelStrategySteamScreenPreviewState(
                 board,
                 cards,
                 impact,
+                identity,
                 loopNumber: 7,
                 bagValue: 420,
                 gatePercent: 68,
