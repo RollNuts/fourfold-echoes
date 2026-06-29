@@ -13,8 +13,10 @@ const objPath = path.join(modelDir, "FE_CHAR_PLAYER_EchoStriker_P0.obj");
 const mtlPath = path.join(modelDir, "FE_CHAR_PLAYER_EchoStriker_P0.mtl");
 const svgPath = path.join(previewDir, "echo-striker-p0-action-poses.svg");
 const gameSvgPath = path.join(previewDir, "echo-striker-p0-game-scale.svg");
+const combatSvgPath = path.join(previewDir, "echo-striker-p0-combat-screen.svg");
 const docsSvgPath = path.join(docsPreviewDir, "FE_CHAR_PLAYER_EchoStriker_P0_action_poses.svg");
 const docsGameSvgPath = path.join(docsPreviewDir, "FE_CHAR_PLAYER_EchoStriker_P0_game_scale.svg");
+const docsCombatSvgPath = path.join(docsPreviewDir, "FE_CHAR_PLAYER_EchoStriker_P0_combat_screen.svg");
 
 const materials = {
   cloak: { hex: "#101f3d", kd: [0.063, 0.122, 0.239], stroke: "#071022" },
@@ -640,6 +642,288 @@ function writeGameScaleSvg(poses) {
   writeFileSync(docsGameSvgPath, svg);
 }
 
+function projectCombat([x, y, z]) {
+  const scale = 190;
+  return {
+    x: 890 + (x - z * 0.58) * scale,
+    y: 792 - y * scale + z * 58 + x * 10,
+  };
+}
+
+function collectPosePolygons(poseData, projector) {
+  const polygons = [];
+  for (const partData of poseData.parts) {
+    const partMesh = resolvedPart(partData, poseData.rootTransform);
+    const mat = materials[partData.mat];
+    for (const face of partMesh.faces) {
+      const vertices = face.map((index) => partMesh.vertices[index - 1]);
+      const avg = vertices.reduce((sum, v) => [sum[0] + v[0], sum[1] + v[1], sum[2] + v[2]], [0, 0, 0]).map((n) => n / vertices.length);
+      const screen = vertices.map(projector);
+      const n = normalOf(vertices);
+      polygons.push({
+        depth: avg[2] * 1.2 + avg[0] * 0.18 - avg[1] * 0.08,
+        points: screen.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" "),
+        fill: shade(mat.hex, n, mat.emissive),
+        stroke: mat.stroke,
+        alpha: mat.alpha || 1,
+        glow: mat.emissive,
+      });
+    }
+  }
+  polygons.sort((a, b) => a.depth - b.depth);
+  return polygons;
+}
+
+function enemyMarkup(x, y, scale, facing = 1, hurt = false) {
+  const glow = hurt ? ' filter="url(#redGlow)"' : "";
+  const core = hurt ? "#33121a" : "#1a1218";
+  const armor = hurt ? "#6a2a1d" : "#302328";
+  return `
+    <g transform="translate(${x} ${y}) scale(${scale})">
+      <ellipse cx="0" cy="72" rx="92" ry="34" fill="#03070b" opacity="0.48"/>
+      <ellipse cx="0" cy="64" rx="96" ry="46" fill="none" stroke="${hurt ? "#ff3a20" : "#c83220"}" stroke-width="8" opacity="${hurt ? "0.78" : "0.38"}"${glow}/>
+      <path d="M ${-46 * facing} 7 L ${-78 * facing} 63 L ${-20 * facing} 52 Z" fill="${armor}" stroke="#0b0708" stroke-width="3"/>
+      <path d="M ${42 * facing} 5 L ${82 * facing} 58 L ${22 * facing} 55 Z" fill="${armor}" stroke="#0b0708" stroke-width="3"/>
+      <path d="M -50 -36 L 0 -74 L 52 -36 L 42 42 L -44 42 Z" fill="${core}" stroke="#070509" stroke-width="4"/>
+      <path d="M -34 -26 L 0 -51 L 36 -26 L 28 28 L -28 28 Z" fill="${armor}" stroke="#120b0e" stroke-width="3"/>
+      <rect x="-25" y="-15" width="50" height="12" fill="#ff3a1d" stroke="#711008" stroke-width="3"${glow}/>
+      <path d="M -18 -76 L -55 -118 L -30 -54 Z" fill="#e4441f" stroke="#711008" stroke-width="3"/>
+      <path d="M 18 -76 L 55 -118 L 30 -54 Z" fill="#e4441f" stroke="#711008" stroke-width="3"/>
+      ${hurt ? '<text x="0" y="-92" text-anchor="middle" class="damage">37</text>' : ""}
+    </g>`;
+}
+
+function bruteEnemyMarkup(x, y, scale) {
+  return `
+    <g transform="translate(${x} ${y}) scale(${scale})">
+      <ellipse cx="0" cy="108" rx="138" ry="42" fill="#03070b" opacity="0.56"/>
+      <path d="M -128 12 L -212 64 L -150 98 L -70 46 Z" fill="#223018" stroke="#090607" stroke-width="5"/>
+      <path d="M 86 -30 L 202 44 L 138 92 L 50 30 Z" fill="#342114" stroke="#0b0706" stroke-width="5"/>
+      <path d="M 118 -66 L 236 -136 L 262 -94 L 148 -30 Z" fill="#9c672e" stroke="#372011" stroke-width="7"/>
+      <path d="M 226 -146 L 292 -114 L 246 -54 L 206 -78 Z" fill="#d6ad61" stroke="#4e351a" stroke-width="6"/>
+      <path d="M -76 -80 L 0 -126 L 82 -76 L 98 42 L 42 118 L -52 114 L -98 44 Z" fill="#2c2115" stroke="#080509" stroke-width="6"/>
+      <path d="M -54 -56 L 0 -92 L 58 -54 L 64 28 L 24 78 L -30 76 L -66 24 Z" fill="#744323" stroke="#1b0c0b" stroke-width="4"/>
+      <path d="M -42 -14 C -18 -24, 16 -20, 44 -2" fill="none" stroke="#b8883d" stroke-width="5" opacity="0.48"/>
+      <path d="M -62 36 C -20 56, 28 58, 68 36" fill="none" stroke="#375438" stroke-width="7" opacity="0.62"/>
+      <path d="M -34 -174 L -100 -96 L -52 -78 Z" fill="#d74a21" stroke="#64240f" stroke-width="5"/>
+      <path d="M 34 -174 L 100 -96 L 52 -78 Z" fill="#d74a21" stroke="#64240f" stroke-width="5"/>
+      <path d="M -46 16 C -6 -8, 38 -4, 76 22" fill="none" stroke="#f0b64c" stroke-width="11" stroke-linecap="round" opacity="0.72"/>
+      <rect x="-35" y="-36" width="70" height="18" fill="#ff3b22" stroke="#6f160b" stroke-width="4" filter="url(#redGlow)"/>
+      <text x="4" y="-132" text-anchor="middle" class="damage">37</text>
+    </g>`;
+}
+
+function casterEnemyMarkup(x, y, scale) {
+  return `
+    <g transform="translate(${x} ${y}) scale(${scale})">
+      <ellipse cx="0" cy="74" rx="88" ry="30" fill="#03070b" opacity="0.46"/>
+      <path d="M -58 28 L -26 -82 L 28 -82 L 64 28 L 30 76 L -30 76 Z" fill="#1b1527" stroke="#080509" stroke-width="5"/>
+      <path d="M -38 -48 L 0 -92 L 39 -48 L 30 18 L -30 18 Z" fill="#3b2952" stroke="#160c22" stroke-width="4"/>
+      <path d="M -12 -90 L 18 -90 L 46 -34 L -42 -34 Z" fill="#245d62" opacity="0.62"/>
+      <rect x="-23" y="-30" width="46" height="10" fill="#ff4730" stroke="#751008" stroke-width="3" filter="url(#redGlow)"/>
+      <path d="M -64 -86 L -105 -132 L -72 -62 Z" fill="#9b4ac9" stroke="#3b174b" stroke-width="4"/>
+      <path d="M 64 -86 L 105 -132 L 72 -62 Z" fill="#9b4ac9" stroke="#3b174b" stroke-width="4"/>
+      <path d="M -80 20 C -32 -2, 36 -2, 84 20" fill="none" stroke="#48d9c9" stroke-width="7" stroke-linecap="round" opacity="0.76" filter="url(#cyanGlow)"/>
+      <circle cx="106" cy="-28" r="25" fill="#ff4c2e" opacity="0.88" filter="url(#redGlow)"/>
+      <circle cx="106" cy="-28" r="8" fill="#ffd266"/>
+      <path d="M 62 -4 L 104 -26" stroke="#ff5332" stroke-width="8" stroke-linecap="round" filter="url(#redGlow)"/>
+    </g>`;
+}
+
+function shieldEnemyMarkup(x, y, scale) {
+  return `
+    <g transform="translate(${x} ${y}) scale(${scale})">
+      <ellipse cx="0" cy="96" rx="128" ry="38" fill="#03070b" opacity="0.50"/>
+      <path d="M -72 -54 L 0 -102 L 74 -52 L 80 46 L 36 106 L -40 102 L -82 42 Z" fill="#171820" stroke="#080509" stroke-width="6"/>
+      <path d="M -136 -34 L -54 -96 L -24 38 L -88 106 Z" fill="#2c3440" stroke="#0c1016" stroke-width="5"/>
+      <path d="M -112 -14 L -66 -56 L -48 32 L -82 68 Z" fill="#a77b4d" stroke="#332114" stroke-width="4"/>
+      <path d="M -122 18 L -42 -58" stroke="#d7b16a" stroke-width="5" opacity="0.34"/>
+      <path d="M -100 -4 L -56 -44" stroke="#e6c47c" stroke-width="5" opacity="0.38"/>
+      <path d="M 58 -10 L 164 -82" stroke="#ce3a23" stroke-width="12" stroke-linecap="round"/>
+      <path d="M 70 -20 L 174 -92" stroke="#ff6a3b" stroke-width="5" stroke-linecap="round" filter="url(#redGlow)"/>
+      <rect x="-25" y="-29" width="50" height="14" fill="#ff3a1d" stroke="#711008" stroke-width="4" filter="url(#redGlow)"/>
+      <path d="M -28 -146 L -78 -84 L -42 -68 Z" fill="#c84624" stroke="#6b2612" stroke-width="5"/>
+      <path d="M 32 -146 L 82 -84 L 42 -68 Z" fill="#c84624" stroke="#6b2612" stroke-width="5"/>
+    </g>`;
+}
+
+function writeCombatScreenSvg(poses) {
+  const active = poses.find((poseData) => poseData.name === "ACTIVE_SLASH");
+  const combatHero = {
+    ...active,
+    parts: active.parts.filter((partData) => !partData.name.startsWith("large_readable_slash") && !partData.name.startsWith("impact_spark")),
+    rootTransform: { ...active.rootTransform, x: -0.72, roll: -12 },
+  };
+  const heroPolygons = collectPosePolygons(combatHero, projectCombat);
+
+  const floorCuts = [
+    '<path d="M 214 292 L 520 256 L 498 442 L 182 474 L 194 386" fill="#c7c2a2" opacity="0.30"/>',
+    '<path d="M 566 244 L 884 228 L 862 424 L 544 436 L 558 326" fill="#b8bea0" opacity="0.34"/>',
+    '<path d="M 934 224 L 1276 202 L 1262 420 L 914 426 L 928 310" fill="#c9c2a4" opacity="0.32"/>',
+    '<path d="M 1324 210 L 1626 208 L 1688 426 L 1300 424 L 1310 306" fill="#aeb99b" opacity="0.31"/>',
+    '<path d="M 118 526 L 490 494 L 470 722 L 78 744 L 94 622" fill="#b8b999" opacity="0.33"/>',
+    '<path d="M 534 496 L 890 478 L 878 704 L 506 716 L 520 612" fill="#c8c0a0" opacity="0.38"/>',
+    '<path d="M 928 480 L 1306 456 L 1320 694 L 900 704 L 914 586" fill="#aebaa0" opacity="0.34"/>',
+    '<path d="M 1360 462 L 1720 448 L 1792 682 L 1340 696 L 1346 580" fill="#bcc2a3" opacity="0.33"/>',
+    '<path d="M 82 798 L 464 760 L 454 962 L 54 978 L 66 888" fill="#b7b898" opacity="0.30"/>',
+    '<path d="M 516 758 L 876 744 L 876 934 L 498 956 L 508 846" fill="#c5bea1" opacity="0.35"/>',
+    '<path d="M 926 742 L 1322 724 L 1340 918 L 906 938 L 914 834" fill="#aeb99e" opacity="0.32"/>',
+    '<path d="M 1372 724 L 1786 704 L 1878 904 L 1362 922 L 1358 816" fill="#c4bea1" opacity="0.34"/>',
+  ];
+
+  const flowerDots = [
+    [648, 354], [668, 344], [680, 362], [708, 348], [1398, 304], [1420, 316],
+    [148, 648], [170, 636], [188, 658], [1138, 268], [1160, 256], [1180, 278],
+    [1454, 848], [1472, 834], [1492, 856], [410, 870], [432, 856], [452, 876],
+  ]
+    .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#f0c94c" opacity="0.82"/><circle cx="${x + 7}" cy="${y + 4}" r="3.5" fill="#fff0a1" opacity="0.62"/>`)
+    .join("\n    ");
+
+  const heroMarkup = heroPolygons
+    .map((poly) => `<polygon points="${poly.points}" fill="${poly.fill}" stroke="${poly.stroke}" stroke-width="${poly.glow ? 1.2 : 1.15}" opacity="${poly.alpha}"${poly.glow ? ' filter="url(#cyanGlow)"' : ""}/>`)
+    .join("\n      ");
+
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <radialGradient id="arenaLight" cx="43%" cy="50%" r="72%">
+      <stop offset="0" stop-color="#304034"/>
+      <stop offset="0.34" stop-color="#203431"/>
+      <stop offset="0.64" stop-color="#121f25"/>
+      <stop offset="1" stop-color="#070a0f"/>
+    </radialGradient>
+    <linearGradient id="stoneFace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#343c37"/>
+      <stop offset="0.52" stop-color="#202b2b"/>
+      <stop offset="1" stop-color="#12191f"/>
+    </linearGradient>
+    <linearGradient id="routeGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0bb4d"/>
+      <stop offset="1" stop-color="#81510e"/>
+    </linearGradient>
+    <filter id="cyanGlow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="redGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="goldGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadowLift" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="8" flood-color="#030509" flood-opacity="0.55"/>
+    </filter>
+    <style>
+      .damage { fill: #ffd36a; stroke: #431e08; stroke-width: 4; paint-order: stroke; font: 900 48px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+    </style>
+  </defs>
+  <rect width="1920" height="1080" fill="#070a0f"/>
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#arenaLight)"/>
+  <g opacity="0.98">
+    <path d="M 82 200 L 1662 142 L 1888 960 L 72 1002 Z" fill="#10211c" stroke="#364a42" stroke-width="4"/>
+    <path d="M 148 238 C 412 182, 714 210, 1012 178 C 1320 146, 1580 170, 1688 232 C 1746 448, 1810 662, 1866 904 C 1430 930, 970 966, 72 1002 C 90 704, 104 446, 148 238 Z" fill="#17291f" opacity="0.66"/>
+    <g fill="url(#stoneFace)" stroke="#52645a" stroke-width="3.5" opacity="0.86">
+      ${floorCuts.join("\n      ")}
+    </g>
+    <path d="M 104 204 L 1664 148 L 1878 956 L 74 994" fill="none" stroke="#86a073" stroke-width="2" opacity="0.20"/>
+  </g>
+  <g opacity="0.46">
+    <path d="M 122 554 C 390 500, 636 536, 858 484 C 1000 450, 1118 412, 1286 430 C 1438 446, 1570 492, 1772 454" fill="none" stroke="#2f776f" stroke-width="42" stroke-linecap="round"/>
+    <path d="M 122 552 C 394 510, 654 540, 854 492 C 1008 456, 1118 426, 1284 442 C 1434 456, 1576 500, 1770 468" fill="none" stroke="#88d5c1" stroke-width="5" stroke-linecap="round" opacity="0.42" filter="url(#cyanGlow)"/>
+  </g>
+  <g fill="none" stroke-linecap="round">
+    <path d="M 56 720 C 194 590, 230 438, 392 352 C 520 286, 690 304, 844 236" stroke="#49331f" stroke-width="26" opacity="0.42"/>
+    <path d="M 70 718 C 204 602, 244 454, 404 370 C 526 306, 686 322, 836 252" stroke="#6b4b2e" stroke-width="8" opacity="0.50"/>
+    <path d="M 1762 312 C 1648 402, 1640 520, 1514 594 C 1394 666, 1252 646, 1110 722" stroke="#4d3420" stroke-width="22" opacity="0.34"/>
+    <path d="M 1748 326 C 1638 414, 1628 530, 1508 604 C 1394 674, 1256 662, 1120 734" stroke="#715033" stroke-width="7" opacity="0.44"/>
+  </g>
+  <g>
+    ${flowerDots}
+  </g>
+  <g stroke="#62706b" stroke-width="3" stroke-linecap="round" opacity="0.18">
+    <path d="M 292 350 L 384 334 L 438 366"/>
+    <path d="M 636 616 L 706 590 L 760 614 L 824 582"/>
+    <path d="M 1124 302 L 1180 278 L 1226 316"/>
+    <path d="M 1488 812 L 1542 778 L 1620 792"/>
+    <path d="M 270 880 L 334 846 L 404 856"/>
+  </g>
+  <g opacity="0.72">
+    <path d="M 360 636 C 590 540, 804 566, 1016 454 S 1418 326, 1730 392" fill="none" stroke="url(#routeGold)" stroke-width="24" opacity="0.16"/>
+    <path d="M 360 636 C 590 540, 804 566, 1016 454 S 1418 326, 1730 392" fill="none" stroke="#ffe08b" stroke-width="4" opacity="0.26" filter="url(#goldGlow)"/>
+  </g>
+  <g opacity="0.68">
+    <path d="M 286 808 L 392 778 L 414 844 L 304 878 Z" fill="#2e3939" stroke="#627068" stroke-width="4"/>
+    <path d="M 1514 210 L 1702 242 L 1688 292 L 1502 262 Z" fill="#2a3439" stroke="#66706c" stroke-width="4"/>
+    <path d="M 1424 866 L 1622 836 L 1640 924 L 1442 954 Z" fill="#2b3636" stroke="#687269" stroke-width="4"/>
+    <path d="M 422 276 L 576 318 L 552 368 L 400 330 Z" fill="#2b3538" stroke="#626f6b" stroke-width="4"/>
+    <path d="M 1028 216 L 1078 300 L 1018 334 L 972 254 Z" fill="#4f4330" stroke="#867044" stroke-width="4" opacity="0.72"/>
+    <path d="M 1010 248 L 1050 310" stroke="#f3b94c" stroke-width="5" opacity="0.34" filter="url(#goldGlow)"/>
+  </g>
+  <g opacity="0.50">
+    <path d="M 606 300 L 694 340 L 620 372 Z" fill="#2d5c44"/>
+    <path d="M 722 278 L 786 306 L 730 334 Z" fill="#315f46"/>
+    <path d="M 144 616 L 220 640 L 154 670 Z" fill="#315f46"/>
+    <path d="M 1292 272 L 1352 292 L 1308 326 Z" fill="#2f6044"/>
+  </g>
+  <g opacity="0.64">
+    <ellipse cx="1328" cy="598" rx="176" ry="72" fill="none" stroke="#f13b22" stroke-width="8" opacity="0.36" filter="url(#redGlow)"/>
+    <ellipse cx="1588" cy="758" rx="202" ry="82" fill="none" stroke="#f13b22" stroke-width="9" opacity="0.30" filter="url(#redGlow)"/>
+    <path d="M 1454 430 L 1556 374 L 1510 512 Z" fill="#f13b22" opacity="0.28" filter="url(#redGlow)"/>
+  </g>
+  ${bruteEnemyMarkup(1294, 604, 0.92)}
+  ${casterEnemyMarkup(1508, 414, 0.72)}
+  ${shieldEnemyMarkup(1620, 786, 0.96)}
+  <g filter="url(#cyanGlow)" opacity="0.76">
+    <path d="M 642 664 C 826 732, 1082 706, 1288 594" fill="none" stroke="#e9fdff" stroke-width="12" stroke-linecap="round"/>
+    <path d="M 662 640 C 858 696, 1078 680, 1268 568" fill="none" stroke="#20d8ff" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <g opacity="0.70" filter="url(#goldGlow)">
+    <path d="M 1228 548 L 1388 494" stroke="#ffd266" stroke-width="7" stroke-linecap="round"/>
+    <path d="M 1248 616 L 1398 654" stroke="#ff5636" stroke-width="7" stroke-linecap="round"/>
+    <path d="M 1188 532 L 1302 444" stroke="#ff5636" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <g>
+    <ellipse cx="742" cy="784" rx="216" ry="72" fill="#03070b" opacity="0.58"/>
+    <ellipse cx="742" cy="754" rx="232" ry="86" fill="none" stroke="#f0bd55" stroke-width="4" opacity="0.28" filter="url(#goldGlow)"/>
+  </g>
+  <g filter="url(#shadowLift)">
+      ${heroMarkup}
+  </g>
+  <g opacity="0.88" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 648 552 C 704 526, 754 544, 792 588" fill="none" stroke="#c51d17" stroke-width="18"/>
+    <path d="M 660 556 C 712 540, 750 556, 782 590" fill="none" stroke="#ff4a2d" stroke-width="5" filter="url(#redGlow)"/>
+    <path d="M 722 600 L 824 646 L 826 700" fill="none" stroke="#f2a522" stroke-width="7" opacity="0.72" filter="url(#goldGlow)"/>
+    <path d="M 660 640 C 720 672, 802 676, 884 646" fill="none" stroke="#c7e8ec" stroke-width="7" opacity="0.74"/>
+    <ellipse cx="660" cy="606" rx="38" ry="18" fill="none" stroke="#25d8ff" stroke-width="5" opacity="0.86" filter="url(#cyanGlow)"/>
+    <path d="M 846 682 L 992 646" stroke="#d9f7ff" stroke-width="6" opacity="0.78" filter="url(#cyanGlow)"/>
+  </g>
+  <g>
+    <path d="M 42 42 L 312 42 L 356 78 L 328 118 L 42 118 Z" fill="#081017" stroke="#7d6138" stroke-width="4"/>
+    <path d="M 70 60 L 294 60 L 310 74 L 298 90 L 70 90 Z" fill="#311317" stroke="#82313a" stroke-width="3"/>
+    <path d="M 76 66 L 258 66 L 258 84 L 76 84 Z" fill="#e43a28"/>
+    <path d="M 70 96 L 238 96 L 250 106 L 238 116 L 70 116 Z" fill="#082d38" stroke="#25899c" stroke-width="3"/>
+    <path d="M 76 101 L 204 101 L 204 111 L 76 111 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
+    <circle cx="392" cy="82" r="42" fill="#101f3d" stroke="#f2a522" stroke-width="6" filter="url(#goldGlow)"/>
+    <path d="M 392 47 L 416 82 L 392 118 L 368 82 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
+  </g>
+</svg>
+`;
+  writeFileSync(combatSvgPath, svg);
+  writeFileSync(docsCombatSvgPath, svg);
+}
+
 function writeMetas() {
   const modelDirMeta = path.join(root, "Assets/Art/Production/P0/Models.meta");
   writeFileSync(modelDirMeta, `fileFormatVersion: 2
@@ -782,13 +1066,16 @@ function main() {
   writeObj(poses);
   writeSvg(poses);
   writeGameScaleSvg(poses);
+  writeCombatScreenSvg(poses);
   writeMetas();
   console.log(`Wrote ${path.relative(root, objPath)}`);
   console.log(`Wrote ${path.relative(root, mtlPath)}`);
   console.log(`Wrote ${path.relative(root, svgPath)}`);
   console.log(`Wrote ${path.relative(root, gameSvgPath)}`);
+  console.log(`Wrote ${path.relative(root, combatSvgPath)}`);
   console.log(`Wrote ${path.relative(root, docsSvgPath)}`);
   console.log(`Wrote ${path.relative(root, docsGameSvgPath)}`);
+  console.log(`Wrote ${path.relative(root, docsCombatSvgPath)}`);
 }
 
 main();
