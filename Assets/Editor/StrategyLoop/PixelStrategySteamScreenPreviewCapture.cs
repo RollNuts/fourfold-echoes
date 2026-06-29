@@ -36,6 +36,7 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             CreateChoiceImpact(state);
             CreateStarterRead(state);
             CreateChoiceDeltaStrip(state.ChoicePreview);
+            CreatePressureCrackRead(state.ChoicePreview);
             CreateDecisionCards(state.Cards);
             CaptureCamera(camera, outputPath);
             Debug.Log("Pixel strategy Steam screen preview captured: " + outputPath);
@@ -418,6 +419,36 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             return delta.Choice == PixelStrategySteamChoiceKind.GreedRelic
                 ? new Color32(255, 183, 160, 255)
                 : new Color32(255, 241, 190, 255);
+        }
+
+        private static void CreatePressureCrackRead(PixelStrategySteamChoicePreview preview)
+        {
+            var crack = preview.ResolveCrack(PixelStrategySteamChoiceKind.CutToGate);
+            var position = new Vector3(0f, -1.58f, -0.19f);
+            CreatePanel("Pressure Crack Rim", position + new Vector3(0f, 0f, 0.03f), new Vector2(3.6f, 0.42f), new Color32(255, 82, 73, 220), 57);
+            CreatePanel("Pressure Crack Back", position + new Vector3(0f, 0f, 0.02f), new Vector2(3.48f, 0.32f), new Color32(30, 20, 24, 245), 58);
+            CreateLabel(
+                "CRACK LV+" + crack.ChosenLevel + "  NEXT " + PressureEventText(crack.QueuedEvent),
+                position + new Vector3(-1.55f, 0.01f, -0.2f),
+                0.024f,
+                new Color32(255, 183, 160, 255),
+                TextAnchor.MiddleLeft,
+                68);
+        }
+
+        private static string PressureEventText(PixelStrategySteamPressureEventKind pressureEvent)
+        {
+            switch (pressureEvent)
+            {
+                case PixelStrategySteamPressureEventKind.Ambush:
+                    return "AMBUSH";
+                case PixelStrategySteamPressureEventKind.SealGate:
+                    return "SEAL GATE";
+                case PixelStrategySteamPressureEventKind.ExtractionHeat:
+                    return "EXTRACTION HEAT";
+                default:
+                    return "ACCIDENT";
+            }
         }
 
         private static void CreateDecisionCards(IReadOnlyList<PixelStrategySteamScreenCard> cards)

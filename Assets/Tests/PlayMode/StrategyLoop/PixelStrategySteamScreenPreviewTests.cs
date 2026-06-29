@@ -107,6 +107,7 @@ namespace FourfoldEchoes.Tests
             Assert.That(cut.Extract, Is.EqualTo(state.ChoicePreview.ExtractScoreTarget));
             Assert.IsTrue(cut.ExtractReady);
             Assert.IsTrue(cut.PressureWillCrack);
+            Assert.That(cut.PendingPressureEvent, Is.EqualTo(PixelStrategySteamPressureEventKind.SealGate));
 
             var greed = state.ChoicePreview.Apply(PixelStrategySteamChoiceKind.GreedRelic);
             Assert.That(greed.Loot, Is.GreaterThan(cut.Loot));
@@ -114,12 +115,57 @@ namespace FourfoldEchoes.Tests
             Assert.That(greed.Extract, Is.LessThan(state.ChoicePreview.BaseExtract));
             Assert.IsFalse(greed.ExtractReady);
             Assert.IsTrue(greed.PressureWillCrack);
+            Assert.That(greed.PendingPressureEvent, Is.EqualTo(PixelStrategySteamPressureEventKind.ExtractionHeat));
 
             var bait = state.ChoicePreview.Apply(PixelStrategySteamChoiceKind.BaitLair);
             Assert.That(bait.Threat, Is.GreaterThan(state.ChoicePreview.BaseThreat));
             Assert.That(bait.Extract, Is.EqualTo(state.ChoicePreview.ExtractScoreTarget));
             Assert.IsFalse(bait.ExtractReady);
             Assert.IsFalse(bait.PressureWillCrack);
+            Assert.IsNull(bait.PendingPressureEvent);
+        }
+
+        [Test]
+        public void FirstSteamScreenSample_ResolvesPressureCrackIntoChosenIntervention()
+        {
+            var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();
+
+            var crack = state.ChoicePreview.ResolveCrack(PixelStrategySteamChoiceKind.CutToGate);
+
+            Assert.That(state.ChoicePreview.PressureCrackCost, Is.EqualTo(5));
+            Assert.That(crack.RemainingPressure, Is.EqualTo(2));
+            Assert.That(crack.CrackCount, Is.EqualTo(1));
+            Assert.That(crack.ChosenLevel, Is.EqualTo(1));
+            Assert.That(crack.QueuedEvent, Is.EqualTo(PixelStrategySteamPressureEventKind.SealGate));
+        }
+
+        [Test]
+        public void FirstSteamScreenSample_AppliesPressureEventsToNextChoiceOnly()
+        {
+            var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();
+
+            var cleanCut = state.ChoicePreview.Apply(PixelStrategySteamChoiceKind.CutToGate);
+            var sealedCut = state.ChoicePreview.Apply(
+                PixelStrategySteamChoiceKind.CutToGate,
+                PixelStrategySteamPressureEventKind.SealGate,
+                chosenLevel: 1);
+            Assert.That(sealedCut.Gate, Is.EqualTo(cleanCut.Gate - 1));
+            Assert.That(sealedCut.Extract, Is.EqualTo(cleanCut.Extract));
+
+            var cleanGreed = state.ChoicePreview.Apply(PixelStrategySteamChoiceKind.GreedRelic);
+            var heatedGreed = state.ChoicePreview.Apply(
+                PixelStrategySteamChoiceKind.GreedRelic,
+                PixelStrategySteamPressureEventKind.ExtractionHeat,
+                chosenLevel: 1);
+            Assert.That(heatedGreed.Extract, Is.EqualTo(cleanGreed.Extract - 2));
+            Assert.That(heatedGreed.Loot, Is.EqualTo(cleanGreed.Loot));
+
+            var cleanBait = state.ChoicePreview.Apply(PixelStrategySteamChoiceKind.BaitLair);
+            var ambushedBait = state.ChoicePreview.Apply(
+                PixelStrategySteamChoiceKind.BaitLair,
+                PixelStrategySteamPressureEventKind.Ambush,
+                chosenLevel: 2);
+            Assert.That(ambushedBait.Threat, Is.EqualTo(cleanBait.Threat + 3));
         }
 
         [Test]

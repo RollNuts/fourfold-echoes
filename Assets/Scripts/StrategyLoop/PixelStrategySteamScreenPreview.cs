@@ -18,6 +18,13 @@ namespace FourfoldEchoes.StrategyLoop
         GreedRelic
     }
 
+    public enum PixelStrategySteamPressureEventKind
+    {
+        Ambush,
+        SealGate,
+        ExtractionHeat
+    }
+
     public readonly struct PixelStrategySteamScreenCard
     {
         public PixelStrategySteamScreenCard(
@@ -132,7 +139,8 @@ namespace FourfoldEchoes.StrategyLoop
             int pressure,
             int extract,
             bool extractReady,
-            bool pressureWillCrack)
+            bool pressureWillCrack,
+            PixelStrategySteamPressureEventKind? pendingPressureEvent)
         {
             Choice = choice;
             Loot = loot;
@@ -142,6 +150,7 @@ namespace FourfoldEchoes.StrategyLoop
             Extract = extract;
             ExtractReady = extractReady;
             PressureWillCrack = pressureWillCrack;
+            PendingPressureEvent = pendingPressureEvent;
         }
 
         public PixelStrategySteamChoiceKind Choice { get; }
@@ -152,6 +161,27 @@ namespace FourfoldEchoes.StrategyLoop
         public int Extract { get; }
         public bool ExtractReady { get; }
         public bool PressureWillCrack { get; }
+        public PixelStrategySteamPressureEventKind? PendingPressureEvent { get; }
+    }
+
+    public readonly struct PixelStrategySteamPressureCrack
+    {
+        public PixelStrategySteamPressureCrack(
+            int remainingPressure,
+            int crackCount,
+            int chosenLevel,
+            PixelStrategySteamPressureEventKind queuedEvent)
+        {
+            RemainingPressure = Mathf.Max(0, remainingPressure);
+            CrackCount = Mathf.Max(0, crackCount);
+            ChosenLevel = Mathf.Max(0, chosenLevel);
+            QueuedEvent = queuedEvent;
+        }
+
+        public int RemainingPressure { get; }
+        public int CrackCount { get; }
+        public int ChosenLevel { get; }
+        public PixelStrategySteamPressureEventKind QueuedEvent { get; }
     }
 
     public sealed class PixelStrategySteamChoicePreview
@@ -165,6 +195,7 @@ namespace FourfoldEchoes.StrategyLoop
             int extractGateTarget,
             int extractScoreTarget,
             int pressureCrackThreshold,
+            int pressureCrackCost,
             IReadOnlyList<PixelStrategySteamChoiceDelta> choices)
         {
             BaseLoot = Mathf.Max(0, baseLoot);
@@ -175,6 +206,7 @@ namespace FourfoldEchoes.StrategyLoop
             ExtractGateTarget = Mathf.Max(1, extractGateTarget);
             ExtractScoreTarget = Mathf.Max(1, extractScoreTarget);
             PressureCrackThreshold = Mathf.Max(1, pressureCrackThreshold);
+            PressureCrackCost = Mathf.Max(1, pressureCrackCost);
             Choices = choices ?? throw new ArgumentNullException(nameof(choices));
         }
 
@@ -186,6 +218,7 @@ namespace FourfoldEchoes.StrategyLoop
         public int ExtractGateTarget { get; }
         public int ExtractScoreTarget { get; }
         public int PressureCrackThreshold { get; }
+        public int PressureCrackCost { get; }
         public IReadOnlyList<PixelStrategySteamChoiceDelta> Choices { get; }
 
         public PixelStrategySteamChoiceDelta GetDelta(PixelStrategySteamChoiceKind choice)
@@ -203,12 +236,21 @@ namespace FourfoldEchoes.StrategyLoop
 
         public PixelStrategySteamChoiceForecast Apply(PixelStrategySteamChoiceKind choice)
         {
-            var delta = GetDelta(choice);
+            return Apply(choice, null, 0);
+        }
+
+        public PixelStrategySteamChoiceForecast Apply(
+            PixelStrategySteamChoiceKind choice,
+            PixelStrategySteamPressureEventKind? pressureEvent,
+            int chosenLevel)
+        {
+            var delta = ApplyPressureEvent(GetDelta(choice), pressureEvent, chosenLevel);
             var loot = Mathf.Max(0, BaseLoot + delta.Loot);
             var threat = Mathf.Max(0, BaseThreat + delta.Threat);
             var gate = Mathf.Max(0, BaseGate + delta.Gate);
             var pressure = Mathf.Max(0, BasePressure + delta.Pressure);
             var extract = Mathf.Max(0, BaseExtract + delta.Extract);
+            var pressureWillCrack = pressure >= PressureCrackThreshold;
             return new PixelStrategySteamChoiceForecast(
                 choice,
                 loot,
@@ -217,7 +259,76 @@ namespace FourfoldEchoes.StrategyLoop
                 pressure,
                 extract,
                 gate >= ExtractGateTarget && extract >= ExtractScoreTarget,
-                pressure >= PressureCrackThreshold);
+                pressureWillCrack,
+                pressureWillCrack ? SelectPressureEvent(choice) : (PixelStrategySteamPressureEventKind?)null);
+        }
+
+        public PixelStrategySteamPressureCrack ResolveCrack(PixelStrategySteamChoiceKind previousChoice)
+        {
+            var forecast = Apply(previousChoice);
+            var remainingPressure = Mathf.Max(0, forecast.Pressure - PressureCrackCost);
+            return new PixelStrategySteamPressureCrack(
+                remainingPressure,
+                crackCount: 1,
+                chosenLevel: 1,
+                forecast.PendingPressureEvent ?? SelectPressureEvent(previousChoice));
+        }
+
+        private static PixelStrategySteamChoiceDelta ApplyPressureEvent(
+            PixelStrategySteamChoiceDelta delta,
+            PixelStrategySteamPressureEventKind? pressureEvent,
+            int chosenLevel)
+        {
+            if (!pressureEvent.HasValue)
+            {
+                return delta;
+            }
+
+            var level = Mathf.Max(0, chosenLevel);
+            switch (pressureEvent.Value)
+            {
+                case PixelStrategySteamPressureEventKind.Ambush:
+                    return new PixelStrategySteamChoiceDelta(
+                        delta.Choice,
+                        delta.Loot,
+                        delta.Threat + 1 + level,
+                        delta.Gate,
+                        delta.Pressure,
+                        delta.Extract);
+                case PixelStrategySteamPressureEventKind.SealGate:
+                    return new PixelStrategySteamChoiceDelta(
+                        delta.Choice,
+                        delta.Loot,
+                        delta.Threat,
+                        delta.Gate > 0 ? delta.Gate - 1 : delta.Gate - 2,
+                        delta.Pressure,
+                        delta.Extract);
+                case PixelStrategySteamPressureEventKind.ExtractionHeat:
+                    return new PixelStrategySteamChoiceDelta(
+                        delta.Choice,
+                        delta.Loot,
+                        delta.Threat,
+                        delta.Gate,
+                        delta.Pressure,
+                        delta.Extract > 0 ? delta.Extract - 1 : delta.Extract - 2);
+                default:
+                    return delta;
+            }
+        }
+
+        private static PixelStrategySteamPressureEventKind SelectPressureEvent(PixelStrategySteamChoiceKind previousChoice)
+        {
+            switch (previousChoice)
+            {
+                case PixelStrategySteamChoiceKind.BaitLair:
+                    return PixelStrategySteamPressureEventKind.Ambush;
+                case PixelStrategySteamChoiceKind.CutToGate:
+                    return PixelStrategySteamPressureEventKind.SealGate;
+                case PixelStrategySteamChoiceKind.GreedRelic:
+                    return PixelStrategySteamPressureEventKind.ExtractionHeat;
+                default:
+                    return PixelStrategySteamPressureEventKind.Ambush;
+            }
         }
     }
 
@@ -399,6 +510,7 @@ namespace FourfoldEchoes.StrategyLoop
                 extractGateTarget: 6,
                 extractScoreTarget: 3,
                 pressureCrackThreshold: 7,
+                pressureCrackCost: 5,
                 choices: new[]
                 {
                     new PixelStrategySteamChoiceDelta(PixelStrategySteamChoiceKind.BaitLair, loot: 1, threat: 2, gate: 0, pressure: 1, extract: 1),
