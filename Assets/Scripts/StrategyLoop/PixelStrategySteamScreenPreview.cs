@@ -11,6 +11,13 @@ namespace FourfoldEchoes.StrategyLoop
         Doom
     }
 
+    public enum PixelStrategySteamChoiceKind
+    {
+        BaitLair,
+        CutToGate,
+        GreedRelic
+    }
+
     public readonly struct PixelStrategySteamScreenCard
     {
         public PixelStrategySteamScreenCard(
@@ -40,11 +47,32 @@ namespace FourfoldEchoes.StrategyLoop
         public bool Selected { get; }
     }
 
+    public sealed class PixelStrategySteamChoiceImpact
+    {
+        public PixelStrategySteamChoiceImpact(
+            PixelStrategySteamChoiceKind selectedChoice,
+            IReadOnlyList<Vector2Int> openedGateCells,
+            IReadOnlyList<Vector2Int> sealedPressureCells,
+            string boardCallout)
+        {
+            SelectedChoice = selectedChoice;
+            OpenedGateCells = openedGateCells ?? throw new ArgumentNullException(nameof(openedGateCells));
+            SealedPressureCells = sealedPressureCells ?? throw new ArgumentNullException(nameof(sealedPressureCells));
+            BoardCallout = boardCallout ?? throw new ArgumentNullException(nameof(boardCallout));
+        }
+
+        public PixelStrategySteamChoiceKind SelectedChoice { get; }
+        public IReadOnlyList<Vector2Int> OpenedGateCells { get; }
+        public IReadOnlyList<Vector2Int> SealedPressureCells { get; }
+        public string BoardCallout { get; }
+    }
+
     public sealed class PixelStrategySteamScreenPreviewState
     {
         public PixelStrategySteamScreenPreviewState(
             PixelStrategyBoardPreviewState board,
             IReadOnlyList<PixelStrategySteamScreenCard> cards,
+            PixelStrategySteamChoiceImpact impact,
             int loopNumber,
             int bagValue,
             int gatePercent,
@@ -54,6 +82,7 @@ namespace FourfoldEchoes.StrategyLoop
         {
             Board = board ?? throw new ArgumentNullException(nameof(board));
             Cards = cards ?? throw new ArgumentNullException(nameof(cards));
+            Impact = impact ?? throw new ArgumentNullException(nameof(impact));
             LoopNumber = Mathf.Max(1, loopNumber);
             BagValue = Mathf.Max(0, bagValue);
             GatePercent = Mathf.Clamp(gatePercent, 0, 100);
@@ -64,6 +93,7 @@ namespace FourfoldEchoes.StrategyLoop
 
         public PixelStrategyBoardPreviewState Board { get; }
         public IReadOnlyList<PixelStrategySteamScreenCard> Cards { get; }
+        public PixelStrategySteamChoiceImpact Impact { get; }
         public int LoopNumber { get; }
         public int BagValue { get; }
         public int GatePercent { get; }
@@ -166,9 +196,27 @@ namespace FourfoldEchoes.StrategyLoop
                     selected: false)
             };
 
+            var impact = new PixelStrategySteamChoiceImpact(
+                PixelStrategySteamChoiceKind.CutToGate,
+                new[]
+                {
+                    new Vector2Int(8, 3),
+                    new Vector2Int(9, 3),
+                    new Vector2Int(10, 3),
+                    new Vector2Int(11, 3),
+                    new Vector2Int(12, 4)
+                },
+                new[]
+                {
+                    new Vector2Int(9, 1),
+                    new Vector2Int(10, 2)
+                },
+                "GATE CUT OPEN");
+
             return new PixelStrategySteamScreenPreviewState(
                 board,
                 cards,
+                impact,
                 loopNumber: 7,
                 bagValue: 420,
                 gatePercent: 68,

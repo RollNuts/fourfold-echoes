@@ -38,6 +38,20 @@ namespace FourfoldEchoes.Tests
         }
 
         [Test]
+        public void FirstSteamScreenSample_ConnectsSelectedChoiceToBoardImpact()
+        {
+            var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();
+
+            Assert.That(state.Impact.SelectedChoice, Is.EqualTo(PixelStrategySteamChoiceKind.CutToGate));
+            Assert.That(state.Impact.OpenedGateCells.Count, Is.EqualTo(5));
+            Assert.That(state.Impact.OpenedGateCells[0], Is.EqualTo(new Vector2Int(8, 3)));
+            Assert.That(state.Impact.OpenedGateCells[4], Is.EqualTo(state.Board.ExtractCell));
+            Assert.That(state.Impact.SealedPressureCells.Count, Is.EqualTo(2));
+            Assert.That(state.Impact.SealedPressureCells[0], Is.EqualTo(new Vector2Int(9, 1)));
+            Assert.That(state.Impact.BoardCallout, Is.EqualTo("GATE CUT OPEN"));
+        }
+
+        [Test]
         public void FirstSteamScreenSample_ExposesEdgeHudPressureAndExtractionRead()
         {
             var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();

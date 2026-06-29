@@ -32,6 +32,7 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             CreateBackground();
             CreateEdgeHud(state);
             CreateBoard(state.Board);
+            CreateChoiceImpact(state);
             CreateStarterRead(state);
             CreateDecisionCards(state.Cards);
             CaptureCamera(camera, outputPath);
@@ -125,7 +126,7 @@ namespace FourfoldEchoes.Editor.StrategyLoop
                 switch (placement.Kind)
                 {
                     case PixelStrategyPlacementKind.Lair:
-            CreateSprite("Lair Token", CreateLairToken(), world + new Vector3(0f, 0.10f, 0f), 34, new Vector2(0.72f, 0.72f));
+                        CreateSprite("Lair Token", CreateLairToken(), world + new Vector3(0f, 0.10f, 0f), 34, new Vector2(0.72f, 0.72f));
                         break;
                     case PixelStrategyPlacementKind.Hazard:
                         CreateSprite("Hazard Token", CreateHazardToken(), world, 33, new Vector2(0.58f, 0.58f));
@@ -155,6 +156,48 @@ namespace FourfoldEchoes.Editor.StrategyLoop
         private static Vector3 CellToWorld(Vector3 origin, Vector2Int cell)
         {
             return origin + new Vector3(cell.x * BoardCellWidth, cell.y * BoardCellHeight, 0f);
+        }
+
+        private static void CreateChoiceImpact(PixelStrategySteamScreenPreviewState state)
+        {
+            var origin = new Vector3(-3.98f, -0.63f, 0f);
+            CreateOpenedGateRoute(origin, state.Impact.OpenedGateCells);
+
+            foreach (var cell in state.Impact.SealedPressureCells)
+            {
+                CreateSealMark(CellToWorld(origin, cell) + new Vector3(0f, 0.02f, -0.28f));
+            }
+
+            CreatePanel("Impact Callout Border", new Vector3(2.92f, 0.52f, -0.22f), new Vector2(1.86f, 0.42f), new Color32(117, 231, 246, 255), 58);
+            CreatePanel("Impact Callout", new Vector3(2.92f, 0.52f, -0.24f), new Vector2(1.76f, 0.33f), new Color32(16, 36, 44, 245), 59);
+            CreateLabel(state.Impact.BoardCallout, new Vector3(2.15f, 0.53f, -0.35f), 0.025f, new Color32(225, 254, 255, 255), TextAnchor.MiddleLeft, 70);
+        }
+
+        private static void CreateOpenedGateRoute(Vector3 origin, IReadOnlyList<Vector2Int> cells)
+        {
+            var lineObject = new GameObject("Choice Impact Gate Cut");
+            var line = lineObject.AddComponent<LineRenderer>();
+            line.positionCount = cells.Count;
+            line.startWidth = 0.12f;
+            line.endWidth = 0.12f;
+            line.material = new Material(Shader.Find("Sprites/Default"));
+            line.startColor = new Color32(117, 231, 246, 245);
+            line.endColor = new Color32(117, 231, 246, 245);
+            line.sortingOrder = 45;
+
+            for (var index = 0; index < cells.Count; index++)
+            {
+                var cell = cells[index];
+                line.SetPosition(index, CellToWorld(origin, cell) + new Vector3(0f, 0.02f, -0.3f));
+                CreatePanel("Opened Gate Cell", CellToWorld(origin, cell) + new Vector3(0f, 0f, -0.29f), new Vector2(BoardCellWidth, BoardCellHeight), new Color32(39, 116, 129, 170), 43);
+            }
+        }
+
+        private static void CreateSealMark(Vector3 position)
+        {
+            CreatePanel("Sealed Pressure Back", position, new Vector2(0.34f, 0.34f), new Color32(30, 20, 24, 230), 46);
+            CreatePanel("Sealed Pressure Slash A", position + new Vector3(0f, 0f, -0.04f), new Vector2(0.44f, 0.08f), new Color32(139, 244, 255, 255), 47);
+            CreatePanel("Sealed Pressure Slash B", position + new Vector3(0f, 0f, -0.05f), new Vector2(0.08f, 0.44f), new Color32(139, 244, 255, 255), 48);
         }
 
         private static void DrawRouteLine(PixelStrategyBoardPreviewState state, Vector3 origin, Color32 color, float width, int sortingOrder)
