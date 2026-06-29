@@ -46,6 +46,7 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             var combatAnchor = CreateHookAnchor("Combat Hook Anchor", new Vector3(4.5f, 0.34f, 3.05f), materials.combatHook);
             var lootAnchor = CreateHookAnchor("Loot Hook Anchor", new Vector3(-4.5f, 0.34f, -3.05f), materials.lootHook);
             var extractAnchor = CreateHookAnchor("Extract Hook Anchor", new Vector3(4.5f, 0.34f, -3.05f), materials.extractHook);
+            var editableBlocksRoot = new GameObject("Editable Build Blocks");
 
             roomRoot.name = "Builder Prototype Block Room";
 
@@ -57,6 +58,9 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             controller.combatHookAnchor = combatAnchor.transform;
             controller.lootHookAnchor = lootAnchor.transform;
             controller.extractHookAnchor = extractAnchor.transform;
+            controller.editableBlocksRoot = editableBlocksRoot.transform;
+            controller.placedBlockMaterial = materials.placedBlock;
+            controller.buildCursorMaterial = materials.buildCursor;
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
@@ -81,6 +85,7 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
                 Require(controller.player != null, "Controller player reference is missing.", errors);
                 Require(controller.followCamera != null, "Controller camera reference is missing.", errors);
                 Require(controller.HasRequiredHookAnchors, "One or more subsystem hook anchors are missing.", errors);
+                Require(controller.HasRequiredBuildReferences, "Build edit references are missing.", errors);
                 Require(controller.CurrentMode == BuilderPrototypeMode.Traverse, "Controller should start in Traverse mode.", errors);
             }
 
@@ -89,6 +94,7 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             Require(GameObject.Find("Combat Hook Anchor") != null, "Combat hook anchor is missing.", errors);
             Require(GameObject.Find("Loot Hook Anchor") != null, "Loot hook anchor is missing.", errors);
             Require(GameObject.Find("Extract Hook Anchor") != null, "Extract hook anchor is missing.", errors);
+            Require(GameObject.Find("Editable Build Blocks") != null, "Editable build block root is missing.", errors);
             Require(Camera.main != null || controller?.followCamera != null, "No usable camera was generated.", errors);
 
             if (errors.Count > 0)
@@ -220,7 +226,9 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
                 UpsertMaterial("MAT_BuilderSpine_BuildHook", new Color(0.35f, 0.78f, 0.62f)),
                 UpsertMaterial("MAT_BuilderSpine_CombatHook", new Color(0.82f, 0.25f, 0.22f)),
                 UpsertMaterial("MAT_BuilderSpine_LootHook", new Color(0.78f, 0.68f, 0.25f)),
-                UpsertMaterial("MAT_BuilderSpine_ExtractHook", new Color(0.35f, 0.48f, 0.86f)));
+                UpsertMaterial("MAT_BuilderSpine_ExtractHook", new Color(0.35f, 0.48f, 0.86f)),
+                UpsertMaterial("MAT_BuilderSpine_PlacedBlock", new Color(0.51f, 0.43f, 0.34f)),
+                UpsertMaterial("MAT_BuilderSpine_BuildCursor", new Color(0.78f, 1f, 0.84f)));
         }
 
         private static Material UpsertMaterial(string name, Color color)
@@ -254,7 +262,7 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
 
         private readonly struct SpineMaterials
         {
-            public SpineMaterials(Material floorA, Material floorB, Material wall, Material player, Material buildHook, Material combatHook, Material lootHook, Material extractHook)
+            public SpineMaterials(Material floorA, Material floorB, Material wall, Material player, Material buildHook, Material combatHook, Material lootHook, Material extractHook, Material placedBlock, Material buildCursor)
             {
                 this.floorA = floorA;
                 this.floorB = floorB;
@@ -264,6 +272,8 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
                 this.combatHook = combatHook;
                 this.lootHook = lootHook;
                 this.extractHook = extractHook;
+                this.placedBlock = placedBlock;
+                this.buildCursor = buildCursor;
             }
 
             public readonly Material floorA;
@@ -274,6 +284,8 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             public readonly Material combatHook;
             public readonly Material lootHook;
             public readonly Material extractHook;
+            public readonly Material placedBlock;
+            public readonly Material buildCursor;
         }
     }
 }
