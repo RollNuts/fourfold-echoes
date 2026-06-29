@@ -13,8 +13,10 @@ const objPath = path.join(modelDir, "FE_CHAR_PLAYER_EchoStriker_P0.obj");
 const mtlPath = path.join(modelDir, "FE_CHAR_PLAYER_EchoStriker_P0.mtl");
 const svgPath = path.join(previewDir, "echo-striker-p0-action-poses.svg");
 const gameSvgPath = path.join(previewDir, "echo-striker-p0-game-scale.svg");
+const combatSvgPath = path.join(previewDir, "echo-striker-p0-combat-screen.svg");
 const docsSvgPath = path.join(docsPreviewDir, "FE_CHAR_PLAYER_EchoStriker_P0_action_poses.svg");
 const docsGameSvgPath = path.join(docsPreviewDir, "FE_CHAR_PLAYER_EchoStriker_P0_game_scale.svg");
+const docsCombatSvgPath = path.join(docsPreviewDir, "FE_CHAR_PLAYER_EchoStriker_P0_combat_screen.svg");
 
 const materials = {
   cloak: { hex: "#101f3d", kd: [0.063, 0.122, 0.239], stroke: "#071022" },
@@ -640,6 +642,249 @@ function writeGameScaleSvg(poses) {
   writeFileSync(docsGameSvgPath, svg);
 }
 
+function projectCombat([x, y, z]) {
+  const scale = 172;
+  return {
+    x: 890 + (x - z * 0.58) * scale,
+    y: 792 - y * scale + z * 58 + x * 10,
+  };
+}
+
+function collectPosePolygons(poseData, projector) {
+  const polygons = [];
+  for (const partData of poseData.parts) {
+    const partMesh = resolvedPart(partData, poseData.rootTransform);
+    const mat = materials[partData.mat];
+    for (const face of partMesh.faces) {
+      const vertices = face.map((index) => partMesh.vertices[index - 1]);
+      const avg = vertices.reduce((sum, v) => [sum[0] + v[0], sum[1] + v[1], sum[2] + v[2]], [0, 0, 0]).map((n) => n / vertices.length);
+      const screen = vertices.map(projector);
+      const n = normalOf(vertices);
+      polygons.push({
+        depth: avg[2] * 1.2 + avg[0] * 0.18 - avg[1] * 0.08,
+        points: screen.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" "),
+        fill: shade(mat.hex, n, mat.emissive),
+        stroke: mat.stroke,
+        alpha: mat.alpha || 1,
+        glow: mat.emissive,
+      });
+    }
+  }
+  polygons.sort((a, b) => a.depth - b.depth);
+  return polygons;
+}
+
+function enemyMarkup(x, y, scale, facing = 1, hurt = false) {
+  const glow = hurt ? ' filter="url(#redGlow)"' : "";
+  const core = hurt ? "#33121a" : "#1a1218";
+  const armor = hurt ? "#6a2a1d" : "#302328";
+  return `
+    <g transform="translate(${x} ${y}) scale(${scale})">
+      <ellipse cx="0" cy="72" rx="92" ry="34" fill="#03070b" opacity="0.48"/>
+      <ellipse cx="0" cy="64" rx="96" ry="46" fill="none" stroke="${hurt ? "#ff3a20" : "#c83220"}" stroke-width="8" opacity="${hurt ? "0.78" : "0.38"}"${glow}/>
+      <path d="M ${-46 * facing} 7 L ${-78 * facing} 63 L ${-20 * facing} 52 Z" fill="${armor}" stroke="#0b0708" stroke-width="3"/>
+      <path d="M ${42 * facing} 5 L ${82 * facing} 58 L ${22 * facing} 55 Z" fill="${armor}" stroke="#0b0708" stroke-width="3"/>
+      <path d="M -50 -36 L 0 -74 L 52 -36 L 42 42 L -44 42 Z" fill="${core}" stroke="#070509" stroke-width="4"/>
+      <path d="M -34 -26 L 0 -51 L 36 -26 L 28 28 L -28 28 Z" fill="${armor}" stroke="#120b0e" stroke-width="3"/>
+      <rect x="-25" y="-15" width="50" height="12" fill="#ff3a1d" stroke="#711008" stroke-width="3"${glow}/>
+      <path d="M -18 -76 L -55 -118 L -30 -54 Z" fill="#e4441f" stroke="#711008" stroke-width="3"/>
+      <path d="M 18 -76 L 55 -118 L 30 -54 Z" fill="#e4441f" stroke="#711008" stroke-width="3"/>
+      ${hurt ? '<text x="0" y="-92" text-anchor="middle" class="damage">37</text>' : ""}
+    </g>`;
+}
+
+function bruteEnemyMarkup(x, y, scale) {
+  return `
+    <g transform="translate(${x} ${y}) scale(${scale})">
+      <ellipse cx="0" cy="104" rx="132" ry="42" fill="#03070b" opacity="0.52"/>
+      <ellipse cx="0" cy="88" rx="138" ry="64" fill="none" stroke="#ff4a28" stroke-width="12" opacity="0.64" filter="url(#redGlow)"/>
+      <path d="M -112 -8 L -188 56 L -120 83 L -68 34 Z" fill="#23161b" stroke="#0b0708" stroke-width="5"/>
+      <path d="M 96 -18 L 198 50 L 138 92 L 54 35 Z" fill="#2b1b20" stroke="#0b0708" stroke-width="5"/>
+      <path d="M -70 -74 L 0 -122 L 74 -76 L 89 46 L 42 112 L -48 108 L -92 43 Z" fill="#1d141b" stroke="#080509" stroke-width="6"/>
+      <path d="M -48 -54 L 0 -88 L 52 -54 L 58 28 L 24 72 L -28 70 L -60 24 Z" fill="#4a241f" stroke="#180b0c" stroke-width="4"/>
+      <path d="M -28 -170 L -88 -101 L -48 -82 Z" fill="#ff4a24" stroke="#771108" stroke-width="5" filter="url(#redGlow)"/>
+      <path d="M 30 -170 L 90 -101 L 48 -82 Z" fill="#ff4a24" stroke="#771108" stroke-width="5" filter="url(#redGlow)"/>
+      <rect x="-34" y="-34" width="68" height="18" fill="#ff351f" stroke="#7a1008" stroke-width="4" filter="url(#redGlow)"/>
+      <path d="M -102 36 C -30 0, 44 4, 116 40" fill="none" stroke="#f0b64c" stroke-width="12" stroke-linecap="round" opacity="0.80" filter="url(#goldGlow)"/>
+      <path d="M -154 -8 L -224 -104" stroke="#ff3824" stroke-width="9" stroke-linecap="round" filter="url(#redGlow)"/>
+      <path d="M 130 0 L 226 -96" stroke="#ff3824" stroke-width="9" stroke-linecap="round" filter="url(#redGlow)"/>
+      <text x="6" y="-130" text-anchor="middle" class="damage">37</text>
+    </g>`;
+}
+
+function casterEnemyMarkup(x, y, scale) {
+  return `
+    <g transform="translate(${x} ${y}) scale(${scale})">
+      <ellipse cx="0" cy="74" rx="88" ry="30" fill="#03070b" opacity="0.48"/>
+      <ellipse cx="0" cy="50" rx="118" ry="48" fill="none" stroke="#ff5a28" stroke-width="8" opacity="0.34" filter="url(#redGlow)"/>
+      <path d="M -52 24 L -22 -74 L 24 -74 L 58 24 L 28 70 L -28 70 Z" fill="#18131d" stroke="#080509" stroke-width="5"/>
+      <path d="M -34 -44 L 0 -84 L 35 -44 L 28 16 L -28 16 Z" fill="#302033" stroke="#120914" stroke-width="4"/>
+      <rect x="-24" y="-28" width="48" height="11" fill="#ff3b20" stroke="#751008" stroke-width="3" filter="url(#redGlow)"/>
+      <path d="M -54 -86 L -91 -132 L -64 -66 Z" fill="#ff4a24" stroke="#771108" stroke-width="4"/>
+      <path d="M 54 -86 L 91 -132 L 64 -66 Z" fill="#ff4a24" stroke="#771108" stroke-width="4"/>
+      <path d="M -72 18 C -28 4, 34 4, 78 18" fill="none" stroke="#ffb33b" stroke-width="7" stroke-linecap="round" opacity="0.72" filter="url(#goldGlow)"/>
+      <circle cx="102" cy="-24" r="22" fill="#ff3b20" opacity="0.86" filter="url(#redGlow)"/>
+      <path d="M 62 -4 L 104 -24" stroke="#ff3b20" stroke-width="8" stroke-linecap="round" filter="url(#redGlow)"/>
+    </g>`;
+}
+
+function shieldEnemyMarkup(x, y, scale) {
+  return `
+    <g transform="translate(${x} ${y}) scale(${scale})">
+      <ellipse cx="0" cy="94" rx="126" ry="36" fill="#03070b" opacity="0.50"/>
+      <ellipse cx="0" cy="73" rx="132" ry="62" fill="none" stroke="#ff4a28" stroke-width="10" opacity="0.42" filter="url(#redGlow)"/>
+      <path d="M -70 -52 L 0 -100 L 72 -52 L 78 46 L 36 104 L -40 100 L -80 42 Z" fill="#1a1319" stroke="#080509" stroke-width="6"/>
+      <path d="M -126 -28 L -52 -88 L -28 36 L -86 96 Z" fill="#38282f" stroke="#10090d" stroke-width="5"/>
+      <path d="M -104 -12 L -64 -50 L -48 31 L -81 60 Z" fill="#70503d" stroke="#21100d" stroke-width="4"/>
+      <path d="M 58 -10 L 166 -84" stroke="#ff3b20" stroke-width="12" stroke-linecap="round" filter="url(#redGlow)"/>
+      <rect x="-25" y="-28" width="50" height="14" fill="#ff3a1d" stroke="#711008" stroke-width="4" filter="url(#redGlow)"/>
+      <path d="M -26 -144 L -76 -84 L -42 -68 Z" fill="#ff4a24" stroke="#771108" stroke-width="5"/>
+      <path d="M 30 -144 L 80 -84 L 42 -68 Z" fill="#ff4a24" stroke="#771108" stroke-width="5"/>
+    </g>`;
+}
+
+function writeCombatScreenSvg(poses) {
+  const active = poses.find((poseData) => poseData.name === "ACTIVE_SLASH");
+  const combatHero = {
+    ...active,
+    rootTransform: { ...active.rootTransform, x: -0.62, roll: -15 },
+  };
+  const heroPolygons = collectPosePolygons(combatHero, projectCombat);
+
+  const floorLines = [];
+  for (let i = -5; i <= 9; i += 1) {
+    const x = 960 + i * 176;
+    floorLines.push(`<path d="M ${x} 168 L ${x - 354} 1034" stroke="#334252" stroke-width="2" opacity="0.32"/>`);
+  }
+  for (let i = 0; i < 9; i += 1) {
+    const y = 222 + i * 92;
+    floorLines.push(`<path d="M 76 ${y} L 1848 ${y - 38}" stroke="#334252" stroke-width="2" opacity="0.30"/>`);
+  }
+
+  const heroMarkup = heroPolygons
+    .map((poly) => `<polygon points="${poly.points}" fill="${poly.fill}" stroke="${poly.stroke}" stroke-width="${poly.glow ? 1.3 : 1}" opacity="${poly.alpha}"${poly.glow ? ' filter="url(#cyanGlow)"' : ""}/>`)
+    .join("\n      ");
+
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <radialGradient id="arenaLight" cx="47%" cy="49%" r="70%">
+      <stop offset="0" stop-color="#223024"/>
+      <stop offset="0.36" stop-color="#192532"/>
+      <stop offset="0.62" stop-color="#121923"/>
+      <stop offset="1" stop-color="#070a0f"/>
+    </radialGradient>
+    <linearGradient id="stoneFace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#39413c"/>
+      <stop offset="0.52" stop-color="#222b2d"/>
+      <stop offset="1" stop-color="#151a20"/>
+    </linearGradient>
+    <linearGradient id="routeGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0bb4d"/>
+      <stop offset="1" stop-color="#81510e"/>
+    </linearGradient>
+    <filter id="cyanGlow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="redGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="goldGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .damage { fill: #ffd36a; stroke: #431e08; stroke-width: 4; paint-order: stroke; font: 900 52px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+    </style>
+  </defs>
+  <rect width="1920" height="1080" fill="#070a0f"/>
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#arenaLight)"/>
+  <g opacity="0.92">
+    <path d="M 82 200 L 1662 142 L 1888 960 L 72 1002 Z" fill="#111922" stroke="#2c3b47" stroke-width="4"/>
+    <path d="M 138 238 L 510 212 L 480 438 L 92 470 Z" fill="url(#stoneFace)" stroke="#3d4b4d" stroke-width="3" opacity="0.74"/>
+    <path d="M 522 210 L 912 194 L 882 430 L 494 438 Z" fill="#172225" stroke="#354447" stroke-width="3" opacity="0.68"/>
+    <path d="M 924 194 L 1302 178 L 1282 416 L 896 430 Z" fill="#1f2b26" stroke="#384743" stroke-width="3" opacity="0.72"/>
+    <path d="M 1318 178 L 1642 170 L 1704 402 L 1296 416 Z" fill="#172126" stroke="#354248" stroke-width="3" opacity="0.70"/>
+    <path d="M 92 486 L 480 452 L 460 706 L 48 742 Z" fill="#172028" stroke="#34424c" stroke-width="3" opacity="0.72"/>
+    <path d="M 494 452 L 884 440 L 872 694 L 468 706 Z" fill="#1f2a28" stroke="#3b4b4d" stroke-width="3" opacity="0.76"/>
+    <path d="M 900 440 L 1288 424 L 1298 678 L 884 694 Z" fill="#17212c" stroke="#364555" stroke-width="3" opacity="0.72"/>
+    <path d="M 1304 424 L 1712 410 L 1784 660 L 1314 678 Z" fill="#1a2422" stroke="#394746" stroke-width="3" opacity="0.72"/>
+    <path d="M 48 760 L 460 722 L 452 970 L 20 986 Z" fill="#151e25" stroke="#303f48" stroke-width="3" opacity="0.70"/>
+    <path d="M 474 722 L 874 710 L 872 950 L 462 970 Z" fill="#1a2524" stroke="#394746" stroke-width="3" opacity="0.74"/>
+    <path d="M 890 710 L 1302 692 L 1324 930 L 884 950 Z" fill="#151f28" stroke="#334250" stroke-width="3" opacity="0.72"/>
+    <path d="M 1318 692 L 1794 676 L 1890 908 L 1338 930 Z" fill="#1f2524" stroke="#404846" stroke-width="3" opacity="0.76"/>
+  </g>
+  <g>
+    ${floorLines.join("\n    ")}
+  </g>
+  <g opacity="0.78">
+    <path d="M 350 628 C 585 528, 792 560, 1018 442 S 1438 300, 1744 372" fill="none" stroke="url(#routeGold)" stroke-width="28" opacity="0.20"/>
+    <path d="M 350 628 C 585 528, 792 560, 1018 442 S 1438 300, 1744 372" fill="none" stroke="#ffe08b" stroke-width="5" opacity="0.32" filter="url(#goldGlow)"/>
+    <path d="M 300 678 C 520 605, 704 650, 920 540" fill="none" stroke="#4f7f68" stroke-width="14" opacity="0.18"/>
+  </g>
+  <g opacity="0.78">
+    <path d="M 286 808 L 392 778 L 414 844 L 304 878 Z" fill="#2e3939" stroke="#627068" stroke-width="4"/>
+    <path d="M 1514 210 L 1702 242 L 1688 292 L 1502 262 Z" fill="#2a3439" stroke="#66706c" stroke-width="4"/>
+    <path d="M 1424 866 L 1622 836 L 1640 924 L 1442 954 Z" fill="#2b3636" stroke="#687269" stroke-width="4"/>
+    <path d="M 422 276 L 576 318 L 552 368 L 400 330 Z" fill="#2b3538" stroke="#626f6b" stroke-width="4"/>
+    <path d="M 1028 216 L 1078 300 L 1018 334 L 972 254 Z" fill="#4f4330" stroke="#867044" stroke-width="4" opacity="0.72"/>
+    <path d="M 1010 248 L 1050 310" stroke="#f3b94c" stroke-width="5" opacity="0.34" filter="url(#goldGlow)"/>
+  </g>
+  <g opacity="0.55">
+    <path d="M 606 300 L 694 340 L 620 372 Z" fill="#2d5c44"/>
+    <path d="M 722 278 L 786 306 L 730 334 Z" fill="#315f46"/>
+    <path d="M 144 616 L 220 640 L 154 670 Z" fill="#315f46"/>
+    <path d="M 1292 272 L 1352 292 L 1308 326 Z" fill="#2f6044"/>
+  </g>
+  <g opacity="0.82">
+    <ellipse cx="1402" cy="477" rx="220" ry="84" fill="none" stroke="#f13b22" stroke-width="10" opacity="0.46" filter="url(#redGlow)"/>
+    <ellipse cx="1580" cy="738" rx="260" ry="98" fill="none" stroke="#f13b22" stroke-width="12" opacity="0.42" filter="url(#redGlow)"/>
+    <path d="M 1474 444 L 1562 392 L 1520 518 Z" fill="#f13b22" opacity="0.36" filter="url(#redGlow)"/>
+  </g>
+  ${bruteEnemyMarkup(1336, 608, 0.95)}
+  ${casterEnemyMarkup(1538, 405, 0.74)}
+  ${shieldEnemyMarkup(1634, 790, 1.03)}
+  <g>
+      ${heroMarkup}
+  </g>
+  <g filter="url(#cyanGlow)" opacity="0.96">
+    <path d="M 686 660 C 900 762, 1188 744, 1410 610" fill="none" stroke="#e9fdff" stroke-width="18" stroke-linecap="round"/>
+    <path d="M 708 635 C 936 722, 1184 704, 1388 584" fill="none" stroke="#20d8ff" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 1244 552 L 1444 486" stroke="#ffd266" stroke-width="11" stroke-linecap="round"/>
+    <path d="M 1272 622 L 1462 664" stroke="#ff3a20" stroke-width="9" stroke-linecap="round"/>
+    <path d="M 1178 532 L 1310 430" stroke="#ff3a20" stroke-width="7" stroke-linecap="round"/>
+  </g>
+  <g>
+    <path d="M 44 42 L 330 42 L 360 73 L 336 114 L 44 114 Z" fill="#0a1017" stroke="#6b5131" stroke-width="4"/>
+    <path d="M 64 58 L 306 58 L 320 72 L 308 86 L 64 86 Z" fill="#2b1015" stroke="#77313a" stroke-width="3"/>
+    <path d="M 70 64 L 282 64 L 282 80 L 70 80 Z" fill="#e43a28"/>
+    <path d="M 64 94 L 250 94 L 260 103 L 250 112 L 64 112 Z" fill="#092e38" stroke="#23899c" stroke-width="3"/>
+    <path d="M 70 99 L 218 99 L 218 107 L 70 107 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
+    <circle cx="394" cy="80" r="38" fill="#101f3d" stroke="#f2a522" stroke-width="6" filter="url(#goldGlow)"/>
+    <path d="M 394 47 L 416 80 L 394 114 L 372 80 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
+  </g>
+  <g opacity="0.72">
+    <path d="M 34 990 L 1886 990 L 1886 1022 L 34 1022 Z" fill="#05070b"/>
+    <path d="M 572 1002 L 1348 1002 L 1364 1011 L 1348 1020 L 572 1020 L 556 1011 Z" fill="#0b1720" stroke="#355466" stroke-width="2"/>
+    <path d="M 820 1004 L 1098 1004 L 1110 1011 L 1098 1018 L 820 1018 L 808 1011 Z" fill="#25d8ff" filter="url(#cyanGlow)"/>
+  </g>
+</svg>
+`;
+  writeFileSync(combatSvgPath, svg);
+  writeFileSync(docsCombatSvgPath, svg);
+}
+
 function writeMetas() {
   const modelDirMeta = path.join(root, "Assets/Art/Production/P0/Models.meta");
   writeFileSync(modelDirMeta, `fileFormatVersion: 2
@@ -782,13 +1027,16 @@ function main() {
   writeObj(poses);
   writeSvg(poses);
   writeGameScaleSvg(poses);
+  writeCombatScreenSvg(poses);
   writeMetas();
   console.log(`Wrote ${path.relative(root, objPath)}`);
   console.log(`Wrote ${path.relative(root, mtlPath)}`);
   console.log(`Wrote ${path.relative(root, svgPath)}`);
   console.log(`Wrote ${path.relative(root, gameSvgPath)}`);
+  console.log(`Wrote ${path.relative(root, combatSvgPath)}`);
   console.log(`Wrote ${path.relative(root, docsSvgPath)}`);
   console.log(`Wrote ${path.relative(root, docsGameSvgPath)}`);
+  console.log(`Wrote ${path.relative(root, docsCombatSvgPath)}`);
 }
 
 main();
