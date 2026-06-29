@@ -28,9 +28,12 @@ namespace FourfoldEchoes.Tests
             var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();
 
             Assert.That(state.Cards.Count, Is.EqualTo(3));
+            Assert.That(state.Cards[0].Choice, Is.EqualTo(PixelStrategySteamChoiceKind.BaitLair));
             Assert.That(state.Cards[0].Tone, Is.EqualTo(PixelStrategySteamScreenCardTone.Greedy));
+            Assert.That(state.Cards[1].Choice, Is.EqualTo(PixelStrategySteamChoiceKind.CutToGate));
             Assert.That(state.Cards[1].Tone, Is.EqualTo(PixelStrategySteamScreenCardTone.SafeSelected));
             Assert.That(state.Cards[1].Selected, Is.True);
+            Assert.That(state.Cards[2].Choice, Is.EqualTo(PixelStrategySteamChoiceKind.GreedRelic));
             Assert.That(state.Cards[2].Tone, Is.EqualTo(PixelStrategySteamScreenCardTone.Doom));
             Assert.That(state.Cards[0].Title, Does.Contain("CHOSEN"));
             Assert.That(state.Cards[0].FooterText, Does.Contain("wood stick"));
@@ -63,6 +66,60 @@ namespace FourfoldEchoes.Tests
             Assert.That(state.Identity.CarriedLoot, Is.EqualTo(new[] { "COIN", "KEY", "SHARD", "SEAL" }));
             Assert.That(state.Identity.LitSealBeatCount, Is.EqualTo(1));
             Assert.That(state.Identity.CrackedSealBeatCount, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void FirstSteamScreenSample_OffersOneStepChoiceDeltas()
+        {
+            var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();
+
+            var bait = state.ChoicePreview.GetDelta(PixelStrategySteamChoiceKind.BaitLair);
+            Assert.That(bait.Loot, Is.EqualTo(1));
+            Assert.That(bait.Threat, Is.EqualTo(2));
+            Assert.That(bait.Gate, Is.EqualTo(0));
+            Assert.That(bait.Pressure, Is.EqualTo(1));
+            Assert.That(bait.Extract, Is.EqualTo(1));
+
+            var cut = state.ChoicePreview.GetDelta(PixelStrategySteamChoiceKind.CutToGate);
+            Assert.That(cut.Loot, Is.EqualTo(0));
+            Assert.That(cut.Threat, Is.EqualTo(-1));
+            Assert.That(cut.Gate, Is.EqualTo(2));
+            Assert.That(cut.Pressure, Is.EqualTo(2));
+            Assert.That(cut.Extract, Is.EqualTo(1));
+
+            var greed = state.ChoicePreview.GetDelta(PixelStrategySteamChoiceKind.GreedRelic);
+            Assert.That(greed.Loot, Is.EqualTo(3));
+            Assert.That(greed.Threat, Is.EqualTo(1));
+            Assert.That(greed.Gate, Is.EqualTo(-1));
+            Assert.That(greed.Pressure, Is.EqualTo(2));
+            Assert.That(greed.Extract, Is.EqualTo(-1));
+        }
+
+        [Test]
+        public void FirstSteamScreenSample_ForecastsChoiceTradeoffs()
+        {
+            var state = PixelStrategySteamScreenPreviewFactory.CreateFirstSteamScreenSample();
+
+            var cut = state.ChoicePreview.Apply(PixelStrategySteamChoiceKind.CutToGate);
+            Assert.That(cut.Loot, Is.EqualTo(state.ChoicePreview.BaseLoot));
+            Assert.That(cut.Threat, Is.LessThan(state.ChoicePreview.BaseThreat));
+            Assert.That(cut.Gate, Is.EqualTo(state.ChoicePreview.ExtractGateTarget));
+            Assert.That(cut.Extract, Is.EqualTo(state.ChoicePreview.ExtractScoreTarget));
+            Assert.IsTrue(cut.ExtractReady);
+            Assert.IsTrue(cut.PressureWillCrack);
+
+            var greed = state.ChoicePreview.Apply(PixelStrategySteamChoiceKind.GreedRelic);
+            Assert.That(greed.Loot, Is.GreaterThan(cut.Loot));
+            Assert.That(greed.Gate, Is.LessThan(state.ChoicePreview.BaseGate));
+            Assert.That(greed.Extract, Is.LessThan(state.ChoicePreview.BaseExtract));
+            Assert.IsFalse(greed.ExtractReady);
+            Assert.IsTrue(greed.PressureWillCrack);
+
+            var bait = state.ChoicePreview.Apply(PixelStrategySteamChoiceKind.BaitLair);
+            Assert.That(bait.Threat, Is.GreaterThan(state.ChoicePreview.BaseThreat));
+            Assert.That(bait.Extract, Is.EqualTo(state.ChoicePreview.ExtractScoreTarget));
+            Assert.IsFalse(bait.ExtractReady);
+            Assert.IsFalse(bait.PressureWillCrack);
         }
 
         [Test]

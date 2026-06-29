@@ -35,6 +35,7 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             CreateFourfoldIdentity(state);
             CreateChoiceImpact(state);
             CreateStarterRead(state);
+            CreateChoiceDeltaStrip(state.ChoicePreview);
             CreateDecisionCards(state.Cards);
             CaptureCamera(camera, outputPath);
             Debug.Log("Pixel strategy Steam screen preview captured: " + outputPath);
@@ -356,6 +357,67 @@ namespace FourfoldEchoes.Editor.StrategyLoop
             CreatePanel("Hand Danger", new Vector3(-4.83f, 1.38f, -0.15f), new Vector2(0.38f, 0.22f), new Color32(223, 81, 68, 255), 50);
             CreatePanel("Hand Reward", new Vector3(-4.25f, 1.38f, -0.15f), new Vector2(0.38f, 0.22f), new Color32(241, 200, 77, 255), 50);
             CreatePanel("Hand Gate", new Vector3(-3.67f, 1.38f, -0.15f), new Vector2(0.38f, 0.22f), new Color32(89, 197, 214, 255), 50);
+        }
+
+        private static void CreateChoiceDeltaStrip(PixelStrategySteamChoicePreview preview)
+        {
+            var positions = new[]
+            {
+                new Vector3(-4.35f, -2.05f, -0.16f),
+                new Vector3(0f, -2.0f, -0.16f),
+                new Vector3(4.35f, -2.05f, -0.16f)
+            };
+
+            for (var index = 0; index < preview.Choices.Count && index < positions.Length; index++)
+            {
+                var delta = preview.Choices[index];
+                var position = positions[index];
+                CreatePanel("Choice Delta Rim", position + new Vector3(0f, 0f, 0.03f), new Vector2(2.55f, 0.38f), DeltaRimColor(delta), 55);
+                CreatePanel("Choice Delta Back", position + new Vector3(0f, 0f, 0.02f), new Vector2(2.45f, 0.29f), new Color32(16, 27, 34, 235), 56);
+                CreateLabel(ChoiceDeltaText(delta), position + new Vector3(-1.08f, 0.01f, -0.2f), 0.024f, DeltaTextColor(delta), TextAnchor.MiddleLeft, 67);
+            }
+        }
+
+        private static string ChoiceDeltaText(PixelStrategySteamChoiceDelta delta)
+        {
+            switch (delta.Choice)
+            {
+                case PixelStrategySteamChoiceKind.BaitLair:
+                    return "A " + Signed(delta.Loot) + "L " + Signed(delta.Threat) + "T " + Signed(delta.Extract) + "X";
+                case PixelStrategySteamChoiceKind.CutToGate:
+                    return "B " + Signed(delta.Gate) + "G " + Signed(delta.Pressure) + "P " + Signed(delta.Extract) + "X";
+                case PixelStrategySteamChoiceKind.GreedRelic:
+                    return "C " + Signed(delta.Loot) + "L " + Signed(delta.Gate) + "G " + Signed(delta.Extract) + "X";
+                default:
+                    return "?";
+            }
+        }
+
+        private static string Signed(int value)
+        {
+            return value >= 0 ? "+" + value : value.ToString();
+        }
+
+        private static Color32 DeltaRimColor(PixelStrategySteamChoiceDelta delta)
+        {
+            if (delta.Choice == PixelStrategySteamChoiceKind.CutToGate)
+            {
+                return new Color32(117, 231, 246, 220);
+            }
+
+            if (delta.Choice == PixelStrategySteamChoiceKind.GreedRelic)
+            {
+                return new Color32(255, 82, 73, 210);
+            }
+
+            return new Color32(240, 216, 121, 210);
+        }
+
+        private static Color32 DeltaTextColor(PixelStrategySteamChoiceDelta delta)
+        {
+            return delta.Choice == PixelStrategySteamChoiceKind.GreedRelic
+                ? new Color32(255, 183, 160, 255)
+                : new Color32(255, 241, 190, 255);
         }
 
         private static void CreateDecisionCards(IReadOnlyList<PixelStrategySteamScreenCard> cards)
