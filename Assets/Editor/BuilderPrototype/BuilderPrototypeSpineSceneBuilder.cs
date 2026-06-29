@@ -46,6 +46,8 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             var combatAnchor = CreateHookAnchor("Combat Hook Anchor", new Vector3(4.5f, 0.34f, 3.05f), materials.combatHook);
             var lootAnchor = CreateHookAnchor("Loot Hook Anchor", new Vector3(-4.5f, 0.34f, -3.05f), materials.lootHook);
             var extractAnchor = CreateHookAnchor("Extract Hook Anchor", new Vector3(4.5f, 0.34f, -3.05f), materials.extractHook);
+            var prototypeLootPickup = CreatePrototypeLootPickup(materials);
+            var prototypeExtractGate = CreatePrototypeExtractGate(materials);
             var editableBlocksRoot = new GameObject("Editable Build Blocks");
 
             roomRoot.name = "Builder Prototype Block Room";
@@ -61,6 +63,13 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             controller.editableBlocksRoot = editableBlocksRoot.transform;
             controller.placedBlockMaterial = materials.placedBlock;
             controller.buildCursorMaterial = materials.buildCursor;
+            controller.prototypeLootPickup = prototypeLootPickup.transform;
+            controller.prototypeExtractGate = prototypeExtractGate.transform;
+            controller.lootPickupAvailableMaterial = materials.lootPickupAvailable;
+            controller.lootPickupCollectedMaterial = materials.lootPickupCollected;
+            controller.extractGateReadyMaterial = materials.extractGateReady;
+            controller.extractGateBankedMaterial = materials.extractGateBanked;
+            controller.extractGateLostMaterial = materials.extractGateLost;
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
@@ -86,6 +95,7 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
                 Require(controller.followCamera != null, "Controller camera reference is missing.", errors);
                 Require(controller.HasRequiredHookAnchors, "One or more subsystem hook anchors are missing.", errors);
                 Require(controller.HasRequiredBuildReferences, "Build edit references are missing.", errors);
+                Require(controller.HasRequiredLootPreviewReferences, "Loot preview references are missing.", errors);
                 Require(controller.CurrentMode == BuilderPrototypeMode.Traverse, "Controller should start in Traverse mode.", errors);
             }
 
@@ -94,6 +104,8 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             Require(GameObject.Find("Combat Hook Anchor") != null, "Combat hook anchor is missing.", errors);
             Require(GameObject.Find("Loot Hook Anchor") != null, "Loot hook anchor is missing.", errors);
             Require(GameObject.Find("Extract Hook Anchor") != null, "Extract hook anchor is missing.", errors);
+            Require(GameObject.Find("Prototype Loot Pickup") != null, "Prototype loot pickup is missing.", errors);
+            Require(GameObject.Find("Prototype Extract Gate") != null, "Prototype extract gate is missing.", errors);
             Require(GameObject.Find("Editable Build Blocks") != null, "Editable build block root is missing.", errors);
             Require(Camera.main != null || controller?.followCamera != null, "No usable camera was generated.", errors);
 
@@ -205,6 +217,27 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             return anchor;
         }
 
+        private static GameObject CreatePrototypeLootPickup(SpineMaterials materials)
+        {
+            var pickup = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            pickup.name = "Prototype Loot Pickup";
+            pickup.transform.position = new Vector3(-4.5f, 0.64f, -2.15f);
+            pickup.transform.rotation = Quaternion.Euler(0f, 45f, 0f);
+            pickup.transform.localScale = new Vector3(0.54f, 0.54f, 0.54f);
+            pickup.GetComponent<Renderer>().sharedMaterial = materials.lootPickupAvailable;
+            return pickup;
+        }
+
+        private static GameObject CreatePrototypeExtractGate(SpineMaterials materials)
+        {
+            var gate = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            gate.name = "Prototype Extract Gate";
+            gate.transform.position = new Vector3(4.5f, 0.7f, -2.1f);
+            gate.transform.localScale = new Vector3(0.56f, 0.36f, 0.56f);
+            gate.GetComponent<Renderer>().sharedMaterial = materials.extractGateReady;
+            return gate;
+        }
+
         private static GameObject CreateBlock(Transform parent, string name, Vector3 position, Vector3 scale, Material material)
         {
             var block = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -228,7 +261,12 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
                 UpsertMaterial("MAT_BuilderSpine_LootHook", new Color(0.78f, 0.68f, 0.25f)),
                 UpsertMaterial("MAT_BuilderSpine_ExtractHook", new Color(0.35f, 0.48f, 0.86f)),
                 UpsertMaterial("MAT_BuilderSpine_PlacedBlock", new Color(0.51f, 0.43f, 0.34f)),
-                UpsertMaterial("MAT_BuilderSpine_BuildCursor", new Color(0.78f, 1f, 0.84f)));
+                UpsertMaterial("MAT_BuilderSpine_BuildCursor", new Color(0.78f, 1f, 0.84f)),
+                UpsertMaterial("MAT_BuilderSpine_LootPickupAvailable", new Color(0.96f, 0.82f, 0.24f)),
+                UpsertMaterial("MAT_BuilderSpine_LootPickupCollected", new Color(0.42f, 0.58f, 0.44f)),
+                UpsertMaterial("MAT_BuilderSpine_ExtractGateReady", new Color(0.22f, 0.62f, 0.95f)),
+                UpsertMaterial("MAT_BuilderSpine_ExtractGateBanked", new Color(0.28f, 0.82f, 0.55f)),
+                UpsertMaterial("MAT_BuilderSpine_ExtractGateLost", new Color(0.86f, 0.24f, 0.22f)));
         }
 
         private static Material UpsertMaterial(string name, Color color)
@@ -262,7 +300,22 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
 
         private readonly struct SpineMaterials
         {
-            public SpineMaterials(Material floorA, Material floorB, Material wall, Material player, Material buildHook, Material combatHook, Material lootHook, Material extractHook, Material placedBlock, Material buildCursor)
+            public SpineMaterials(
+                Material floorA,
+                Material floorB,
+                Material wall,
+                Material player,
+                Material buildHook,
+                Material combatHook,
+                Material lootHook,
+                Material extractHook,
+                Material placedBlock,
+                Material buildCursor,
+                Material lootPickupAvailable,
+                Material lootPickupCollected,
+                Material extractGateReady,
+                Material extractGateBanked,
+                Material extractGateLost)
             {
                 this.floorA = floorA;
                 this.floorB = floorB;
@@ -274,6 +327,11 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
                 this.extractHook = extractHook;
                 this.placedBlock = placedBlock;
                 this.buildCursor = buildCursor;
+                this.lootPickupAvailable = lootPickupAvailable;
+                this.lootPickupCollected = lootPickupCollected;
+                this.extractGateReady = extractGateReady;
+                this.extractGateBanked = extractGateBanked;
+                this.extractGateLost = extractGateLost;
             }
 
             public readonly Material floorA;
@@ -286,6 +344,11 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             public readonly Material extractHook;
             public readonly Material placedBlock;
             public readonly Material buildCursor;
+            public readonly Material lootPickupAvailable;
+            public readonly Material lootPickupCollected;
+            public readonly Material extractGateReady;
+            public readonly Material extractGateBanked;
+            public readonly Material extractGateLost;
         }
     }
 }
