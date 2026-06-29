@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 namespace FourfoldEchoes.BuilderPrototype
@@ -11,6 +12,8 @@ namespace FourfoldEchoes.BuilderPrototype
         public const string CombatHookPromptText = "Combat preview: read telegraphs, safe lanes, and flank/rear bonus | Exit B/Tab";
         public const string LootHookPromptText = "Loot: collect prototype cache A/J; deterministic pickup raises value and pressure.";
         public const string ExtractHookPromptText = "Extract: bank A/J | lose X/K; deterministic rolls update the run HUD.";
+        public const string PrototypeBuildIdentityText = "Echo Forgemason";
+        public const string PrototypeBuildSelectedAffixesText = "+BuilderPower +BuildSpeed +StrikerDamage";
 
         [Header("Scene")]
         public Transform player;
@@ -67,6 +70,8 @@ namespace FourfoldEchoes.BuilderPrototype
 
         private readonly BuilderPrototypeRunState runState = new BuilderPrototypeRunState();
         private readonly BuilderPrototypeLootPressureModel lootPressure = new BuilderPrototypeLootPressureModel();
+        private readonly BuilderPrototypeCharacterBuildSnapshot characterBuildSnapshot = CreatePrototypeCharacterBuildSheet().Evaluate();
+        private readonly BuilderPrototypeCharacterBuildValidation characterBuildValidation = CreatePrototypeCharacterBuildSheet().Validate();
         private readonly Dictionary<Vector2Int, Stack<GameObject>> placedBlocks = new Dictionary<Vector2Int, Stack<GameObject>>();
         private readonly BuilderPrototypeTacticalModel tacticalModel = new BuilderPrototypeTacticalModel();
         private BuilderPrototypeBuildGrid buildGrid;
@@ -113,6 +118,10 @@ namespace FourfoldEchoes.BuilderPrototype
         public BuilderPrototypePositionSafety CombatPreviewSafety => combatEvaluation.Safety;
         public BuilderPrototypePositionalBonus CombatPreviewPositionalBonus => combatPositionalBonus;
         public string CombatPreviewHudText => FormatCombatPreviewHud();
+        public bool IsPrototypeCharacterBuildValid => characterBuildValidation.IsValid;
+        public BuilderPrototypeCharacterBuildSnapshot CharacterBuildSnapshot => characterBuildSnapshot;
+        public string CharacterBuildHudText => FormatCharacterBuildHud();
+        public string CharacterBuildSourceHudText => FormatCharacterBuildSourceHud();
 
         public void Awake()
         {
@@ -185,6 +194,49 @@ namespace FourfoldEchoes.BuilderPrototype
         public static BuilderPrototypeLootItem CreatePrototypeLootForPreview()
         {
             return new BuilderPrototypeLootItem("prototype-echo-cache", BuilderPrototypeLootRarity.Rare, 12, 2);
+        }
+
+        public static BuilderPrototypeCharacterBuildSheet CreatePrototypeCharacterBuildSheet()
+        {
+            return new BuilderPrototypeCharacterBuildSheet()
+                .AddSource(new BuilderPrototypeBuildSource("Echo Chisel", BuilderPrototypeBuildSourceKind.Gear, affixBudget: 4))
+                .AddSource(new BuilderPrototypeBuildSource("Anchor Greaves", BuilderPrototypeBuildSourceKind.Gear, affixBudget: 2))
+                .AddSource(new BuilderPrototypeBuildSource("Anvil Vow", BuilderPrototypeBuildSourceKind.Passive))
+                .AddModifier(new BuilderPrototypeStatModifier(
+                    BuilderPrototypeBuildStatId.BuilderPower,
+                    BuilderPrototypeStatModifierKind.Flat,
+                    8d,
+                    "Echo Chisel",
+                    affixCost: 2))
+                .AddModifier(new BuilderPrototypeStatModifier(
+                    BuilderPrototypeBuildStatId.BuildSpeed,
+                    BuilderPrototypeStatModifierKind.AdditivePercent,
+                    0.25d,
+                    "Echo Chisel",
+                    affixCost: 1))
+                .AddModifier(new BuilderPrototypeStatModifier(
+                    BuilderPrototypeBuildStatId.StrikerDamage,
+                    BuilderPrototypeStatModifierKind.Flat,
+                    8d,
+                    "Echo Chisel",
+                    affixCost: 1))
+                .AddModifier(new BuilderPrototypeStatModifier(
+                    BuilderPrototypeBuildStatId.SentinelGuard,
+                    BuilderPrototypeStatModifierKind.Flat,
+                    5d,
+                    "Anchor Greaves",
+                    affixCost: 1))
+                .AddModifier(new BuilderPrototypeStatModifier(
+                    BuilderPrototypeBuildStatId.Vitality,
+                    BuilderPrototypeStatModifierKind.Flat,
+                    20d,
+                    "Anchor Greaves",
+                    affixCost: 1))
+                .AddModifier(new BuilderPrototypeStatModifier(
+                    BuilderPrototypeBuildStatId.BreakerPower,
+                    BuilderPrototypeStatModifierKind.Flat,
+                    6d,
+                    "Anvil Vow"));
         }
 
         public void CollectPrototypeLootForPreview()
@@ -809,6 +861,74 @@ namespace FourfoldEchoes.BuilderPrototype
             return secondsUntilUnsafe >= 0f ? secondsUntilUnsafe.ToString("0.0") + "s" : "--";
         }
 
+        private string FormatCharacterBuildHud()
+        {
+            return "Build: "
+                + PrototypeBuildIdentityText
+                + " | Role: "
+                + FormatRoleTags(characterBuildSnapshot.RoleTags)
+                + " | Build "
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.BuilderPower))
+                + " Speed "
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.BuildSpeed))
+                + " | Off "
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.StrikerDamage))
+                + " Break "
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.BreakerPower))
+                + " Guard "
+                + FormatStat(characterBuildSnapshot.GetStat(BuilderPrototypeBuildStatId.SentinelGuard))
+                + " | Press "
+                + lootPressure.PressureScore
+                + "/"
+                + BuilderPrototypeLootPressureModel.MaxPressureScore
+                + " "
+                + lootPressure.PressureBand
+                + " Risk "
+                + lootPressure.ExtractionRiskPercent
+                + "%";
+        }
+
+        private string FormatCharacterBuildSourceHud()
+        {
+            if (characterBuildSnapshot.AffixBudgets.Count == 0)
+            {
+                return "Source: none";
+            }
+
+            var source = characterBuildSnapshot.AffixBudgets[0];
+            return "Source: "
+                + source.SourceLabel
+                + " ("
+                + source.SourceKind
+                + ") affix "
+                + source.Used
+                + "/"
+                + source.Budget
+                + " | "
+                + PrototypeBuildSelectedAffixesText;
+        }
+
+        private static string FormatRoleTags(IReadOnlyList<BuilderPrototypeBuildRoleTag> roleTags)
+        {
+            if (roleTags.Count == 0)
+            {
+                return "None";
+            }
+
+            var value = roleTags[0].ToString();
+            for (var index = 1; index < roleTags.Count; index++)
+            {
+                value += "/" + roleTags[index];
+            }
+
+            return value;
+        }
+
+        private static string FormatStat(double value)
+        {
+            return value.ToString("0.##", CultureInfo.InvariantCulture);
+        }
+
         private static bool Pressed(KeyCode keyboard, KeyCode gamepad)
         {
             return Input.GetKeyDown(keyboard) || Input.GetKeyDown(gamepad);
@@ -841,9 +961,11 @@ namespace FourfoldEchoes.BuilderPrototype
                 return;
             }
 
-            GUILayout.BeginArea(new Rect(16f, 16f, 560f, 252f), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16f, 16f, 720f, 300f), GUI.skin.box);
             GUILayout.Label(SceneContractText);
             GUILayout.Label("Mode: " + BuilderPrototypeRunState.LabelFor(runState.Mode));
+            GUILayout.Label(CharacterBuildHudText);
+            GUILayout.Label(CharacterBuildSourceHudText);
             GUILayout.Label("Build Blocks: " + BuildBlocksAvailable + " | Placed: " + PlacedBlockCount + " | Cursor: " + FormatCell(SelectedBuildCell));
             GUILayout.Label("Build Event: " + lastBuildEvent);
             if (runState.Mode == BuilderPrototypeMode.CombatHook)
