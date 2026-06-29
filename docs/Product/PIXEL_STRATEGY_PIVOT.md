@@ -6,6 +6,10 @@ FOURFOLD ECHOES is pivoting toward a Steam-first, buy-to-own, single-player
 2D pixel strategy game built around an addictive board loop, readable placement,
 and extraction pressure.
 
+See `docs/Product/PIXEL_STRATEGY_DESIGN_THESIS.md` for the tighter design
+guardrail: shape the board so the adventurer becomes more valuable, more
+pressured, and harder to extract safely.
+
 The target feel is:
 
 - small, charming pixel pieces with the immediate readability of classic JRPG
