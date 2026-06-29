@@ -5,10 +5,10 @@ namespace FourfoldEchoes.BuilderPrototype
 {
     public sealed class BuilderPrototypeSpineController : MonoBehaviour
     {
-        public const string SceneContractText = "PR-02 build edit loop: traversal, camera, HUD, and block placement/deletion.";
+        public const string SceneContractText = "PR-03B combat preview: traversal, build edit loop, tactical telegraphs, and HUD readout.";
         public const string ControlPromptText = "Move LS/WASD | Build X/B | Combat Y/C | Loot LB/L | Extract RB/E | Reset Start/R";
         public const string BuildHookPromptText = "Build: move cursor LS/arrows | Place A/J | Remove X/K | Exit B/Tab";
-        public const string CombatHookPromptText = "Combat hook reserved for PR-03; no attacks, enemies, or damage ship in PR-02.";
+        public const string CombatHookPromptText = "Combat preview: read telegraphs, safe lanes, and flank/rear bonus | Exit B/Tab";
         public const string LootHookPromptText = "Loot hook reserved for PR-04; no drops or affixes ship in PR-02.";
         public const string ExtractHookPromptText = "Extract hook reserved for PR-05; no extraction reward flow ships in PR-02.";
 
@@ -30,6 +30,16 @@ namespace FourfoldEchoes.BuilderPrototype
 
         private const float CursorMoveRepeatDuration = 0.18f;
 
+        [Header("Combat Preview")]
+        public Material combatTelegraphMaterial;
+        public Material combatSafeMarkerMaterial;
+        public Material combatThreatenedMarkerMaterial;
+        public Material combatUnsafeMarkerMaterial;
+        public float combatPreviewLoopDuration = 3.2f;
+        public float combatTelegraphRadius = 2.15f;
+        public Vector2 combatLineTelegraphSize = new Vector2(1.35f, 4.4f);
+        public Vector3 combatMarkerScale = new Vector3(0.82f, 0.03f, 0.82f);
+
         [Header("Movement")]
         public float moveSpeed = 5.2f;
         public Vector2 xBounds = new Vector2(-6.4f, 6.4f);
@@ -42,14 +52,26 @@ namespace FourfoldEchoes.BuilderPrototype
         [Header("Prototype HUD")]
         public bool showDebugHud = true;
 
+        private const float CombatTelegraphResolveAt = 2.15f;
+        private const float CombatTelegraphResolveDuration = 0.48f;
+        private const float CombatLineTelegraphForwardOffset = 2.05f;
+
         private readonly BuilderPrototypeRunState runState = new BuilderPrototypeRunState();
         private readonly Dictionary<Vector2Int, Stack<GameObject>> placedBlocks = new Dictionary<Vector2Int, Stack<GameObject>>();
+        private readonly BuilderPrototypeTacticalModel tacticalModel = new BuilderPrototypeTacticalModel();
         private BuilderPrototypeBuildGrid buildGrid;
         private Transform buildCursor;
+        private Transform combatPreviewRoot;
+        private Transform combatCircleTelegraph;
+        private Transform combatLineTelegraph;
+        private Transform combatSafetyMarker;
         private float cursorMoveRepeatTimer;
+        private float combatPreviewTime;
         private Vector3 facing = Vector3.forward;
         private Vector3 startPosition;
         private string lastBuildEvent = "Build loop ready";
+        private BuilderPrototypeTacticalEvaluation combatEvaluation = new BuilderPrototypeTacticalEvaluation(BuilderPrototypePositionSafety.Safe, 0, 0, -1f);
+        private BuilderPrototypePositionalBonus combatPositionalBonus = BuilderPrototypePositionalBonus.None;
 
         public BuilderPrototypeMode CurrentMode => runState.Mode;
         public int CarriedLootValue => runState.CarriedLootValue;
@@ -57,9 +79,14 @@ namespace FourfoldEchoes.BuilderPrototype
         public int BankedLootValue => runState.BankedLootValue;
         public bool HasRequiredHookAnchors => buildHookAnchor != null && combatHookAnchor != null && lootHookAnchor != null && extractHookAnchor != null;
         public bool HasRequiredBuildReferences => editableBlocksRoot != null && placedBlockMaterial != null && buildCursorMaterial != null;
+        public bool HasRequiredCombatPreviewReferences => combatTelegraphMaterial != null && combatSafeMarkerMaterial != null && combatThreatenedMarkerMaterial != null && combatUnsafeMarkerMaterial != null;
         public int BuildBlocksAvailable => buildGrid?.BlocksAvailable ?? startingBuildBlocks;
         public int PlacedBlockCount => buildGrid?.PlacedBlockCount ?? 0;
         public Vector2Int SelectedBuildCell => buildGrid?.SelectedCell ?? Vector2Int.zero;
+        public int CombatPreviewTelegraphCount => tacticalModel.TelegraphZoneCount;
+        public BuilderPrototypePositionSafety CombatPreviewSafety => combatEvaluation.Safety;
+        public BuilderPrototypePositionalBonus CombatPreviewPositionalBonus => combatPositionalBonus;
+        public string CombatPreviewHudText => FormatCombatPreviewHud();
 
         public void Awake()
         {
@@ -69,6 +96,7 @@ namespace FourfoldEchoes.BuilderPrototype
             }
 
             ResetBuildGrid();
+            ResetCombatPreview();
             SnapCameraToPlayer();
         }
 
@@ -80,6 +108,7 @@ namespace FourfoldEchoes.BuilderPrototype
             HandleBuildInput();
             MovePlayer(Time.deltaTime);
             UpdateBuildCursor();
+            UpdateCombatPreview(Time.deltaTime);
             FollowPlayer(Time.deltaTime);
         }
 
@@ -92,6 +121,7 @@ namespace FourfoldEchoes.BuilderPrototype
             }
 
             SnapCameraToPlayer();
+            ResetCombatPreview();
         }
 
         public void ResetBuildGrid()
@@ -105,6 +135,11 @@ namespace FourfoldEchoes.BuilderPrototype
             EnsureBuildCursor();
             UpdateBuildCursor();
             lastBuildEvent = "Build loop ready";
+        }
+
+        public void SetModeForPrototypePreview(BuilderPrototypeMode mode)
+        {
+            SetPrototypeMode(mode);
         }
 
         public static Vector3 ClampToArena(Vector3 position, Vector2 xRange, Vector2 zRange)
@@ -136,23 +171,23 @@ namespace FourfoldEchoes.BuilderPrototype
         {
             if (Pressed(KeyCode.B, KeyCode.JoystickButton2))
             {
-                runState.SetMode(BuilderPrototypeMode.BuildHook);
+                SetPrototypeMode(BuilderPrototypeMode.BuildHook);
             }
             else if (Pressed(KeyCode.C, KeyCode.JoystickButton3))
             {
-                runState.SetMode(BuilderPrototypeMode.CombatHook);
+                SetPrototypeMode(BuilderPrototypeMode.CombatHook);
             }
             else if (Pressed(KeyCode.L, KeyCode.JoystickButton4))
             {
-                runState.SetMode(BuilderPrototypeMode.LootHook);
+                SetPrototypeMode(BuilderPrototypeMode.LootHook);
             }
             else if (Pressed(KeyCode.E, KeyCode.JoystickButton5))
             {
-                runState.SetMode(BuilderPrototypeMode.ExtractHook);
+                SetPrototypeMode(BuilderPrototypeMode.ExtractHook);
             }
             else if (Pressed(KeyCode.Tab, KeyCode.JoystickButton1))
             {
-                runState.SetMode(BuilderPrototypeMode.Traverse);
+                SetPrototypeMode(BuilderPrototypeMode.Traverse);
             }
         }
 
@@ -258,6 +293,23 @@ namespace FourfoldEchoes.BuilderPrototype
             return Vector2Int.zero;
         }
 
+        private void SetPrototypeMode(BuilderPrototypeMode mode)
+        {
+            if (runState.Mode == mode)
+            {
+                return;
+            }
+
+            runState.SetMode(mode);
+            if (mode == BuilderPrototypeMode.CombatHook)
+            {
+                combatPreviewTime = 0f;
+            }
+
+            UpdateBuildCursor();
+            UpdateCombatPreview(0f);
+        }
+
         private void FollowPlayer(float deltaTime)
         {
             if (player == null || followCamera == null)
@@ -309,6 +361,183 @@ namespace FourfoldEchoes.BuilderPrototype
             }
 
             UpdateBuildCursor();
+        }
+
+        private void ResetCombatPreview()
+        {
+            combatPreviewTime = 0f;
+            RefreshCombatTelegraphs();
+            EnsureCombatPreviewObjects();
+            UpdateCombatPreview(0f);
+        }
+
+        private void UpdateCombatPreview(float deltaTime)
+        {
+            RefreshCombatTelegraphs();
+            EnsureCombatPreviewObjects();
+
+            var active = runState.Mode == BuilderPrototypeMode.CombatHook;
+            if (combatPreviewRoot != null)
+            {
+                combatPreviewRoot.gameObject.SetActive(active);
+            }
+
+            if (!active)
+            {
+                combatEvaluation = new BuilderPrototypeTacticalEvaluation(BuilderPrototypePositionSafety.Safe, 0, 0, -1f);
+                combatPositionalBonus = BuilderPrototypePositionalBonus.None;
+                return;
+            }
+
+            combatPreviewTime += Mathf.Max(0f, deltaTime);
+            var loopDuration = Mathf.Max(combatPreviewLoopDuration, CombatTelegraphResolveAt + CombatTelegraphResolveDuration + 0.1f);
+            if (combatPreviewTime > loopDuration)
+            {
+                combatPreviewTime %= loopDuration;
+            }
+
+            var playerPosition = TopDown(player != null ? player.position : startPosition);
+            combatEvaluation = tacticalModel.EvaluatePosition(playerPosition, combatPreviewTime);
+            combatPositionalBonus = BuilderPrototypeTacticalModel.EvaluatePositionalBonus(
+                playerPosition,
+                CombatTargetPosition,
+                CombatTargetFacing);
+
+            PositionCombatPreviewObjects();
+            UpdateCombatSafetyMarker();
+        }
+
+        private void RefreshCombatTelegraphs()
+        {
+            tacticalModel.ClearTelegraphZones();
+
+            var targetPosition = CombatTargetPosition;
+            var targetFacing = CombatTargetFacing;
+            var castWindow = new BuilderPrototypeCastWindow(0f, CombatTelegraphResolveAt, CombatTelegraphResolveDuration);
+            tacticalModel.AddTelegraphZone(BuilderPrototypeTelegraphZone.Circle(targetPosition, combatTelegraphRadius, castWindow));
+            tacticalModel.AddTelegraphZone(BuilderPrototypeTelegraphZone.Rectangle(
+                targetPosition + targetFacing * CombatLineTelegraphForwardOffset,
+                combatLineTelegraphSize,
+                targetFacing,
+                castWindow));
+        }
+
+        private void EnsureCombatPreviewObjects()
+        {
+            if (combatPreviewRoot == null)
+            {
+                combatPreviewRoot = new GameObject("Combat Hook Tactical Preview").transform;
+                combatPreviewRoot.SetParent(transform, false);
+            }
+
+            if (combatCircleTelegraph == null)
+            {
+                combatCircleTelegraph = CreatePreviewPrimitive(
+                    PrimitiveType.Cylinder,
+                    "Combat Telegraph Circle",
+                    combatPreviewRoot,
+                    combatTelegraphMaterial);
+            }
+
+            if (combatLineTelegraph == null)
+            {
+                combatLineTelegraph = CreatePreviewPrimitive(
+                    PrimitiveType.Cube,
+                    "Combat Telegraph Line",
+                    combatPreviewRoot,
+                    combatTelegraphMaterial);
+            }
+
+            if (combatSafetyMarker == null)
+            {
+                combatSafetyMarker = CreatePreviewPrimitive(
+                    PrimitiveType.Cylinder,
+                    "Combat Player Safety Marker",
+                    combatPreviewRoot,
+                    combatSafeMarkerMaterial);
+            }
+
+            PositionCombatPreviewObjects();
+        }
+
+        private Transform CreatePreviewPrimitive(PrimitiveType primitiveType, string objectName, Transform parent, Material material)
+        {
+            var previewObject = GameObject.CreatePrimitive(primitiveType);
+            previewObject.name = objectName;
+            previewObject.transform.SetParent(parent, false);
+
+            var collider = previewObject.GetComponent<Collider>();
+            if (collider != null)
+            {
+                Destroy(collider);
+            }
+
+            var renderer = previewObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.sharedMaterial = material;
+            }
+
+            return previewObject.transform;
+        }
+
+        private void PositionCombatPreviewObjects()
+        {
+            var targetPosition = CombatTargetPosition;
+            var targetFacing = CombatTargetFacing;
+            var targetWorld = new Vector3(targetPosition.x, 0.035f, targetPosition.y);
+            var lineWorld = new Vector3(
+                targetPosition.x + targetFacing.x * CombatLineTelegraphForwardOffset,
+                0.055f,
+                targetPosition.y + targetFacing.y * CombatLineTelegraphForwardOffset);
+
+            if (combatCircleTelegraph != null)
+            {
+                combatCircleTelegraph.position = targetWorld;
+                combatCircleTelegraph.localScale = new Vector3(combatTelegraphRadius * 2f, 0.02f, combatTelegraphRadius * 2f);
+                combatCircleTelegraph.rotation = Quaternion.identity;
+            }
+
+            if (combatLineTelegraph != null)
+            {
+                combatLineTelegraph.position = lineWorld;
+                combatLineTelegraph.localScale = new Vector3(combatLineTelegraphSize.x, 0.04f, combatLineTelegraphSize.y);
+                combatLineTelegraph.rotation = RotationForTopDownFacing(targetFacing);
+            }
+
+            if (combatSafetyMarker != null && player != null)
+            {
+                combatSafetyMarker.position = new Vector3(player.position.x, 0.075f, player.position.z);
+                combatSafetyMarker.localScale = combatMarkerScale;
+                combatSafetyMarker.rotation = Quaternion.identity;
+            }
+        }
+
+        private void UpdateCombatSafetyMarker()
+        {
+            if (combatSafetyMarker == null)
+            {
+                return;
+            }
+
+            var renderer = combatSafetyMarker.GetComponent<Renderer>();
+            if (renderer == null)
+            {
+                return;
+            }
+
+            switch (combatEvaluation.Safety)
+            {
+                case BuilderPrototypePositionSafety.Unsafe:
+                    renderer.sharedMaterial = combatUnsafeMarkerMaterial;
+                    break;
+                case BuilderPrototypePositionSafety.Threatened:
+                    renderer.sharedMaterial = combatThreatenedMarkerMaterial;
+                    break;
+                default:
+                    renderer.sharedMaterial = combatSafeMarkerMaterial;
+                    break;
+            }
         }
 
         private void CreatePlacedBlock(Vector2Int cell, int stackHeight)
@@ -400,6 +629,58 @@ namespace FourfoldEchoes.BuilderPrototype
             return new Vector3(x, y, z);
         }
 
+        private Vector2 CombatTargetPosition => TopDown(combatHookAnchor != null ? combatHookAnchor.position : new Vector3(2.25f, 0f, 1.4f));
+
+        private Vector2 CombatTargetFacing
+        {
+            get
+            {
+                var towardArenaCenter = -CombatTargetPosition;
+                return towardArenaCenter.sqrMagnitude > 0.0001f ? towardArenaCenter.normalized : Vector2.down;
+            }
+        }
+
+        private static Vector2 TopDown(Vector3 position)
+        {
+            return new Vector2(position.x, position.z);
+        }
+
+        private static Quaternion RotationForTopDownFacing(Vector2 facing)
+        {
+            var direction = new Vector3(facing.x, 0f, facing.y);
+            return direction.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(direction.normalized, Vector3.up) : Quaternion.identity;
+        }
+
+        private string FormatCombatPreviewHud()
+        {
+            return "Combat Preview: "
+                + combatEvaluation.Safety
+                + " | Bonus: "
+                + FormatPositionalBonus(combatPositionalBonus)
+                + " | Telegraphs: "
+                + tacticalModel.TelegraphZoneCount
+                + " | Unsafe in: "
+                + FormatUnsafeCountdown(combatEvaluation.SecondsUntilUnsafe);
+        }
+
+        private static string FormatPositionalBonus(BuilderPrototypePositionalBonus bonus)
+        {
+            switch (bonus)
+            {
+                case BuilderPrototypePositionalBonus.Rear:
+                    return "Rear";
+                case BuilderPrototypePositionalBonus.Flank:
+                    return "Flank";
+                default:
+                    return "None";
+            }
+        }
+
+        private static string FormatUnsafeCountdown(float secondsUntilUnsafe)
+        {
+            return secondsUntilUnsafe >= 0f ? secondsUntilUnsafe.ToString("0.0") + "s" : "--";
+        }
+
         private static bool Pressed(KeyCode keyboard, KeyCode gamepad)
         {
             return Input.GetKeyDown(keyboard) || Input.GetKeyDown(gamepad);
@@ -412,13 +693,18 @@ namespace FourfoldEchoes.BuilderPrototype
                 return;
             }
 
-            GUILayout.BeginArea(new Rect(16f, 16f, 460f, 184f), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16f, 16f, 520f, 210f), GUI.skin.box);
             GUILayout.Label(SceneContractText);
             GUILayout.Label("Mode: " + BuilderPrototypeRunState.LabelFor(runState.Mode));
             GUILayout.Label("Carried Loot Value: " + runState.CarriedLootValue);
             GUILayout.Label("Danger Tier: " + runState.DangerTier + "/" + BuilderPrototypeRunState.MaxDangerTier);
             GUILayout.Label("Build Blocks: " + BuildBlocksAvailable + " | Placed: " + PlacedBlockCount + " | Cursor: " + FormatCell(SelectedBuildCell));
             GUILayout.Label("Build Event: " + lastBuildEvent);
+            if (runState.Mode == BuilderPrototypeMode.CombatHook)
+            {
+                GUILayout.Label(CombatPreviewHudText);
+            }
+
             GUILayout.Label(PromptFor(runState.Mode));
             GUILayout.EndArea();
         }

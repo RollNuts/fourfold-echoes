@@ -61,6 +61,10 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             controller.editableBlocksRoot = editableBlocksRoot.transform;
             controller.placedBlockMaterial = materials.placedBlock;
             controller.buildCursorMaterial = materials.buildCursor;
+            controller.combatTelegraphMaterial = materials.combatTelegraph;
+            controller.combatSafeMarkerMaterial = materials.combatSafeMarker;
+            controller.combatThreatenedMarkerMaterial = materials.combatThreatenedMarker;
+            controller.combatUnsafeMarkerMaterial = materials.combatUnsafeMarker;
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
@@ -86,6 +90,7 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
                 Require(controller.followCamera != null, "Controller camera reference is missing.", errors);
                 Require(controller.HasRequiredHookAnchors, "One or more subsystem hook anchors are missing.", errors);
                 Require(controller.HasRequiredBuildReferences, "Build edit references are missing.", errors);
+                Require(controller.HasRequiredCombatPreviewReferences, "Combat preview material references are missing.", errors);
                 Require(controller.CurrentMode == BuilderPrototypeMode.Traverse, "Controller should start in Traverse mode.", errors);
             }
 
@@ -228,7 +233,11 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
                 UpsertMaterial("MAT_BuilderSpine_LootHook", new Color(0.78f, 0.68f, 0.25f)),
                 UpsertMaterial("MAT_BuilderSpine_ExtractHook", new Color(0.35f, 0.48f, 0.86f)),
                 UpsertMaterial("MAT_BuilderSpine_PlacedBlock", new Color(0.51f, 0.43f, 0.34f)),
-                UpsertMaterial("MAT_BuilderSpine_BuildCursor", new Color(0.78f, 1f, 0.84f)));
+                UpsertMaterial("MAT_BuilderSpine_BuildCursor", new Color(0.78f, 1f, 0.84f)),
+                UpsertMaterial("MAT_BuilderSpine_CombatTelegraph", new Color(1f, 0.25f, 0.16f, 0.62f)),
+                UpsertMaterial("MAT_BuilderSpine_CombatSafeMarker", new Color(0.31f, 0.92f, 0.53f, 0.82f)),
+                UpsertMaterial("MAT_BuilderSpine_CombatThreatenedMarker", new Color(1f, 0.78f, 0.24f, 0.86f)),
+                UpsertMaterial("MAT_BuilderSpine_CombatUnsafeMarker", new Color(1f, 0.18f, 0.15f, 0.92f)));
         }
 
         private static Material UpsertMaterial(string name, Color color)
@@ -262,7 +271,21 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
 
         private readonly struct SpineMaterials
         {
-            public SpineMaterials(Material floorA, Material floorB, Material wall, Material player, Material buildHook, Material combatHook, Material lootHook, Material extractHook, Material placedBlock, Material buildCursor)
+            public SpineMaterials(
+                Material floorA,
+                Material floorB,
+                Material wall,
+                Material player,
+                Material buildHook,
+                Material combatHook,
+                Material lootHook,
+                Material extractHook,
+                Material placedBlock,
+                Material buildCursor,
+                Material combatTelegraph,
+                Material combatSafeMarker,
+                Material combatThreatenedMarker,
+                Material combatUnsafeMarker)
             {
                 this.floorA = floorA;
                 this.floorB = floorB;
@@ -274,6 +297,10 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
                 this.extractHook = extractHook;
                 this.placedBlock = placedBlock;
                 this.buildCursor = buildCursor;
+                this.combatTelegraph = combatTelegraph;
+                this.combatSafeMarker = combatSafeMarker;
+                this.combatThreatenedMarker = combatThreatenedMarker;
+                this.combatUnsafeMarker = combatUnsafeMarker;
             }
 
             public readonly Material floorA;
@@ -286,6 +313,10 @@ namespace FourfoldEchoes.Editor.BuilderPrototype
             public readonly Material extractHook;
             public readonly Material placedBlock;
             public readonly Material buildCursor;
+            public readonly Material combatTelegraph;
+            public readonly Material combatSafeMarker;
+            public readonly Material combatThreatenedMarker;
+            public readonly Material combatUnsafeMarker;
         }
     }
 }
